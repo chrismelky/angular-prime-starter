@@ -1,0 +1,24 @@
+<!-- <mat-sidenav-container>
+    <mat-sidenav mode="over" align="start" opened>
+        Sidenav content
+    </mat-sidenav>
+
+</mat-sidenav-container> -->
+
+<mat-drawer-container>
+  <mat-drawer
+    #drawer
+    [mode]="isGtMd ? 'side' : 'over'"
+    [opened]="isGtMd"
+    class="mat-elevation-z2"
+  >
+    <mat-toolbar class="mat-elevation-z0"> </mat-toolbar>
+  </mat-drawer>
+  <mat-drawer-content style="flex: 1 1 auto">
+    <mat-toolbar class="mat-elevation-z2">
+      <button mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-toolbar>
+  </mat-drawer-content>
+</mat-drawer-container>

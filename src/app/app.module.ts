@@ -11,9 +11,10 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MainComponent } from './layouts/main/main.component';
+import { AppComponent } from './app.component';
 
 @NgModule({
-  declarations: [MainComponent],
+  declarations: [MainComponent, AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -25,6 +26,6 @@ import { MainComponent } from './layouts/main/main.component';
     MatButtonModule,
   ],
   providers: [],
-  bootstrap: [MainComponent],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

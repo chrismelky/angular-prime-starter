@@ -5,7 +5,20 @@
     [opened]="isGtMd"
     class="mat-elevation-z2"
   >
-    <mat-toolbar class="mat-elevation-z0"> </mat-toolbar>
+    <mat-toolbar class="mat-elevation-z0">
+      <div fxLayout="row" fxLayoutGap="0.1rem">
+        <span class="logo-text">Planrep</span>
+      </div>
+    </mat-toolbar>
+    <div
+      class="location"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      fxLayoutGap="1rem"
+    >
+      <img src="../../../assets/images/coat.png" />
+      <span>Porlarg</span>
+    </div>
   </mat-drawer>
   <mat-drawer-content style="flex: 1 1 auto">
     <mat-toolbar class="mat-elevation-z2">

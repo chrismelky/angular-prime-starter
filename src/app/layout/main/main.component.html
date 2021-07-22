@@ -19,6 +19,15 @@
       <img src="../../../assets/images/coat.png" />
       <span>Porlarg</span>
     </div>
+    <div class="sidenav-item">
+      <mat-nav-list>
+        <app-menu-item
+          class="main"
+          *ngFor="let item of navlinks"
+          [item]="item"
+        ></app-menu-item>
+      </mat-nav-list>
+    </div>
   </mat-drawer>
   <mat-drawer-content style="flex: 1 1 auto">
     <mat-toolbar class="mat-elevation-z2">

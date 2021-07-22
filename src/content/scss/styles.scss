@@ -1,7 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
-@import 'variables.scss';
+@import "variables.scss";
 
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -29,25 +32,35 @@ body {
     }
   }
   .location {
-    height: 100px;
-    padding-left: 1em;
+    height: 80px;
+    padding-left: 1.5em;
     box-shadow: 0 -1px 0 $navBorder inset;
 
     img {
       transition: all 0.2s ease-in-out;
       vertical-align: middle;
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
-      border: 3px solid $navText;
+      // border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      // border: 3px solid $navText;
       padding: 2px;
     }
     span {
       font-size: 1rem;
-      color: $navText;
+      color: #f7f7f7;
     }
+  }
+  app-menu-item.main > .menu-list-item {
+    box-shadow: 0 -1px 0 $navBorder inset;
+  }
+  a.expanded {
+    color: #669df6;
   }
 }
 .content {
   margin: 1.5rem;
+}
+
+.mat-drawer-content {
+  background-color: #e4e5e6 !important;
 }

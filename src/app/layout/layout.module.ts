@@ -7,11 +7,13 @@ import { MainComponent } from './main/main.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MenuItemComponent } from './menu-item/menu-item.component';
 
 @NgModule({
-  declarations: [MainComponent],
+  declarations: [MainComponent, MenuItemComponent],
   imports: [
     CommonModule,
     LayoutRoutingModule,
@@ -20,6 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
+    MatListModule,
   ],
 })
 export class LayoutModule {}

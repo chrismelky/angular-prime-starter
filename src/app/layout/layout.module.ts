@@ -11,9 +11,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MenuItemComponent } from './menu-item/menu-item.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
-  declarations: [MainComponent, MenuItemComponent],
+  declarations: [MainComponent, MenuItemComponent, NotFoundComponent],
   imports: [
     CommonModule,
     LayoutRoutingModule,

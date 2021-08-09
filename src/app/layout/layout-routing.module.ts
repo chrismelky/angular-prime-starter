@@ -20,6 +20,13 @@ const routes: Routes = [
             (m) => m.DashboardModule
           ),
       },
+      {
+        path: 'facility-type',
+        loadChildren: () =>
+          import('../setup/facility-type/facility-type.module').then(
+            (m) => m.FacilityTypeModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: '**',

@@ -18,7 +18,7 @@ export class NavigationService {
   }
 
   public closeNav(): void {
-    this.appDrawer.close();
+    if (this.appDrawer) setTimeout(() => this.appDrawer.close(), 100);
   }
 
   public openNav(): void {

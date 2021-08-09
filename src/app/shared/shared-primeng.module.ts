@@ -12,9 +12,11 @@ import { TreeModule } from 'primeng/tree';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
   declarations: [],
@@ -30,7 +32,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
     TreeModule,
     DynamicDialogModule,
     ConfirmDialogModule,
+    DialogModule,
     MessageModule,
+    MessagesModule,
     ToastModule,
     CheckboxModule,
     RadioButtonModule,

@@ -1,0 +1,136 @@
+<div class="content" fxLayout="column" fxLayoutGap="0.75rem">
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <span fxLayout="row" fxLayoutGap="4px" fxLayout="start baseline">
+          <mat-icon>filter_list</mat-icon>
+          <span>Filter</span>
+        </span>
+      </mat-expansion-panel-header>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <div class="p-field">
+          <span class="p-float-label p-input-icon-right">
+            <input
+              id="name"
+              type="text"
+              class="p-inputtext-sm"
+              pInputText
+              [(ngModel)]="filter['name']"
+            />
+            <label for="name">Name </label>
+            <i
+              class="pi pi-times"
+              (click)="filter['name'] = undefined; search()"
+            ></i>
+          </span>
+        </div>
+        <div class="p-field">
+          <span class="p-float-label p-input-icon-right">
+            <input
+              id="code"
+              type="text"
+              class="p-inputtext-sm"
+              pInputText
+              [(ngModel)]="filter['code']"
+            />
+            <label for="name">Code </label>
+            <i
+              class="pi pi-times"
+              (click)="filter['code'] = undefined; search()"
+            ></i>
+          </span>
+        </div>
+      </div>
+      <mat-action-row>
+        <button mat-button color="warn" (click)="clearSearch()">Clear</button>
+        <button mat-button color="primary" (click)="search()">Seach</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title> Facility Type </mat-card-title>
+      <span fxFlex></span>
+    </mat-card-header>
+    <div *ngIf="!facilityTypes?.length" class="text-center">No data found!</div>
+    <p-table
+      [paginator]="true"
+      [rows]="perPage"
+      [lazy]="true"
+      [resizableColumns]="true"
+      [responsive]="true"
+      [autoLayout]="true"
+      (onLazyLoad)="pageChanged($event)"
+      [rowsPerPageOptions]="[2, 10, 20, 100, 500, 1000]"
+      [loading]="isLoading"
+      [totalRecords]="totalItems"
+      [columns]="cols"
+      [value]="facilityTypes!"
+      *ngIf="facilityTypes?.length!"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{ col.header }}
+          </th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            {{ rowData[col.field] }}
+          </td>
+          <td [style]="{ width: '1%' }">
+            <div fxLayout="row" fxLayoutAlign="end">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                [matMenuTriggerData]="{ id: rowData.id, element: rowData }"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </mat-card>
+</div>
+
+<button
+  (click)="createOrUpdate()"
+  style="position: fixed; bottom: 1.5rem; right: 1.5rem"
+  mat-fab
+  color="primary"
+  aria-label="Add"
+>
+  <mat-icon>add</mat-icon>
+</button>
+
+<mat-menu #menu="matMenu">
+  <ng-template matMenuContent let-id="id" let-element="element">
+    <button
+      mat-menu-item
+      aria-label="Edit Facility Type"
+      (click)="createOrUpdate(element)"
+    >
+      <mat-icon>edit</mat-icon>
+      <span>Edit</span>
+    </button>
+    <button
+      mat-menu-item
+      aria-label="Delete Facility Type"
+      (click)="delete(element)"
+    >
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-template>
+</mat-menu>
+<p-confirmDialog
+  [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+  [style]="{ width: '50vw' }"
+  header="Confirmation Delete"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>

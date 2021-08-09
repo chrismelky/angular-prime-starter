@@ -1,6 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 @import "variables.scss";
 
+html {
+  font-size: 16px; // Component saclling
+}
 html,
 body {
   height: 100%;
@@ -58,9 +61,107 @@ body {
   }
 }
 .content {
-  margin: 1.5rem;
+  margin: 0.75rem;
+}
+.text-center {
+  width: 100%;
+  text-align: center;
+}
+
+.fit {
+  width:1%
+}
+.p-component {
+  font-size: 0.8125rem;
 }
 
 .mat-drawer-content {
   background-color: #e4e5e6 !important;
 }
+.p-paginator .p-dropdown .p-dropdown-label {
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.p-paginator .p-dropdown .pi {
+  font-size: 13px;
+}
+
+.p-paginator .p-dropdown {
+  height: 42px;
+  min-width: 64px;
+  border: 1px solid #e4e4e4;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.p-dropdown .p-dropdown-trigger, .p-paginator .p-dropdown .p-dropdown-label {
+  min-width: 24px;
+}
+.p-datatable .p-datatable-thead > tr > th {
+  color: rgba(0,0,0,.54);
+  font-size: 0.75rem;
+  padding: 0;
+}
+
+.p-datatable {
+  position: relative;
+}
+
+.p-datatable .p-datatable-thead > tr > th:first-of-type {
+  padding-left: 24px;
+  height: 56px;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 0;
+  height: 48px;
+}
+.p-datatable .p-datatable-tbody > tr > td:first-of-type {
+  padding-left: 24px;
+}
+.p-datatable .p-datatable-tbody > tr > td:last-of-type, .p-datatable .p-datatable-thead > tr > th:last-of-type {
+  padding-right: 24px;
+}
+.mat-card-header {
+  padding:4px 24px 4px 0px;
+}
+
+.p-inputtext {
+  width: 100%;
+}
+
+.mat-dialog-content {
+  padding-top: 10px !important;
+}
+
+.p-dynamic-dialog {
+ min-width: 600px;
+}
+.p-dynamic-dialog-content {
+  margin-top: 4px;
+}
+
+@media only screen and (max-width: 959px) {
+  .p-dynamic-dialog {
+    min-width: 96% !important;
+  }
+}
+
+@media screen and (max-width: 40em) {
+  .p-datatable.p-datatable-responsive .p-datatable-tbody>tr>td:first-of-type {
+    padding-left: 0 !important;
+  }
+  .p-datatable.p-datatable-responsive .p-datatable-tbody>tr>td:last-of-type {
+    border-bottom: 1px solid #e4e4e4;
+    width: 100% !important;
+    text-align: right;
+    padding-right: 0 !important;
+
+  }
+}
+

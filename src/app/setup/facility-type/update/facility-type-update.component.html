@@ -1,0 +1,50 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <!-- <h2 mat-dialog-title>Update Facility Type</h2> -->
+    <!-- <mat-dialog-content class="mat-typography"> -->
+    <!-- <p-messages severity="error" *ngIf="errors">
+      <ng-template pTemplate>
+        <ul>
+          <li></li>
+        </ul>
+      </ng-template>
+    </p-messages> -->
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex="100%">
+        <span class="p-float-label">
+          <input id="name" type="text" pInputText formControlName="name" />
+          <label for="name">Name </label>
+        </span>
+        <div
+          *ngIf="
+            editForm.get('name')!.invalid &&
+            (editForm.get('name')!.dirty || editForm.get('name')!.touched)
+          "
+        >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
+            >Name is required.</small
+          >
+        </div>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex="100%">
+        <span class="p-float-label">
+          <input id="code" type="text" pInputText formControlName="code" />
+          <label for="code">Code </label>
+        </span>
+      </div>
+    </div>
+    <!-- </mat-dialog-content> -->
+    <mat-dialog-actions align="end">
+      <button type="button" mat-button mat-dialog-close>Cancel</button>
+      <button mat-raised-button color="primary" type="submit" cdkFocusInitial>
+        Save
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>

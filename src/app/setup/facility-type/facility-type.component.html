@@ -92,6 +92,8 @@
       [totalRecords]="totalItems"
       [columns]="cols"
       [value]="facilityTypes!"
+      [scrollable]="true"
+      scrollHeight="500px"
       *ngIf="facilityTypes?.length!"
     >
       <ng-template pTemplate="header" let-columns>
@@ -99,7 +101,7 @@
           <th *ngFor="let col of columns">
             {{ col.header }}
           </th>
-          <th>Actions</th>
+          <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -107,7 +109,7 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td [style]="{ width: '1%' }">
+          <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <button
                 mat-icon-button

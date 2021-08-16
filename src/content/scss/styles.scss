@@ -215,10 +215,10 @@ i.clear {
 }
 
 @media screen and (max-width: 40em) {
-  .p-datatable.p-datatable-responsive .p-datatable-tbody>tr>td:first-of-type {
+  .p-datatable .p-datatable-responsive .p-datatable-tbody>tr>td:first-of-type {
     padding-left: 0 !important;
   }
-  .p-datatable.p-datatable-responsive .p-datatable-tbody>tr>td:last-of-type {
+  .p-datatable .p-datatable-responsive .p-datatable-tbody>tr>td:last-of-type {
     border-bottom: 1px solid #e4e4e4;
     width: 100% !important;
     text-align: right;

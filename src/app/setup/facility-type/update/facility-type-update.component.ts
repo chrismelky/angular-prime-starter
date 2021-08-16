@@ -16,6 +16,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 })
 export class FacilityTypeUpdateComponent implements OnInit {
   isSaving = false;
+  formError = false;
   errors = [];
 
   editForm = this.fb.group({
@@ -36,12 +37,9 @@ export class FacilityTypeUpdateComponent implements OnInit {
     this.updateForm(this.dialogConfig.data);
   }
 
-  close(): void {
-    this.dialogRef.close(true);
-  }
-
   save(): void {
     if (this.editForm.invalid) {
+      this.formError = true;
       return;
     }
     this.isSaving = true;

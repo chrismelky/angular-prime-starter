@@ -48,10 +48,20 @@
           </div>
         </div>
         <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
-          <button mat-stroked-button (click)="clearSearch()">Clear</button>
-          <button mat-raised-button color="primary" (click)="search()">
-            Seach
-          </button>
+          <button
+            pButton
+            class="p-button-text p-button-plain"
+            icon="pi pi-times"
+            label="Clear"
+            (click)="clearSearch()"
+          ></button>
+          <button
+            pButton
+            class="p-button-text p-button-plain"
+            icon="pi pi-search"
+            label="Search"
+            (click)="search()"
+          ></button>
         </div>
       </div>
     </mat-expansion-panel>
@@ -60,9 +70,13 @@
     <mat-card-header>
       <mat-card-title> Facility Type </mat-card-title>
       <span fxFlex></span>
-      <button color="primary" mat-raised-button (click)="createOrUpdate()">
-        Create
-      </button>
+      <button
+        pButton
+        icon="pi pi-plus"
+        class="p-button-raised"
+        (click)="createOrUpdate()"
+        label="Create"
+      ></button>
     </mat-card-header>
     <div *ngIf="!facilityTypes?.length" class="text-center">No data found!</div>
     <p-table

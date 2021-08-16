@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import {
-  ConfirmationService,
-  LazyLoadEvent,
-  MessageService,
-} from 'primeng/api';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../utils/custom-response';
@@ -29,6 +25,7 @@ export class FacilityTypeComponent implements OnInit {
     { field: 'name', header: 'Name' },
     { field: 'code', header: 'Code' },
   ];
+  menus: MenuItem[] = [];
   isLoading = false;
   totalItems = 0;
   perPage = ITEMS_PER_PAGE;
@@ -84,10 +81,6 @@ export class FacilityTypeComponent implements OnInit {
 
   ngOnInit(): void {
     this.handleNavigation();
-  }
-
-  trackId(index: number, item: FacilityType): number {
-    return item.id!;
   }
 
   createOrUpdate(facilityType?: FacilityType): void {

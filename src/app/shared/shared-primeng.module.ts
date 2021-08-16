@@ -15,6 +15,8 @@ import { ToastModule } from 'primeng/toast';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { MenuModule } from 'primeng/menu';
 
 @NgModule({
   declarations: [],
@@ -34,6 +36,8 @@ import { DialogModule } from 'primeng/dialog';
     ToastModule,
     CheckboxModule,
     RadioButtonModule,
+    ButtonModule,
+    MenuModule,
   ],
 })
 export class SharedPrimengModule {}

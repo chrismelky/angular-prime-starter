@@ -15,7 +15,9 @@
         <div
           *ngIf="
             editForm.get('name')!.invalid &&
-            (editForm.get('name')!.dirty || editForm.get('name')!.touched)
+            (editForm.get('name')!.dirty ||
+              editForm.get('name')!.touched ||
+              formError)
           "
         >
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
@@ -31,10 +33,13 @@
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
-        <button type="button" (click)="close()" mat-button>Cancel</button>
-        <button mat-raised-button color="primary" type="submit" cdkFocusInitial>
-          Save
-        </button>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
       </div>
     </div>
   </form>

@@ -7,50 +7,62 @@
           <span>Filter</span>
         </span>
       </mat-expansion-panel-header>
-      <div fxLayout="row" fxLayoutGap="0.75rem">
-        <div class="p-field">
-          <span class="p-float-label p-input-icon-right">
-            <input
-              id="name"
-              type="text"
-              class="p-inputtext-sm"
-              pInputText
-              [(ngModel)]="filter['name']"
-            />
-            <label for="name">Name </label>
-            <i
-              class="pi pi-times"
-              (click)="filter['name'] = undefined; search()"
-            ></i>
-          </span>
+      <div fxLayout="row" fxLayoutGap="10px">
+        <div
+          fxLayout="row"
+          fxLayoutGap="0.75rem"
+          fxFlex
+          fxLayoutAlign="start center"
+        >
+          <div class="p-field">
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="name"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="filter['name']"
+              />
+              <label for="name">Name </label>
+              <i
+                class="pi pi-times clear"
+                (click)="filter['name'] = undefined; search()"
+              ></i>
+            </span>
+          </div>
+          <div class="p-field">
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="code"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="filter['code']"
+              />
+              <label for="name">Code </label>
+              <i
+                class="pi pi-times clear"
+                (click)="filter['code'] = undefined; search()"
+              ></i>
+            </span>
+          </div>
         </div>
-        <div class="p-field">
-          <span class="p-float-label p-input-icon-right">
-            <input
-              id="code"
-              type="text"
-              class="p-inputtext-sm"
-              pInputText
-              [(ngModel)]="filter['code']"
-            />
-            <label for="name">Code </label>
-            <i
-              class="pi pi-times"
-              (click)="filter['code'] = undefined; search()"
-            ></i>
-          </span>
+        <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
+          <button mat-stroked-button (click)="clearSearch()">Clear</button>
+          <button mat-raised-button color="primary" (click)="search()">
+            Seach
+          </button>
         </div>
       </div>
-      <mat-action-row>
-        <button mat-button color="warn" (click)="clearSearch()">Clear</button>
-        <button mat-button color="primary" (click)="search()">Seach</button>
-      </mat-action-row>
     </mat-expansion-panel>
   </mat-accordion>
   <mat-card>
     <mat-card-header>
       <mat-card-title> Facility Type </mat-card-title>
       <span fxFlex></span>
+      <button color="primary" mat-raised-button (click)="createOrUpdate()">
+        Create
+      </button>
     </mat-card-header>
     <div *ngIf="!facilityTypes?.length" class="text-center">No data found!</div>
     <p-table
@@ -97,16 +109,6 @@
     </p-table>
   </mat-card>
 </div>
-
-<button
-  (click)="createOrUpdate()"
-  style="position: fixed; bottom: 1.5rem; right: 1.5rem"
-  mat-fab
-  color="primary"
-  aria-label="Add"
->
-  <mat-icon>add</mat-icon>
-</button>
 
 <mat-menu #menu="matMenu">
   <ng-template matMenuContent let-id="id" let-element="element">

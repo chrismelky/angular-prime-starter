@@ -8,9 +8,9 @@ import { FacilityType } from './facility-type.model';
 
 @Injectable({ providedIn: 'root' })
 export class FacilityTypeService {
-  public resourceUrl = 'api/facility-types';
+  public resourceUrl = 'api/facility_types';
 
-  constructor(protected http: HttpClient) {}
+  constructor(public http: HttpClient) {}
 
   create(facilityType: FacilityType): Observable<CustomResponse<FacilityType>> {
     return this.http.post<CustomResponse<FacilityType>>(
@@ -33,6 +33,7 @@ export class FacilityTypeService {
   }
 
   query(req?: any): Observable<CustomResponse<FacilityType[]>> {
+    console.log('called');
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<FacilityType[]>>(this.resourceUrl, {
       params: options,

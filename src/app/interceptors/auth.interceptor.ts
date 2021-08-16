@@ -2,52 +2,27 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 import {
+  HttpEvent,
+  HttpHandler,
   HttpInterceptor,
   HttpRequest,
-  HttpHandler,
-  HttpEvent,
 } from '@angular/common/http';
 
 @Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export class MyInterceptor implements HttpInterceptor {
   constructor(
     private localStorage: LocalStorageService,
     private sessionStorage: SessionStorageService
-  ) {}
+  ) {
+    console.log('contracted');
+  }
 
   intercept(
-    request: HttpRequest<any>,
+    req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    // const serverApiUrl = this.applicationConfigService.getEndpointFor('');
-    // if (!request.url || (request.url.startsWith('http') && !(serverApiUrl && request.url.startsWith(serverApiUrl)))) {
-    //   return next.handle(request);
-    // }
+    console.log('inetrcepting');
 
-    const token: string | null =
-      this.localStorage.retrieve('authenticationToken') ??
-      this.sessionStorage.retrieve('authenticationToken');
-    if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-
-    if (
-      !request.headers.has('Content-Type') &&
-      !request.url.includes('file-resources/upload')
-    ) {
-      request = request.clone({
-        headers: request.headers.set('Content-Type', 'application/json'),
-      });
-    }
-
-    request = request.clone({
-      headers: request.headers.set('Accept', 'application/json'),
-    });
-    console.log('intercepted');
-    return next.handle(request);
+    return next.handle(req);
   }
 }

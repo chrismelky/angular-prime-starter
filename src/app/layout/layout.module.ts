@@ -12,6 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MenuItemComponent } from './menu-item/menu-item.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { PanelMenuModule } from 'primeng/panelmenu';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [MainComponent, MenuItemComponent, NotFoundComponent],
@@ -24,6 +26,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
     MatIconModule,
     MatButtonModule,
     MatListModule,
+    PanelMenuModule,
+    ToastModule,
   ],
 })
 export class LayoutModule {}

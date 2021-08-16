@@ -7,9 +7,8 @@ const routes: Routes = [
     path: '',
     component: FacilityTypeComponent,
     data: {
-      defaultSort: 'id,asc',
+      defaultSort: 'id:asc',
     },
-    // canActivate: [UserRouteAccessService],
   },
 ];
 

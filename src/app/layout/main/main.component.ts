@@ -4,6 +4,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { NavigationItem } from '../menu-item/nav.item';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-main',
@@ -13,6 +14,7 @@ import { NavigationItem } from '../menu-item/nav.item';
 export class MainComponent implements OnInit {
   gtMd!: Observable<boolean>;
   isGtMd = true;
+
   constructor(private breakPointObsever: BreakpointObserver) {
     this.gtMd = this.breakPointObsever
       .observe('(max-width: 959px)')
@@ -24,6 +26,67 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  items: MenuItem[] = [
+    {
+      label: 'Dashboard',
+      icon: 'pi pi-pw pi-chart-bar',
+      routerLink: 'dashboard',
+    },
+    {
+      label: 'Setup',
+      icon: 'pi pi-pw pi-cog',
+      separator: true,
+      items: [
+        {
+          label: 'Facility Managment',
+          icon: 'pi pi-fw pi-chevron-circle-right',
+          items: [
+            {
+              label: 'Facility Types',
+              icon: 'pi pi-fw pi-angle-right',
+              routerLink: 'facility-type',
+            },
+            {
+              label: 'Facilities',
+              icon: 'pi pi-fw pi-angle-right',
+              routerLink: 'facility',
+            },
+          ],
+        },
+        {
+          label: 'Admin Hierarchy Managment',
+          icon: 'pi pi-fw pi-chevron-circle-right',
+          items: [
+            {
+              label: 'Facility Types',
+              icon: 'pi pi-fw',
+              routerLink: 'facility-type',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: 'Planning',
+      icon: 'pi pi-pw pi-list',
+      items: [
+        {
+          label: 'New',
+          icon: 'pi pi-fw',
+        },
+      ],
+    },
+    {
+      label: 'Budgeting',
+      icon: 'pi pi-pw pi-money-bill',
+      items: [
+        {
+          label: 'New',
+          icon: 'pi pi-fw',
+        },
+      ],
+    },
+  ];
   navlinks: NavigationItem[] = [
     {
       title: 'Dashboard',

@@ -7,12 +7,8 @@ import { CustomResponse } from '../../../utils/custom-response';
 
 import { FacilityType } from '../facility-type.model';
 import { FacilityTypeService } from '../facility-type.service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {
-  DynamicDialogComponent,
-  DynamicDialogConfig,
-  DynamicDialogRef,
-} from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
   selector: 'app-facility-type-update',
@@ -30,16 +26,14 @@ export class FacilityTypeUpdateComponent implements OnInit {
 
   constructor(
     protected facilityTypeService: FacilityTypeService,
-    // public dialogRef: MatDialogRef<FacilityTypeUpdateComponent>,
     public dialogRef: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-    // @Inject(MAT_DIALOG_DATA) public facilityType: FacilityType,
-    protected fb: FormBuilder
+    public dialogConfig: DynamicDialogConfig,
+    protected fb: FormBuilder,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    // this.updateForm(this.facilityType);
-    this.updateForm(this.config.data);
+    this.updateForm(this.dialogConfig.data);
   }
 
   close(): void {
@@ -67,19 +61,17 @@ export class FacilityTypeUpdateComponent implements OnInit {
     result: Observable<CustomResponse<FacilityType>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      () => this.onSaveSuccess(),
+      (result) => this.onSaveSuccess(result),
       (error) => this.onSaveError(error)
     );
   }
 
-  protected onSaveSuccess(): void {
-    this.dialogRef.close();
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+    this.dialogRef.close(true);
   }
 
-  protected onSaveError(error: any): void {
-    // Api for inheritance.
-    console.log(error);
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

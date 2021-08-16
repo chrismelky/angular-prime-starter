@@ -20,13 +20,12 @@
       <span>Porlarg</span>
     </div>
     <div class="sidenav-item">
-      <mat-nav-list>
-        <app-menu-item
-          class="main"
-          *ngFor="let item of navlinks"
-          [item]="item"
-        ></app-menu-item>
-      </mat-nav-list>
+      <p-panelMenu
+        [multiple]="false"
+        [transitionOptions]="'250ms'"
+        [transitionOptions]="'250ms cubic-bezier(0, 0.5, 0.07, 1)'"
+        [model]="items"
+      ></p-panelMenu>
     </div>
   </mat-drawer>
   <mat-drawer-content style="flex: 1 1 auto">
@@ -40,3 +39,13 @@
     </div>
   </mat-drawer-content>
 </mat-drawer-container>
+<p-toast
+  position="top-center"
+  key="error"
+  [preventDuplicates]="false"
+></p-toast>
+<p-toast
+  key="info"
+  position="bottom-center"
+  [preventDuplicates]="false"
+></p-toast>

@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import {
+  ConfirmationService,
+  LazyLoadEvent,
+  MessageService,
+} from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../utils/custom-response';
@@ -12,6 +16,7 @@ import { FacilityTypeService } from './facility-type.service';
 import { FacilityTypeUpdateComponent } from './update/facility-type-update.component';
 import { MatDialog } from '@angular/material/dialog';
 import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
   selector: 'app-facility-type',
@@ -39,7 +44,8 @@ export class FacilityTypeComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected dialog: MatDialog,
-    protected helper: HelperService
+    protected helper: HelperService,
+    protected toastService: ToastService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -84,23 +90,16 @@ export class FacilityTypeComponent implements OnInit {
     return item.id!;
   }
 
-  // createOrUpdate(facilityType?: FacilityType): void {
-  //   const data: FacilityType = facilityType ?? { ...new FacilityType() };
-  //   const dialogRef = this.dialog.open(FacilityTypeUpdateComponent, {
-  //     data: data,
-  //     width: '50%',
-  //   });
-  //   dialogRef.afterClosed().subscribe((result) => {
-  //     if (result) {
-  //       this.loadPage(this.page);
-  //     }
-  //   });
-  // }
   createOrUpdate(facilityType?: FacilityType): void {
     const data: FacilityType = facilityType ?? { ...new FacilityType() };
-    this.dialogService.open(FacilityTypeUpdateComponent, {
+    const ref = this.dialogService.open(FacilityTypeUpdateComponent, {
       data,
       header: 'Create/Update Facility Type',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
     });
   }
 
@@ -111,19 +110,19 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   delete(facilityType: FacilityType): void {
-    console.log('calded');
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this action FacilityType?',
       accept: () => {
         this.facilityTypeService.delete(facilityType.id!).subscribe((resp) => {
           this.loadPage(this.page);
+          this.toastService.info(resp.message);
         });
       },
     });
   }
 
   protected sort(): string[] {
-    const result = [this.predicate + ',' + (this.ascending ? 'asc' : 'desc')];
+    const result = [this.predicate + ':' + (this.ascending ? 'asc' : 'desc')];
     if (this.predicate !== 'id') {
       result.push('id');
     }
@@ -172,6 +171,6 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   protected onError(): void {
-    //this.ngbPaginationPage = this.page ?? 1;
+    this.toastService.error('Error loading facility type');
   }
 }

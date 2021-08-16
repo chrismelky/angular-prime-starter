@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
@@ -11,7 +10,6 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TreeModule } from 'primeng/tree';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -20,7 +18,6 @@ import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule],
   exports: [
     CalendarModule,
     DropdownModule,
@@ -33,7 +30,6 @@ import { DialogModule } from 'primeng/dialog';
     DynamicDialogModule,
     ConfirmDialogModule,
     DialogModule,
-    MessageModule,
     MessagesModule,
     ToastModule,
     CheckboxModule,

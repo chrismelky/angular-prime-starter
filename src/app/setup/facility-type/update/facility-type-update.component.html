@@ -6,15 +6,6 @@
     (ngSubmit)="save()"
     [formGroup]="editForm"
   >
-    <!-- <h2 mat-dialog-title>Update Facility Type</h2> -->
-    <!-- <mat-dialog-content class="mat-typography"> -->
-    <!-- <p-messages severity="error" *ngIf="errors">
-      <ng-template pTemplate>
-        <ul>
-          <li></li>
-        </ul>
-      </ng-template>
-    </p-messages> -->
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex="100%">
         <span class="p-float-label">
@@ -38,13 +29,13 @@
           <label for="code">Code </label>
         </span>
       </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button type="button" (click)="close()" mat-button>Cancel</button>
+        <button mat-raised-button color="primary" type="submit" cdkFocusInitial>
+          Save
+        </button>
+      </div>
     </div>
-    <!-- </mat-dialog-content> -->
-    <mat-dialog-actions align="end">
-      <button type="button" mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="primary" type="submit" cdkFocusInitial>
-        Save
-      </button>
-    </mat-dialog-actions>
   </form>
 </div>

@@ -17,6 +17,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
+import { AccordionModule } from 'primeng/accordion';
+import { CardModule } from 'primeng/card';
 
 @NgModule({
   declarations: [],
@@ -38,6 +40,8 @@ import { MenuModule } from 'primeng/menu';
     RadioButtonModule,
     ButtonModule,
     MenuModule,
+    AccordionModule,
+    CardModule,
   ],
 })
 export class SharedPrimengModule {}

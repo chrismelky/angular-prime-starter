@@ -126,8 +126,43 @@ body {
 .fit {
   width:1%
 }
+.filter-text{
+  font-weight: 500;
+}
+.p-card-header {
+  padding: 20px 32px 0px 32px;
+  .card-header-text {
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+.p-card .p-card-body {
+  padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+  .p-card-content {
+    padding-top: 0px;
+  }
+}
+
 .p-component {
   font-size: 0.8125rem;
+}
+.p-dropdown {
+  min-width: 200px;
+}
+.p-dropdown.p-dropdown-clearable .p-dropdown-label{
+  font-size: 0.8125rem;
+  line-height: 0.8125rem;
+}
+.p-accordion .p-accordion-header .p-accordion-header-link {
+  padding: 1rem;
+  padding-left: 1.25rem;
+}
+.p-accordion .p-accordion-tab.p-accordion-tab-active {
+  margin-bottom: 0px;
+}
+
+.p-accordion p-accordiontab .p-accordion-content {
+  padding: 6px 24px 16px;
 }
 
 .mat-drawer-content {

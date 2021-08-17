@@ -7,7 +7,10 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { CustomResponse } from '../../utils/custom-response';
 import { FacilityType } from './facility-type.model';
 
-import { ITEMS_PER_PAGE } from '../../config/pagination.constants';
+import {
+  ITEMS_PER_PAGE,
+  PER_PAGE_OPTIONS,
+} from '../../config/pagination.constants';
 import { FacilityTypeService } from './facility-type.service';
 import { FacilityTypeUpdateComponent } from './update/facility-type-update.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,15 +27,23 @@ export class FacilityTypeComponent implements OnInit {
   cols = [
     { field: 'name', header: 'Name' },
     { field: 'code', header: 'Code' },
-  ];
-  menus: MenuItem[] = [];
+  ]; //Table display columns
   isLoading = false;
   totalItems = 0;
   perPage = ITEMS_PER_PAGE;
-  page?: number;
-  predicate!: string;
-  ascending!: boolean;
-  filter: any = {};
+  perPageOptions = PER_PAGE_OPTIONS;
+  page?: number = 1;
+  predicate!: string; //Sort column
+  ascending!: boolean; //Sort direction asc/desc
+  filter: any = {}; // items filter objects
+
+  cities = [
+    { name: 'New York', code: 'NY', inactive: false },
+    { name: 'Rome', code: 'RM', inactive: true },
+    { name: 'London', code: 'LDN', inactive: false },
+    { name: 'Istanbul', code: 'IST', inactive: true },
+    { name: 'Paris', code: 'PRS', inactive: false },
+  ];
 
   constructor(
     protected facilityTypeService: FacilityTypeService,
@@ -45,6 +56,15 @@ export class FacilityTypeComponent implements OnInit {
     protected toastService: ToastService
   ) {}
 
+  ngOnInit(): void {
+    this.handleNavigation();
+  }
+
+  /**
+   * Load data
+   * @param page
+   * @param dontNavigate
+   */
   loadPage(page?: number, dontNavigate?: boolean): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
@@ -68,21 +88,27 @@ export class FacilityTypeComponent implements OnInit {
       );
   }
 
+  /**
+   * search items by @var filter params
+   */
   search(): void {
     this.page = 1;
     this.loadPage();
   }
 
+  /**
+   * Clear search params
+   */
   clearSearch(): void {
     this.filter = {};
     this.page = 1;
     this.loadPage();
   }
 
-  ngOnInit(): void {
-    this.handleNavigation();
-  }
-
+  /**
+   * Creating or updating FacilityType
+   * @param facilityType ; If undefined initize new model to create else edit existing model
+   */
   createOrUpdate(facilityType?: FacilityType): void {
     const data: FacilityType = facilityType ?? { ...new FacilityType() };
     const ref = this.dialogService.open(FacilityTypeUpdateComponent, {
@@ -96,12 +122,20 @@ export class FacilityTypeComponent implements OnInit {
     });
   }
 
+  /**
+   * When page changed
+   * @param event page event to
+   */
   pageChanged(event: LazyLoadEvent): void {
     this.page = event.first! / event.rows! + 1;
     this.perPage = event.rows!;
     this.loadPage();
   }
 
+  /**
+   * Delete FacilityType
+   * @param facilityType
+   */
   delete(facilityType: FacilityType): void {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this action FacilityType?',
@@ -114,14 +148,18 @@ export class FacilityTypeComponent implements OnInit {
     });
   }
 
+  /**
+   * Set/Reurn the sorting option for data
+   * @returns
+   */
   protected sort(): string[] {
-    const result = [this.predicate + ':' + (this.ascending ? 'asc' : 'desc')];
-    if (this.predicate !== 'id') {
-      result.push('id');
-    }
-    return result;
+    return ['id:desc'];
   }
 
+  /**
+   * Called initialy/onInit to
+   * Restore page, sort option from url query params if exist and load page
+   */
   protected handleNavigation(): void {
     combineLatest([
       this.activatedRoute.data,
@@ -129,7 +167,7 @@ export class FacilityTypeComponent implements OnInit {
     ]).subscribe(([data, params]) => {
       const page = params.get('page');
       const pageNumber = page !== null ? +page : 1;
-      const sort = (params.get('sort') ?? data['defaultSort']).split(',');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
       const ascending = sort[1] === 'asc';
       if (
@@ -144,6 +182,12 @@ export class FacilityTypeComponent implements OnInit {
     });
   }
 
+  /**
+   * When successfully data loaded
+   * @param resp
+   * @param page
+   * @param navigate
+   */
   protected onSuccess(
     resp: CustomResponse<FacilityType[]> | null,
     page: number,
@@ -156,13 +200,16 @@ export class FacilityTypeComponent implements OnInit {
         queryParams: {
           page: this.page,
           per_page: this.perPage,
-          sort: this.predicate + ',' + (this.ascending ? 'asc' : 'desc'),
+          sort: this.predicate + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
     this.facilityTypes = resp?.data ?? [];
   }
 
+  /**
+   * When error on loading data
+   */
   protected onError(): void {
     this.toastService.error('Error loading facility type');
   }

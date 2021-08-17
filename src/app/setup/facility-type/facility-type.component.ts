@@ -20,7 +20,6 @@ import { ToastService } from 'src/app/shared/toast.service';
 @Component({
   selector: 'app-facility-type',
   templateUrl: './facility-type.component.html',
-  providers: [ConfirmationService, DialogService],
 })
 export class FacilityTypeComponent implements OnInit {
   facilityTypes?: FacilityType[] = [];

@@ -1,5 +1,5 @@
 export declare class CustomResponse<T> {
-  readonly data: T | null;
+  readonly data: T | undefined;
 
   readonly success: boolean;
 
@@ -16,7 +16,7 @@ export declare class CustomResponse<T> {
    */
   constructor(init?: {
     success?: boolean;
-    data?: T | null;
+    data?: T | undefined;
     message?: string;
     total: number;
     current_page: number;

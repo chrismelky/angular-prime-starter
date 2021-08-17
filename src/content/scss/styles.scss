@@ -130,11 +130,15 @@ body {
   font-weight: 500;
 }
 .p-card-header {
-  padding: 20px 32px 0px 32px;
-  .card-header-text {
-    font-size: 20px;
-    font-weight: 500;
-  }
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+
+}
+.card-header-text {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+.p-datatable-tbody{
+  text-align: center;
 }
 .p-card .p-card-body {
   padding: 0.75rem 0.75rem 0.25rem 0.75rem;
@@ -143,11 +147,35 @@ body {
   }
 }
 
+p-card.filter {
+  .p-card-body {
+    padding: 0.75rem 1.5rem !important;
+  }
+  .card-header-text{
+    font-size: 0.75rem !important;
+  }
+  .p-accordion {
+    margin-top: 0.75rem;
+    .p-accordion-tab {
+      box-shadow: none !important;
+      .p-accordion-content{
+        padding: 0px !important;
+      }
+
+      .p-accordion-header {
+        display: none !important;
+      }
+    }
+  }
+}
+
+
 .p-component {
   font-size: 0.8125rem;
 }
 .p-dropdown {
   min-width: 200px;
+  width: 100%;
 }
 .p-dropdown.p-dropdown-clearable .p-dropdown-label{
   font-size: 0.8125rem;
@@ -204,9 +232,20 @@ i.clear {
   font-size: 0.75rem;
   padding: 0;
 }
+.p-tooltip {
+  padding: 0.5rem;
+  .p-tooltip-text	{
+    font-size: 11px;
+    line-height: 11px;
+    margin: 0.5rem;
 
+  }
+}
 .p-datatable {
   position: relative;
+  .p-datatable-header {
+    border: none;
+  }
 }
 
 .p-datatable .p-datatable-thead > tr > th:first-of-type {
@@ -228,8 +267,9 @@ i.clear {
   padding:4px 24px 4px 0px;
 }
 
-.p-inputtext {
+.p-inputtext, .p-float-label{
   width: 100%;
+  font-size: 0.8125rem;
 }
 
 .mat-dialog-content {

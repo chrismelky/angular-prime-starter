@@ -1,0 +1,222 @@
+<div class="content" fxLayout="column" fxLayoutGap="0.75rem">
+  <!-- Filter Panel -->
+  <p-card class="filter">
+    <ng-template pTemplate="header">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+        <i class="pi pi-filter"></i>
+        <span class="card-header-text">Filter</span>
+      </div>
+    </ng-template>
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div fxLayout="row" fxLayoutGap="10px">
+        <div
+          fxLayout="row"
+          fxLayoutGap="0.75rem"
+          fxFlex
+          fxLayoutAlign="start center"
+        >
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="facility_type_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                optionValue="id"
+                optionLabel="name"
+                [options]="facilityTypes!"
+                (onChange)="loadPage(1, true)"
+                [(ngModel)]="facility_type_id"
+              ></p-dropdown>
+              <label for="facility_type_id">Facility Type </label>
+            </span>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
+          <button
+            pButton
+            type="button"
+            [pTooltip]="
+              advFilter.selected ? 'Hide Advance Search' : 'Show Advance Search'
+            "
+            tooltipPosition="bottom"
+            [icon]="
+              advFilter.selected
+                ? 'pi pi-angle-double-up'
+                : 'pi pi-angle-double-down'
+            "
+            class="p-button-rounded p-button-text p-button-plain"
+            (click)="advFilter.selected = !advFilter.selected"
+          ></button>
+          <button
+            pButton
+            class="p-button-primary p-button-raised"
+            icon="pi pi-search"
+            label="Search"
+            (click)="search()"
+          ></button>
+        </div>
+      </div>
+      <p-accordion>
+        <p-accordionTab
+          class="p-shadow-0"
+          #advFilter
+          [selected]="advFilter.selected"
+          [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"
+        >
+          <div fxLayout="row" fxLayoutGap="10px">
+            <div
+              fxLayout="row"
+              fxLayoutGap="0.75rem"
+              fxFlex
+              fxLayoutAlign="start center"
+            >
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="code"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="filter['code']"
+                  />
+                  <label for="code">Code </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="filter['code'] = undefined; search()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="name"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="filter['name']"
+                  />
+                  <label for="name">Name </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="filter['name'] = undefined; search()"
+                  ></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </p-accordionTab>
+      </p-accordion>
+    </div>
+  </p-card>
+
+  <!-- Table Panel -->
+  <p-card>
+    <p-table
+      [rows]="perPage"
+      [lazy]="true"
+      [resizableColumns]="true"
+      [responsive]="true"
+      [autoLayout]="true"
+      (onLazyLoad)="pageChanged($event)"
+      [rowsPerPageOptions]="perPageOptions"
+      [loading]="isLoading"
+      [totalRecords]="totalItems"
+      [columns]="cols"
+      [value]="facilities!"
+      [scrollable]="true"
+      scrollHeight="500px"
+      [paginator]="true"
+      emptymessage="No data found"
+    >
+      <ng-template pTemplate="caption">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text">Facility</span>
+          <button
+            pButton
+            icon="pi pi-plus"
+            class="p-button-raised"
+            [disabled]="!facility_type_id"
+            (click)="createOrUpdate()"
+            label="Add Facility"
+          ></button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr *ngIf="facilities?.length">
+          <th *ngFor="let col of columns">
+            {{ col.header }}
+          </th>
+          <th style="flex: 0 0 2rem"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            {{ rowData[col.field] }}
+          </td>
+          <td style="flex: 0 0 2 rem">
+            <div fxLayout="row" fxLayoutAlign="end">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                [matMenuTriggerData]="{ id: rowData.id, element: rowData }"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+    </p-table>
+    <!-- </div> -->
+  </p-card>
+</div>
+
+<mat-menu #menu="matMenu">
+  <ng-template matMenuContent let-id="id" let-element="element">
+    <div fxLayout="column" fxLayoutGap="10px">
+      <button
+        pButton
+        class="p-button-text p-button-plain"
+        icon="pi pi-pencil
+      "
+        label="Edit"
+        (click)="createOrUpdate(element)"
+      ></button>
+      <button
+        pButton
+        class="p-button-text p-button-plain"
+        icon="pi pi-trash
+      "
+        label="Delete"
+        (click)="delete(element)"
+      ></button>
+    </div>
+
+    <!-- <button
+      mat-menu-item
+      aria-label="Delete Facility"
+      (click)="delete(element)"
+    >
+      <mat-icon>edit</mat-icon>
+      <span>Edit</span>
+    </button>
+    <button
+      mat-menu-item
+      aria-label="Delete Facility"
+      (click)="delete(element)"
+    >
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button> -->
+  </ng-template>
+</mat-menu>
+<p-confirmDialog
+  [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+  [style]="{ width: '50vw' }"
+  header="Confirmation Delete Facility"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>

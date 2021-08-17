@@ -5,26 +5,30 @@ import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../utils/custom-response';
-import { FacilityType } from './facility-type.model';
+import { Facility } from './facility.model';
 
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import { FacilityTypeService } from './facility-type.service';
-import { FacilityTypeUpdateComponent } from './update/facility-type-update.component';
+import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
+import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
+import { FacilityService } from './facility.service';
+import { FacilityUpdateComponent } from './update/facility-update.component';
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: 'app-facility-type',
-  templateUrl: './facility-type.component.html',
+  selector: 'app-facility',
+  templateUrl: './facility.component.html',
 })
-export class FacilityTypeComponent implements OnInit {
+export class FacilityComponent implements OnInit {
+  facilities?: Facility[] = [];
   facilityTypes?: FacilityType[] = [];
   cols = [
-    { field: 'name', header: 'Name' },
     { field: 'code', header: 'Code' },
+    { field: 'name', header: 'Name' },
+    { field: 'facility_type_id', header: 'Facility Type ' },
   ]; //Table display columns
   isLoading = false;
   totalItems = 0;
@@ -35,15 +39,11 @@ export class FacilityTypeComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   filter: any = {}; // items filter objects
 
-  cities = [
-    { name: 'New York', code: 'NY', inactive: false },
-    { name: 'Rome', code: 'RM', inactive: true },
-    { name: 'London', code: 'LDN', inactive: false },
-    { name: 'Istanbul', code: 'IST', inactive: true },
-    { name: 'Paris', code: 'PRS', inactive: false },
-  ];
+  //Mandatory filter
+  facility_type_id!: number;
 
   constructor(
+    protected facilityService: FacilityService,
     protected facilityTypeService: FacilityTypeService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -54,6 +54,12 @@ export class FacilityTypeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.facilityTypeService
+      .query()
+      .subscribe(
+        (resp: CustomResponse<FacilityType[]>) =>
+          (this.facilityTypes = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -63,18 +69,23 @@ export class FacilityTypeComponent implements OnInit {
    * @param dontNavigate
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    //  this.facilities = [];
+    if (!this.facility_type_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
 
-    this.facilityTypeService
+    this.facilityService
       .query({
         page: pageToLoad,
         per_page: this.perPage,
         sort: this.sort(),
+        facility_type_id: this.facility_type_id,
         ...this.helper.buildFilter(this.filter),
       })
       .subscribe(
-        (res: CustomResponse<FacilityType[]>) => {
+        (res: CustomResponse<Facility[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -106,7 +117,6 @@ export class FacilityTypeComponent implements OnInit {
       ) {
         this.predicate = predicate;
         this.ascending = ascending;
-        this.loadPage(pageNumber, true);
       }
     });
   }
@@ -147,14 +157,17 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating FacilityType
-   * @param facilityType ; If undefined initize new model to create else edit existing model
+   * Creating or updating Facility
+   * @param facility ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(facilityType?: FacilityType): void {
-    const data: FacilityType = facilityType ?? { ...new FacilityType() };
-    const ref = this.dialogService.open(FacilityTypeUpdateComponent, {
+  createOrUpdate(facility?: Facility): void {
+    const data: Facility = facility ?? {
+      ...new Facility(),
+      facility_type_id: this.facility_type_id,
+    };
+    const ref = this.dialogService.open(FacilityUpdateComponent, {
       data,
-      header: 'Create/Update Facility Type',
+      header: 'Create/Update Facility',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -164,14 +177,14 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   /**
-   * Delete FacilityType
-   * @param facilityType
+   * Delete Facility
+   * @param facility
    */
-  delete(facilityType: FacilityType): void {
+  delete(facility: Facility): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this action FacilityType?',
+      message: 'Are you sure that you want to delete this Facility?',
       accept: () => {
-        this.facilityTypeService.delete(facilityType.id!).subscribe((resp) => {
+        this.facilityService.delete(facility.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -186,14 +199,14 @@ export class FacilityTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<FacilityType[]> | null,
+    resp: CustomResponse<Facility[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/facility-type'], {
+      this.router.navigate(['/facility'], {
         queryParams: {
           page: this.page,
           per_page: this.perPage,
@@ -201,13 +214,13 @@ export class FacilityTypeComponent implements OnInit {
         },
       });
     }
-    this.facilityTypes = resp?.data ?? [];
+    this.facilities = resp?.data ?? [];
   }
 
   /**
    * When error on loading data
    */
   protected onError(): void {
-    this.toastService.error('Error loading facility type');
+    this.toastService.error('Error loading Facility');
   }
 }

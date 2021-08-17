@@ -19,6 +19,7 @@ import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { AccordionModule } from 'primeng/accordion';
 import { CardModule } from 'primeng/card';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [],
@@ -42,6 +43,7 @@ import { CardModule } from 'primeng/card';
     MenuModule,
     AccordionModule,
     CardModule,
+    TooltipModule,
   ],
 })
 export class SharedPrimengModule {}

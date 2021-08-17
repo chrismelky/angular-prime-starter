@@ -89,74 +89,6 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   /**
-   * search items by @var filter params
-   */
-  search(): void {
-    this.page = 1;
-    this.loadPage();
-  }
-
-  /**
-   * Clear search params
-   */
-  clearSearch(): void {
-    this.filter = {};
-    this.page = 1;
-    this.loadPage();
-  }
-
-  /**
-   * Creating or updating FacilityType
-   * @param facilityType ; If undefined initize new model to create else edit existing model
-   */
-  createOrUpdate(facilityType?: FacilityType): void {
-    const data: FacilityType = facilityType ?? { ...new FacilityType() };
-    const ref = this.dialogService.open(FacilityTypeUpdateComponent, {
-      data,
-      header: 'Create/Update Facility Type',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
-  }
-
-  /**
-   * When page changed
-   * @param event page event to
-   */
-  pageChanged(event: LazyLoadEvent): void {
-    this.page = event.first! / event.rows! + 1;
-    this.perPage = event.rows!;
-    this.loadPage();
-  }
-
-  /**
-   * Delete FacilityType
-   * @param facilityType
-   */
-  delete(facilityType: FacilityType): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this action FacilityType?',
-      accept: () => {
-        this.facilityTypeService.delete(facilityType.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
-      },
-    });
-  }
-
-  /**
-   * Set/Reurn the sorting option for data
-   * @returns
-   */
-  protected sort(): string[] {
-    return ['id:desc'];
-  }
-
-  /**
    * Called initialy/onInit to
    * Restore page, sort option from url query params if exist and load page
    */
@@ -179,6 +111,74 @@ export class FacilityTypeComponent implements OnInit {
         this.ascending = ascending;
         this.loadPage(pageNumber, true);
       }
+    });
+  }
+
+  /**
+   * When page changed
+   * @param event page event to
+   */
+  pageChanged(event: LazyLoadEvent): void {
+    this.page = event.first! / event.rows! + 1;
+    this.perPage = event.rows!;
+    this.loadPage();
+  }
+
+  /**
+   * search items by @var filter params
+   */
+  search(): void {
+    this.page = 1;
+    this.loadPage();
+  }
+
+  /**
+   * Clear search params
+   */
+  clearSearch(): void {
+    this.filter = {};
+    this.page = 1;
+    this.loadPage();
+  }
+
+  /**
+   * Impletement sorting Set/Reurn the sorting option for data
+   * @returns dfefault ot id sorting
+   */
+  protected sort(): string[] {
+    return ['id:asc'];
+  }
+
+  /**
+   * Creating or updating FacilityType
+   * @param facilityType ; If undefined initize new model to create else edit existing model
+   */
+  createOrUpdate(facilityType?: FacilityType): void {
+    const data: FacilityType = facilityType ?? { ...new FacilityType() };
+    const ref = this.dialogService.open(FacilityTypeUpdateComponent, {
+      data,
+      header: 'Create/Update Facility Type',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  /**
+   * Delete FacilityType
+   * @param facilityType
+   */
+  delete(facilityType: FacilityType): void {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this action FacilityType?',
+      accept: () => {
+        this.facilityTypeService.delete(facilityType.id!).subscribe((resp) => {
+          this.loadPage(this.page);
+          this.toastService.info(resp.message);
+        });
+      },
     });
   }
 

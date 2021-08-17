@@ -19,6 +19,9 @@ export class FacilityTypeUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
+  /**
+   * Declare form
+   */
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
@@ -34,9 +37,13 @@ export class FacilityTypeUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.updateForm(this.dialogConfig.data);
+    this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
   }
 
+  /**
+   * When form is valid Create FacilityType or Update Facilitiy type if exist else set form has error and return
+   * @returns
+   */
   save(): void {
     if (this.editForm.invalid) {
       this.formError = true;
@@ -64,17 +71,30 @@ export class FacilityTypeUpdateComponent implements OnInit {
     );
   }
 
+  /**
+   * When save successfully close dialog and dispaly info message
+   * @param result
+   */
   protected onSaveSuccess(result: any): void {
     this.toastService.info(result.message);
     this.dialogRef.close(true);
   }
 
+  /**
+   * Error handiling specific to this component
+   * Note; general error handleing is done by ErrorInterceptor
+   * @param error
+   */
   protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
   }
 
+  /**
+   * Set/Initialize form values
+   * @param facilityType
+   */
   protected updateForm(facilityType: FacilityType): void {
     this.editForm.patchValue({
       id: facilityType.id,
@@ -83,6 +103,10 @@ export class FacilityTypeUpdateComponent implements OnInit {
     });
   }
 
+  /**
+   * Return form values as object of type FacilityType
+   * @returns FacilityType
+   */
   protected createFromForm(): FacilityType {
     return {
       ...new FacilityType(),

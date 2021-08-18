@@ -124,16 +124,16 @@ export class FacilityComponent implements OnInit {
    * Mandatory filter= fields that must be specified when requesting data
    * @param event
    */
-  filterChanged(event: any): void {
+  filterChanged(): void {
     if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePageToFirst(event.originalEvent));
+      setTimeout(() => this.paginator.changePage(0));
     } else {
       this.loadPage(1);
     }
   }
 
   /**
-   * search items by @var filter params
+   * search items by @var search params
    */
   onSearch(): void {
     if (this.page !== 1) {
@@ -155,6 +155,10 @@ export class FacilityComponent implements OnInit {
     }
   }
 
+  /**
+   * Sorting changed
+   * @param $event
+   */
   onSortChange($event: LazyLoadEvent): void {
     this.predicate = $event.sortField!;
     this.ascending = $event.sortOrder === 1;

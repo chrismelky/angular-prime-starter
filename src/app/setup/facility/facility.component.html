@@ -26,7 +26,7 @@
                 optionValue="id"
                 optionLabel="name"
                 [options]="facilityTypes!"
-                (onChange)="loadPage(1, true)"
+                (onChange)="filterChanged($event)"
                 [(ngModel)]="facility_type_id"
               ></p-dropdown>
               <label for="facility_type_id">Facility Type </label>
@@ -105,6 +105,13 @@
                 </span>
               </div>
             </div>
+            <button
+              pButton
+              class="p-button-text p-button-plain"
+              icon="pi pi-times"
+              label="Clear"
+              (click)="clearSearch()"
+            ></button>
           </div>
         </p-accordionTab>
       </p-accordion>
@@ -114,21 +121,17 @@
   <!-- Table Panel -->
   <p-card>
     <p-table
-      [rows]="perPage"
       [lazy]="true"
       [resizableColumns]="true"
       [responsive]="true"
       [autoLayout]="true"
-      (onLazyLoad)="pageChanged($event)"
-      [rowsPerPageOptions]="perPageOptions"
       [loading]="isLoading"
-      [totalRecords]="totalItems"
       [columns]="cols"
       [value]="facilities!"
       [scrollable]="true"
       scrollHeight="500px"
-      [paginator]="true"
-      emptymessage="No data found"
+      (onLazyLoad)="onSortChange($event)"
+      [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
@@ -145,8 +148,8 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="facilities?.length">
-          <th *ngFor="let col of columns">
-            {{ col.header }}
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+            {{ col.header }}<p-sortIcon [field]="col.field"></p-sortIcon>
           </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
@@ -170,8 +173,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="footer">
+        <p-paginator
+          #paginator
+          [alwaysShow]="true"
+          [rows]="per_page"
+          dropdownAppendTo="body"
+          [showCurrentPageReport]="true"
+          [totalRecords]="totalItems"
+          [rowsPerPageOptions]="perPageOptions"
+          (onPageChange)="pageChanged($event)"
+        ></p-paginator>
+      </ng-template>
     </p-table>
-    <!-- </div> -->
   </p-card>
 </div>
 
@@ -195,23 +209,6 @@
         (click)="delete(element)"
       ></button>
     </div>
-
-    <!-- <button
-      mat-menu-item
-      aria-label="Delete Facility"
-      (click)="delete(element)"
-    >
-      <mat-icon>edit</mat-icon>
-      <span>Edit</span>
-    </button>
-    <button
-      mat-menu-item
-      aria-label="Delete Facility"
-      (click)="delete(element)"
-    >
-      <mat-icon>delete</mat-icon>
-      <span>Delete</span>
-    </button> -->
   </ng-template>
 </mat-menu>
 <p-confirmDialog

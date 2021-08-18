@@ -231,6 +231,7 @@ i.clear {
   color: rgba(0,0,0,.54);
   font-size: 0.75rem;
   padding: 0;
+  padding-left: 24px;
 }
 .p-tooltip {
   padding: 0.5rem;
@@ -250,11 +251,12 @@ i.clear {
 
 .p-datatable .p-datatable-thead > tr > th:first-of-type {
   padding-left: 24px;
-  height: 56px;
+  height: 48px;
 }
 
 .p-datatable .p-datatable-tbody > tr > td {
   padding: 0;
+  padding-left: 24px;
   height: 48px;
 }
 .p-datatable .p-datatable-tbody > tr > td:first-of-type {

@@ -1,13 +1,13 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { FacilityComponent } from "./facility.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { FacilityComponent } from './facility.component';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: FacilityComponent,
     data: {
-      defaultSort: "id,asc",
+      defaultSort: 'id:desc',
     },
     //canActivate: [UserRouteAccessService],
   },

@@ -3,21 +3,20 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
 
 import { CustomResponse } from '../../utils/custom-response';
-import { Facility } from './facility.model';
-
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Facility } from './facility.model';
 import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
 import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
 import { FacilityService } from './facility.service';
 import { FacilityUpdateComponent } from './update/facility-update.component';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { Paginator } from 'primeng/paginator';
 
 @Component({
   selector: 'app-facility',
@@ -33,13 +32,13 @@ export class FacilityComponent implements OnInit {
     { field: 'facility_type_id', header: 'Facility Type ', sort: false },
   ]; //Table display columns
   isLoading = false;
-  totalItems = 0;
-  per_page!: number;
-  perPageOptions = PER_PAGE_OPTIONS;
   page?: number = 1;
+  per_page!: number;
+  totalItems = 0;
+  perPageOptions = PER_PAGE_OPTIONS;
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
-  filter: any = {}; // items filter objects
+  search: any = {}; // items search objects
 
   //Mandatory filter
   facility_type_id!: number;
@@ -66,9 +65,9 @@ export class FacilityComponent implements OnInit {
   }
 
   /**
-   * Load data
-   * @param page
-   * @param dontNavigate
+   * Load data from api
+   * @param page = page number
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (!this.facility_type_id) {
@@ -83,7 +82,7 @@ export class FacilityComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         facility_type_id: this.facility_type_id,
-        ...this.helper.buildFilter(this.filter),
+        ...this.helper.buildFilter(this.search),
       })
       .subscribe(
         (res: CustomResponse<Facility[]>) => {
@@ -95,20 +94,6 @@ export class FacilityComponent implements OnInit {
           this.onError();
         }
       );
-  }
-
-  filterChanged(event: any): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePageToFirst(event.originalEvent));
-    } else {
-      this.loadPage(1);
-    }
-  }
-
-  onSortChange($event: LazyLoadEvent): void {
-    this.predicate = $event.sortField!;
-    this.ascending = $event.sortOrder === 1;
-    this.loadPage();
   }
 
   /**
@@ -135,29 +120,54 @@ export class FacilityComponent implements OnInit {
   }
 
   /**
-   * When page changed
-   * @param event page event to
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
    */
-  pageChanged(event: any): void {
-    this.page = event.page + 1;
-    this.per_page = event.rows!;
-    this.loadPage();
+  filterChanged(event: any): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePageToFirst(event.originalEvent));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
    * search items by @var filter params
    */
-  search(): void {
-    this.paginator.changePage(0);
-    this.loadPage();
+  onSearch(): void {
+    if (this.page !== 1) {
+      this.paginator.changePage(0);
+    } else {
+      this.loadPage();
+    }
   }
 
   /**
    * Clear search params
    */
   clearSearch(): void {
-    this.filter = {};
-    this.paginator.changePage(0);
+    this.search = {};
+    if (this.page !== 1) {
+      this.paginator.changePage(0);
+    } else {
+      this.loadPage();
+    }
+  }
+
+  onSortChange($event: LazyLoadEvent): void {
+    this.predicate = $event.sortField!;
+    this.ascending = $event.sortOrder === 1;
+    this.loadPage();
+  }
+
+  /**
+   * When page changed
+   * @param event page event to
+   */
+  pageChanged(event: any): void {
+    this.page = event.page + 1;
+    this.per_page = event.rows!;
     this.loadPage();
   }
 
@@ -237,7 +247,6 @@ export class FacilityComponent implements OnInit {
    * When error on loading data
    */
   protected onError(): void {
-    this.facilities = [];
     setTimeout(() => this.paginator.changePage(0));
     this.toastService.error('Error loading Facility');
   }

@@ -53,7 +53,7 @@
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
-            (click)="search()"
+            (click)="onSearch()"
           ></button>
         </div>
       </div>
@@ -78,12 +78,12 @@
                     type="text"
                     class="p-inputtext-sm"
                     pInputText
-                    [(ngModel)]="filter['code']"
+                    [(ngModel)]="search['code']"
                   />
                   <label for="code">Code </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="filter['code'] = undefined; search()"
+                    (click)="search['code'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>
@@ -94,12 +94,12 @@
                     type="text"
                     class="p-inputtext-sm"
                     pInputText
-                    [(ngModel)]="filter['name']"
+                    [(ngModel)]="search['name']"
                   />
                   <label for="name">Name </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="filter['name'] = undefined; search()"
+                    (click)="search['name'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>

@@ -122,6 +122,7 @@
   <!-- Table Panel -->
   <p-card>
     <p-table
+      #table
       [lazy]="true"
       [resizableColumns]="true"
       [responsive]="true"
@@ -151,7 +152,7 @@
         <tr *ngIf="facilities?.length">
           <th
             *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
+            [pSortableColumn]="col.sort ? col.field : 'xxx'"
           >
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>

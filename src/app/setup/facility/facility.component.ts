@@ -17,6 +17,7 @@ import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
 import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
 import { FacilityService } from './facility.service';
 import { FacilityUpdateComponent } from './update/facility-update.component';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-facility',
@@ -24,6 +25,7 @@ import { FacilityUpdateComponent } from './update/facility-update.component';
 })
 export class FacilityComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   facilities?: Facility[] = [];
   facilityTypes?: FacilityType[] = [];
   cols = [
@@ -157,6 +159,8 @@ export class FacilityComponent implements OnInit {
 
   /**
    * Sorting changed
+   * predicate = column to sort by
+   * ascending = sort ascending else descending
    * @param $event
    */
   onSortChange($event: LazyLoadEvent): void {
@@ -167,7 +171,7 @@ export class FacilityComponent implements OnInit {
 
   /**
    * When page changed
-   * @param event page event to
+   * @param event page event
    */
   pageChanged(event: any): void {
     this.page = event.page + 1;
@@ -248,10 +252,11 @@ export class FacilityComponent implements OnInit {
   }
 
   /**
-   * When error on loading data
+   * When error on loading data set data to empt and resert page to load
    */
   protected onError(): void {
-    setTimeout(() => this.paginator.changePage(0));
+    setTimeout(() => (this.table.value = []));
+    this.page = 1;
     this.toastService.error('Error loading Facility');
   }
 }

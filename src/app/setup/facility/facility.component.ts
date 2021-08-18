@@ -28,9 +28,9 @@ export class FacilityComponent implements OnInit {
   facilities?: Facility[] = [];
   facilityTypes?: FacilityType[] = [];
   cols = [
-    { field: 'code', header: 'Code' },
-    { field: 'name', header: 'Name' },
-    { field: 'facility_type_id', header: 'Facility Type ' },
+    { field: 'code', header: 'Code', sort: true },
+    { field: 'name', header: 'Name', sort: true },
+    { field: 'facility_type_id', header: 'Facility Type ', sort: false },
   ]; //Table display columns
   isLoading = false;
   totalItems = 0;

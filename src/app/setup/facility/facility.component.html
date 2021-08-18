@@ -37,7 +37,9 @@
             pButton
             type="button"
             [pTooltip]="
-              advFilter.selected ? 'Hide Advance Search' : 'Show Advance Search'
+              advFilter.selected
+                ? 'Hide Advanced Search'
+                : 'Show Advanced Search'
             "
             tooltipPosition="bottom"
             [icon]="
@@ -106,7 +108,7 @@
             </div>
             <button
               pButton
-              pTooltip="Clear Advance Search"
+              pTooltip="Clear Advanced Search"
               tooltipPosition="bottom"
               class="p-button-text p-button-plain"
               icon="pi pi-times"

@@ -20,6 +20,7 @@ import { MenuModule } from 'primeng/menu';
 import { AccordionModule } from 'primeng/accordion';
 import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @NgModule({
   declarations: [],
@@ -44,6 +45,7 @@ import { TooltipModule } from 'primeng/tooltip';
     AccordionModule,
     CardModule,
     TooltipModule,
+    InputSwitchModule,
   ],
 })
 export class SharedPrimengModule {}

@@ -18,6 +18,7 @@ import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.s
 import { FacilityService } from './facility.service';
 import { FacilityUpdateComponent } from './update/facility-update.component';
 import { Table } from 'primeng/table';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
 
 @Component({
   selector: 'app-facility',
@@ -28,6 +29,10 @@ export class FacilityComponent implements OnInit {
   @ViewChild('table') table!: Table;
   facilities?: Facility[] = [];
   facilityTypes?: FacilityType[] = [];
+
+  //Enums
+  ownerships: PlanrepEnum[] = [];
+
   cols = [
     { field: 'code', header: 'Code', sort: true },
     { field: 'name', header: 'Name', sort: true },
@@ -45,6 +50,9 @@ export class FacilityComponent implements OnInit {
   //Mandatory filter
   facility_type_id!: number;
 
+  //Mndatory Enums
+  ownership!: string;
+
   constructor(
     protected facilityService: FacilityService,
     protected facilityTypeService: FacilityTypeService,
@@ -53,7 +61,8 @@ export class FacilityComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    protected enumService: EnumService
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +72,9 @@ export class FacilityComponent implements OnInit {
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
       );
+    //load enums
+    this.ownerships = this.enumService.get('ownership');
+
     this.handleNavigation();
   }
 
@@ -72,7 +84,7 @@ export class FacilityComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.facility_type_id) {
+    if (!this.facility_type_id || !this.ownership) {
       return;
     }
     this.isLoading = true;
@@ -84,6 +96,7 @@ export class FacilityComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         facility_type_id: this.facility_type_id,
+        ownership: this.ownership,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(

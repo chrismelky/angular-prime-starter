@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { NavigationItem } from '../menu-item/nav.item';
 import { MenuItem } from 'primeng/api';
 
 @Component({
@@ -39,16 +38,16 @@ export class MainComponent implements OnInit {
       items: [
         {
           label: 'Facility Managment',
-          icon: 'pi pi-fw pi-chevron-circle-right',
+          icon: 'pi pi-fw pi-home',
           items: [
             {
               label: 'Facility Types',
-              icon: 'pi pi-fw pi-angle-right',
+              icon: 'pi pi-fw pi-arrow-right',
               routerLink: 'facility-type',
             },
             {
               label: 'Facilities',
-              icon: 'pi pi-fw pi-angle-right',
+              icon: 'pi pi-fw pi-arrow-right',
               routerLink: 'facility',
             },
           ],
@@ -83,65 +82,6 @@ export class MainComponent implements OnInit {
         {
           label: 'New',
           icon: 'pi pi-fw',
-        },
-      ],
-    },
-  ];
-  navlinks: NavigationItem[] = [
-    {
-      title: 'Dashboard',
-      subTitle: 'Application dashboard',
-      iconName: 'dashboard',
-      authorities: ['VIEW_DASHBOARD'],
-      route: '/dashboard',
-    },
-    {
-      title: 'System Settings',
-      subTitle: 'Settings',
-      iconName: 'settings',
-      route: '/system-settings',
-      authorities: ['ROLE_ADMIN'],
-      children: [
-        {
-          title: 'Financial Years',
-          iconName: 'keyboard_arrow_right',
-          route: '/user',
-          children: [
-            {
-              title: 'Financial Years',
-              iconName: 'keyboard_arrow_right',
-              route: '/user',
-            },
-            {
-              title: 'Quarters',
-              iconName: 'keyboard_arrow_right',
-              route: '/user',
-            },
-          ],
-        },
-        {
-          title: 'Administative Hierarchy',
-          iconName: 'keyboard_arrow_right',
-          route: '/financial-year',
-        },
-      ],
-    },
-    {
-      title: 'Planning',
-      subTitle: 'Settings',
-      iconName: 'settings',
-      route: '/system-settings',
-      authorities: ['ROLE_ADMIN'],
-      children: [
-        {
-          title: 'Users',
-          iconName: 'keyboard_arrow_right',
-          route: '/user',
-        },
-        {
-          title: 'Financial Years',
-          iconName: 'keyboard_arrow_right',
-          route: '/financial-year',
         },
       ],
     },

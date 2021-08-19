@@ -29,9 +29,12 @@
   </mat-drawer>
   <mat-drawer-content style="flex: 1 1 auto">
     <mat-toolbar class="mat-elevation-z2">
-      <button mat-icon-button (click)="drawer.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
+      <button
+        pButton
+        icon="pi pi-bars"
+        class="p-button-plain p-button-rounded p-button-text p-ripple"
+        (click)="drawer.toggle()"
+      ></button>
     </mat-toolbar>
     <div>
       <router-outlet></router-outlet>

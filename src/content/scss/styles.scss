@@ -25,8 +25,17 @@ body {
     width: 100%;
     background-color: transparent;
 
+    .p-menuitem-text {
+      font-size: 13px;
+      // line-height: 20px;
+      font-weight: 500;
+    }
+    .p-menuitem-text:hover {
+      color: #669df6;
+    }
+
     .p-panelmenu-content {
-      background-color: rgba(255,255,255,.1);
+      background-color: #19314a;
       color: white;
       padding-left: 0.75rem;
       .p-panelmenu-icon	{
@@ -39,7 +48,23 @@ body {
             color: white;
           }
         }
+        .p-menuitem-link:hover {
+          .p-menuitem-icon,
+          .p-menuitem-text {
+            color: white;
+          }
+        }
+        .p-menuitem-link-active {
+          .p-menuitem-icon,
+          .p-menuitem-text {
+            color: #669df6;
+          }
+        }
       }
+    }
+    .p-highlight {
+      background-color: #132d49;
+      border-bottom: 1px solid rgba(255,255,255,.1);
     }
     .p-panelmenu-panel {
       border-bottom: 1px solid rgba(255,255,255,.1);
@@ -49,7 +74,7 @@ body {
     .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-link:hover,
     .p-panelmenu-panel .p-panelmenu-header:not(.p-highlight) .p-panelmenu-header-link:hover,
     .p-panelmenu-panel .p-panelmenu-header:not(.p-highlight) .p-panelmenu-header-link:focus {
-      background-color: transparent;
+      background-color: #19314a;
     }
     .p-panelmenu-panel:first-child .p-panelmenu-header > a  {
       background-color: transparent;
@@ -58,7 +83,16 @@ body {
     .p-panelmenu-panel:last-child .p-panelmenu-content{
       border-radius: 0;
     }
-    .p-panelmenu-panel .p-panelmenu-header > a , .p-panelmenu-panel:last-child .p-panelmenu-header > a {
+
+     .p-panelmenu-panel .p-panelmenu-header > a
+     {
+      color: #fff;
+      border-radius: 0;
+      background-color: transparent;
+    }
+
+     .p-panelmenu-panel .p-panelmenu-header > a:hover
+     {
       color: #fff;
       border-radius: 0;
       background-color: transparent;
@@ -130,7 +164,7 @@ body {
   font-weight: 500;
 }
 .p-card-header {
-  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+  padding: 1.25rem 1.25rem 0.5rem 1.25rem;
 
 }
 .card-header-text {
@@ -154,14 +188,17 @@ p-card.filter {
   .card-header-text{
     font-size: 0.75rem !important;
   }
+  .p-card-content {
+    padding-bottom: 0px !important;
+  }
   .p-accordion {
     margin-top: 0.75rem;
     .p-accordion-tab {
       box-shadow: none !important;
       .p-accordion-content{
         padding: 0px !important;
+        margin-bottom: 0.5rem;
       }
-
       .p-accordion-header {
         display: none !important;
       }

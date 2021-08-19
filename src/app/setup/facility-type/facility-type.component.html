@@ -126,14 +126,29 @@
             {{ rowData[col.field] }}
           </td>
           <td style="flex: 0 0 2 rem">
-            <div fxLayout="row" fxLayoutAlign="end">
+            <div fxLayout="row" fxLayoutGap="2px">
               <button
-                mat-icon-button
-                [matMenuTriggerFor]="menu"
-                [matMenuTriggerData]="{ id: rowData.id, element: rowData }"
-              >
-                <mat-icon>more_vert</mat-icon>
-              </button>
+                pButton
+                pTooltip="Edit"
+                tooltipPosition="bottom"
+                class="
+                  p-button-text p-button-plain p-button-rounded p-button-icon
+                "
+                icon="pi pi-pencil
+            "
+                (click)="createOrUpdate(rowData)"
+              ></button>
+              <button
+                pButton
+                pTooltip="Delete"
+                tooltipPosition="bottom"
+                class="
+                  p-button-text p-button-plain p-button-rounded p-button-icon
+                "
+                icon="pi pi-trash
+            "
+                (click)="delete(rowData)"
+              ></button>
             </div>
           </td>
         </tr>
@@ -141,27 +156,6 @@
     </p-table>
   </p-card>
 </div>
-
-<mat-menu #menu="matMenu">
-  <ng-template matMenuContent let-id="id" let-element="element">
-    <button
-      mat-menu-item
-      aria-label="Edit Facility Type"
-      (click)="createOrUpdate(element)"
-    >
-      <mat-icon>edit</mat-icon>
-      <span>Edit</span>
-    </button>
-    <button
-      mat-menu-item
-      aria-label="Delete Facility Type"
-      (click)="delete(element)"
-    >
-      <mat-icon>delete</mat-icon>
-      <span>Delete</span>
-    </button>
-  </ng-template>
-</mat-menu>
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"

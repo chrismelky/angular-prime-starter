@@ -36,53 +36,28 @@ export class MainComponent implements OnInit {
       icon: 'pi pi-pw pi-cog',
       separator: true,
       items: [
-        {
-          label: 'Facility Managment',
-          icon: 'pi pi-fw pi-home',
-          items: [
-            {
-              label: 'Facility Types',
-              icon: 'pi pi-fw pi-arrow-right',
-              routerLink: 'facility-type',
-            },
-            {
-              label: 'Facilities',
-              icon: 'pi pi-fw pi-arrow-right',
-              routerLink: 'facility',
-            },
-          ],
-        },
-        {
-          label: 'Admin Hierarchy Managment',
-          icon: 'pi pi-fw pi-chevron-circle-right',
-          items: [
-            {
-              label: 'Facility Types',
-              icon: 'pi pi-fw',
-              routerLink: 'facility-type',
-            },
-          ],
-        },
+        /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },
     {
       label: 'Planning',
       icon: 'pi pi-pw pi-list',
       items: [
-        {
-          label: 'New',
-          icon: 'pi pi-fw',
-        },
+        /**====Planrep planning Menu Generator Hook: Dont Delete====*/
       ],
     },
     {
       label: 'Budgeting',
       icon: 'pi pi-pw pi-money-bill',
       items: [
-        {
-          label: 'New',
-          icon: 'pi pi-fw',
-        },
+        /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
+      ],
+    },
+    {
+      label: 'Execution',
+      icon: 'pi pi-pw pi-money-bill',
+      items: [
+        /**====Planrep execution Menu Generator Hook: Dont Delete====*/
       ],
     },
   ];

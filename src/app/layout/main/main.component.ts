@@ -1,14 +1,14 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
 
-import { BreakpointObserver } from "@angular/cdk/layout";
-import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
-import { MenuItem } from "primeng/api";
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { MenuItem } from 'primeng/api';
 
 @Component({
-  selector: "app-main",
-  templateUrl: "./main.component.html",
-  styleUrls: ["./main.component.scss"],
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss'],
 })
 export class MainComponent implements OnInit {
   gtMd!: Observable<boolean>;
@@ -16,7 +16,7 @@ export class MainComponent implements OnInit {
 
   constructor(private breakPointObsever: BreakpointObserver) {
     this.gtMd = this.breakPointObsever
-      .observe("(max-width: 959px)")
+      .observe('(max-width: 959px)')
       .pipe(map((result) => !result.matches));
     this.gtMd.subscribe((value) => {
       this.isGtMd = value;
@@ -27,54 +27,92 @@ export class MainComponent implements OnInit {
 
   items: MenuItem[] = [
     {
-      label: "Dashboard",
-      icon: "pi pi-pw pi-chart-bar",
-      routerLink: "dashboard",
+      label: 'Dashboard',
+      icon: 'pi pi-pw pi-chart-bar',
+      routerLink: 'dashboard',
     },
     {
-      label: "Setup",
-      icon: "pi pi-pw pi-cog",
+      label: 'Setup',
+      icon: 'pi pi-pw pi-cog',
       separator: true,
       items: [
         {
+          label: 'Asset Uses',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'asset-use',
+        },
+        {
+          label: 'Bank Accounts',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'bank-account',
+        },
+        {
+          label: 'Asset Conditions',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'asset-condition',
+        },
+        {
+          label: 'Account Types',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'account-type',
+        },
+        {
+          label: 'Activity Types',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'activity-type',
+        },
+        {
+          label: 'Activity Task Natures',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'activity-task_nature',
+        },
+        {
+          label: 'Admin Hierarchy Levels',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'admin-hierarchy_level',
           label: "Admin Hierarchies",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "admin-hierarchy",
         },
         {
-          label: "Sectors",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "sector",
+          label: 'Admin Hierarchies',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'admin-hierarchy',
         },
         {
-          label: "Section Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "section-level",
+          label: 'Sectors',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'sector',
         },
         {
-          label: "Sections",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "section",
+          label: 'Section Levels',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'section-level',
         },
         {
-          label: "Decision Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "decision-level",
+          label: 'Sections',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'section',
         },
         {
-          label: "Reference Document Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "reference-document_type",
+          label: 'Decision Levels',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'decision-level',
         },
         {
-          label: "Reference Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "reference-type",
+          label: 'Reference Document Types',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'reference-document_type',
         },
         {
-          label: "Financial Years",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "financial-year",
+          label: 'Reference Types',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'reference-type',
+        },
+        {
+          label: 'Financial Years',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'financial-year',
         },
         {
           label: "Admin Hierarchy Levels",
@@ -85,22 +123,22 @@ export class MainComponent implements OnInit {
       ],
     },
     {
-      label: "Planning",
-      icon: "pi pi-pw pi-list",
+      label: 'Planning',
+      icon: 'pi pi-pw pi-list',
       items: [
         /**====Planrep planning Menu Generator Hook: Dont Delete====*/
       ],
     },
     {
-      label: "Budgeting",
-      icon: "pi pi-pw pi-money-bill",
+      label: 'Budgeting',
+      icon: 'pi pi-pw pi-money-bill',
       items: [
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],
     },
     {
-      label: "Execution",
-      icon: "pi pi-pw pi-money-bill",
+      label: 'Execution',
+      icon: 'pi pi-pw pi-money-bill',
       items: [
         /**====Planrep execution Menu Generator Hook: Dont Delete====*/
       ],

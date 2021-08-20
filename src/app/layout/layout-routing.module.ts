@@ -67,6 +67,13 @@ const routes: Routes = [
             (m) => m.ReferenceTypeModule
           ),
       },
+      {
+        path: "financial-year",
+        loadChildren: () =>
+          import("../setup/financial-year/financial-year.module").then(
+            (m) => m.FinancialYearModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

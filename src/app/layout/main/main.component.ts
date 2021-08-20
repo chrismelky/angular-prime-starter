@@ -76,6 +76,11 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "reference-type",
         },
+        {
+          label: "Financial Years",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "financial-year",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

@@ -146,9 +146,7 @@ export class FinancialYearUpdateComponent implements OnInit {
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
       description: this.editForm.get(["description"])!.value,
-      previous_financial_year_id: this.editForm.get([
-        "previous_financial_year_id",
-      ])!.value,
+      previous_financial_year_id: this.editForm.get(["previous_financial_year_id"])!.value,
       is_active: this.editForm.get(["is_active"])!.value,
       is_current: this.editForm.get(["is_current"])!.value,
       status: this.editForm.get(["status"])!.value,

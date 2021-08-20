@@ -46,6 +46,27 @@ const routes: Routes = [
             (m) => m.SectionModule
           ),
       },
+      {
+        path: "decision-level",
+        loadChildren: () =>
+          import("../setup/decision-level/decision-level.module").then(
+            (m) => m.DecisionLevelModule
+          ),
+      },
+      {
+        path: "reference-document_type",
+        loadChildren: () =>
+          import(
+            "../setup/reference-document_type/reference-document_type.module"
+          ).then((m) => m.ReferenceDocumentTypeModule),
+      },
+      {
+        path: "reference-type",
+        loadChildren: () =>
+          import("../setup/reference-type/reference-type.module").then(
+            (m) => m.ReferenceTypeModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

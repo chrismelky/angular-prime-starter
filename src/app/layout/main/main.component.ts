@@ -61,6 +61,21 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "section",
         },
+        {
+          label: "Decision Levels",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "decision-level",
+        },
+        {
+          label: "Reference Document Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-document_type",
+        },
+        {
+          label: "Reference Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-type",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

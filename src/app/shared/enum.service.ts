@@ -22,6 +22,7 @@ export class EnumService {
     ],
     // ===enum hooks===
   };
+
   constructor() {}
 
   get(key: string): PlanrepEnum[] {

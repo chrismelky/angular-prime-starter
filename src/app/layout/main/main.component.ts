@@ -37,11 +37,6 @@ export class MainComponent implements OnInit {
       separator: true,
       items: [
         {
-          label: "Admin Hierarchy Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy_level",
-        },
-        {
           label: "Admin Hierarchies",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "admin-hierarchy",
@@ -80,6 +75,11 @@ export class MainComponent implements OnInit {
           label: "Financial Years",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "financial-year",
+        },
+        {
+          label: "Admin Hierarchy Levels",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "admin-hierarchy-level",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

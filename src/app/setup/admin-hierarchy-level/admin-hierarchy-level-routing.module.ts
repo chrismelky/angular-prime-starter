@@ -1,6 +1,14 @@
+/**
+ * @license
+ * Copyright TAMISEMI All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache-style license that can be
+ * found in the LICENSE file at https://tamisemi.go.tz/license
+ */
+
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { AdminHierarchyLevelComponent } from "./admin-hierarchy_level.component";
+import { AdminHierarchyLevelComponent } from "./admin-hierarchy-level.component";
 
 const routes: Routes = [
   {

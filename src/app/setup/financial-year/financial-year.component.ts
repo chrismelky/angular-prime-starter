@@ -70,7 +70,7 @@ export class FinancialYearComponent implements OnInit {
       header: "Sort Order",
       sort: false,
     },
-    {
+    /*{
       field: "start_date",
       header: "Start Date",
       sort: true,
@@ -79,7 +79,7 @@ export class FinancialYearComponent implements OnInit {
       field: "end_date",
       header: "End Date",
       sort: true,
-    },
+    },*/
   ]; //Table display columns
 
   isLoading = false;

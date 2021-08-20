@@ -21,13 +21,6 @@ const routes: Routes = [
           ),
       },
       {
-        path: "admin-hierarchy_level",
-        loadChildren: () =>
-          import(
-            "../setup/admin-hierarchy_level/admin-hierarchy_level.module"
-          ).then((m) => m.AdminHierarchyLevelModule),
-      },
-      {
         path: "sector",
         loadChildren: () =>
           import("../setup/sector/sector.module").then((m) => m.SectorModule),
@@ -73,6 +66,13 @@ const routes: Routes = [
           import("../setup/financial-year/financial-year.module").then(
             (m) => m.FinancialYearModule
           ),
+      },
+      {
+        path: "admin-hierarchy-level",
+        loadChildren: () =>
+          import(
+            "../setup/admin-hierarchy-level/admin-hierarchy-level.module"
+          ).then((m) => m.AdminHierarchyLevelModule),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

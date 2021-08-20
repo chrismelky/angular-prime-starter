@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 export interface PlanrepEnum {
   display: string;
@@ -6,18 +6,18 @@ export interface PlanrepEnum {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class EnumService {
   enums: any = {
     ownership: [
       {
-        display: 'Private',
-        value: 'Private',
+        display: "Private",
+        value: "Private",
       },
       {
-        display: 'Public',
-        value: 'Public',
+        display: "Public",
+        value: "Public",
       },
     ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/

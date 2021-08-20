@@ -89,8 +89,7 @@
             [pSortableColumn]="col.sort ? col.field : null"
           >
             {{ col.header
-            }}
-            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
@@ -130,7 +129,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found</ng-template>
+      <ng-template pTemplate="emptymessage"> No data found </ng-template>
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator

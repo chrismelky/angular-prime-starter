@@ -5,19 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import {Injectable} from "@angular/core";
+import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { ReferenceDocumentType } from "./reference-document_type.model";
+import {createRequestOption} from "../../utils/request-util";
+import {CustomResponse} from "../../utils/custom-response";
+import {ReferenceDocumentType} from "./reference-document-type.model";
 
-@Injectable({ providedIn: "root" })
+@Injectable({providedIn: "root"})
 export class ReferenceDocumentTypeService {
   public resourceUrl = "api/reference_document_types";
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient) {
+  }
 
   create(
     referenceDocumentType: ReferenceDocumentType
@@ -47,7 +48,7 @@ export class ReferenceDocumentTypeService {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<ReferenceDocumentType[]>>(
       this.resourceUrl,
-      { params: options }
+      {params: options}
     );
   }
 

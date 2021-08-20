@@ -12,13 +12,13 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { ReferenceDocumentType } from "../reference-document_type.model";
-import { ReferenceDocumentTypeService } from "../reference-document_type.service";
+import { ReferenceDocumentType } from "../reference-document-type.model";
+import { ReferenceDocumentTypeService } from "../reference-document-type.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-reference-document_type-update",
-  templateUrl: "./reference-document_type-update.component.html",
+  selector: "app-reference-document-type-update",
+  templateUrl: "./reference-document-type-update.component.html",
 })
 export class ReferenceDocumentTypeUpdateComponent implements OnInit {
   isSaving = false;
@@ -42,11 +42,11 @@ export class ReferenceDocumentTypeUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
   }
 
   /**
-   * When form is valid Create ReferenceDocumentType or Update Facility type if exist else set form has error and return
+   * When form is valid Create ReferenceDocumentType or Update Facilitiy type if exist else set form has error and return
    * @returns
    */
   save(): void {

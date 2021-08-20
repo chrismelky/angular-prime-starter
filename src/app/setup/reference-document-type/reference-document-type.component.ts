@@ -5,34 +5,34 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {FinancialYear} from "./financial-year.model";
-import {FinancialYearService} from "./financial-year.service";
-import {FinancialYearUpdateComponent} from "./update/financial-year-update.component";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+
+import { ReferenceDocumentType } from "./reference-document-type.model";
+import { ReferenceDocumentTypeService } from "./reference-document-type.service";
+import { ReferenceDocumentTypeUpdateComponent } from "./update/reference-document-type-update.component";
 
 @Component({
-  selector: "app-financial-year",
-  templateUrl: "./financial-year.component.html",
+  selector: "app-reference-document-type",
+  templateUrl: "./reference-document-type.component.html",
 })
-export class FinancialYearComponent implements OnInit {
+export class ReferenceDocumentTypeComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  financialYears?: FinancialYear[] = [];
-  previousFinancialYears?: FinancialYear[] = [];
+  referenceDocumentTypes?: ReferenceDocumentType[] = [];
 
   cols = [
     {
@@ -40,46 +40,6 @@ export class FinancialYearComponent implements OnInit {
       header: "Name",
       sort: true,
     },
-    {
-      field: "description",
-      header: "Description",
-      sort: true,
-    },
-    {
-      field: "previous_financial_year_id",
-      header: "Previous Financial Year ",
-      sort: true,
-    },
-    {
-      field: "is_active",
-      header: "Is Active",
-      sort: false,
-    },
-    {
-      field: "is_current",
-      header: "Is Current",
-      sort: false,
-    },
-    {
-      field: "status",
-      header: "Status",
-      sort: false,
-    },
-    {
-      field: "sort_order",
-      header: "Sort Order",
-      sort: false,
-    },
-    /*{
-      field: "start_date",
-      header: "Start Date",
-      sort: true,
-    },
-    {
-      field: "end_date",
-      header: "End Date",
-      sort: true,
-    },*/
   ]; //Table display columns
 
   isLoading = false;
@@ -94,36 +54,29 @@ export class FinancialYearComponent implements OnInit {
   //Mandatory filter
 
   constructor(
-    protected financialYearService: FinancialYearService,
+    protected referenceDocumentTypeService: ReferenceDocumentTypeService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.financialYearService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.previousFinancialYears = resp.data)
-      );
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.financialYearService
+    this.referenceDocumentTypeService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -131,7 +84,7 @@ export class FinancialYearComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<FinancialYear[]>) => {
+        (res: CustomResponse<ReferenceDocumentType[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -224,16 +177,16 @@ export class FinancialYearComponent implements OnInit {
   }
 
   /**
-   * Creating or updating FinancialYear
-   * @param financialYear ; If undefined initize new model to create else edit existing model
+   * Creating or updating ReferenceDocumentType
+   * @param referenceDocumentType ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(financialYear?: FinancialYear): void {
-    const data: FinancialYear = financialYear ?? {
-      ...new FinancialYear(),
+  createOrUpdate(referenceDocumentType?: ReferenceDocumentType): void {
+    const data: ReferenceDocumentType = referenceDocumentType ?? {
+      ...new ReferenceDocumentType(),
     };
-    const ref = this.dialogService.open(FinancialYearUpdateComponent, {
+    const ref = this.dialogService.open(ReferenceDocumentTypeUpdateComponent, {
       data,
-      header: "Create/Update FinancialYear",
+      header: "Create/Update ReferenceDocumentType",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -243,15 +196,16 @@ export class FinancialYearComponent implements OnInit {
   }
 
   /**
-   * Delete FinancialYear
-   * @param financialYear
+   * Delete ReferenceDocumentType
+   * @param referenceDocumentType
    */
-  delete(financialYear: FinancialYear): void {
+  delete(referenceDocumentType: ReferenceDocumentType): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this FinancialYear?",
+      message:
+        "Are you sure that you want to delete this ReferenceDocumentType?",
       accept: () => {
-        this.financialYearService
-          .delete(financialYear.id!)
+        this.referenceDocumentTypeService
+          .delete(referenceDocumentType.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -267,14 +221,14 @@ export class FinancialYearComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<FinancialYear[]> | null,
+    resp: CustomResponse<ReferenceDocumentType[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/financial-year"], {
+      this.router.navigate(["/reference-document-type"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -283,7 +237,7 @@ export class FinancialYearComponent implements OnInit {
         },
       });
     }
-    this.financialYears = resp?.data ?? [];
+    this.referenceDocumentTypes = resp?.data ?? [];
   }
 
   /**
@@ -292,6 +246,6 @@ export class FinancialYearComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Financial Year");
+    this.toastService.error("Error loading Reference Document Type");
   }
 }

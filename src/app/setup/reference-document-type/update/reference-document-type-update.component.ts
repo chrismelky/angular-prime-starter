@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright TAMISEMI All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache-style license that can be
+ * found in the LICENSE file at https://tamisemi.go.tz/license
+ */
 import { Component, Inject, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Observable } from "rxjs";
@@ -5,15 +12,15 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { AdminHierarchyLevel } from "../admin-hierarchy_level.model";
-import { AdminHierarchyLevelService } from "../admin-hierarchy_level.service";
+import { ReferenceDocumentType } from "../reference-document-type.model";
+import { ReferenceDocumentTypeService } from "../reference-document-type.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-admin-hierarchy_level-update",
-  templateUrl: "./admin-hierarchy_level-update.component.html",
+  selector: "app-reference-document-type-update",
+  templateUrl: "./reference-document-type-update.component.html",
 })
-export class AdminHierarchyLevelUpdateComponent implements OnInit {
+export class ReferenceDocumentTypeUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
@@ -23,15 +30,11 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    code: [null, [Validators.required]],
     name: [null, [Validators.required]],
-    position: [null, [Validators.required]],
-    code_required: [null, []],
-    code_length: [null, []],
   });
 
   constructor(
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
+    protected referenceDocumentTypeService: ReferenceDocumentTypeService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -43,7 +46,7 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create AdminHierarchyLevel or Update Facilitiy type if exist else set form has error and return
+   * When form is valid Create ReferenceDocumentType or Update Facilitiy type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -52,20 +55,20 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const adminHierarchyLevel = this.createFromForm();
-    if (adminHierarchyLevel.id !== undefined) {
+    const referenceDocumentType = this.createFromForm();
+    if (referenceDocumentType.id !== undefined) {
       this.subscribeToSaveResponse(
-        this.adminHierarchyLevelService.update(adminHierarchyLevel)
+        this.referenceDocumentTypeService.update(referenceDocumentType)
       );
     } else {
       this.subscribeToSaveResponse(
-        this.adminHierarchyLevelService.create(adminHierarchyLevel)
+        this.referenceDocumentTypeService.create(referenceDocumentType)
       );
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<AdminHierarchyLevel>>
+    result: Observable<CustomResponse<ReferenceDocumentType>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -95,32 +98,24 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param adminHierarchyLevel
+   * @param referenceDocumentType
    */
-  protected updateForm(adminHierarchyLevel: AdminHierarchyLevel): void {
+  protected updateForm(referenceDocumentType: ReferenceDocumentType): void {
     this.editForm.patchValue({
-      id: adminHierarchyLevel.id,
-      code: adminHierarchyLevel.code,
-      name: adminHierarchyLevel.name,
-      position: adminHierarchyLevel.position,
-      code_required: adminHierarchyLevel.code_required,
-      code_length: adminHierarchyLevel.code_length,
+      id: referenceDocumentType.id,
+      name: referenceDocumentType.name,
     });
   }
 
   /**
-   * Return form values as object of type AdminHierarchyLevel
-   * @returns AdminHierarchyLevel
+   * Return form values as object of type ReferenceDocumentType
+   * @returns ReferenceDocumentType
    */
-  protected createFromForm(): AdminHierarchyLevel {
+  protected createFromForm(): ReferenceDocumentType {
     return {
-      ...new AdminHierarchyLevel(),
+      ...new ReferenceDocumentType(),
       id: this.editForm.get(["id"])!.value,
-      code: this.editForm.get(["code"])!.value,
       name: this.editForm.get(["name"])!.value,
-      position: this.editForm.get(["position"])!.value,
-      code_required: this.editForm.get(["code_required"])!.value,
-      code_length: this.editForm.get(["code_length"])!.value,
     };
   }
 }

@@ -21,24 +21,44 @@ import {
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
 
-import { ReferenceDocumentType } from "./reference-document_type.model";
-import { ReferenceDocumentTypeService } from "./reference-document_type.service";
-import { ReferenceDocumentTypeUpdateComponent } from "./update/reference-document_type-update.component";
+import { AdminHierarchyLevel } from "./admin-hierarchy-level.model";
+import { AdminHierarchyLevelService } from "./admin-hierarchy-level.service";
+import { AdminHierarchyLevelUpdateComponent } from "./update/admin-hierarchy-level-update.component";
 
 @Component({
-  selector: "app-reference-document_type",
-  templateUrl: "./reference-document_type.component.html",
+  selector: "app-admin-hierarchy-level",
+  templateUrl: "./admin-hierarchy-level.component.html",
 })
-export class ReferenceDocumentTypeComponent implements OnInit {
+export class AdminHierarchyLevelComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  referenceDocumentTypes?: ReferenceDocumentType[] = [];
+  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
 
   cols = [
+    {
+      field: "code",
+      header: "Code",
+      sort: true,
+    },
     {
       field: "name",
       header: "Name",
       sort: true,
+    },
+    {
+      field: "position",
+      header: "Position",
+      sort: false,
+    },
+    {
+      field: "code_required",
+      header: "Code Required",
+      sort: false,
+    },
+    {
+      field: "code_length",
+      header: "Code Length",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -54,7 +74,7 @@ export class ReferenceDocumentTypeComponent implements OnInit {
   //Mandatory filter
 
   constructor(
-    protected referenceDocumentTypeService: ReferenceDocumentTypeService,
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -76,7 +96,7 @@ export class ReferenceDocumentTypeComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceDocumentTypeService
+    this.adminHierarchyLevelService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -84,7 +104,7 @@ export class ReferenceDocumentTypeComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceDocumentType[]>) => {
+        (res: CustomResponse<AdminHierarchyLevel[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -177,16 +197,16 @@ export class ReferenceDocumentTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReferenceDocumentType
-   * @param referenceDocumentType ; If undefined initize new model to create else edit existing model
+   * Creating or updating AdminHierarchyLevel
+   * @param adminHierarchyLevel ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(referenceDocumentType?: ReferenceDocumentType): void {
-    const data: ReferenceDocumentType = referenceDocumentType ?? {
-      ...new ReferenceDocumentType(),
+  createOrUpdate(adminHierarchyLevel?: AdminHierarchyLevel): void {
+    const data: AdminHierarchyLevel = adminHierarchyLevel ?? {
+      ...new AdminHierarchyLevel(),
     };
-    const ref = this.dialogService.open(ReferenceDocumentTypeUpdateComponent, {
+    const ref = this.dialogService.open(AdminHierarchyLevelUpdateComponent, {
       data,
-      header: "Create/Update Reference Document Type",
+      header: "Create/Update AdminHierarchyLevel",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -196,16 +216,15 @@ export class ReferenceDocumentTypeComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceDocumentType
-   * @param referenceDocumentType
+   * Delete AdminHierarchyLevel
+   * @param adminHierarchyLevel
    */
-  delete(referenceDocumentType: ReferenceDocumentType): void {
+  delete(adminHierarchyLevel: AdminHierarchyLevel): void {
     this.confirmationService.confirm({
-      message:
-        "Are you sure that you want to delete this Reference Document Type?",
+      message: "Are you sure that you want to delete this AdminHierarchyLevel?",
       accept: () => {
-        this.referenceDocumentTypeService
-          .delete(referenceDocumentType.id!)
+        this.adminHierarchyLevelService
+          .delete(adminHierarchyLevel.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -221,14 +240,14 @@ export class ReferenceDocumentTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceDocumentType[]> | null,
+    resp: CustomResponse<AdminHierarchyLevel[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-document_type"], {
+      this.router.navigate(["/admin-hierarchy-level"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -237,7 +256,7 @@ export class ReferenceDocumentTypeComponent implements OnInit {
         },
       });
     }
-    this.referenceDocumentTypes = resp?.data ?? [];
+    this.adminHierarchyLevels = resp?.data ?? [];
   }
 
   /**
@@ -246,6 +265,6 @@ export class ReferenceDocumentTypeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Document Type");
+    this.toastService.error("Error loading Admin Hierarchy Level");
   }
 }

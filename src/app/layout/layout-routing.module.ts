@@ -66,7 +66,7 @@ const routes: Routes = [
         path: "admin-hierarchy_level",
         loadChildren: () =>
           import(
-            "../setup/admin-hierarchy_level/admin-hierarchy_level.module"
+            "../setup/admin-hierarchy-level/admin-hierarchy-level.module"
           ).then((m) => m.AdminHierarchyLevelModule),
       },
       {
@@ -99,7 +99,7 @@ const routes: Routes = [
         path: "reference-document_type",
         loadChildren: () =>
           import(
-            "../setup/reference-document_type/reference-document_type.module"
+            "../setup/reference-document-type/reference-document-type.module"
           ).then((m) => m.ReferenceDocumentTypeModule),
       },
       {
@@ -117,11 +117,53 @@ const routes: Routes = [
           ),
       },
       {
+        path: "reference-type",
+        loadChildren: () =>
+          import("../setup/reference-type/reference-type.module").then(
+            (m) => m.ReferenceTypeModule
+          ),
+      },
+      {
+        path: "financial-year",
+        loadChildren: () =>
+          import("../setup/financial-year/financial-year.module").then(
+            (m) => m.FinancialYearModule
+          ),
+      },
+      {
+        path: "admin-hierarchy-level",
+        loadChildren: () =>
+          import(
+            "../setup/admin-hierarchy-level/admin-hierarchy-level.module"
+          ).then((m) => m.AdminHierarchyLevelModule),
+      },
+      {
+        path: "reference-document-type",
+        loadChildren: () =>
+          import(
+            "../setup/reference-document-type/reference-document-type.module"
+          ).then((m) => m.ReferenceDocumentTypeModule),
+      },
+      {
+        path: "admin-hierarchy",
+        loadChildren: () =>
+          import("../setup/admin-hierarchy/admin-hierarchy.module").then(
+            (m) => m.AdminHierarchyModule
+          ),
+      },
+      {
         path: "strategic-plan",
         loadChildren: () =>
           import("../setup/strategic-plan/strategic-plan.module").then(
             (m) => m.StrategicPlanModule
           ),
+      },
+      {
+        path: "activity-task-nature",
+        loadChildren: () =>
+          import(
+            "../setup/activity-task-nature/activity-task-nature.module"
+          ).then((m) => m.ActivityTaskNatureModule),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

@@ -1,10 +1,17 @@
+/**
+ * @license
+ * Copyright TAMISEMI All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache-style license that can be
+ * found in the LICENSE file at https://tamisemi.go.tz/license
+ */
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { AdminHierarchyLevel } from "./admin-hierarchy_level.model";
+import { AdminHierarchyLevel } from "./admin-hierarchy-level.model";
 
 @Injectable({ providedIn: "root" })
 export class AdminHierarchyLevelService {

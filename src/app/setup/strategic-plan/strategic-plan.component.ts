@@ -5,49 +5,47 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { StartFinancialYear } from "src/app/setup/start-financial-year/start-financial-year.model";
-import { StartFinancialYearService } from "src/app/setup/start-financial-year/start-financial-year.service";
-import { EndFinancialYear } from "src/app/setup/end-financial-year/end-financial-year.model";
-import { EndFinancialYearService } from "src/app/setup/end-financial-year/end-financial-year.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 
-import { StrategicPlan } from "./strategic-plan.model";
-import { StrategicPlanService } from "./strategic-plan.service";
-import { StrategicPlanUpdateComponent } from "./update/strategic-plan-update.component";
+import { StrategicPlan } from './strategic-plan.model';
+import { StrategicPlanService } from './strategic-plan.service';
+import { StrategicPlanUpdateComponent } from './update/strategic-plan-update.component';
 
 @Component({
-  selector: "app-strategic-plan",
-  templateUrl: "./strategic-plan.component.html",
+  selector: 'app-strategic-plan',
+  templateUrl: './strategic-plan.component.html',
 })
 export class StrategicPlanComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   strategicPlans?: StrategicPlan[] = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
-  startFinancialYears?: StartFinancialYear[] = [];
-  endFinancialYears?: EndFinancialYear[] = [];
+  startFinancialYears?: FinancialYear[] = [];
+  endFinancialYears?: FinancialYear[] = [];
 
   cols = [
     {
-      field: "url",
-      header: "Url",
+      field: 'url',
+      header: 'Url',
       sort: true,
     },
   ]; //Table display columns
@@ -69,8 +67,8 @@ export class StrategicPlanComponent implements OnInit {
   constructor(
     protected strategicPlanService: StrategicPlanService,
     protected adminHierarchyService: AdminHierarchyService,
-    protected startFinancialYearService: StartFinancialYearService,
-    protected endFinancialYearService: EndFinancialYearService,
+    protected startFinancialYearService: FinancialYearService,
+    protected endFinancialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -89,13 +87,13 @@ export class StrategicPlanComponent implements OnInit {
     this.startFinancialYearService
       .query()
       .subscribe(
-        (resp: CustomResponse<StartFinancialYear[]>) =>
+        (resp: CustomResponse<FinancialYear[]>) =>
           (this.startFinancialYears = resp.data)
       );
     this.endFinancialYearService
       .query()
       .subscribe(
-        (resp: CustomResponse<EndFinancialYear[]>) =>
+        (resp: CustomResponse<FinancialYear[]>) =>
           (this.endFinancialYears = resp.data)
       );
     this.handleNavigation();
@@ -148,11 +146,11 @@ export class StrategicPlanComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -227,8 +225,8 @@ export class StrategicPlanComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -245,7 +243,7 @@ export class StrategicPlanComponent implements OnInit {
     };
     const ref = this.dialogService.open(StrategicPlanUpdateComponent, {
       data,
-      header: "Create/Update StrategicPlan",
+      header: 'Create/Update StrategicPlan',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -260,7 +258,7 @@ export class StrategicPlanComponent implements OnInit {
    */
   delete(strategicPlan: StrategicPlan): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this StrategicPlan?",
+      message: 'Are you sure that you want to delete this StrategicPlan?',
       accept: () => {
         this.strategicPlanService
           .delete(strategicPlan.id!)
@@ -286,12 +284,12 @@ export class StrategicPlanComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/strategic-plan"], {
+      this.router.navigate(['/strategic-plan'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -304,6 +302,6 @@ export class StrategicPlanComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Strategic Plan");
+    this.toastService.error('Error loading Strategic Plan');
   }
 }

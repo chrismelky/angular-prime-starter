@@ -116,6 +116,31 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "strategic-plan",
         },
+        {
+          label: "Reference Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-type",
+        },
+        {
+          label: "Financial Years",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "financial-year",
+        },
+        {
+          label: "Admin Hierarchy Levels",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "admin-hierarchy-level",
+        },
+        {
+          label: "Reference Document Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-document-type",
+        },
+        {
+          label: "Activity Task Natures",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "activity-task-nature",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

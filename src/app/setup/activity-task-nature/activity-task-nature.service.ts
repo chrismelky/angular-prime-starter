@@ -11,41 +11,41 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { ReferenceDocumentType } from "./reference-document_type.model";
+import { ActivityTaskNature } from "./activity-task-nature.model";
 
 @Injectable({ providedIn: "root" })
-export class ReferenceDocumentTypeService {
-  public resourceUrl = "api/reference_document_types";
+export class ActivityTaskNatureService {
+  public resourceUrl = "api/activity_task_natures";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    referenceDocumentType: ReferenceDocumentType
-  ): Observable<CustomResponse<ReferenceDocumentType>> {
-    return this.http.post<CustomResponse<ReferenceDocumentType>>(
+    activityTaskNature: ActivityTaskNature
+  ): Observable<CustomResponse<ActivityTaskNature>> {
+    return this.http.post<CustomResponse<ActivityTaskNature>>(
       this.resourceUrl,
-      referenceDocumentType
+      activityTaskNature
     );
   }
 
   update(
-    referenceDocumentType: ReferenceDocumentType
-  ): Observable<CustomResponse<ReferenceDocumentType>> {
-    return this.http.put<CustomResponse<ReferenceDocumentType>>(
-      `${this.resourceUrl}/${referenceDocumentType.id}`,
-      referenceDocumentType
+    activityTaskNature: ActivityTaskNature
+  ): Observable<CustomResponse<ActivityTaskNature>> {
+    return this.http.put<CustomResponse<ActivityTaskNature>>(
+      `${this.resourceUrl}/${activityTaskNature.id}`,
+      activityTaskNature
     );
   }
 
-  find(id: number): Observable<CustomResponse<ReferenceDocumentType>> {
-    return this.http.get<CustomResponse<ReferenceDocumentType>>(
+  find(id: number): Observable<CustomResponse<ActivityTaskNature>> {
+    return this.http.get<CustomResponse<ActivityTaskNature>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<ReferenceDocumentType[]>> {
+  query(req?: any): Observable<CustomResponse<ActivityTaskNature[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<ReferenceDocumentType[]>>(
+    return this.http.get<CustomResponse<ActivityTaskNature[]>>(
       this.resourceUrl,
       { params: options }
     );

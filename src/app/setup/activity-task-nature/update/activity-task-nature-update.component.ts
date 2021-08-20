@@ -12,18 +12,22 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { ReferenceDocumentType } from "../reference-document_type.model";
-import { ReferenceDocumentTypeService } from "../reference-document_type.service";
+import { ActivityType } from "src/app/setup/activity-type/activity-type.model";
+import { ActivityTypeService } from "src/app/setup/activity-type/activity-type.service";
+import { ActivityTaskNature } from "../activity-task-nature.model";
+import { ActivityTaskNatureService } from "../activity-task-nature.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-reference-document_type-update",
-  templateUrl: "./reference-document_type-update.component.html",
+  selector: "app-activity-task-nature-update",
+  templateUrl: "./activity-task-nature-update.component.html",
 })
-export class ReferenceDocumentTypeUpdateComponent implements OnInit {
+export class ActivityTaskNatureUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+
+  activityTypes?: ActivityType[] = [];
 
   /**
    * Declare form
@@ -31,10 +35,13 @@ export class ReferenceDocumentTypeUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
+    code: [null, [Validators.required]],
+    activity_type_id: [null, [Validators.required]],
   });
 
   constructor(
-    protected referenceDocumentTypeService: ReferenceDocumentTypeService,
+    protected activityTaskNatureService: ActivityTaskNatureService,
+    protected activityTypeService: ActivityTypeService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -42,11 +49,17 @@ export class ReferenceDocumentTypeUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.activityTypeService
+      .query()
+      .subscribe(
+        (resp: CustomResponse<ActivityType[]>) =>
+          (this.activityTypes = resp.data)
+      );
+    this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
   }
 
   /**
-   * When form is valid Create ReferenceDocumentType or Update Facility type if exist else set form has error and return
+   * When form is valid Create ActivityTaskNature or Update Facilitiy type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -55,20 +68,20 @@ export class ReferenceDocumentTypeUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const referenceDocumentType = this.createFromForm();
-    if (referenceDocumentType.id !== undefined) {
+    const activityTaskNature = this.createFromForm();
+    if (activityTaskNature.id !== undefined) {
       this.subscribeToSaveResponse(
-        this.referenceDocumentTypeService.update(referenceDocumentType)
+        this.activityTaskNatureService.update(activityTaskNature)
       );
     } else {
       this.subscribeToSaveResponse(
-        this.referenceDocumentTypeService.create(referenceDocumentType)
+        this.activityTaskNatureService.create(activityTaskNature)
       );
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<ReferenceDocumentType>>
+    result: Observable<CustomResponse<ActivityTaskNature>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -98,24 +111,28 @@ export class ReferenceDocumentTypeUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param referenceDocumentType
+   * @param activityTaskNature
    */
-  protected updateForm(referenceDocumentType: ReferenceDocumentType): void {
+  protected updateForm(activityTaskNature: ActivityTaskNature): void {
     this.editForm.patchValue({
-      id: referenceDocumentType.id,
-      name: referenceDocumentType.name,
+      id: activityTaskNature.id,
+      name: activityTaskNature.name,
+      code: activityTaskNature.code,
+      activity_type_id: activityTaskNature.activity_type_id,
     });
   }
 
   /**
-   * Return form values as object of type ReferenceDocumentType
-   * @returns ReferenceDocumentType
+   * Return form values as object of type ActivityTaskNature
+   * @returns ActivityTaskNature
    */
-  protected createFromForm(): ReferenceDocumentType {
+  protected createFromForm(): ActivityTaskNature {
     return {
-      ...new ReferenceDocumentType(),
+      ...new ActivityTaskNature(),
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
+      code: this.editForm.get(["code"])!.value,
+      activity_type_id: this.editForm.get(["activity_type_id"])!.value,
     };
   }
 }

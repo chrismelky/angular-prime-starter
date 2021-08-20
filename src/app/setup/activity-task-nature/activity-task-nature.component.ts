@@ -5,34 +5,38 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {FinancialYear} from "./financial-year.model";
-import {FinancialYearService} from "./financial-year.service";
-import {FinancialYearUpdateComponent} from "./update/financial-year-update.component";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+import { ActivityType } from "src/app/setup/activity-type/activity-type.model";
+import { ActivityTypeService } from "src/app/setup/activity-type/activity-type.service";
+
+import { ActivityTaskNature } from "./activity-task-nature.model";
+import { ActivityTaskNatureService } from "./activity-task-nature.service";
+import { ActivityTaskNatureUpdateComponent } from "./update/activity-task-nature-update.component";
 
 @Component({
-  selector: "app-financial-year",
-  templateUrl: "./financial-year.component.html",
+  selector: "app-activity-task-nature",
+  templateUrl: "./activity-task-nature.component.html",
 })
-export class FinancialYearComponent implements OnInit {
+export class ActivityTaskNatureComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  financialYears?: FinancialYear[] = [];
-  previousFinancialYears?: FinancialYear[] = [];
+  activityTaskNatures?: ActivityTaskNature[] = [];
+
+  activityTypes?: ActivityType[] = [];
 
   cols = [
     {
@@ -41,45 +45,10 @@ export class FinancialYearComponent implements OnInit {
       sort: true,
     },
     {
-      field: "description",
-      header: "Description",
+      field: "code",
+      header: "Code",
       sort: true,
     },
-    {
-      field: "previous_financial_year_id",
-      header: "Previous Financial Year ",
-      sort: true,
-    },
-    {
-      field: "is_active",
-      header: "Is Active",
-      sort: false,
-    },
-    {
-      field: "is_current",
-      header: "Is Current",
-      sort: false,
-    },
-    {
-      field: "status",
-      header: "Status",
-      sort: false,
-    },
-    {
-      field: "sort_order",
-      header: "Sort Order",
-      sort: false,
-    },
-    /*{
-      field: "start_date",
-      header: "Start Date",
-      sort: true,
-    },
-    {
-      field: "end_date",
-      header: "End Date",
-      sort: true,
-    },*/
   ]; //Table display columns
 
   isLoading = false;
@@ -92,24 +61,25 @@ export class FinancialYearComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  activity_type_id!: number;
 
   constructor(
-    protected financialYearService: FinancialYearService,
+    protected activityTaskNatureService: ActivityTaskNatureService,
+    protected activityTypeService: ActivityTypeService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.financialYearService
+    this.activityTypeService
       .query()
       .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.previousFinancialYears = resp.data)
+        (resp: CustomResponse<ActivityType[]>) =>
+          (this.activityTypes = resp.data)
       );
     this.handleNavigation();
   }
@@ -117,21 +87,25 @@ export class FinancialYearComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.activity_type_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.financialYearService
+    this.activityTaskNatureService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        activity_type_id: this.activity_type_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<FinancialYear[]>) => {
+        (res: CustomResponse<ActivityTaskNature[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -162,8 +136,20 @@ export class FinancialYearComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -224,16 +210,17 @@ export class FinancialYearComponent implements OnInit {
   }
 
   /**
-   * Creating or updating FinancialYear
-   * @param financialYear ; If undefined initize new model to create else edit existing model
+   * Creating or updating ActivityTaskNature
+   * @param activityTaskNature ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(financialYear?: FinancialYear): void {
-    const data: FinancialYear = financialYear ?? {
-      ...new FinancialYear(),
+  createOrUpdate(activityTaskNature?: ActivityTaskNature): void {
+    const data: ActivityTaskNature = activityTaskNature ?? {
+      ...new ActivityTaskNature(),
+      activity_type_id: this.activity_type_id,
     };
-    const ref = this.dialogService.open(FinancialYearUpdateComponent, {
+    const ref = this.dialogService.open(ActivityTaskNatureUpdateComponent, {
       data,
-      header: "Create/Update FinancialYear",
+      header: "Create/Update ActivityTaskNature",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -243,15 +230,15 @@ export class FinancialYearComponent implements OnInit {
   }
 
   /**
-   * Delete FinancialYear
-   * @param financialYear
+   * Delete ActivityTaskNature
+   * @param activityTaskNature
    */
-  delete(financialYear: FinancialYear): void {
+  delete(activityTaskNature: ActivityTaskNature): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this FinancialYear?",
+      message: "Are you sure that you want to delete this ActivityTaskNature?",
       accept: () => {
-        this.financialYearService
-          .delete(financialYear.id!)
+        this.activityTaskNatureService
+          .delete(activityTaskNature.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -267,14 +254,14 @@ export class FinancialYearComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<FinancialYear[]> | null,
+    resp: CustomResponse<ActivityTaskNature[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/financial-year"], {
+      this.router.navigate(["/activity-task-nature"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -283,7 +270,7 @@ export class FinancialYearComponent implements OnInit {
         },
       });
     }
-    this.financialYears = resp?.data ?? [];
+    this.activityTaskNatures = resp?.data ?? [];
   }
 
   /**
@@ -292,6 +279,6 @@ export class FinancialYearComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Financial Year");
+    this.toastService.error("Error loading Activity Task Nature");
   }
 }

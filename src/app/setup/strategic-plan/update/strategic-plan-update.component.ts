@@ -14,10 +14,8 @@ import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 import { CustomResponse } from "../../../utils/custom-response";
 import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
 import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { StartFinancialYear } from "src/app/setup/start-financial-year/start-financial-year.model";
-import { StartFinancialYearService } from "src/app/setup/start-financial-year/start-financial-year.service";
-import { EndFinancialYear } from "src/app/setup/end-financial-year/end-financial-year.model";
-import { EndFinancialYearService } from "src/app/setup/end-financial-year/end-financial-year.service";
+import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
+import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
 import { StrategicPlan } from "../strategic-plan.model";
 import { StrategicPlanService } from "../strategic-plan.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -32,8 +30,8 @@ export class StrategicPlanUpdateComponent implements OnInit {
   errors = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
-  startFinancialYears?: StartFinancialYear[] = [];
-  endFinancialYears?: EndFinancialYear[] = [];
+  startFinancialYears?: FinancialYear[] = [];
+  endFinancialYears?: FinancialYear[] = [];
 
   /**
    * Declare form
@@ -49,8 +47,8 @@ export class StrategicPlanUpdateComponent implements OnInit {
   constructor(
     protected strategicPlanService: StrategicPlanService,
     protected adminHierarchyService: AdminHierarchyService,
-    protected startFinancialYearService: StartFinancialYearService,
-    protected endFinancialYearService: EndFinancialYearService,
+    protected startFinancialYearService: FinancialYearService,
+    protected endFinancialYearService: FinancialYearService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -67,13 +65,13 @@ export class StrategicPlanUpdateComponent implements OnInit {
     this.startFinancialYearService
       .query()
       .subscribe(
-        (resp: CustomResponse<StartFinancialYear[]>) =>
+        (resp: CustomResponse<FinancialYear[]>) =>
           (this.startFinancialYears = resp.data)
       );
     this.endFinancialYearService
       .query()
       .subscribe(
-        (resp: CustomResponse<EndFinancialYear[]>) =>
+        (resp: CustomResponse<FinancialYear[]>) =>
           (this.endFinancialYears = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog

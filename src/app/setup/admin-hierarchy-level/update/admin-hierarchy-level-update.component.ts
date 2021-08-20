@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright TAMISEMI All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache-style license that can be
+ * found in the LICENSE file at https://tamisemi.go.tz/license
+ */
 import { Component, Inject, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Observable } from "rxjs";
@@ -5,13 +12,13 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { AdminHierarchyLevel } from "../admin-hierarchy_level.model";
-import { AdminHierarchyLevelService } from "../admin-hierarchy_level.service";
+import { AdminHierarchyLevel } from "../admin-hierarchy-level.model";
+import { AdminHierarchyLevelService } from "../admin-hierarchy-level.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-admin-hierarchy_level-update",
-  templateUrl: "./admin-hierarchy_level-update.component.html",
+  selector: "app-admin-hierarchy-level-update",
+  templateUrl: "./admin-hierarchy-level-update.component.html",
 })
 export class AdminHierarchyLevelUpdateComponent implements OnInit {
   isSaving = false;

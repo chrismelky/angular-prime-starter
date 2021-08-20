@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright TAMISEMI All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache-style license that can be
+ * found in the LICENSE file at https://tamisemi.go.tz/license
+ */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
@@ -14,13 +21,13 @@ import {
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
 
-import { AdminHierarchyLevel } from "./admin-hierarchy_level.model";
-import { AdminHierarchyLevelService } from "./admin-hierarchy_level.service";
-import { AdminHierarchyLevelUpdateComponent } from "./update/admin-hierarchy_level-update.component";
+import { AdminHierarchyLevel } from "./admin-hierarchy-level.model";
+import { AdminHierarchyLevelService } from "./admin-hierarchy-level.service";
+import { AdminHierarchyLevelUpdateComponent } from "./update/admin-hierarchy-level-update.component";
 
 @Component({
-  selector: "app-admin-hierarchy_level",
-  templateUrl: "./admin-hierarchy_level.component.html",
+  selector: "app-admin-hierarchy-level",
+  templateUrl: "./admin-hierarchy-level.component.html",
 })
 export class AdminHierarchyLevelComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
@@ -240,7 +247,7 @@ export class AdminHierarchyLevelComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/admin-hierarchy_level"], {
+      this.router.navigate(["/admin-hierarchy-level"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,

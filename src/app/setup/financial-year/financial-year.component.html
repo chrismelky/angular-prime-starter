@@ -136,12 +136,14 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="financialYears?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'start_date'">
+            Start Date<p-sortIcon [field]="'start_date'"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'end_date'">
+            End Date<p-sortIcon [field]="'end_date'"></p-sortIcon>
           </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
@@ -150,6 +152,12 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            {{ rowData['start_date']|date:'mediumDate' }}
+          </td>
+          <td>
+            {{ rowData['end_date']|date:'mediumDate' }}
           </td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">

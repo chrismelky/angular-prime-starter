@@ -20,7 +20,7 @@ export class EnumService {
         value: 'Public',
       },
     ],
-    // ===enum hooks===
+    /**====Planrep Enum Generator Hook: Dont Delete====*/
   };
   constructor() {}
 

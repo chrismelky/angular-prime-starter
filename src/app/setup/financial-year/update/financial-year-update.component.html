@@ -1,0 +1,178 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="name" type="text" pInputText formControlName="name" />
+          <label for="name">Name </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('name')!.invalid &&
+            (editForm.get('name')!.dirty ||
+              editForm.get('name')!.touched ||
+              formError)
+          "
+        >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
+            >Name is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="description"
+            type="text"
+            pInputText
+            formControlName="description"
+          />
+          <label for="description">Description </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('description')!.invalid &&
+            (editForm.get('description')!.dirty ||
+              editForm.get('description')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_active"
+          name="is_active"
+          formControlName="is_active"
+        ></p-inputSwitch>
+        <label for="is_active">Is Active </label>
+      </div>
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_current"
+          name="is_current"
+          formControlName="is_current"
+        ></p-inputSwitch>
+        <label for="is_current">Is Current </label>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber id="status" formControlName="status"></p-inputNumber>
+          <label for="status">Status </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('status')!.invalid &&
+            (editForm.get('status')!.dirty ||
+              editForm.get('status')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="sort_order"
+            formControlName="sort_order"
+          ></p-inputNumber>
+          <label for="sort_order">Sort Order </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sort_order')!.invalid &&
+            (editForm.get('sort_order')!.dirty ||
+              editForm.get('sort_order')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-calendar id="start_date" appendTo="body" formControlName="start_date"></p-calendar>
+          <label for="start_date">Start Date </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('start_date')!.invalid &&
+            (editForm.get('start_date')!.dirty ||
+              editForm.get('start_date')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('start_date')?.errors?.required"
+            >Start Date is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-calendar id="end_date" appendTo="body" formControlName="end_date"></p-calendar>
+          <label for="end_date">End Date </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('end_date')!.invalid &&
+            (editForm.get('end_date')!.dirty ||
+              editForm.get('end_date')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('end_date')?.errors?.required"
+            >End Date is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="previous_financial_year_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            optionValue="id"
+            optionLabel="name"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="previousFinancialYears!"
+            formControlName="previous_financial_year_id"
+          ></p-dropdown>
+          <label for="previous_financial_year_id"
+            >Previous Financial Year
+          </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('previous_financial_year_id')!.invalid &&
+            (editForm.get('previous_financial_year_id')!.dirty ||
+              editForm.get('previous_financial_year_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

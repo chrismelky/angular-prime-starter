@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { MainComponent } from './main/main.component';
-import { NotFoundComponent } from './not-found/not-found.component';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {MainComponent} from './main/main.component';
+import {NotFoundComponent} from './not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -60,7 +60,7 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             '../setup/activity-task_nature/activity-task_nature.module'
-          ).then((m) => m.ActivityTaskNatureModule),
+            ).then((m) => m.ActivityTaskNatureModule),
       },
       {
         path: 'sector',
@@ -93,7 +93,7 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             '../setup/reference-document_type/reference-document_type.module'
-          ).then((m) => m.ReferenceDocumentTypeModule),
+            ).then((m) => m.ReferenceDocumentTypeModule),
       },
       {
         path: 'reference-type',
@@ -114,7 +114,7 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/admin-hierarchy-level/admin-hierarchy-level.module"
-          ).then((m) => m.AdminHierarchyLevelModule),
+            ).then((m) => m.AdminHierarchyLevelModule),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
@@ -129,4 +129,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class LayoutRoutingModule {}
+export class LayoutRoutingModule {
+}

@@ -19,8 +19,8 @@ import { SectionLevelService } from "src/app/setup/section-level/section-level.s
 import { DecisionLevel } from "./decision-level.model";
 import { DecisionLevelService } from "./decision-level.service";
 import { DecisionLevelUpdateComponent } from "./update/decision-level-update.component";
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy_level.model";
-import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy_level.service";
+import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
 
 @Component({
   selector: "app-decision-level",

@@ -70,9 +70,6 @@ export class MainComponent implements OnInit {
           label: 'Admin Hierarchy Levels',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'admin-hierarchy_level',
-          label: "Admin Hierarchies",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy",
         },
         {
           label: 'Admin Hierarchies',

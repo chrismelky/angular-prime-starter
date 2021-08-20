@@ -41,6 +41,26 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "admin-hierarchy_level",
         },
+        {
+          label: "Admin Hierarchies",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "admin-hierarchy",
+        },
+        {
+          label: "Sectors",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "sector",
+        },
+        {
+          label: "Section Levels",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "section-level",
+        },
+        {
+          label: "Sections",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "section",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

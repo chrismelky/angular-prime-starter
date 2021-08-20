@@ -13,20 +13,20 @@ export class AdminHierarchyLevelService {
   constructor(protected http: HttpClient) {}
 
   create(
-    adminhierarchy_level: AdminHierarchyLevel
+    adminHierarchyLevel: AdminHierarchyLevel
   ): Observable<CustomResponse<AdminHierarchyLevel>> {
     return this.http.post<CustomResponse<AdminHierarchyLevel>>(
       this.resourceUrl,
-      adminhierarchy_level
+      adminHierarchyLevel
     );
   }
 
   update(
-    adminhierarchy_level: AdminHierarchyLevel
+    adminHierarchyLevel: AdminHierarchyLevel
   ): Observable<CustomResponse<AdminHierarchyLevel>> {
     return this.http.put<CustomResponse<AdminHierarchyLevel>>(
-      `${this.resourceUrl}/${adminhierarchy_level.id}`,
-      adminhierarchy_level
+      `${this.resourceUrl}/${adminHierarchyLevel.id}`,
+      adminHierarchyLevel
     );
   }
 

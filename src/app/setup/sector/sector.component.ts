@@ -14,43 +14,33 @@ import {
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
 
-import { AdminHierarchyLevel } from "./admin-hierarchy_level.model";
-import { AdminHierarchyLevelService } from "./admin-hierarchy_level.service";
-import { AdminHierarchyLevelUpdateComponent } from "./update/admin-hierarchy_level-update.component";
+import { Sector } from "./sector.model";
+import { SectorService } from "./sector.service";
+import { SectorUpdateComponent } from "./update/sector-update.component";
 
 @Component({
-  selector: "app-admin-hierarchy_level",
-  templateUrl: "./admin-hierarchy_level.component.html",
+  selector: "app-sector",
+  templateUrl: "./sector.component.html",
 })
-export class AdminHierarchyLevelComponent implements OnInit {
+export class SectorComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
+  sectors?: Sector[] = [];
 
   cols = [
     {
       field: "code",
       header: "Code",
-      sort: true,
+      sort: false,
     },
     {
       field: "name",
       header: "Name",
-      sort: true,
-    },
-    {
-      field: "position",
-      header: "Position",
       sort: false,
     },
     {
-      field: "code_required",
-      header: "Code Required",
-      sort: false,
-    },
-    {
-      field: "code_length",
-      header: "Code Length",
+      field: "description",
+      header: "Description",
       sort: false,
     },
   ]; //Table display columns
@@ -67,7 +57,7 @@ export class AdminHierarchyLevelComponent implements OnInit {
   //Mandatory filter
 
   constructor(
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
+    protected sectorService: SectorService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -89,7 +79,7 @@ export class AdminHierarchyLevelComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.adminHierarchyLevelService
+    this.sectorService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -97,7 +87,7 @@ export class AdminHierarchyLevelComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<AdminHierarchyLevel[]>) => {
+        (res: CustomResponse<Sector[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -190,16 +180,16 @@ export class AdminHierarchyLevelComponent implements OnInit {
   }
 
   /**
-   * Creating or updating AdminHierarchyLevel
-   * @param adminHierarchyLevel ; If undefined initize new model to create else edit existing model
+   * Creating or updating Sector
+   * @param sector ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(adminHierarchyLevel?: AdminHierarchyLevel): void {
-    const data: AdminHierarchyLevel = adminHierarchyLevel ?? {
-      ...new AdminHierarchyLevel(),
+  createOrUpdate(sector?: Sector): void {
+    const data: Sector = sector ?? {
+      ...new Sector(),
     };
-    const ref = this.dialogService.open(AdminHierarchyLevelUpdateComponent, {
+    const ref = this.dialogService.open(SectorUpdateComponent, {
       data,
-      header: "Create/Update AdminHierarchyLevel",
+      header: "Create/Update Sector",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -209,19 +199,17 @@ export class AdminHierarchyLevelComponent implements OnInit {
   }
 
   /**
-   * Delete AdminHierarchyLevel
-   * @param adminHierarchyLevel
+   * Delete Sector
+   * @param sector
    */
-  delete(adminHierarchyLevel: AdminHierarchyLevel): void {
+  delete(sector: Sector): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this AdminHierarchyLevel?",
+      message: "Are you sure that you want to delete this Sector?",
       accept: () => {
-        this.adminHierarchyLevelService
-          .delete(adminHierarchyLevel.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
+        this.sectorService.delete(sector.id!).subscribe((resp) => {
+          this.loadPage(this.page);
+          this.toastService.info(resp.message);
+        });
       },
     });
   }
@@ -233,14 +221,14 @@ export class AdminHierarchyLevelComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<AdminHierarchyLevel[]> | null,
+    resp: CustomResponse<Sector[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/admin-hierarchy_level"], {
+      this.router.navigate(["/sector"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -249,7 +237,7 @@ export class AdminHierarchyLevelComponent implements OnInit {
         },
       });
     }
-    this.adminHierarchyLevels = resp?.data ?? [];
+    this.sectors = resp?.data ?? [];
   }
 
   /**
@@ -258,6 +246,6 @@ export class AdminHierarchyLevelComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Admin Hierarchy Level");
+    this.toastService.error("Error loading Sector");
   }
 }

@@ -5,15 +5,15 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { AdminHierarchyLevel } from "../admin-hierarchy_level.model";
-import { AdminHierarchyLevelService } from "../admin-hierarchy_level.service";
+import { SectionLevel } from "../section-level.model";
+import { SectionLevelService } from "../section-level.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-admin-hierarchy_level-update",
-  templateUrl: "./admin-hierarchy_level-update.component.html",
+  selector: "app-section-level-update",
+  templateUrl: "./section-level-update.component.html",
 })
-export class AdminHierarchyLevelUpdateComponent implements OnInit {
+export class SectionLevelUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
@@ -31,7 +31,7 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
   });
 
   constructor(
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
+    protected sectionLevelService: SectionLevelService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -43,7 +43,7 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create AdminHierarchyLevel or Update Facilitiy type if exist else set form has error and return
+   * When form is valid Create SectionLevel or Update Facilitiy type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -52,20 +52,20 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const adminHierarchyLevel = this.createFromForm();
-    if (adminHierarchyLevel.id !== undefined) {
+    const sectionLevel = this.createFromForm();
+    if (sectionLevel.id !== undefined) {
       this.subscribeToSaveResponse(
-        this.adminHierarchyLevelService.update(adminHierarchyLevel)
+        this.sectionLevelService.update(sectionLevel)
       );
     } else {
       this.subscribeToSaveResponse(
-        this.adminHierarchyLevelService.create(adminHierarchyLevel)
+        this.sectionLevelService.create(sectionLevel)
       );
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<AdminHierarchyLevel>>
+    result: Observable<CustomResponse<SectionLevel>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -95,26 +95,26 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param adminHierarchyLevel
+   * @param sectionLevel
    */
-  protected updateForm(adminHierarchyLevel: AdminHierarchyLevel): void {
+  protected updateForm(sectionLevel: SectionLevel): void {
     this.editForm.patchValue({
-      id: adminHierarchyLevel.id,
-      code: adminHierarchyLevel.code,
-      name: adminHierarchyLevel.name,
-      position: adminHierarchyLevel.position,
-      code_required: adminHierarchyLevel.code_required,
-      code_length: adminHierarchyLevel.code_length,
+      id: sectionLevel.id,
+      code: sectionLevel.code,
+      name: sectionLevel.name,
+      position: sectionLevel.position,
+      code_required: sectionLevel.code_required,
+      code_length: sectionLevel.code_length,
     });
   }
 
   /**
-   * Return form values as object of type AdminHierarchyLevel
-   * @returns AdminHierarchyLevel
+   * Return form values as object of type SectionLevel
+   * @returns SectionLevel
    */
-  protected createFromForm(): AdminHierarchyLevel {
+  protected createFromForm(): SectionLevel {
     return {
-      ...new AdminHierarchyLevel(),
+      ...new SectionLevel(),
       id: this.editForm.get(["id"])!.value,
       code: this.editForm.get(["code"])!.value,
       name: this.editForm.get(["name"])!.value,

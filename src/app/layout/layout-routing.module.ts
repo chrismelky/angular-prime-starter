@@ -27,6 +27,25 @@ const routes: Routes = [
             "../setup/admin-hierarchy_level/admin-hierarchy_level.module"
           ).then((m) => m.AdminHierarchyLevelModule),
       },
+      {
+        path: "sector",
+        loadChildren: () =>
+          import("../setup/sector/sector.module").then((m) => m.SectorModule),
+      },
+      {
+        path: "section-level",
+        loadChildren: () =>
+          import("../setup/section-level/section-level.module").then(
+            (m) => m.SectionLevelModule
+          ),
+      },
+      {
+        path: "section",
+        loadChildren: () =>
+          import("../setup/section/section.module").then(
+            (m) => m.SectionModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

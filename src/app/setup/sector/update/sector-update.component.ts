@@ -5,15 +5,15 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { AdminHierarchyLevel } from "../admin-hierarchy_level.model";
-import { AdminHierarchyLevelService } from "../admin-hierarchy_level.service";
+import { Sector } from "../sector.model";
+import { SectorService } from "../sector.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-admin-hierarchy_level-update",
-  templateUrl: "./admin-hierarchy_level-update.component.html",
+  selector: "app-sector-update",
+  templateUrl: "./sector-update.component.html",
 })
-export class AdminHierarchyLevelUpdateComponent implements OnInit {
+export class SectorUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
@@ -25,13 +25,11 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
     id: [null, []],
     code: [null, [Validators.required]],
     name: [null, [Validators.required]],
-    position: [null, [Validators.required]],
-    code_required: [null, []],
-    code_length: [null, []],
+    description: [null, []],
   });
 
   constructor(
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
+    protected sectorService: SectorService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -43,7 +41,7 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create AdminHierarchyLevel or Update Facilitiy type if exist else set form has error and return
+   * When form is valid Create Sector or Update Facilitiy type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -52,20 +50,16 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const adminHierarchyLevel = this.createFromForm();
-    if (adminHierarchyLevel.id !== undefined) {
-      this.subscribeToSaveResponse(
-        this.adminHierarchyLevelService.update(adminHierarchyLevel)
-      );
+    const sector = this.createFromForm();
+    if (sector.id !== undefined) {
+      this.subscribeToSaveResponse(this.sectorService.update(sector));
     } else {
-      this.subscribeToSaveResponse(
-        this.adminHierarchyLevelService.create(adminHierarchyLevel)
-      );
+      this.subscribeToSaveResponse(this.sectorService.create(sector));
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<AdminHierarchyLevel>>
+    result: Observable<CustomResponse<Sector>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -95,32 +89,28 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param adminHierarchyLevel
+   * @param sector
    */
-  protected updateForm(adminHierarchyLevel: AdminHierarchyLevel): void {
+  protected updateForm(sector: Sector): void {
     this.editForm.patchValue({
-      id: adminHierarchyLevel.id,
-      code: adminHierarchyLevel.code,
-      name: adminHierarchyLevel.name,
-      position: adminHierarchyLevel.position,
-      code_required: adminHierarchyLevel.code_required,
-      code_length: adminHierarchyLevel.code_length,
+      id: sector.id,
+      code: sector.code,
+      name: sector.name,
+      description: sector.description,
     });
   }
 
   /**
-   * Return form values as object of type AdminHierarchyLevel
-   * @returns AdminHierarchyLevel
+   * Return form values as object of type Sector
+   * @returns Sector
    */
-  protected createFromForm(): AdminHierarchyLevel {
+  protected createFromForm(): Sector {
     return {
-      ...new AdminHierarchyLevel(),
+      ...new Sector(),
       id: this.editForm.get(["id"])!.value,
       code: this.editForm.get(["code"])!.value,
       name: this.editForm.get(["name"])!.value,
-      position: this.editForm.get(["position"])!.value,
-      code_required: this.editForm.get(["code_required"])!.value,
-      code_length: this.editForm.get(["code_length"])!.value,
+      description: this.editForm.get(["description"])!.value,
     };
   }
 }

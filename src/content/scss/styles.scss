@@ -210,7 +210,7 @@ p-card.filter {
 .p-component {
   font-size: 0.8125rem;
 }
-.p-dropdown {
+.p-dropdown, .p-multiselect, .p-inputnumber, .p-calendar{
   min-width: 200px;
   width: 100%;
 }

@@ -5,50 +5,55 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { ActivityType } from "src/app/setup/activity-type/activity-type.model";
-import { ActivityTypeService } from "src/app/setup/activity-type/activity-type.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { ActivityType } from 'src/app/setup/activity-type/activity-type.model';
+import { ActivityTypeService } from 'src/app/setup/activity-type/activity-type.service';
 
-import { ActivityTaskNature } from "./activity-task_nature.model";
-import { ActivityTaskNatureService } from "./activity-task_nature.service";
-import { ActivityTaskNatureUpdateComponent } from "./update/activity-task_nature-update.component";
+import { ActivityTaskNature } from './activity-task_nature.model';
+import { ActivityTaskNatureService } from './activity-task_nature.service';
+import { ActivityTaskNatureUpdateComponent } from './update/activity-task_nature-update.component';
 
 @Component({
-  selector: "app-activity-task_nature",
-  templateUrl: "./activity-task_nature.component.html",
+  selector: 'app-activity-task_nature',
+  templateUrl: './activity-task_nature.component.html',
 })
 export class ActivityTaskNatureComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   activityTaskNatures?: ActivityTaskNature[] = [];
 
   activityTypes?: ActivityType[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: true,
     },
+    // {
+    //   field: 'activity_type',
+    //   header: 'Activity type',
+    //   sort: false,
+    // },
   ]; //Table display columns
 
   isLoading = false;
@@ -125,11 +130,11 @@ export class ActivityTaskNatureComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -204,8 +209,8 @@ export class ActivityTaskNatureComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -220,7 +225,7 @@ export class ActivityTaskNatureComponent implements OnInit {
     };
     const ref = this.dialogService.open(ActivityTaskNatureUpdateComponent, {
       data,
-      header: "Create/Update ActivityTaskNature",
+      header: 'Create/Update ActivityTaskNature',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -235,7 +240,7 @@ export class ActivityTaskNatureComponent implements OnInit {
    */
   delete(activityTaskNature: ActivityTaskNature): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ActivityTaskNature?",
+      message: 'Are you sure that you want to delete this ActivityTaskNature?',
       accept: () => {
         this.activityTaskNatureService
           .delete(activityTaskNature.id!)
@@ -261,12 +266,12 @@ export class ActivityTaskNatureComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/activity-task_nature"], {
+      this.router.navigate(['/activity-task_nature'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -279,6 +284,6 @@ export class ActivityTaskNatureComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Activity Task Nature");
+    this.toastService.error('Error loading Activity Task Nature');
   }
 }

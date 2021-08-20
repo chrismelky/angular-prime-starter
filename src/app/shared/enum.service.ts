@@ -20,8 +20,19 @@ export class EnumService {
         value: "Public",
       },
     ],
+    linkLevels: [
+      {
+        display: "Activity",
+        value: "Activity",
+      },
+      {
+        display: "Target",
+        value: "Target",
+      },
+    ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };
+
   constructor() {}
 
   get(key: string): PlanrepEnum[] {

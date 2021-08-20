@@ -46,6 +46,34 @@ const routes: Routes = [
             (m) => m.SectionModule
           ),
       },
+      {
+        path: "decision-level",
+        loadChildren: () =>
+          import("../setup/decision-level/decision-level.module").then(
+            (m) => m.DecisionLevelModule
+          ),
+      },
+      {
+        path: "reference-document_type",
+        loadChildren: () =>
+          import(
+            "../setup/reference-document_type/reference-document_type.module"
+          ).then((m) => m.ReferenceDocumentTypeModule),
+      },
+      {
+        path: "reference-type",
+        loadChildren: () =>
+          import("../setup/reference-type/reference-type.module").then(
+            (m) => m.ReferenceTypeModule
+          ),
+      },
+      {
+        path: "financial-year",
+        loadChildren: () =>
+          import("../setup/financial-year/financial-year.module").then(
+            (m) => m.FinancialYearModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

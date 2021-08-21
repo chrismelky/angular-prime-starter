@@ -165,6 +165,20 @@ const routes: Routes = [
             "../setup/activity-task-nature/activity-task-nature.module"
           ).then((m) => m.ActivityTaskNatureModule),
       },
+      {
+        path: "objective-type",
+        loadChildren: () =>
+          import("../setup/objective-type/objective-type.module").then(
+            (m) => m.ObjectiveTypeModule
+          ),
+      },
+      {
+        path: "objective",
+        loadChildren: () =>
+          import("../setup/objective/objective.module").then(
+            (m) => m.ObjectiveModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

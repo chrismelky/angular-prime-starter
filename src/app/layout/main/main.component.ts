@@ -151,6 +151,21 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "objective",
         },
+        {
+          label: "Calendar Events",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "calendar-event",
+        },
+        {
+          label: "Calendars",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "calendar",
+        },
+        {
+          label: "Cas Assessment Rounds",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-round",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

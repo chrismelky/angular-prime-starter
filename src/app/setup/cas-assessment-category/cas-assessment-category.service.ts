@@ -15,7 +15,7 @@ import { CasAssessmentCategory } from "./cas-assessment-category.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentCategoryService {
-  public resourceUrl = "api/cas_assessment_categories";
+  public resourceUrl = "api/categories";
 
   constructor(protected http: HttpClient) {}
 

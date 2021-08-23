@@ -20,6 +20,9 @@
               formError)
           "
         >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
+            >Name is required.</small
+          >
         </span>
       </div>
 
@@ -36,27 +39,11 @@
               formError)
           "
         >
-        </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input
-            id="create_by"
-            type="text"
-            pInputText
-            formControlName="create_by"
-          />
-          <label for="create_by">Create By </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('create_by')!.invalid &&
-            (editForm.get('create_by')!.dirty ||
-              editForm.get('create_by')!.touched ||
-              formError)
-          "
-        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('number')?.errors?.required"
+            >Number is required.</small
+          >
         </span>
       </div>
 

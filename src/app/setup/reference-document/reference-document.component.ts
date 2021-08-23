@@ -8,7 +8,7 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
 import {DialogService} from "primeng/dynamicdialog";
 import {Paginator} from "primeng/paginator";
 import {Table} from "primeng/table";
@@ -37,6 +37,7 @@ export class ReferenceDocumentComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
   referenceDocuments?: ReferenceDocument[] = [];
+
   startFinancialYears?: FinancialYear[] = [];
   endFinancialYears?: FinancialYear[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
@@ -52,21 +53,6 @@ export class ReferenceDocumentComponent implements OnInit {
       header: "Url",
       sort: true,
     },
-    {
-      field: "start_financial_year_id",
-      header: "Start Financial Year ",
-      sort: true,
-    },
-    {
-      field: "end_financial_year_id",
-      header: "End Financial Year ",
-      sort: true,
-    },
-    {
-      field: "admin_hierarchy_id",
-      header: "Admin Hierarchy ",
-      sort: true,
-    },
   ]; //Table display columns
 
   isLoading = false;
@@ -79,6 +65,9 @@ export class ReferenceDocumentComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  start_financial_year_id!: number;
+  end_financial_year_id!: number;
+  admin_hierarchy_id!: number;
 
   constructor(
     protected referenceDocumentService: ReferenceDocumentService,
@@ -121,6 +110,13 @@ export class ReferenceDocumentComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (
+      !this.start_financial_year_id ||
+      !this.end_financial_year_id ||
+      !this.admin_hierarchy_id
+    ) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -129,6 +125,9 @@ export class ReferenceDocumentComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        start_financial_year_id: this.start_financial_year_id,
+        end_financial_year_id: this.end_financial_year_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -163,8 +162,20 @@ export class ReferenceDocumentComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -231,6 +242,9 @@ export class ReferenceDocumentComponent implements OnInit {
   createOrUpdate(referenceDocument?: ReferenceDocument): void {
     const data: ReferenceDocument = referenceDocument ?? {
       ...new ReferenceDocument(),
+      start_financial_year_id: this.start_financial_year_id,
+      end_financial_year_id: this.end_financial_year_id,
+      admin_hierarchy_id: this.admin_hierarchy_id,
     };
     const ref = this.dialogService.open(ReferenceDocumentUpdateComponent, {
       data,

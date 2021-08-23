@@ -17,6 +17,8 @@ import {AdminHierarchyService} from "src/app/setup/admin-hierarchy/admin-hierarc
 import {ReferenceDocument} from "../reference-document.model";
 import {ReferenceDocumentService} from "../reference-document.service";
 import {ToastService} from "src/app/shared/toast.service";
+import {FinancialYear} from "../../financial-year/financial-year.model";
+import {FinancialYearService} from "../../financial-year/financial-year.service";
 
 @Component({
   selector: "app-reference-document-update",
@@ -27,6 +29,8 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
+  startFinancialYears?: FinancialYear[] = [];
+  endFinancialYears?: FinancialYear[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
 
   /**
@@ -34,15 +38,16 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, []],
+    name: [null, [Validators.required]],
     url: [null, []],
-    start_financial_year_id: [null, []],
-    end_financial_year_id: [null, []],
-    admin_hierarchy_id: [null, []],
+    start_financial_year_id: [null, [Validators.required]],
+    end_financial_year_id: [null, [Validators.required]],
+    admin_hierarchy_id: [null, [Validators.required]],
   });
 
   constructor(
     protected referenceDocumentService: ReferenceDocumentService,
+    protected financialYearService: FinancialYearService,
     protected adminHierarchyService: AdminHierarchyService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
@@ -52,7 +57,18 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.financialYearService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.startFinancialYears = resp.data)
+      );
+    this.financialYearService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.endFinancialYears = resp.data)
+      );
     this.adminHierarchyService
       .query({columns: ["id", "name"]})
       .subscribe(

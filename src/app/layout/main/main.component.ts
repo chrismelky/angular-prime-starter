@@ -236,6 +236,21 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "category-option",
         },
+        {
+          label: "Category Combinations",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "category-combination",
+        },
+        {
+          label: "Category Category Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "category-category-option",
+        },
+        {
+          label: "Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "category",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

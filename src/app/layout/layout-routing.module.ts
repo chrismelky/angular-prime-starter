@@ -298,6 +298,27 @@ const routes: Routes = [
             (m) => m.CategoryOptionModule
           ),
       },
+      {
+        path: "category-combination",
+        loadChildren: () =>
+          import(
+            "../setup/category-combination/category-combination.module"
+          ).then((m) => m.CategoryCombinationModule),
+      },
+      {
+        path: "category-category-option",
+        loadChildren: () =>
+          import(
+            "../setup/category-category-option/category-category-option.module"
+          ).then((m) => m.CategoryCategoryOptionModule),
+      },
+      {
+        path: "category",
+        loadChildren: () =>
+          import("../setup/category/category.module").then(
+            (m) => m.CategoryModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

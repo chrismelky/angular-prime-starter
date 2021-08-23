@@ -1,9 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 
-import { BreakpointObserver } from "@angular/cdk/layout";
-import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
-import { MenuItem } from "primeng/api";
+import {BreakpointObserver} from "@angular/cdk/layout";
+import {map} from "rxjs/operators";
+import {Observable} from "rxjs";
+import {MenuItem} from "primeng/api";
 
 @Component({
   selector: "app-main",
@@ -23,7 +23,8 @@ export class MainComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   items: MenuItem[] = [
     {
@@ -65,11 +66,6 @@ export class MainComponent implements OnInit {
           label: "Activity Task Natures",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "activity-task_nature",
-        },
-        {
-          label: "Admin Hierarchy Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy_level",
         },
         {
           label: "Admin Hierarchies",
@@ -137,6 +133,16 @@ export class MainComponent implements OnInit {
           routerLink: "reference-document-type",
         },
         {
+          label: "Cas Plans",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-plan",
+        },
+        {
+          label: "Cas Plan Contents",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-plan-content",
+        },
+        {
           label: "Activity Task Natures",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "activity-task-nature",
@@ -155,6 +161,61 @@ export class MainComponent implements OnInit {
           label: "Long Term Targets",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "long-term-target",
+        },
+        {
+          label: "Calendar Events",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "calendar-event",
+        },
+        {
+          label: "Calendars",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "calendar",
+        },
+        {
+          label: "Cas Assessment Rounds",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-round",
+        },
+        {
+          label: "Cas Assessment States",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-state",
+        },
+        {
+          label: "Cas Assessment Criteria",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-criteria",
+        },
+        {
+          label: "Cas Assessment Sub Criteria",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria",
+        },
+        {
+          label: "Cas Assessment Sub Criteria Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria-option",
+        },
+        {
+          label: "Cas Assessment Category Versions",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category-version",
+        },
+        {
+          label: "Cas Assessment Criteria Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-criteria-option",
+        },
+        {
+          label: "Cas Assessment Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category",
+        },
+        {
+          label: "Reference Documents",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-document",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

@@ -30,6 +30,40 @@ export class EnumService {
         value: "Target",
       },
     ],
+    financialYearTypes: [
+      {
+        display: "Activity",
+        value: "Activity",
+      },
+      {
+        display: "Target",
+        value: "Target",
+      },
+    ],
+    periodTypes: [
+      {
+        display: "Quarterly",
+        value: "Quarterly",
+      },
+      {
+        display: "Financial Year",
+        value: "Financial Year",
+      },
+    ],
+    contentTypes: [
+      {
+        display: "CAS",
+        value: "CAS",
+      },
+      {
+        display: "PROJECT",
+        value: "PROJECT",
+      },
+      {
+        display: "DATA FORM",
+        value: "DATA FORM",
+      },
+    ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };
 

@@ -1,0 +1,168 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="minimum_passmark"
+            formControlName="minimum_passmark"
+          ></p-inputNumber>
+          <label for="minimum_passmark">Minimum Passmark </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('minimum_passmark')!.invalid &&
+            (editForm.get('minimum_passmark')!.dirty ||
+              editForm.get('minimum_passmark')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('minimum_passmark')?.errors?.required"
+            >Minimum Passmark is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="financial_year_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="financialYears!"
+            formControlName="financial_year_id"
+          ></p-dropdown>
+          <label for="financial_year_id">Financial Year </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('financial_year_id')!.invalid &&
+            (editForm.get('financial_year_id')!.dirty ||
+              editForm.get('financial_year_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('financial_year_id')?.errors?.required"
+            >Financial Year is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="reference_document_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="referenceDocuments!"
+            formControlName="reference_document_id"
+          ></p-dropdown>
+          <label for="reference_document_id">Reference Document </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('reference_document_id')!.invalid &&
+            (editForm.get('reference_document_id')!.dirty ||
+              editForm.get('reference_document_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('reference_document_id')?.errors?.required"
+            >Reference Document is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="cas_assessment_state_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="casAssessmentStates!"
+            formControlName="cas_assessment_state_id"
+          ></p-dropdown>
+          <label for="cas_assessment_state_id">Cas Assessment State </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('cas_assessment_state_id')!.invalid &&
+            (editForm.get('cas_assessment_state_id')!.dirty ||
+              editForm.get('cas_assessment_state_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('cas_assessment_state_id')?.errors?.required"
+            >Cas Assessment State is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="cas_assessment_category_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="casAssessmentCategories!"
+            formControlName="cas_assessment_category_id"
+          ></p-dropdown>
+          <label for="cas_assessment_category_id"
+            >Cas Assessment Category
+          </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('cas_assessment_category_id')!.invalid &&
+            (editForm.get('cas_assessment_category_id')!.dirty ||
+              editForm.get('cas_assessment_category_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('cas_assessment_category_id')?.errors?.required"
+            >Cas Assessment Category is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

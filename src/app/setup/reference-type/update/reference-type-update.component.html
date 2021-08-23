@@ -25,6 +25,7 @@
           >
         </span>
       </div>
+
       <div fxLayout="row" fxLayoutGap="2px">
         <p-inputSwitch
           id="multi_select"
@@ -33,14 +34,41 @@
         ></p-inputSwitch>
         <label for="multi_select">Multi Select </label>
       </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="link_level"
+            type="text"
+            pInputText
+            formControlName="link_level"
+          />
+          <label for="link_level">Link Level </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('link_level')!.invalid &&
+            (editForm.get('link_level')!.dirty ||
+              editForm.get('link_level')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('link_level')?.errors?.required"
+            >Link Level is required.</small
+          >
+        </span>
+      </div>
+
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
             id="sector_id"
-            [autoDisplayFirst]="false"
-            [filter]="true"
             optionValue="id"
             optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="sectors!"
@@ -60,36 +88,6 @@
             class="p-error"
             *ngIf="editForm.get('sector_id')?.errors?.required"
             >Sector is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="link_level"
-            optionValue="value"
-            optionLabel="display"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="linkLevels!"
-            formControlName="link_level"
-          ></p-dropdown>
-          <label for="link_level">Link Level </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('link_level')!.invalid &&
-            (editForm.get('link_level')!.dirty ||
-              editForm.get('link_level')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('link_level')?.errors?.required"
-            >Link Level is required.</small
           >
         </span>
       </div>

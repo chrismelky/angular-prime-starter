@@ -284,6 +284,20 @@ const routes: Routes = [
             (m) => m.DataSetModule
           ),
       },
+      {
+        path: "option-set",
+        loadChildren: () =>
+          import("../setup/option-set/option-set.module").then(
+            (m) => m.OptionSetModule
+          ),
+      },
+      {
+        path: "category-option",
+        loadChildren: () =>
+          import("../setup/category-option/category-option.module").then(
+            (m) => m.CategoryOptionModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

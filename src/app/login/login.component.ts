@@ -52,10 +52,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.formError = true;
       return;
     }
+    this.isLoading = true;
+    this.formError = false;
     const credentials = this.loginForm.value;
     this.authService.login(credentials).subscribe(
       () => {
         this.authenticationError = false;
+        this.isLoading = false;
         if (!this.stateStorage.getUrl()) {
           // There were no routing during login (eg from navigationToStoredUrl)
           this.router.navigate(['']);
@@ -63,7 +66,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
           this.router.navigate([this.stateStorage.getUrl()]);
         }
       },
-      () => (this.authenticationError = true)
+      () => {
+        this.authenticationError = true;
+        this.isLoading = false;
+      }
     );
   }
 }

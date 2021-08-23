@@ -94,9 +94,12 @@
             <!-- <p-captcha siteKey="'YOUR_SITE_KEY'"></p-captcha> -->
 
             <button
+              pRipple
+              #loginPanel
+              (disabled)="(isLoading)"
               class="p-button p-button-raised"
               pButton
-              icon="pi pi-user"
+              [icon]="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-user'"
               type="submit"
               label="Sign In"
             ></button>

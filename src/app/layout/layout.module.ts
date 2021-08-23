@@ -7,13 +7,13 @@ import { MainComponent } from './main/main.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { AvatarModule } from 'primeng/avatar';
+import { MenuModule } from 'primeng/menu';
+import { BlockUIModule } from 'primeng/blockui';
 
 @NgModule({
   declarations: [MainComponent, NotFoundComponent],
@@ -23,12 +23,12 @@ import { ButtonModule } from 'primeng/button';
     FlexLayoutModule,
     MatSidenavModule,
     MatToolbarModule,
-    // MatIconModule,
-    // MatButtonModule,
-    // MatListModule,
+    AvatarModule,
     PanelMenuModule,
     ToastModule,
     ButtonModule,
+    MenuModule,
+    BlockUIModule,
   ],
 })
 export class LayoutModule {}

@@ -11,6 +11,7 @@ import { PasswordModule } from 'primeng/password';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CaptchaModule } from 'primeng/captcha';
 import { DividerModule } from 'primeng/divider';
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -26,6 +27,7 @@ import { DividerModule } from 'primeng/divider';
     PasswordModule,
     CaptchaModule,
     DividerModule,
+    RippleModule,
   ],
 })
 export class LoginModule {}

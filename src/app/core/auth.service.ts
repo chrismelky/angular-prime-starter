@@ -41,12 +41,19 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
+    console.log('service called');
+    return this.http.post<any>('api/logout', {});
+  }
+
+  clearAuth(): Observable<void> {
     return new Observable((observer) => {
       this.$localStorage.clear('authenticationToken');
       this.$sessionStorage.clear('authenticationToken');
       observer.complete();
     });
   }
+
+  private logoutSuccess(): void {}
 
   private authenticateSuccess(
     response: LoginRespose,

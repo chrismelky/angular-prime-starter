@@ -12,6 +12,7 @@ import { MessageService } from 'primeng/api';
 import { MessageModule } from 'primeng/message';
 import { ErrorHandlerInterceptor } from './interceptors/error-handler.interceptor';
 import { AuthExpiredInterceptor } from './interceptors/auth-expired.interceptor';
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,6 +22,7 @@ import { AuthExpiredInterceptor } from './interceptors/auth-expired.interceptor'
     HttpClientModule,
     CommonModule,
     AppRoutingModule,
+    RippleModule,
     NgxWebstorageModule.forRoot({
       prefix: 'planrep',
       separator: '-',

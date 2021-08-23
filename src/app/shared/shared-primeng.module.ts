@@ -22,6 +22,7 @@ import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   declarations: [],
@@ -48,6 +49,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
     TooltipModule,
     InputSwitchModule,
     MultiSelectModule,
+    RippleModule,
   ],
 })
 export class SharedPrimengModule {}

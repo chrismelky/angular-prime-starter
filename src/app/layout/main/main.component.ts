@@ -67,11 +67,6 @@ export class MainComponent implements OnInit {
           routerLink: "activity-task_nature",
         },
         {
-          label: "Admin Hierarchy Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy_level",
-        },
-        {
           label: "Admin Hierarchies",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "admin-hierarchy",
@@ -115,6 +110,16 @@ export class MainComponent implements OnInit {
           label: "Reference Document Types",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "reference-document-type",
+        },
+        {
+          label: "Cas Plans",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-plan",
+        },
+        {
+          label: "Cas Plan Contents",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-plan-content",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

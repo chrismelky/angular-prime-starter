@@ -123,6 +123,20 @@ const routes: Routes = [
             (m) => m.AdminHierarchyModule
           ),
       },
+      {
+        path: "cas-plan",
+        loadChildren: () =>
+          import("../setup/cas-plan/cas-plan.module").then(
+            (m) => m.CasPlanModule
+          ),
+      },
+      {
+        path: "cas-plan-content",
+        loadChildren: () =>
+          import("../setup/cas-plan-content/cas-plan-content.module").then(
+            (m) => m.CasPlanContentModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

@@ -5,12 +5,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { MyInterceptor } from './interceptors/auth.interceptor';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { CommonModule } from '@angular/common';
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import { MessageService } from 'primeng/api';
 import { MessageModule } from 'primeng/message';
 import { ErrorHandlerInterceptor } from './interceptors/error-handler.interceptor';
+import { AuthExpiredInterceptor } from './interceptors/auth-expired.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,19 +21,28 @@ import { ErrorHandlerInterceptor } from './interceptors/error-handler.intercepto
     HttpClientModule,
     CommonModule,
     AppRoutingModule,
-    NgxWebstorageModule.forRoot(),
+    NgxWebstorageModule.forRoot({
+      prefix: 'planrep',
+      separator: '-',
+      caseSensitive: true,
+    }),
     MessageModule,
   ],
   providers: [
     MessageService,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: MyInterceptor,
+      useClass: AuthInterceptor,
       multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorHandlerInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthExpiredInterceptor,
       multi: true,
     },
   ],

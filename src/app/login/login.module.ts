@@ -3,15 +3,29 @@ import { CommonModule } from '@angular/common';
 
 import { LoginRoutingModule } from './login-routing.module';
 import { LoginComponent } from './login.component';
-
+import { CardModule } from 'primeng/card';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { PasswordModule } from 'primeng/password';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CaptchaModule } from 'primeng/captcha';
+import { DividerModule } from 'primeng/divider';
 
 @NgModule({
-  declarations: [
-    LoginComponent
-  ],
+  declarations: [LoginComponent],
   imports: [
     CommonModule,
-    LoginRoutingModule
-  ]
+    LoginRoutingModule,
+    CardModule,
+    FlexLayoutModule,
+    InputTextModule,
+    ButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PasswordModule,
+    CaptchaModule,
+    DividerModule,
+  ],
 })
-export class LoginModule { }
+export class LoginModule {}

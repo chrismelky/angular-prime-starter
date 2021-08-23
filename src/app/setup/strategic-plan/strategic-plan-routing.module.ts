@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 
-import {NgModule} from "@angular/core";
-import {RouterModule, Routes} from "@angular/router";
-import {ReferenceDocumentTypeComponent} from "./reference-document_type.component";
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { StrategicPlanComponent } from "./strategic-plan.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: ReferenceDocumentTypeComponent,
+    component: StrategicPlanComponent,
     data: {
       defaultSort: "id:asc",
     },
@@ -25,5 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ReferenceDocumentTypeRoutingModule {
-}
+export class StrategicPlanRoutingModule {}

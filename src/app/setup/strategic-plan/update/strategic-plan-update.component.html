@@ -1,0 +1,134 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="url" type="text" pInputText formControlName="url" />
+          <label for="url">Url </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('url')!.invalid &&
+            (editForm.get('url')!.dirty ||
+              editForm.get('url')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="admin_hierarchy_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            optionValue="id"
+            optionLabel="name"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="adminHierarchies!"
+            formControlName="admin_hierarchy_id"
+          ></p-dropdown>
+          <label for="admin_hierarchy_id">Admin Hierarchy </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('admin_hierarchy_id')!.invalid &&
+            (editForm.get('admin_hierarchy_id')!.dirty ||
+              editForm.get('admin_hierarchy_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
+            >Admin Hierarchy is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="start_financial_year_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            optionValue="id"
+            optionLabel="name"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="startFinancialYears!"
+            formControlName="start_financial_year_id"
+          ></p-dropdown>
+          <label for="start_financial_year_id">Start Financial Year </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('start_financial_year_id')!.invalid &&
+            (editForm.get('start_financial_year_id')!.dirty ||
+              editForm.get('start_financial_year_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('start_financial_year_id')?.errors?.required"
+            >Start Financial Year is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="end_financial_year_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            optionValue="id"
+            optionLabel="name"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="endFinancialYears!"
+            formControlName="end_financial_year_id"
+          ></p-dropdown>
+          <label for="end_financial_year_id">End Financial Year </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('end_financial_year_id')!.invalid &&
+            (editForm.get('end_financial_year_id')!.dirty ||
+              editForm.get('end_financial_year_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('end_financial_year_id')?.errors?.required"
+            >End Financial Year is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

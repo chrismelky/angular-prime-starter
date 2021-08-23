@@ -151,6 +151,11 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "objective",
         },
+        {
+          label: "Long Term Targets",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "long-term-target",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

@@ -179,6 +179,13 @@ const routes: Routes = [
             (m) => m.ObjectiveModule
           ),
       },
+      {
+        path: "long-term-target",
+        loadChildren: () =>
+          import("../setup/long-term-target/long-term-target.module").then(
+            (m) => m.LongTermTargetModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

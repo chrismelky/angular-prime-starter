@@ -92,6 +92,26 @@ export class MainComponent implements OnInit {
           routerLink: "decision-level",
         },
         {
+          label: "Reference Document Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-document_type",
+        },
+        {
+          label: "Reference Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-type",
+        },
+        {
+          label: "Financial Years",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "financial-year",
+        },
+        {
+          label: "Strategic Plans",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "strategic-plan",
+        },
+        {
           label: "Reference Types",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "reference-type",
@@ -120,6 +140,36 @@ export class MainComponent implements OnInit {
           label: "Cas Plan Contents",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "cas-plan-content",
+        },
+        {
+          label: "Activity Task Natures",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "activity-task-nature",
+        },
+        {
+          label: "Objective Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "objective-type",
+        },
+        {
+          label: "Objectives",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "objective",
+        },
+        {
+          label: "Calendar Events",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "calendar-event",
+        },
+        {
+          label: "Calendars",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "calendar",
+        },
+        {
+          label: "Cas Assessment Rounds",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-round",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

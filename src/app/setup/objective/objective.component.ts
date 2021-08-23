@@ -5,49 +5,55 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import { CustomResponse } from '../../utils/custom-response';
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { ActivityType } from 'src/app/setup/activity-type/activity-type.model';
-import { ActivityTypeService } from 'src/app/setup/activity-type/activity-type.service';
+} from "../../config/pagination.constants";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+import { ObjectiveType } from "src/app/setup/objective-type/objective-type.model";
+import { ObjectiveTypeService } from "src/app/setup/objective-type/objective-type.service";
 
-import { ActivityTaskNature } from './activity-task_nature.model';
-import { ActivityTaskNatureService } from './activity-task_nature.service';
-import { ActivityTaskNatureUpdateComponent } from './update/activity-task_nature-update.component';
+import { Objective } from "./objective.model";
+import { ObjectiveService } from "./objective.service";
+import { ObjectiveUpdateComponent } from "./update/objective-update.component";
 
 @Component({
-  selector: 'app-activity-task_nature',
-  templateUrl: './activity-task_nature.component.html',
+  selector: "app-objective",
+  templateUrl: "./objective.component.html",
 })
-export class ActivityTaskNatureComponent implements OnInit {
-  @ViewChild('paginator') paginator!: Paginator;
-  @ViewChild('table') table!: Table;
-  activityTaskNatures?: ActivityTaskNature[] = [];
+export class ObjectiveComponent implements OnInit {
+  @ViewChild("paginator") paginator!: Paginator;
+  @ViewChild("table") table!: Table;
+  objectives?: Objective[] = [];
 
-  activityTypes?: ActivityType[] = [];
+  objectiveTypes?: ObjectiveType[] = [];
+  parents?: Objective[] = [];
 
   cols = [
     {
-      field: 'name',
-      header: 'Name',
+      field: "description",
+      header: "Description",
       sort: true,
     },
     {
-      field: 'code',
-      header: 'Code',
+      field: "code",
+      header: "Code",
       sort: true,
+    },
+    {
+      field: "parent_id",
+      header: "Parent ",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -61,11 +67,12 @@ export class ActivityTaskNatureComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  activity_type_id!: number;
+  objective_type_id!: number;
 
   constructor(
-    protected activityTaskNatureService: ActivityTaskNatureService,
-    protected activityTypeService: ActivityTypeService,
+    protected objectiveService: ObjectiveService,
+    protected objectiveTypeService: ObjectiveTypeService,
+    protected parentService: ObjectiveService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -75,11 +82,16 @@ export class ActivityTaskNatureComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activityTypeService
+    this.objectiveTypeService
       .query()
       .subscribe(
-        (resp: CustomResponse<ActivityType[]>) =>
-          (this.activityTypes = resp.data)
+        (resp: CustomResponse<ObjectiveType[]>) =>
+          (this.objectiveTypes = resp.data)
+      );
+    this.parentService
+      .query()
+      .subscribe(
+        (resp: CustomResponse<Objective[]>) => (this.parents = resp.data)
       );
     this.handleNavigation();
   }
@@ -90,22 +102,22 @@ export class ActivityTaskNatureComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.activity_type_id) {
+    if (!this.objective_type_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.activityTaskNatureService
+    this.objectiveService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        activity_type_id: this.activity_type_id,
+        objective_type_id: this.objective_type_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ActivityTaskNature[]>) => {
+        (res: CustomResponse<Objective[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -125,11 +137,11 @@ export class ActivityTaskNatureComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+      const page = params.get("page");
+      const perPage = params.get("per_page");
+      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
       const predicate = sort[0];
-      const ascending = sort[1] === 'asc';
+      const ascending = sort[1] === "asc";
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -204,23 +216,23 @@ export class ActivityTaskNatureComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : 'id';
-    const direction = this.ascending ? 'asc' : 'desc';
+    const predicate = this.predicate ? this.predicate : "id";
+    const direction = this.ascending ? "asc" : "desc";
     return [`${predicate}:${direction}`];
   }
 
   /**
-   * Creating or updating ActivityTaskNature
-   * @param activityTaskNature ; If undefined initize new model to create else edit existing model
+   * Creating or updating Objective
+   * @param objective ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(activityTaskNature?: ActivityTaskNature): void {
-    const data: ActivityTaskNature = activityTaskNature ?? {
-      ...new ActivityTaskNature(),
-      activity_type_id: this.activity_type_id,
+  createOrUpdate(objective?: Objective): void {
+    const data: Objective = objective ?? {
+      ...new Objective(),
+      objective_type_id: this.objective_type_id,
     };
-    const ref = this.dialogService.open(ActivityTaskNatureUpdateComponent, {
+    const ref = this.dialogService.open(ObjectiveUpdateComponent, {
       data,
-      header: 'Create/Update ActivityTaskNature',
+      header: "Create/Update Objective",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -230,19 +242,17 @@ export class ActivityTaskNatureComponent implements OnInit {
   }
 
   /**
-   * Delete ActivityTaskNature
-   * @param activityTaskNature
+   * Delete Objective
+   * @param objective
    */
-  delete(activityTaskNature: ActivityTaskNature): void {
+  delete(objective: Objective): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this ActivityTaskNature?',
+      message: "Are you sure that you want to delete this Objective?",
       accept: () => {
-        this.activityTaskNatureService
-          .delete(activityTaskNature.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
+        this.objectiveService.delete(objective.id!).subscribe((resp) => {
+          this.loadPage(this.page);
+          this.toastService.info(resp.message);
+        });
       },
     });
   }
@@ -254,23 +264,23 @@ export class ActivityTaskNatureComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ActivityTaskNature[]> | null,
+    resp: CustomResponse<Objective[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/activity-task_nature'], {
+      this.router.navigate(["/objective"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
         },
       });
     }
-    this.activityTaskNatures = resp?.data ?? [];
+    this.objectives = resp?.data ?? [];
   }
 
   /**
@@ -279,6 +289,6 @@ export class ActivityTaskNatureComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error('Error loading Activity Task Nature');
+    this.toastService.error("Error loading Objective");
   }
 }

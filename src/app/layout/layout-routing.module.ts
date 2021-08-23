@@ -89,6 +89,27 @@ const routes: Routes = [
           ),
       },
       {
+        path: "reference-document_type",
+        loadChildren: () =>
+          import(
+            "../setup/reference-document-type/reference-document-type.module"
+          ).then((m) => m.ReferenceDocumentTypeModule),
+      },
+      {
+        path: "reference-type",
+        loadChildren: () =>
+          import("../setup/reference-type/reference-type.module").then(
+            (m) => m.ReferenceTypeModule
+          ),
+      },
+      {
+        path: "financial-year",
+        loadChildren: () =>
+          import("../setup/financial-year/financial-year.module").then(
+            (m) => m.FinancialYearModule
+          ),
+      },
+      {
         path: "reference-type",
         loadChildren: () =>
           import("../setup/reference-type/reference-type.module").then(
@@ -122,6 +143,55 @@ const routes: Routes = [
           import("../setup/admin-hierarchy/admin-hierarchy.module").then(
             (m) => m.AdminHierarchyModule
           ),
+      },
+      {
+        path: "strategic-plan",
+        loadChildren: () =>
+          import("../setup/strategic-plan/strategic-plan.module").then(
+            (m) => m.StrategicPlanModule
+          ),
+      },
+      {
+        path: "activity-task-nature",
+        loadChildren: () =>
+          import(
+            "../setup/activity-task-nature/activity-task-nature.module"
+          ).then((m) => m.ActivityTaskNatureModule),
+      },
+      {
+        path: "objective-type",
+        loadChildren: () =>
+          import("../setup/objective-type/objective-type.module").then(
+            (m) => m.ObjectiveTypeModule
+          ),
+      },
+      {
+        path: "objective",
+        loadChildren: () =>
+          import("../setup/objective/objective.module").then(
+            (m) => m.ObjectiveModule
+          ),
+      },
+      {
+        path: "calendar-event",
+        loadChildren: () =>
+          import("../setup/calendar-event/calendar-event.module").then(
+            (m) => m.CalendarEventModule
+          ),
+      },
+      {
+        path: "calendar",
+        loadChildren: () =>
+          import("../setup/calendar/calendar.module").then(
+            (m) => m.CalendarModule
+          ),
+      },
+      {
+        path: "cas-assessment-round",
+        loadChildren: () =>
+          import(
+            "../setup/cas-assessment-round/cas-assessment-round.module"
+          ).then((m) => m.CasAssessmentRoundModule),
       },
       {
         path: "cas-plan",

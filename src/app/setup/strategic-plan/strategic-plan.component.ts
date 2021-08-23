@@ -20,33 +20,32 @@ import {
 } from '../../config/pagination.constants';
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { ActivityType } from 'src/app/setup/activity-type/activity-type.model';
-import { ActivityTypeService } from 'src/app/setup/activity-type/activity-type.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 
-import { ActivityTaskNature } from './activity-task_nature.model';
-import { ActivityTaskNatureService } from './activity-task_nature.service';
-import { ActivityTaskNatureUpdateComponent } from './update/activity-task_nature-update.component';
+import { StrategicPlan } from './strategic-plan.model';
+import { StrategicPlanService } from './strategic-plan.service';
+import { StrategicPlanUpdateComponent } from './update/strategic-plan-update.component';
 
 @Component({
-  selector: 'app-activity-task_nature',
-  templateUrl: './activity-task_nature.component.html',
+  selector: 'app-strategic-plan',
+  templateUrl: './strategic-plan.component.html',
 })
-export class ActivityTaskNatureComponent implements OnInit {
+export class StrategicPlanComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
-  activityTaskNatures?: ActivityTaskNature[] = [];
+  strategicPlans?: StrategicPlan[] = [];
 
-  activityTypes?: ActivityType[] = [];
+  adminHierarchies?: AdminHierarchy[] = [];
+  startFinancialYears?: FinancialYear[] = [];
+  endFinancialYears?: FinancialYear[] = [];
 
   cols = [
     {
-      field: 'name',
-      header: 'Name',
-      sort: true,
-    },
-    {
-      field: 'code',
-      header: 'Code',
+      field: 'url',
+      header: 'Url',
       sort: true,
     },
   ]; //Table display columns
@@ -61,11 +60,15 @@ export class ActivityTaskNatureComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  activity_type_id!: number;
+  admin_hierarchy_id!: number;
+  start_financial_year_id!: number;
+  end_financial_year_id!: number;
 
   constructor(
-    protected activityTaskNatureService: ActivityTaskNatureService,
-    protected activityTypeService: ActivityTypeService,
+    protected strategicPlanService: StrategicPlanService,
+    protected adminHierarchyService: AdminHierarchyService,
+    protected startFinancialYearService: FinancialYearService,
+    protected endFinancialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -75,11 +78,23 @@ export class ActivityTaskNatureComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activityTypeService
+    this.adminHierarchyService
       .query()
       .subscribe(
-        (resp: CustomResponse<ActivityType[]>) =>
-          (this.activityTypes = resp.data)
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.adminHierarchies = resp.data)
+      );
+    this.startFinancialYearService
+      .query()
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.startFinancialYears = resp.data)
+      );
+    this.endFinancialYearService
+      .query()
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.endFinancialYears = resp.data)
       );
     this.handleNavigation();
   }
@@ -90,22 +105,28 @@ export class ActivityTaskNatureComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.activity_type_id) {
+    if (
+      !this.admin_hierarchy_id ||
+      !this.start_financial_year_id ||
+      !this.end_financial_year_id
+    ) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.activityTaskNatureService
+    this.strategicPlanService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        activity_type_id: this.activity_type_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        start_financial_year_id: this.start_financial_year_id,
+        end_financial_year_id: this.end_financial_year_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ActivityTaskNature[]>) => {
+        (res: CustomResponse<StrategicPlan[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -210,17 +231,19 @@ export class ActivityTaskNatureComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ActivityTaskNature
-   * @param activityTaskNature ; If undefined initize new model to create else edit existing model
+   * Creating or updating StrategicPlan
+   * @param strategicPlan ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(activityTaskNature?: ActivityTaskNature): void {
-    const data: ActivityTaskNature = activityTaskNature ?? {
-      ...new ActivityTaskNature(),
-      activity_type_id: this.activity_type_id,
+  createOrUpdate(strategicPlan?: StrategicPlan): void {
+    const data: StrategicPlan = strategicPlan ?? {
+      ...new StrategicPlan(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      start_financial_year_id: this.start_financial_year_id,
+      end_financial_year_id: this.end_financial_year_id,
     };
-    const ref = this.dialogService.open(ActivityTaskNatureUpdateComponent, {
+    const ref = this.dialogService.open(StrategicPlanUpdateComponent, {
       data,
-      header: 'Create/Update ActivityTaskNature',
+      header: 'Create/Update StrategicPlan',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -230,15 +253,15 @@ export class ActivityTaskNatureComponent implements OnInit {
   }
 
   /**
-   * Delete ActivityTaskNature
-   * @param activityTaskNature
+   * Delete StrategicPlan
+   * @param strategicPlan
    */
-  delete(activityTaskNature: ActivityTaskNature): void {
+  delete(strategicPlan: StrategicPlan): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this ActivityTaskNature?',
+      message: 'Are you sure that you want to delete this StrategicPlan?',
       accept: () => {
-        this.activityTaskNatureService
-          .delete(activityTaskNature.id!)
+        this.strategicPlanService
+          .delete(strategicPlan.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -254,14 +277,14 @@ export class ActivityTaskNatureComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ActivityTaskNature[]> | null,
+    resp: CustomResponse<StrategicPlan[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/activity-task_nature'], {
+      this.router.navigate(['/strategic-plan'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -270,7 +293,7 @@ export class ActivityTaskNatureComponent implements OnInit {
         },
       });
     }
-    this.activityTaskNatures = resp?.data ?? [];
+    this.strategicPlans = resp?.data ?? [];
   }
 
   /**
@@ -279,6 +302,6 @@ export class ActivityTaskNatureComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error('Error loading Activity Task Nature');
+    this.toastService.error('Error loading Strategic Plan');
   }
 }

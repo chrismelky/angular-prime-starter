@@ -5,27 +5,29 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {AdminHierarchy} from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import {AdminHierarchyService} from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
 
-import { ReferenceDocument } from "./reference-document.model";
-import { ReferenceDocumentService } from "./reference-document.service";
-import { ReferenceDocumentUpdateComponent } from "./update/reference-document-update.component";
+import {ReferenceDocument} from "./reference-document.model";
+import {ReferenceDocumentService} from "./reference-document.service";
+import {ReferenceDocumentUpdateComponent} from "./update/reference-document-update.component";
+import {FinancialYear} from "../financial-year/financial-year.model";
+import {FinancialYearService} from "../financial-year/financial-year.service";
 
 @Component({
   selector: "app-reference-document",
@@ -36,8 +38,8 @@ export class ReferenceDocumentComponent implements OnInit {
   @ViewChild("table") table!: Table;
   referenceDocuments?: ReferenceDocument[] = [];
 
-  // startFinancialYears?: StartFinancialYear[] = [];
-  // endFinancialYears?: EndFinancialYear[] = [];
+  startFinancialYears?: FinancialYear[] = [];
+  endFinancialYears?: FinancialYear[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
 
   cols = [
@@ -49,21 +51,6 @@ export class ReferenceDocumentComponent implements OnInit {
     {
       field: "url",
       header: "Url",
-      sort: true,
-    },
-    {
-      field: "start_financial_year_id",
-      header: "Start Financial Year ",
-      sort: true,
-    },
-    {
-      field: "end_financial_year_id",
-      header: "End Financial Year ",
-      sort: true,
-    },
-    {
-      field: "admin_hierarchy_id",
-      header: "Admin Hierarchy ",
       sort: true,
     },
   ]; //Table display columns
@@ -78,11 +65,13 @@ export class ReferenceDocumentComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  start_financial_year_id!: number;
+  end_financial_year_id!: number;
+  admin_hierarchy_id!: number;
 
   constructor(
     protected referenceDocumentService: ReferenceDocumentService,
-    // protected startFinancialYearService: StartFinancialYearService,
-    // protected endFinancialYearService: EndFinancialYearService,
+    protected financialYearService: FinancialYearService,
     protected adminHierarchyService: AdminHierarchyService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -90,23 +79,24 @@ export class ReferenceDocumentComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
-    // this.startFinancialYearService
-    //   .query({ columns: ["id", "name"] })
-    //   .subscribe(
-    //     (resp: CustomResponse<StartFinancialYear[]>) =>
-    //       (this.startFinancialYears = resp.data)
-    //   );
-    // this.endFinancialYearService
-    //   .query({ columns: ["id", "name"] })
-    //   .subscribe(
-    //     (resp: CustomResponse<EndFinancialYear[]>) =>
-    //       (this.endFinancialYears = resp.data)
-    //   );
+    this.financialYearService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.startFinancialYears = resp.data)
+      );
+    this.financialYearService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.endFinancialYears = resp.data)
+      );
     this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
@@ -120,6 +110,13 @@ export class ReferenceDocumentComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (
+      !this.start_financial_year_id ||
+      !this.end_financial_year_id ||
+      !this.admin_hierarchy_id
+    ) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -128,6 +125,9 @@ export class ReferenceDocumentComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        start_financial_year_id: this.start_financial_year_id,
+        end_financial_year_id: this.end_financial_year_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -162,8 +162,20 @@ export class ReferenceDocumentComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -230,6 +242,9 @@ export class ReferenceDocumentComponent implements OnInit {
   createOrUpdate(referenceDocument?: ReferenceDocument): void {
     const data: ReferenceDocument = referenceDocument ?? {
       ...new ReferenceDocument(),
+      start_financial_year_id: this.start_financial_year_id,
+      end_financial_year_id: this.end_financial_year_id,
+      admin_hierarchy_id: this.admin_hierarchy_id,
     };
     const ref = this.dialogService.open(ReferenceDocumentUpdateComponent, {
       data,

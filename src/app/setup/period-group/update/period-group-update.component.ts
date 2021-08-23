@@ -30,9 +30,8 @@ export class PeriodGroupUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, []],
-    number: [null, []],
-    create_by: [null, []],
+    name: [null, [Validators.required]],
+    number: [null, [Validators.required]],
   });
 
   constructor(
@@ -102,8 +101,7 @@ export class PeriodGroupUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: periodGroup.id,
       name: periodGroup.name,
-      number: periodGroup.number,
-      create_by: periodGroup.create_by,
+      number: periodGroup.number
     });
   }
 
@@ -117,7 +115,6 @@ export class PeriodGroupUpdateComponent implements OnInit {
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
       number: this.editForm.get(["number"])!.value,
-      create_by: this.editForm.get(["create_by"])!.value,
     };
   }
 }

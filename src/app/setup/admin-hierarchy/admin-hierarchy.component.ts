@@ -5,37 +5,37 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
-import { AdminHierarchy } from "./admin-hierarchy.model";
-import { AdminHierarchyService } from "./admin-hierarchy.service";
-import { AdminHierarchyUpdateComponent } from "./update/admin-hierarchy-update.component";
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
-import {DecisionLevel} from "../decision-level/decision-level.model";
-import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
-import {DecisionLevelService} from "../decision-level/decision-level.service";
+import { AdminHierarchy } from './admin-hierarchy.model';
+import { AdminHierarchyService } from './admin-hierarchy.service';
+import { AdminHierarchyUpdateComponent } from './update/admin-hierarchy-update.component';
+import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
+import { DecisionLevel } from '../decision-level/decision-level.model';
+import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
+import { DecisionLevelService } from '../decision-level/decision-level.service';
 
 @Component({
-  selector: "app-admin-hierarchy",
-  templateUrl: "./admin-hierarchy.component.html",
+  selector: 'app-admin-hierarchy',
+  templateUrl: './admin-hierarchy.component.html',
 })
 export class AdminHierarchyComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   adminHierarchies?: AdminHierarchy[] = [];
 
   parents?: AdminHierarchy[] = [];
@@ -46,59 +46,14 @@ export class AdminHierarchyComponent implements OnInit {
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: true,
-    },
-    {
-      field: "current_budget_locked",
-      header: "Current Budget Locked",
-      sort: false,
-    },
-    {
-      field: "is_carryover_budget_locked",
-      header: "Is Carryover Budget Locked",
-      sort: false,
-    },
-    {
-      field: "is_supplementary_budget_locked",
-      header: "Is Supplementary Budget Locked",
-      sort: false,
-    },
-    {
-      field: "is_current_budget_approved",
-      header: "Is Current Budget Approved",
-      sort: false,
-    },
-    {
-      field: "is_carryover_budget_approved",
-      header: "Is Carryover Budget Approved",
-      sort: false,
-    },
-    {
-      field: "is_supplementary_budget_approved",
-      header: "Is Supplementary Budget Approved",
-      sort: false,
-    },
-    {
-      field: "current_budget_decision_level_id",
-      header: "Current Budget Decision Level ",
-      sort: false,
-    },
-    {
-      field: "carryover_budget_decision_level_id",
-      header: "Carryover Budget Decision Level ",
-      sort: false,
-    },
-    {
-      field: "supplementary_budget_decision_level_id",
-      header: "Supplementary Budget Decision Level ",
-      sort: false,
     },
   ]; //Table display columns
 
@@ -202,11 +157,11 @@ export class AdminHierarchyComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -281,8 +236,8 @@ export class AdminHierarchyComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -298,7 +253,7 @@ export class AdminHierarchyComponent implements OnInit {
     };
     const ref = this.dialogService.open(AdminHierarchyUpdateComponent, {
       data,
-      header: "Create/Update AdminHierarchy",
+      header: 'Create/Update AdminHierarchy',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -313,7 +268,7 @@ export class AdminHierarchyComponent implements OnInit {
    */
   delete(adminHierarchy: AdminHierarchy): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this AdminHierarchy?",
+      message: 'Are you sure that you want to delete this AdminHierarchy?',
       accept: () => {
         this.adminHierarchyService
           .delete(adminHierarchy.id!)
@@ -339,12 +294,12 @@ export class AdminHierarchyComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/admin-hierarchy"], {
+      this.router.navigate(['/admin-hierarchy'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -357,6 +312,6 @@ export class AdminHierarchyComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Admin Hierarchy");
+    this.toastService.error('Error loading Admin Hierarchy');
   }
 }

@@ -179,6 +179,41 @@ const routes: Routes = [
             '../setup/activity-task-nature/activity-task-nature.module'
           ).then((m) => m.ActivityTaskNatureModule),
       },
+      {
+        path: "objective-type",
+        loadChildren: () =>
+          import("../setup/objective-type/objective-type.module").then(
+            (m) => m.ObjectiveTypeModule
+          ),
+      },
+      {
+        path: "objective",
+        loadChildren: () =>
+          import("../setup/objective/objective.module").then(
+            (m) => m.ObjectiveModule
+          ),
+      },
+      {
+        path: "calendar-event",
+        loadChildren: () =>
+          import("../setup/calendar-event/calendar-event.module").then(
+            (m) => m.CalendarEventModule
+          ),
+      },
+      {
+        path: "calendar",
+        loadChildren: () =>
+          import("../setup/calendar/calendar.module").then(
+            (m) => m.CalendarModule
+          ),
+      },
+      {
+        path: "cas-assessment-round",
+        loadChildren: () =>
+          import(
+            "../setup/cas-assessment-round/cas-assessment-round.module"
+          ).then((m) => m.CasAssessmentRoundModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: '**',

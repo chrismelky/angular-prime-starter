@@ -18,49 +18,33 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="admin_hierarchy_id"
+                id="financial_year_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="adminHierarchies!"
+                [options]="financialYears!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_id"
+                [(ngModel)]="financial_year_id"
               ></p-dropdown>
-              <label for="admin_hierarchy_id">Admin Hierarchy </label>
+              <label for="financial_year_id">Financial Year </label>
             </span>
           </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="start_financial_year_id"
+                id="section_level_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="startFinancialYears!"
+                [options]="sectionLevels!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="start_financial_year_id"
+                [(ngModel)]="section_level_id"
               ></p-dropdown>
-              <label for="start_financial_year_id">Start Financial Year </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="end_financial_year_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="endFinancialYears!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="end_financial_year_id"
-              ></p-dropdown>
-              <label for="end_financial_year_id">End Financial Year </label>
+              <label for="section_level_id">Section Level </label>
             </span>
           </div>
         </div>
@@ -112,17 +96,19 @@
             >
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="url"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['url']"
-                  />
-                  <label for="url">Url </label>
+                  <label for="start_date">Start Date </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="search['url'] = undefined; onSearch()"
+                    (click)="search['start_date'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <label for="end_date">End Date </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['end_date'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>
@@ -159,7 +145,7 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="strategicPlans!"
+      [value]="calendars!"
       [scrollable]="true"
       scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
@@ -167,37 +153,25 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Strategic Plans</span>
+          <span class="card-header-text">Calendars</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !admin_hierarchy_id ||
-              !start_financial_year_id ||
-              !end_financial_year_id
-            "
+            [disabled]="!financial_year_id || !section_level_id"
             (click)="createOrUpdate()"
-            label="Add Strategic Plan"
+            label="Add Calendar"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="strategicPlans?.length">
+        <tr *ngIf="calendars?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
           >
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th
-            [pSortableColumn]="'start_financial_year_id'">
-            Start Financial Year<p-sortIcon [field]="'start_financial_year'"></p-sortIcon>
-          </th>
-          <th
-            [pSortableColumn]="'end_financial_year_id'">
-            End Financial Year<p-sortIcon [field]="'end_financial_year'"></p-sortIcon>
           </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
@@ -206,12 +180,6 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
-          </td>
-          <td>
-            {{ rowData['start_financial_year'].name }}
-          </td>
-          <td>
-            {{ rowData['end_financial_year'].name }}
           </td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
@@ -247,7 +215,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="strategicPlans?.length! > 0"
+          [alwaysShow]="calendars?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -263,6 +231,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Strategic Plan"
+  header="Confirmation Delete Calendar"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

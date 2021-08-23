@@ -20,38 +20,34 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
+import { CasPlan } from "src/app/setup/cas-plan/cas-plan.model";
+import { CasPlanService } from "src/app/setup/cas-plan/cas-plan.service";
+import { PeriodGroup } from "src/app/setup/period-group/period-group.model";
+import { PeriodGroupService } from "src/app/setup/period-group/period-group.service";
+import { AdminHierarchyLevel } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
+import { AdminHierarchyLevelService } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
 
-import { ReferenceType } from "./reference-type.model";
-import { ReferenceTypeService } from "./reference-type.service";
-import { ReferenceTypeUpdateComponent } from "./update/reference-type-update.component";
+import { CasAssessmentCategory } from "./cas-assessment-category.model";
+import { CasAssessmentCategoryService } from "./cas-assessment-category.service";
+import { CasAssessmentCategoryUpdateComponent } from "./update/cas-assessment-category-update.component";
 
 @Component({
-  selector: "app-reference-type",
-  templateUrl: "./reference-type.component.html",
+  selector: "app-cas-assessment-category",
+  templateUrl: "./cas-assessment-category.component.html",
 })
-export class ReferenceTypeComponent implements OnInit {
+export class CasAssessmentCategoryComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  referenceTypes?: ReferenceType[] = [];
+  casAssessmentCategories?: CasAssessmentCategory[] = [];
 
-  sectors?: Sector[] = [];
+  casPlans?: CasPlan[] = [];
+  periodGroups?: PeriodGroup[] = [];
+  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
 
   cols = [
     {
       field: "name",
       header: "Name",
-      sort: true,
-    },
-    {
-      field: "multi_select",
-      header: "Multi Select",
-      sort: false,
-    },
-    {
-      field: "link_level",
-      header: "Link Level",
       sort: true,
     },
   ]; //Table display columns
@@ -66,11 +62,15 @@ export class ReferenceTypeComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  sector_id!: number;
+  cas_plan_id!: number;
+  period_group_id!: number;
+  admin_hierarchy_level_id!: number;
 
   constructor(
-    protected referenceTypeService: ReferenceTypeService,
-    protected sectorService: SectorService,
+    protected casAssessmentCategoryService: CasAssessmentCategoryService,
+    protected casPlanService: CasPlanService,
+    protected periodGroupService: PeriodGroupService,
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -80,10 +80,21 @@ export class ReferenceTypeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sectorService
+    this.casPlanService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
+        (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
+      );
+    this.periodGroupService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<PeriodGroup[]>) => (this.periodGroups = resp.data)
+      );
+    this.adminHierarchyLevelService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
+          (this.adminHierarchyLevels = resp.data)
       );
     this.handleNavigation();
   }
@@ -94,22 +105,28 @@ export class ReferenceTypeComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.sector_id) {
+    if (
+      !this.cas_plan_id ||
+      !this.period_group_id ||
+      !this.admin_hierarchy_level_id
+    ) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceTypeService
+    this.casAssessmentCategoryService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        sector_id: this.sector_id,
+        cas_plan_id: this.cas_plan_id,
+        period_group_id: this.period_group_id,
+        admin_hierarchy_level_id: this.admin_hierarchy_level_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceType[]>) => {
+        (res: CustomResponse<CasAssessmentCategory[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -214,17 +231,19 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReferenceType
-   * @param referenceType ; If undefined initize new model to create else edit existing model
+   * Creating or updating CasAssessmentCategory
+   * @param casAssessmentCategory ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(referenceType?: ReferenceType): void {
-    const data: ReferenceType = referenceType ?? {
-      ...new ReferenceType(),
-      sector_id: this.sector_id,
+  createOrUpdate(casAssessmentCategory?: CasAssessmentCategory): void {
+    const data: CasAssessmentCategory = casAssessmentCategory ?? {
+      ...new CasAssessmentCategory(),
+      cas_plan_id: this.cas_plan_id,
+      period_group_id: this.period_group_id,
+      admin_hierarchy_level_id: this.admin_hierarchy_level_id,
     };
-    const ref = this.dialogService.open(ReferenceTypeUpdateComponent, {
+    const ref = this.dialogService.open(CasAssessmentCategoryUpdateComponent, {
       data,
-      header: "Create/Update ReferenceType",
+      header: "Create/Update CasAssessmentCategory",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -234,15 +253,16 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceType
-   * @param referenceType
+   * Delete CasAssessmentCategory
+   * @param casAssessmentCategory
    */
-  delete(referenceType: ReferenceType): void {
+  delete(casAssessmentCategory: CasAssessmentCategory): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReferenceType?",
+      message:
+        "Are you sure that you want to delete this CasAssessmentCategory?",
       accept: () => {
-        this.referenceTypeService
-          .delete(referenceType.id!)
+        this.casAssessmentCategoryService
+          .delete(casAssessmentCategory.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -258,14 +278,14 @@ export class ReferenceTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceType[]> | null,
+    resp: CustomResponse<CasAssessmentCategory[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-type"], {
+      this.router.navigate(["/cas-assessment-category"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -274,7 +294,7 @@ export class ReferenceTypeComponent implements OnInit {
         },
       });
     }
-    this.referenceTypes = resp?.data ?? [];
+    this.casAssessmentCategories = resp?.data ?? [];
   }
 
   /**
@@ -283,6 +303,6 @@ export class ReferenceTypeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Type");
+    this.toastService.error("Error loading Cas Assessment Category");
   }
 }

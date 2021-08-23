@@ -11,41 +11,41 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { CasAssessmentRound } from "./cas-assessment-round.model";
+import { CasAssessmentState } from "./cas-assessment-state.model";
 
 @Injectable({ providedIn: "root" })
-export class CasAssessmentRoundService {
-  public resourceUrl = "api/rounds";
+export class CasAssessmentStateService {
+  public resourceUrl = "api/states";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    casAssessmentRound: CasAssessmentRound
-  ): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.post<CustomResponse<CasAssessmentRound>>(
+    casAssessmentState: CasAssessmentState
+  ): Observable<CustomResponse<CasAssessmentState>> {
+    return this.http.post<CustomResponse<CasAssessmentState>>(
       this.resourceUrl,
-      casAssessmentRound
+      casAssessmentState
     );
   }
 
   update(
-    casAssessmentRound: CasAssessmentRound
-  ): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.put<CustomResponse<CasAssessmentRound>>(
-      `${this.resourceUrl}/${casAssessmentRound.id}`,
-      casAssessmentRound
+    casAssessmentState: CasAssessmentState
+  ): Observable<CustomResponse<CasAssessmentState>> {
+    return this.http.put<CustomResponse<CasAssessmentState>>(
+      `${this.resourceUrl}/${casAssessmentState.id}`,
+      casAssessmentState
     );
   }
 
-  find(id: number): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.get<CustomResponse<CasAssessmentRound>>(
+  find(id: number): Observable<CustomResponse<CasAssessmentState>> {
+    return this.http.get<CustomResponse<CasAssessmentState>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<CasAssessmentRound[]>> {
+  query(req?: any): Observable<CustomResponse<CasAssessmentState[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<CasAssessmentRound[]>>(
+    return this.http.get<CustomResponse<CasAssessmentState[]>>(
       this.resourceUrl,
       { params: options }
     );

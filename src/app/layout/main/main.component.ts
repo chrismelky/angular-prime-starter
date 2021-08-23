@@ -166,6 +166,46 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "cas-assessment-round",
         },
+        {
+          label: "Cas Assessment States",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-state",
+        },
+        {
+          label: "Cas Assessment Criteria",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-criteria",
+        },
+        {
+          label: "Cas Assessment Sub Criteria",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria",
+        },
+        {
+          label: "Cas Assessment Sub Criteria Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria-option",
+        },
+        {
+          label: "Cas Assessment Category Versions",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category-version",
+        },
+        {
+          label: "Cas Assessment Criteria Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-criteria-option",
+        },
+        {
+          label: "Cas Assessment Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category",
+        },
+        {
+          label: "Reference Documents",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-document",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

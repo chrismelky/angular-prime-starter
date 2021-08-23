@@ -12,22 +12,18 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
-import { ReferenceType } from "../reference-type.model";
-import { ReferenceTypeService } from "../reference-type.service";
+import { CasAssessmentState } from "../cas-assessment-state.model";
+import { CasAssessmentStateService } from "../cas-assessment-state.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-reference-type-update",
-  templateUrl: "./reference-type-update.component.html",
+  selector: "app-cas-assessment-state-update",
+  templateUrl: "./cas-assessment-state-update.component.html",
 })
-export class ReferenceTypeUpdateComponent implements OnInit {
+export class CasAssessmentStateUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-
-  sectors?: Sector[] = [];
 
   /**
    * Declare form
@@ -35,14 +31,11 @@ export class ReferenceTypeUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    multi_select: [false, [Validators.required]],
-    link_level: [null, [Validators.required]],
-    sector_id: [null, [Validators.required]],
+    code: [null, []],
   });
 
   constructor(
-    protected referenceTypeService: ReferenceTypeService,
-    protected sectorService: SectorService,
+    protected casAssessmentStateService: CasAssessmentStateService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -50,16 +43,11 @@ export class ReferenceTypeUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sectorService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
-      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create ReferenceType or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasAssessmentState or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -68,20 +56,20 @@ export class ReferenceTypeUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const referenceType = this.createFromForm();
-    if (referenceType.id !== undefined) {
+    const casAssessmentState = this.createFromForm();
+    if (casAssessmentState.id !== undefined) {
       this.subscribeToSaveResponse(
-        this.referenceTypeService.update(referenceType)
+        this.casAssessmentStateService.update(casAssessmentState)
       );
     } else {
       this.subscribeToSaveResponse(
-        this.referenceTypeService.create(referenceType)
+        this.casAssessmentStateService.create(casAssessmentState)
       );
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<ReferenceType>>
+    result: Observable<CustomResponse<CasAssessmentState>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -111,30 +99,26 @@ export class ReferenceTypeUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param referenceType
+   * @param casAssessmentState
    */
-  protected updateForm(referenceType: ReferenceType): void {
+  protected updateForm(casAssessmentState: CasAssessmentState): void {
     this.editForm.patchValue({
-      id: referenceType.id,
-      name: referenceType.name,
-      multi_select: referenceType.multi_select,
-      link_level: referenceType.link_level,
-      sector_id: referenceType.sector_id,
+      id: casAssessmentState.id,
+      name: casAssessmentState.name,
+      code: casAssessmentState.code,
     });
   }
 
   /**
-   * Return form values as object of type ReferenceType
-   * @returns ReferenceType
+   * Return form values as object of type CasAssessmentState
+   * @returns CasAssessmentState
    */
-  protected createFromForm(): ReferenceType {
+  protected createFromForm(): CasAssessmentState {
     return {
-      ...new ReferenceType(),
+      ...new CasAssessmentState(),
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
-      multi_select: this.editForm.get(["multi_select"])!.value,
-      link_level: this.editForm.get(["link_level"])!.value,
-      sector_id: this.editForm.get(["sector_id"])!.value,
+      code: this.editForm.get(["code"])!.value,
     };
   }
 }

@@ -11,41 +11,41 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { CasAssessmentRound } from "./cas-assessment-round.model";
+import { CasAssessmentCategory } from "./cas-assessment-category.model";
 
 @Injectable({ providedIn: "root" })
-export class CasAssessmentRoundService {
-  public resourceUrl = "api/rounds";
+export class CasAssessmentCategoryService {
+  public resourceUrl = "api/cas_assessment_categories";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    casAssessmentRound: CasAssessmentRound
-  ): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.post<CustomResponse<CasAssessmentRound>>(
+    casAssessmentCategory: CasAssessmentCategory
+  ): Observable<CustomResponse<CasAssessmentCategory>> {
+    return this.http.post<CustomResponse<CasAssessmentCategory>>(
       this.resourceUrl,
-      casAssessmentRound
+      casAssessmentCategory
     );
   }
 
   update(
-    casAssessmentRound: CasAssessmentRound
-  ): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.put<CustomResponse<CasAssessmentRound>>(
-      `${this.resourceUrl}/${casAssessmentRound.id}`,
-      casAssessmentRound
+    casAssessmentCategory: CasAssessmentCategory
+  ): Observable<CustomResponse<CasAssessmentCategory>> {
+    return this.http.put<CustomResponse<CasAssessmentCategory>>(
+      `${this.resourceUrl}/${casAssessmentCategory.id}`,
+      casAssessmentCategory
     );
   }
 
-  find(id: number): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.get<CustomResponse<CasAssessmentRound>>(
+  find(id: number): Observable<CustomResponse<CasAssessmentCategory>> {
+    return this.http.get<CustomResponse<CasAssessmentCategory>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<CasAssessmentRound[]>> {
+  query(req?: any): Observable<CustomResponse<CasAssessmentCategory[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<CasAssessmentRound[]>>(
+    return this.http.get<CustomResponse<CasAssessmentCategory[]>>(
       this.resourceUrl,
       { params: options }
     );

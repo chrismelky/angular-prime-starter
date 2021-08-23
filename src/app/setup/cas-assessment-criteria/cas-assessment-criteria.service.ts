@@ -11,41 +11,41 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { CasAssessmentRound } from "./cas-assessment-round.model";
+import { CasAssessmentCriteria } from "./cas-assessment-criteria.model";
 
 @Injectable({ providedIn: "root" })
-export class CasAssessmentRoundService {
-  public resourceUrl = "api/rounds";
+export class CasAssessmentCriteriaService {
+  public resourceUrl = "api/criteria";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    casAssessmentRound: CasAssessmentRound
-  ): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.post<CustomResponse<CasAssessmentRound>>(
+    casAssessmentCriteria: CasAssessmentCriteria
+  ): Observable<CustomResponse<CasAssessmentCriteria>> {
+    return this.http.post<CustomResponse<CasAssessmentCriteria>>(
       this.resourceUrl,
-      casAssessmentRound
+      casAssessmentCriteria
     );
   }
 
   update(
-    casAssessmentRound: CasAssessmentRound
-  ): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.put<CustomResponse<CasAssessmentRound>>(
-      `${this.resourceUrl}/${casAssessmentRound.id}`,
-      casAssessmentRound
+    casAssessmentCriteria: CasAssessmentCriteria
+  ): Observable<CustomResponse<CasAssessmentCriteria>> {
+    return this.http.put<CustomResponse<CasAssessmentCriteria>>(
+      `${this.resourceUrl}/${casAssessmentCriteria.id}`,
+      casAssessmentCriteria
     );
   }
 
-  find(id: number): Observable<CustomResponse<CasAssessmentRound>> {
-    return this.http.get<CustomResponse<CasAssessmentRound>>(
+  find(id: number): Observable<CustomResponse<CasAssessmentCriteria>> {
+    return this.http.get<CustomResponse<CasAssessmentCriteria>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<CasAssessmentRound[]>> {
+  query(req?: any): Observable<CustomResponse<CasAssessmentCriteria[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<CasAssessmentRound[]>>(
+    return this.http.get<CustomResponse<CasAssessmentCriteria[]>>(
       this.resourceUrl,
       { params: options }
     );

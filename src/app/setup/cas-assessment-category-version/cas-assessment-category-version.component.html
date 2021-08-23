@@ -18,17 +18,51 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="sector_id"
+                id="financial_year_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="sectors!"
+                [options]="financialYears!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="sector_id"
+                [(ngModel)]="financial_year_id"
               ></p-dropdown>
-              <label for="sector_id">Sector </label>
+              <label for="financial_year_id">Financial Year </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="cas_assessment_state_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casAssessmentStates!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="cas_assessment_state_id"
+              ></p-dropdown>
+              <label for="cas_assessment_state_id">Cas Assessment State </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="cas_assessment_category_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casAssessmentCategories!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="cas_assessment_category_id"
+              ></p-dropdown>
+              <label for="cas_assessment_category_id"
+                >Cas Assessment Category
+              </label>
             </span>
           </div>
         </div>
@@ -77,40 +111,7 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            >
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['name']"
-                  />
-                  <label for="name">Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="link_level"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['link_level']"
-                  />
-                  <label for="link_level">Link Level </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['link_level'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-            </div>
+            ></div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -143,7 +144,7 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="referenceTypes!"
+      [value]="casAssessmentCategoryVersions!"
       [scrollable]="true"
       scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
@@ -151,19 +152,23 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Reference Types</span>
+          <span class="card-header-text">Cas Assessment Category Versions</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!sector_id"
+            [disabled]="
+              !financial_year_id ||
+              !cas_assessment_state_id ||
+              !cas_assessment_category_id
+            "
             (click)="createOrUpdate()"
-            label="Add Reference Type"
+            label="Add Cas Assessment Category Version"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="referenceTypes?.length">
+        <tr *ngIf="casAssessmentCategoryVersions?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -213,7 +218,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="referenceTypes?.length! > 0"
+          [alwaysShow]="casAssessmentCategoryVersions?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -229,6 +234,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Reference Type"
+  header="Confirmation Delete Cas Assessment Category Version"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

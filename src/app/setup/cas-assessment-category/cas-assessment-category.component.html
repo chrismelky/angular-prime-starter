@@ -18,17 +18,51 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="sector_id"
+                id="cas_plan_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="sectors!"
+                [options]="casPlans!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="sector_id"
+                [(ngModel)]="cas_plan_id"
               ></p-dropdown>
-              <label for="sector_id">Sector </label>
+              <label for="cas_plan_id">Cas Plan </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="period_group_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="periodGroups!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="period_group_id"
+              ></p-dropdown>
+              <label for="period_group_id">Period Group </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="admin_hierarchy_level_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="adminHierarchyLevels!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="admin_hierarchy_level_id"
+              ></p-dropdown>
+              <label for="admin_hierarchy_level_id"
+                >Admin Hierarchy Level
+              </label>
             </span>
           </div>
         </div>
@@ -94,22 +128,6 @@
                   ></i>
                 </span>
               </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="link_level"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['link_level']"
-                  />
-                  <label for="link_level">Link Level </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['link_level'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
             </div>
             <div
               fxLayout="row"
@@ -143,7 +161,7 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="referenceTypes!"
+      [value]="casAssessmentCategories!"
       [scrollable]="true"
       scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
@@ -151,19 +169,21 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Reference Types</span>
+          <span class="card-header-text">Cas Assessment Categories</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!sector_id"
+            [disabled]="
+              !cas_plan_id || !period_group_id || !admin_hierarchy_level_id
+            "
             (click)="createOrUpdate()"
-            label="Add Reference Type"
+            label="Add Cas Assessment Category"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="referenceTypes?.length">
+        <tr *ngIf="casAssessmentCategories?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -213,7 +233,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="referenceTypes?.length! > 0"
+          [alwaysShow]="casAssessmentCategories?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -229,6 +249,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Reference Type"
+  header="Confirmation Delete Cas Assessment Category"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

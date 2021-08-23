@@ -20,23 +20,19 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
 
-import { ReferenceType } from "./reference-type.model";
-import { ReferenceTypeService } from "./reference-type.service";
-import { ReferenceTypeUpdateComponent } from "./update/reference-type-update.component";
+import { CasAssessmentState } from "./cas-assessment-state.model";
+import { CasAssessmentStateService } from "./cas-assessment-state.service";
+import { CasAssessmentStateUpdateComponent } from "./update/cas-assessment-state-update.component";
 
 @Component({
-  selector: "app-reference-type",
-  templateUrl: "./reference-type.component.html",
+  selector: "app-cas-assessment-state",
+  templateUrl: "./cas-assessment-state.component.html",
 })
-export class ReferenceTypeComponent implements OnInit {
+export class CasAssessmentStateComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  referenceTypes?: ReferenceType[] = [];
-
-  sectors?: Sector[] = [];
+  casAssessmentStates?: CasAssessmentState[] = [];
 
   cols = [
     {
@@ -45,14 +41,9 @@ export class ReferenceTypeComponent implements OnInit {
       sort: true,
     },
     {
-      field: "multi_select",
-      header: "Multi Select",
+      field: "code",
+      header: "Code",
       sort: false,
-    },
-    {
-      field: "link_level",
-      header: "Link Level",
-      sort: true,
     },
   ]; //Table display columns
 
@@ -66,11 +57,9 @@ export class ReferenceTypeComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  sector_id!: number;
 
   constructor(
-    protected referenceTypeService: ReferenceTypeService,
-    protected sectorService: SectorService,
+    protected casAssessmentStateService: CasAssessmentStateService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -80,11 +69,6 @@ export class ReferenceTypeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sectorService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
-      );
     this.handleNavigation();
   }
 
@@ -94,22 +78,18 @@ export class ReferenceTypeComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.sector_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceTypeService
+    this.casAssessmentStateService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        sector_id: this.sector_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceType[]>) => {
+        (res: CustomResponse<CasAssessmentState[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -140,20 +120,8 @@ export class ReferenceTypeComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -214,17 +182,16 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReferenceType
-   * @param referenceType ; If undefined initize new model to create else edit existing model
+   * Creating or updating CasAssessmentState
+   * @param casAssessmentState ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(referenceType?: ReferenceType): void {
-    const data: ReferenceType = referenceType ?? {
-      ...new ReferenceType(),
-      sector_id: this.sector_id,
+  createOrUpdate(casAssessmentState?: CasAssessmentState): void {
+    const data: CasAssessmentState = casAssessmentState ?? {
+      ...new CasAssessmentState(),
     };
-    const ref = this.dialogService.open(ReferenceTypeUpdateComponent, {
+    const ref = this.dialogService.open(CasAssessmentStateUpdateComponent, {
       data,
-      header: "Create/Update ReferenceType",
+      header: "Create/Update CasAssessmentState",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -234,15 +201,15 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceType
-   * @param referenceType
+   * Delete CasAssessmentState
+   * @param casAssessmentState
    */
-  delete(referenceType: ReferenceType): void {
+  delete(casAssessmentState: CasAssessmentState): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReferenceType?",
+      message: "Are you sure that you want to delete this CasAssessmentState?",
       accept: () => {
-        this.referenceTypeService
-          .delete(referenceType.id!)
+        this.casAssessmentStateService
+          .delete(casAssessmentState.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -258,14 +225,14 @@ export class ReferenceTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceType[]> | null,
+    resp: CustomResponse<CasAssessmentState[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-type"], {
+      this.router.navigate(["/cas-assessment-state"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -274,7 +241,7 @@ export class ReferenceTypeComponent implements OnInit {
         },
       });
     }
-    this.referenceTypes = resp?.data ?? [];
+    this.casAssessmentStates = resp?.data ?? [];
   }
 
   /**
@@ -283,6 +250,6 @@ export class ReferenceTypeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Type");
+    this.toastService.error("Error loading Cas Assessment State");
   }
 }

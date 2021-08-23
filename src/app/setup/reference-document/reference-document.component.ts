@@ -20,23 +20,29 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
+import { StartFinancialYear } from "src/app/setup/start-financial-year/start-financial-year.model";
+import { StartFinancialYearService } from "src/app/setup/start-financial-year/start-financial-year.service";
+import { EndFinancialYear } from "src/app/setup/end-financial-year/end-financial-year.model";
+import { EndFinancialYearService } from "src/app/setup/end-financial-year/end-financial-year.service";
+import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
 
-import { ReferenceType } from "./reference-type.model";
-import { ReferenceTypeService } from "./reference-type.service";
-import { ReferenceTypeUpdateComponent } from "./update/reference-type-update.component";
+import { ReferenceDocument } from "./reference-document.model";
+import { ReferenceDocumentService } from "./reference-document.service";
+import { ReferenceDocumentUpdateComponent } from "./update/reference-document-update.component";
 
 @Component({
-  selector: "app-reference-type",
-  templateUrl: "./reference-type.component.html",
+  selector: "app-reference-document",
+  templateUrl: "./reference-document.component.html",
 })
-export class ReferenceTypeComponent implements OnInit {
+export class ReferenceDocumentComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  referenceTypes?: ReferenceType[] = [];
+  referenceDocuments?: ReferenceDocument[] = [];
 
-  sectors?: Sector[] = [];
+  startFinancialYears?: StartFinancialYear[] = [];
+  endFinancialYears?: EndFinancialYear[] = [];
+  adminHierarchies?: AdminHierarchy[] = [];
 
   cols = [
     {
@@ -45,13 +51,8 @@ export class ReferenceTypeComponent implements OnInit {
       sort: true,
     },
     {
-      field: "multi_select",
-      header: "Multi Select",
-      sort: false,
-    },
-    {
-      field: "link_level",
-      header: "Link Level",
+      field: "url",
+      header: "Url",
       sort: true,
     },
   ]; //Table display columns
@@ -66,11 +67,15 @@ export class ReferenceTypeComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  sector_id!: number;
+  start_financial_year_id!: number;
+  end_financial_year_id!: number;
+  admin_hierarchy_id!: number;
 
   constructor(
-    protected referenceTypeService: ReferenceTypeService,
-    protected sectorService: SectorService,
+    protected referenceDocumentService: ReferenceDocumentService,
+    protected startFinancialYearService: StartFinancialYearService,
+    protected endFinancialYearService: EndFinancialYearService,
+    protected adminHierarchyService: AdminHierarchyService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -80,10 +85,23 @@ export class ReferenceTypeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sectorService
+    this.startFinancialYearService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
+        (resp: CustomResponse<StartFinancialYear[]>) =>
+          (this.startFinancialYears = resp.data)
+      );
+    this.endFinancialYearService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<EndFinancialYear[]>) =>
+          (this.endFinancialYears = resp.data)
+      );
+    this.adminHierarchyService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.adminHierarchies = resp.data)
       );
     this.handleNavigation();
   }
@@ -94,22 +112,28 @@ export class ReferenceTypeComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.sector_id) {
+    if (
+      !this.start_financial_year_id ||
+      !this.end_financial_year_id ||
+      !this.admin_hierarchy_id
+    ) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceTypeService
+    this.referenceDocumentService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        sector_id: this.sector_id,
+        start_financial_year_id: this.start_financial_year_id,
+        end_financial_year_id: this.end_financial_year_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceType[]>) => {
+        (res: CustomResponse<ReferenceDocument[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -214,17 +238,19 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReferenceType
-   * @param referenceType ; If undefined initize new model to create else edit existing model
+   * Creating or updating ReferenceDocument
+   * @param referenceDocument ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(referenceType?: ReferenceType): void {
-    const data: ReferenceType = referenceType ?? {
-      ...new ReferenceType(),
-      sector_id: this.sector_id,
+  createOrUpdate(referenceDocument?: ReferenceDocument): void {
+    const data: ReferenceDocument = referenceDocument ?? {
+      ...new ReferenceDocument(),
+      start_financial_year_id: this.start_financial_year_id,
+      end_financial_year_id: this.end_financial_year_id,
+      admin_hierarchy_id: this.admin_hierarchy_id,
     };
-    const ref = this.dialogService.open(ReferenceTypeUpdateComponent, {
+    const ref = this.dialogService.open(ReferenceDocumentUpdateComponent, {
       data,
-      header: "Create/Update ReferenceType",
+      header: "Create/Update ReferenceDocument",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -234,15 +260,15 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceType
-   * @param referenceType
+   * Delete ReferenceDocument
+   * @param referenceDocument
    */
-  delete(referenceType: ReferenceType): void {
+  delete(referenceDocument: ReferenceDocument): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReferenceType?",
+      message: "Are you sure that you want to delete this ReferenceDocument?",
       accept: () => {
-        this.referenceTypeService
-          .delete(referenceType.id!)
+        this.referenceDocumentService
+          .delete(referenceDocument.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -258,14 +284,14 @@ export class ReferenceTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceType[]> | null,
+    resp: CustomResponse<ReferenceDocument[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-type"], {
+      this.router.navigate(["/reference-document"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -274,7 +300,7 @@ export class ReferenceTypeComponent implements OnInit {
         },
       });
     }
-    this.referenceTypes = resp?.data ?? [];
+    this.referenceDocuments = resp?.data ?? [];
   }
 
   /**
@@ -283,6 +309,6 @@ export class ReferenceTypeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Type");
+    this.toastService.error("Error loading Reference Document");
   }
 }

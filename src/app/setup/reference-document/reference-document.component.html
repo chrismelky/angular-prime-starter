@@ -18,17 +18,49 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="sector_id"
+                id="start_financial_year_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="sectors!"
+                [options]="startFinancialYears!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="sector_id"
+                [(ngModel)]="start_financial_year_id"
               ></p-dropdown>
-              <label for="sector_id">Sector </label>
+              <label for="start_financial_year_id">Start Financial Year </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="end_financial_year_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="endFinancialYears!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="end_financial_year_id"
+              ></p-dropdown>
+              <label for="end_financial_year_id">End Financial Year </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="admin_hierarchy_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="adminHierarchies!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="admin_hierarchy_id"
+              ></p-dropdown>
+              <label for="admin_hierarchy_id">Admin Hierarchy </label>
             </span>
           </div>
         </div>
@@ -96,17 +128,10 @@
               </div>
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="link_level"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['link_level']"
-                  />
-                  <label for="link_level">Link Level </label>
+                  <label for="url">Url </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="search['link_level'] = undefined; onSearch()"
+                    (click)="search['url'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>
@@ -143,7 +168,7 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="referenceTypes!"
+      [value]="referenceDocuments!"
       [scrollable]="true"
       scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
@@ -151,19 +176,23 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Reference Types</span>
+          <span class="card-header-text">Reference Documents</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!sector_id"
+            [disabled]="
+              !start_financial_year_id ||
+              !end_financial_year_id ||
+              !admin_hierarchy_id
+            "
             (click)="createOrUpdate()"
-            label="Add Reference Type"
+            label="Add Reference Document"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="referenceTypes?.length">
+        <tr *ngIf="referenceDocuments?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -213,7 +242,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="referenceTypes?.length! > 0"
+          [alwaysShow]="referenceDocuments?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -229,6 +258,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Reference Type"
+  header="Confirmation Delete Reference Document"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

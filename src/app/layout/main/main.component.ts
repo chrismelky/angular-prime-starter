@@ -216,6 +216,11 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "period-group",
         },
+        {
+          label: "Data Sets",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "data-set",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

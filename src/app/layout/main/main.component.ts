@@ -157,6 +157,11 @@ export class MainComponent implements OnInit {
           routerLink: "objective",
         },
         {
+          label: "Long Term Targets",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "long-term-target",
+        },
+        {
           label: "Calendar Events",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "calendar-event",

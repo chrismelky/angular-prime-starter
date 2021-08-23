@@ -20,47 +20,39 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
+import { StrategicPlan } from "src/app/setup/strategic-plan/strategic-plan.model";
+import { StrategicPlanService } from "src/app/setup/strategic-plan/strategic-plan.service";
+import { Objective } from "src/app/setup/objective/objective.model";
+import { ObjectiveService } from "src/app/setup/objective/objective.service";
+import { Section } from "src/app/setup/section/section.model";
+import { SectionService } from "src/app/setup/section/section.service";
 
-import { StrategicPlan } from "./strategic-plan.model";
-import { StrategicPlanService } from "./strategic-plan.service";
-import { StrategicPlanUpdateComponent } from "./update/strategic-plan-update.component";
+import { LongTermTarget } from "./long-term-target.model";
+import { LongTermTargetService } from "./long-term-target.service";
+import { LongTermTargetUpdateComponent } from "./update/long-term-target-update.component";
 
 @Component({
-  selector: "app-strategic-plan",
-  templateUrl: "./strategic-plan.component.html",
+  selector: "app-long-term-target",
+  templateUrl: "./long-term-target.component.html",
 })
-export class StrategicPlanComponent implements OnInit {
+export class LongTermTargetComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  strategicPlans?: StrategicPlan[] = [];
+  longTermTargets?: LongTermTarget[] = [];
 
-  adminHierarchies?: AdminHierarchy[] = [];
-  startFinancialYears?: FinancialYear[] = [];
-  endFinancialYears?: FinancialYear[] = [];
+  strategicPlans?: StrategicPlan[] = [];
+  objectives?: Objective[] = [];
+  sections?: Section[] = [];
 
   cols = [
-    {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
     {
       field: "description",
       header: "Description",
       sort: true,
     },
     {
-      field: "is_active",
-      header: "Is Active",
-      sort: false,
-    },
-    {
-      field: "url",
-      header: "Url",
+      field: "code",
+      header: "Code",
       sort: true,
     },
   ]; //Table display columns
@@ -75,15 +67,15 @@ export class StrategicPlanComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
-  start_financial_year_id!: number;
-  end_financial_year_id!: number;
+  strategic_plan_id!: number;
+  objective_id!: number;
+  section_id!: number;
 
   constructor(
+    protected longTermTargetService: LongTermTargetService,
     protected strategicPlanService: StrategicPlanService,
-    protected adminHierarchyService: AdminHierarchyService,
-    protected startFinancialYearService: FinancialYearService,
-    protected endFinancialYearService: FinancialYearService,
+    protected objectiveService: ObjectiveService,
+    protected sectionService: SectionService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -93,23 +85,23 @@ export class StrategicPlanComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.adminHierarchyService
+    this.strategicPlanService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
+        (resp: CustomResponse<StrategicPlan[]>) =>
+          (this.strategicPlans = resp.data)
       );
-    this.startFinancialYearService
-      .query({ columns: ["id", "name"] })
+    this.objectiveService
+      .query({ columns: ["id", "description"] })
       .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.startFinancialYears = resp.data)
+        (resp: CustomResponse<Objective[]>) => (this.objectives = resp.data)
       );
-    this.endFinancialYearService
+    console.log("Masese")
+    console.log(this.objectives)
+    this.sectionService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.endFinancialYears = resp.data)
+        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
     this.handleNavigation();
   }
@@ -120,28 +112,24 @@ export class StrategicPlanComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (
-      !this.admin_hierarchy_id ||
-      !this.start_financial_year_id ||
-      !this.end_financial_year_id
-    ) {
+    if (!this.strategic_plan_id || !this.objective_id || !this.section_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.strategicPlanService
+    this.longTermTargetService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        start_financial_year_id: this.start_financial_year_id,
-        end_financial_year_id: this.end_financial_year_id,
+        strategic_plan_id: this.strategic_plan_id,
+        objective_id: this.objective_id,
+        section_id: this.section_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<StrategicPlan[]>) => {
+        (res: CustomResponse<LongTermTarget[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -246,19 +234,19 @@ export class StrategicPlanComponent implements OnInit {
   }
 
   /**
-   * Creating or updating StrategicPlan
-   * @param strategicPlan ; If undefined initize new model to create else edit existing model
+   * Creating or updating LongTermTarget
+   * @param longTermTarget ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(strategicPlan?: StrategicPlan): void {
-    const data: StrategicPlan = strategicPlan ?? {
-      ...new StrategicPlan(),
-      admin_hierarchy_id: this.admin_hierarchy_id,
-      start_financial_year_id: this.start_financial_year_id,
-      end_financial_year_id: this.end_financial_year_id,
+  createOrUpdate(longTermTarget?: LongTermTarget): void {
+    const data: LongTermTarget = longTermTarget ?? {
+      ...new LongTermTarget(),
+      strategic_plan_id: this.strategic_plan_id,
+      objective_id: this.objective_id,
+      section_id: this.section_id,
     };
-    const ref = this.dialogService.open(StrategicPlanUpdateComponent, {
+    const ref = this.dialogService.open(LongTermTargetUpdateComponent, {
       data,
-      header: "Create/Update StrategicPlan",
+      header: "Create/Update LongTermTarget",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -268,15 +256,15 @@ export class StrategicPlanComponent implements OnInit {
   }
 
   /**
-   * Delete StrategicPlan
-   * @param strategicPlan
+   * Delete LongTermTarget
+   * @param longTermTarget
    */
-  delete(strategicPlan: StrategicPlan): void {
+  delete(longTermTarget: LongTermTarget): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this StrategicPlan?",
+      message: "Are you sure that you want to delete this LongTermTarget?",
       accept: () => {
-        this.strategicPlanService
-          .delete(strategicPlan.id!)
+        this.longTermTargetService
+          .delete(longTermTarget.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -292,14 +280,14 @@ export class StrategicPlanComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<StrategicPlan[]> | null,
+    resp: CustomResponse<LongTermTarget[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/strategic-plan"], {
+      this.router.navigate(["/long-term-target"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -308,7 +296,7 @@ export class StrategicPlanComponent implements OnInit {
         },
       });
     }
-    this.strategicPlans = resp?.data ?? [];
+    this.longTermTargets = resp?.data ?? [];
   }
 
   /**
@@ -317,6 +305,6 @@ export class StrategicPlanComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Strategic Plan");
+    this.toastService.error("Error loading Long Term Target");
   }
 }

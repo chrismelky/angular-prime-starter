@@ -9,25 +9,6 @@
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="name" type="text" pInputText formControlName="name" />
-          <label for="name">Name </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('name')!.invalid &&
-            (editForm.get('name')!.dirty ||
-              editForm.get('name')!.touched ||
-              formError)
-          "
-        >
-          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
-            >Name is required.</small
-          >
-        </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
           <input
             id="description"
             type="text"
@@ -44,121 +25,120 @@
               formError)
           "
         >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('description')?.errors?.required"
+            >Description is required.</small
+          >
         </span>
-      </div>
-
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
-          id="is_active"
-          name="is_active"
-          formControlName="is_active"
-        ></p-inputSwitch>
-        <label for="is_active">Is Active </label>
       </div>
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="url" type="text" pInputText formControlName="url" />
-          <label for="url">Url </label>
+          <input id="code" type="text" pInputText formControlName="code" />
+          <label for="code">Code </label>
         </span>
         <span
           *ngIf="
-            editForm.get('url')!.invalid &&
-            (editForm.get('url')!.dirty ||
-              editForm.get('url')!.touched ||
+            editForm.get('code')!.invalid &&
+            (editForm.get('code')!.dirty ||
+              editForm.get('code')!.touched ||
               formError)
           "
         >
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
+            >Code is required.</small
+          >
         </span>
       </div>
 
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="admin_hierarchy_id"
+            id="strategic_plan_id"
             optionValue="id"
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
-            [options]="adminHierarchies!"
-            formControlName="admin_hierarchy_id"
+            [options]="strategicPlans!"
+            formControlName="strategic_plan_id"
           ></p-dropdown>
-          <label for="admin_hierarchy_id">Admin Hierarchy </label>
+          <label for="strategic_plan_id">Strategic Plan </label>
         </span>
         <span
           *ngIf="
-            editForm.get('admin_hierarchy_id')!.invalid &&
-            (editForm.get('admin_hierarchy_id')!.dirty ||
-              editForm.get('admin_hierarchy_id')!.touched ||
+            editForm.get('strategic_plan_id')!.invalid &&
+            (editForm.get('strategic_plan_id')!.dirty ||
+              editForm.get('strategic_plan_id')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
-            >Admin Hierarchy is required.</small
+            *ngIf="editForm.get('strategic_plan_id')?.errors?.required"
+            >Strategic Plan is required.</small
           >
         </span>
       </div>
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="start_financial_year_id"
+            id="objective_id"
             optionValue="id"
-            optionLabel="name"
+            optionLabel="description"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
-            [options]="startFinancialYears!"
-            formControlName="start_financial_year_id"
+            [options]="objectives!"
+            formControlName="objective_id"
           ></p-dropdown>
-          <label for="start_financial_year_id">Start Financial Year </label>
+          <label for="objective_id">Objective </label>
         </span>
         <span
           *ngIf="
-            editForm.get('start_financial_year_id')!.invalid &&
-            (editForm.get('start_financial_year_id')!.dirty ||
-              editForm.get('start_financial_year_id')!.touched ||
+            editForm.get('objective_id')!.invalid &&
+            (editForm.get('objective_id')!.dirty ||
+              editForm.get('objective_id')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('start_financial_year_id')?.errors?.required"
-            >Start Financial Year is required.</small
+            *ngIf="editForm.get('objective_id')?.errors?.required"
+            >Objective is required.</small
           >
         </span>
       </div>
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="end_financial_year_id"
+            id="section_id"
             optionValue="id"
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
-            [options]="endFinancialYears!"
-            formControlName="end_financial_year_id"
+            [options]="sections!"
+            formControlName="section_id"
           ></p-dropdown>
-          <label for="end_financial_year_id">End Financial Year </label>
+          <label for="section_id">Section </label>
         </span>
         <span
           *ngIf="
-            editForm.get('end_financial_year_id')!.invalid &&
-            (editForm.get('end_financial_year_id')!.dirty ||
-              editForm.get('end_financial_year_id')!.touched ||
+            editForm.get('section_id')!.invalid &&
+            (editForm.get('section_id')!.dirty ||
+              editForm.get('section_id')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('end_financial_year_id')?.errors?.required"
-            >End Financial Year is required.</small
+            *ngIf="editForm.get('section_id')?.errors?.required"
+            >Section is required.</small
           >
         </span>
       </div>

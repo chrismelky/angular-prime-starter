@@ -18,49 +18,49 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="admin_hierarchy_id"
+                id="strategic_plan_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="adminHierarchies!"
+                [options]="strategicPlans!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_id"
+                [(ngModel)]="strategic_plan_id"
               ></p-dropdown>
-              <label for="admin_hierarchy_id">Admin Hierarchy </label>
+              <label for="strategic_plan_id">Strategic Plan </label>
             </span>
           </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="start_financial_year_id"
+                id="objective_id"
                 optionValue="id"
-                optionLabel="name"
+                optionLabel="description"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="startFinancialYears!"
+                [options]="objectives!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="start_financial_year_id"
+                [(ngModel)]="objective_id"
               ></p-dropdown>
-              <label for="start_financial_year_id">Start Financial Year </label>
+              <label for="objective_id">Objective </label>
             </span>
           </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="end_financial_year_id"
+                id="section_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="endFinancialYears!"
+                [options]="sections!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="end_financial_year_id"
+                [(ngModel)]="section_id"
               ></p-dropdown>
-              <label for="end_financial_year_id">End Financial Year </label>
+              <label for="section_id">Section </label>
             </span>
           </div>
         </div>
@@ -113,22 +113,6 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
-                    id="name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['name']"
-                  />
-                  <label for="name">Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
                     id="description"
                     type="text"
                     class="p-inputtext-sm"
@@ -145,16 +129,16 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
-                    id="url"
+                    id="code"
                     type="text"
                     class="p-inputtext-sm"
                     pInputText
-                    [(ngModel)]="search['url']"
+                    [(ngModel)]="search['code']"
                   />
-                  <label for="url">Url </label>
+                  <label for="code">Code </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="search['url'] = undefined; onSearch()"
+                    (click)="search['code'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>
@@ -191,7 +175,7 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="strategicPlans!"
+      [value]="longTermTargets!"
       [scrollable]="true"
       scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
@@ -199,23 +183,19 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Strategic Plans</span>
+          <span class="card-header-text">Long Term Targets</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !admin_hierarchy_id ||
-              !start_financial_year_id ||
-              !end_financial_year_id
-            "
+            [disabled]="!strategic_plan_id || !objective_id || !section_id"
             (click)="createOrUpdate()"
-            label="Add Strategic Plan"
+            label="Add Long Term Target"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="strategicPlans?.length">
+        <tr *ngIf="longTermTargets?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -265,7 +245,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="strategicPlans?.length! > 0"
+          [alwaysShow]="longTermTargets?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -281,6 +261,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Strategic Plan"
+  header="Confirmation Delete Long Term Target"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

@@ -173,6 +173,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: "long-term-target",
+        loadChildren: () =>
+          import("../setup/long-term-target/long-term-target.module").then(
+            (m) => m.LongTermTargetModule
+          ),
+      },
+      {
         path: "calendar-event",
         loadChildren: () =>
           import("../setup/calendar-event/calendar-event.module").then(

@@ -1,7 +1,7 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { MainComponent } from "./main/main.component";
-import { NotFoundComponent } from "./not-found/not-found.component";
+import {NgModule} from "@angular/core";
+import {RouterModule, Routes} from "@angular/router";
+import {MainComponent} from "./main/main.component";
+import {NotFoundComponent} from "./not-found/not-found.component";
 
 const routes: Routes = [
   {
@@ -60,14 +60,7 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/activity-task_nature/activity-task_nature.module"
-          ).then((m) => m.ActivityTaskNatureModule),
-      },
-      {
-        path: "admin-hierarchy_level",
-        loadChildren: () =>
-          import(
-            "../setup/admin-hierarchy-level/admin-hierarchy-level.module"
-          ).then((m) => m.AdminHierarchyLevelModule),
+            ).then((m) => m.ActivityTaskNatureModule),
       },
       {
         path: "sector",
@@ -100,7 +93,7 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/reference-document-type/reference-document-type.module"
-          ).then((m) => m.ReferenceDocumentTypeModule),
+            ).then((m) => m.ReferenceDocumentTypeModule),
       },
       {
         path: "reference-type",
@@ -135,14 +128,14 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/admin-hierarchy-level/admin-hierarchy-level.module"
-          ).then((m) => m.AdminHierarchyLevelModule),
+            ).then((m) => m.AdminHierarchyLevelModule),
       },
       {
         path: "reference-document-type",
         loadChildren: () =>
           import(
             "../setup/reference-document-type/reference-document-type.module"
-          ).then((m) => m.ReferenceDocumentTypeModule),
+            ).then((m) => m.ReferenceDocumentTypeModule),
       },
       {
         path: "admin-hierarchy",
@@ -163,7 +156,7 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/activity-task-nature/activity-task-nature.module"
-          ).then((m) => m.ActivityTaskNatureModule),
+            ).then((m) => m.ActivityTaskNatureModule),
       },
       {
         path: "objective-type",
@@ -198,7 +191,21 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/cas-assessment-round/cas-assessment-round.module"
-          ).then((m) => m.CasAssessmentRoundModule),
+            ).then((m) => m.CasAssessmentRoundModule),
+      },
+      {
+        path: "cas-plan",
+        loadChildren: () =>
+          import("../setup/cas-plan/cas-plan.module").then(
+            (m) => m.CasPlanModule
+          ),
+      },
+      {
+        path: "cas-plan-content",
+        loadChildren: () =>
+          import("../setup/cas-plan-content/cas-plan-content.module").then(
+            (m) => m.CasPlanContentModule
+          ),
       },
       {
         path: "cas-assessment-state",
@@ -269,4 +276,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class LayoutRoutingModule {}
+export class LayoutRoutingModule {
+}

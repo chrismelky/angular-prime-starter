@@ -1,9 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 
-import { BreakpointObserver } from "@angular/cdk/layout";
-import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
-import { MenuItem } from "primeng/api";
+import {BreakpointObserver} from "@angular/cdk/layout";
+import {map} from "rxjs/operators";
+import {Observable} from "rxjs";
+import {MenuItem} from "primeng/api";
 
 @Component({
   selector: "app-main",
@@ -23,7 +23,8 @@ export class MainComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   items: MenuItem[] = [
     {
@@ -65,11 +66,6 @@ export class MainComponent implements OnInit {
           label: "Activity Task Natures",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "activity-task_nature",
-        },
-        {
-          label: "Admin Hierarchy Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy_level",
         },
         {
           label: "Admin Hierarchies",
@@ -135,6 +131,16 @@ export class MainComponent implements OnInit {
           label: "Reference Document Types",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "reference-document-type",
+        },
+        {
+          label: "Cas Plans",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-plan",
+        },
+        {
+          label: "Cas Plan Contents",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-plan-content",
         },
         {
           label: "Activity Task Natures",

@@ -20,16 +20,14 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { StartFinancialYear } from "src/app/setup/start-financial-year/start-financial-year.model";
-import { StartFinancialYearService } from "src/app/setup/start-financial-year/start-financial-year.service";
-import { EndFinancialYear } from "src/app/setup/end-financial-year/end-financial-year.model";
-import { EndFinancialYearService } from "src/app/setup/end-financial-year/end-financial-year.service";
+import {FinancialYear} from "src/app/setup/financial-year/financial-year.model";
 import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
 import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
 
 import { ReferenceDocument } from "./reference-document.model";
 import { ReferenceDocumentService } from "./reference-document.service";
 import { ReferenceDocumentUpdateComponent } from "./update/reference-document-update.component";
+import {FinancialYearService} from "../financial-year/financial-year.service";
 
 @Component({
   selector: "app-reference-document",
@@ -40,8 +38,8 @@ export class ReferenceDocumentComponent implements OnInit {
   @ViewChild("table") table!: Table;
   referenceDocuments?: ReferenceDocument[] = [];
 
-  startFinancialYears?: StartFinancialYear[] = [];
-  endFinancialYears?: EndFinancialYear[] = [];
+  startFinancialYears?: FinancialYear[] = [];
+  endFinancialYears?: FinancialYear[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
 
   cols = [
@@ -73,8 +71,7 @@ export class ReferenceDocumentComponent implements OnInit {
 
   constructor(
     protected referenceDocumentService: ReferenceDocumentService,
-    protected startFinancialYearService: StartFinancialYearService,
-    protected endFinancialYearService: EndFinancialYearService,
+    protected financialYearService: FinancialYearService,
     protected adminHierarchyService: AdminHierarchyService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -85,16 +82,16 @@ export class ReferenceDocumentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.startFinancialYearService
+    this.financialYearService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<StartFinancialYear[]>) =>
+        (resp: CustomResponse<FinancialYear[]>) =>
           (this.startFinancialYears = resp.data)
       );
-    this.endFinancialYearService
+    this.financialYearService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<EndFinancialYear[]>) =>
+        (resp: CustomResponse<FinancialYear[]>) =>
           (this.endFinancialYears = resp.data)
       );
     this.adminHierarchyService

@@ -212,55 +212,55 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/cas-assessment-state/cas-assessment-state.module"
-          ).then((m) => m.CasAssessmentStateModule),
+            ).then((m) => m.CasAssessmentStateModule),
       },
       {
         path: "cas-assessment-criteria",
         loadChildren: () =>
           import(
             "../setup/cas-assessment-criteria/cas-assessment-criteria.module"
-          ).then((m) => m.CasAssessmentCriteriaModule),
+            ).then((m) => m.CasAssessmentCriteriaModule),
       },
       {
         path: "cas-assessment-sub-criteria",
         loadChildren: () =>
           import(
             "../setup/cas-assessment-sub-criteria/cas-assessment-sub-criteria.module"
-          ).then((m) => m.CasAssessmentSubCriteriaModule),
+            ).then((m) => m.CasAssessmentSubCriteriaModule),
       },
       {
         path: "cas-assessment-sub-criteria-option",
         loadChildren: () =>
           import(
             "../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.module"
-          ).then((m) => m.CasAssessmentSubCriteriaOptionModule),
+            ).then((m) => m.CasAssessmentSubCriteriaOptionModule),
       },
       {
         path: "cas-assessment-category-version",
         loadChildren: () =>
           import(
             "../setup/cas-assessment-category-version/cas-assessment-category-version.module"
-          ).then((m) => m.CasAssessmentCategoryVersionModule),
+            ).then((m) => m.CasAssessmentCategoryVersionModule),
       },
       {
         path: "cas-assessment-criteria-option",
         loadChildren: () =>
           import(
             "../setup/cas-assessment-criteria-option/cas-assessment-criteria-option.module"
-          ).then((m) => m.CasAssessmentCriteriaOptionModule),
+            ).then((m) => m.CasAssessmentCriteriaOptionModule),
       },
       {
         path: "cas-assessment-category",
         loadChildren: () =>
           import(
             "../setup/cas-assessment-category/cas-assessment-category.module"
-          ).then((m) => m.CasAssessmentCategoryModule),
+            ).then((m) => m.CasAssessmentCategoryModule),
       },
       {
         path: "reference-document",
         loadChildren: () =>
           import("../setup/reference-document/reference-document.module").then(
-            (m) => m.Reference - documentModule
+            (m) => m.ReferenceDocumentModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

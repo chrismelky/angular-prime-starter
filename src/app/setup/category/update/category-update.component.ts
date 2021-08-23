@@ -12,6 +12,8 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
+import { CategoryCombination } from "src/app/setup/category-combination/category-combination.model";
+import { CategoryCombinationService } from "src/app/setup/category-combination/category-combination.service";
 import { Category } from "../category.model";
 import { CategoryService } from "../category.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -25,6 +27,8 @@ export class CategoryUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
+  categoryCombinations?: CategoryCombination[] = [];
+
   /**
    * Declare form
    */
@@ -32,10 +36,12 @@ export class CategoryUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
+    category_combination_id: [null, [Validators.required]],
   });
 
   constructor(
     protected categoryService: CategoryService,
+    protected categoryCombinationService: CategoryCombinationService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -43,6 +49,12 @@ export class CategoryUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.categoryCombinationService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CategoryCombination[]>) =>
+          (this.categoryCombinations = resp.data)
+      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -102,6 +114,7 @@ export class CategoryUpdateComponent implements OnInit {
       id: category.id,
       name: category.name,
       code: category.code,
+      category_combination_id: category.category_combination_id,
     });
   }
 
@@ -115,6 +128,8 @@ export class CategoryUpdateComponent implements OnInit {
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
       code: this.editForm.get(["code"])!.value,
+      category_combination_id: this.editForm.get(["category_combination_id"])!
+        .value,
     };
   }
 }

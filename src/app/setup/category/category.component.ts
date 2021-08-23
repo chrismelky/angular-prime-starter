@@ -5,25 +5,27 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {CategoryCombination} from "src/app/setup/category-combination/category-combination.model";
+import {CategoryCombinationService} from "src/app/setup/category-combination/category-combination.service";
 
-import { Category } from "./category.model";
-import { CategoryService } from "./category.service";
-import { CategoryUpdateComponent } from "./update/category-update.component";
+import {Category} from "./category.model";
+import {CategoryService} from "./category.service";
+import {CategoryUpdateComponent} from "./update/category-update.component";
 
 @Component({
   selector: "app-category",
@@ -33,6 +35,8 @@ export class CategoryComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
   categories?: Category[] = [];
+
+  categoryCombinations?: CategoryCombination[] = [];
 
   cols = [
     {
@@ -57,18 +61,27 @@ export class CategoryComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  category_combination_id!: number;
 
   constructor(
     protected categoryService: CategoryService,
+    protected categoryCombinationService: CategoryCombinationService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
+    this.categoryCombinationService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<CategoryCombination[]>) =>
+          (this.categoryCombinations = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -78,6 +91,9 @@ export class CategoryComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.category_combination_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -86,6 +102,7 @@ export class CategoryComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        category_combination_id: this.category_combination_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -120,8 +137,20 @@ export class CategoryComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -188,6 +217,7 @@ export class CategoryComponent implements OnInit {
   createOrUpdate(category?: Category): void {
     const data: Category = category ?? {
       ...new Category(),
+      category_combination_id: this.category_combination_id,
     };
     const ref = this.dialogService.open(CategoryUpdateComponent, {
       data,

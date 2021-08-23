@@ -12,10 +12,6 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { StartFinancialYear } from "src/app/setup/start-financial-year/start-financial-year.model";
-import { StartFinancialYearService } from "src/app/setup/start-financial-year/start-financial-year.service";
-import { EndFinancialYear } from "src/app/setup/end-financial-year/end-financial-year.model";
-import { EndFinancialYearService } from "src/app/setup/end-financial-year/end-financial-year.service";
 import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
 import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
 import { ReferenceDocument } from "../reference-document.model";
@@ -31,8 +27,6 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
-  startFinancialYears?: StartFinancialYear[] = [];
-  endFinancialYears?: EndFinancialYear[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
 
   /**
@@ -40,17 +34,15 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
+    name: [null, []],
     url: [null, []],
-    start_financial_year_id: [null, [Validators.required]],
-    end_financial_year_id: [null, [Validators.required]],
-    admin_hierarchy_id: [null, [Validators.required]],
+    start_financial_year_id: [null, []],
+    end_financial_year_id: [null, []],
+    admin_hierarchy_id: [null, []],
   });
 
   constructor(
     protected referenceDocumentService: ReferenceDocumentService,
-    protected startFinancialYearService: StartFinancialYearService,
-    protected endFinancialYearService: EndFinancialYearService,
     protected adminHierarchyService: AdminHierarchyService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
@@ -59,18 +51,7 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.startFinancialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<StartFinancialYear[]>) =>
-          (this.startFinancialYears = resp.data)
-      );
-    this.endFinancialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<EndFinancialYear[]>) =>
-          (this.endFinancialYears = resp.data)
-      );
+
     this.adminHierarchyService
       .query({ columns: ["id", "name"] })
       .subscribe(

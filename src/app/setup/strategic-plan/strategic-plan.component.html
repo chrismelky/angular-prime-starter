@@ -113,6 +113,38 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
+                    id="name"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['name']"
+                  />
+                  <label for="name">Name </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['name'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="description"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['description']"
+                  />
+                  <label for="description">Description </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['description'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
                     id="url"
                     type="text"
                     class="p-inputtext-sm"
@@ -191,14 +223,6 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th
-            [pSortableColumn]="'start_financial_year_id'">
-            Start Financial Year<p-sortIcon [field]="'start_financial_year'"></p-sortIcon>
-          </th>
-          <th
-            [pSortableColumn]="'end_financial_year_id'">
-            End Financial Year<p-sortIcon [field]="'end_financial_year'"></p-sortIcon>
-          </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
@@ -206,12 +230,6 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
-          </td>
-          <td>
-            {{ rowData['start_financial_year'].name }}
-          </td>
-          <td>
-            {{ rowData['end_financial_year'].name }}
           </td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">

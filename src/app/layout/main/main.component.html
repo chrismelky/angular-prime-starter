@@ -35,6 +35,30 @@
         class="p-button-plain p-button-rounded p-button-text p-ripple"
         (click)="drawer.toggle()"
       ></button>
+      <span fxFlex></span>
+
+      <div fxLayout="row" fxLayoutGap="8px" style="margin-right: 0.75rem">
+        <button
+          pButton
+          class="p-button-icon p-button-rounded p-button-plain p-button-text"
+          icon="pi pi-bell"
+        ></button>
+        <p-avatar
+          pRipple
+          class="p-ripple"
+          size="large"
+          id="avator"
+          [label]="avator"
+          shape="circle"
+          (click)="userMenu.toggle($event)"
+        ></p-avatar>
+        <p-menu
+          #userMenu
+          [popup]="true"
+          [model]="userMenus"
+          appendTo="body"
+        ></p-menu>
+      </div>
     </mat-toolbar>
     <div>
       <router-outlet></router-outlet>

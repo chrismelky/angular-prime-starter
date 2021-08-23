@@ -25,9 +25,86 @@
           >
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+
+      <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <label for="next_decision_level_ids">Next Decision Levels </label>
+          <p-dropdown
+            id="admin_hierarchy_level_position"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            optionValue="position"
+            optionLabel="name"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="adminHierarchyLevels!"
+            formControlName="admin_hierarchy_level_position"
+          ></p-dropdown>
+          <label for="admin_hierarchy_level_position"
+            >Admin Hierarchy Level
+          </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('admin_hierarchy_level_position')!.invalid &&
+            (editForm.get('admin_hierarchy_level_position')!.dirty ||
+              editForm.get('admin_hierarchy_level_position')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('admin_hierarchy_level_id')?.errors?.required"
+            >Admin Hierarchy Level is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="section_level_position"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            optionValue="position"
+            optionLabel="name"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="sectionLevels!"
+            formControlName="section_level_position"
+          ></p-dropdown>
+          <label for="section_level_position">Section Level </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('section_level_position')!.invalid &&
+            (editForm.get('section_level_position')!.dirty ||
+              editForm.get('section_level_position')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('section_level_position')?.errors?.required"
+            >Section Level is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-multiSelect
+            [options]="nextDecisionLevels!"
+            formControlName="next_decision_level_ids"
+            optionLabel="name"
+            dataKey="id"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+          >
+          </p-multiSelect>
+          <label for="next_decision_level_ids">Next Decision Level</label>
         </span>
         <span
           *ngIf="
@@ -37,74 +114,6 @@
               formError)
           "
         >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="admin_hierarchy_position_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            optionValue="id"
-            optionLabel="name"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="adminHierarchyLevels!"
-            formControlName="admin_hierarchy_position_id"
-          ></p-dropdown>
-          <label for="admin_hierarchy_position_id"
-            >Admin Hierarchy Position
-          </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('admin_hierarchy_position_id')!.invalid &&
-            (editForm.get('admin_hierarchy_position_id')!.dirty ||
-              editForm.get('admin_hierarchy_position_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="
-              editForm.get('admin_hierarchy_position_id')?.errors?.required
-            "
-            >Admin Hierarchy Position is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="section_level_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            optionValue="id"
-            optionLabel="name"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="sectionLevels!"
-            formControlName="section_level_id"
-          ></p-dropdown>
-          <label for="section_level_id">Section Level </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('section_level_id')!.invalid &&
-            (editForm.get('section_level_id')!.dirty ||
-              editForm.get('section_level_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('section_level_id')?.errors?.required"
-            >Section Level is required.</small
-          >
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">

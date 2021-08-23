@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {FinancialYear} from "../financial-year.model";
-import {FinancialYearService} from "../financial-year.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {DatePipe} from "@angular/common";
+import { CustomResponse } from '../../../utils/custom-response';
+import { FinancialYear } from '../financial-year.model';
+import { FinancialYearService } from '../financial-year.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: "app-financial-year-update",
-  templateUrl: "./financial-year-update.component.html",
-  providers: [DatePipe]
+  selector: 'app-financial-year-update',
+  templateUrl: './financial-year-update.component.html',
+  providers: [DatePipe],
 })
 export class FinancialYearUpdateComponent implements OnInit {
   isSaving = false;
@@ -52,8 +52,7 @@ export class FinancialYearUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     private datePipe: DatePipe,
     private toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.financialYearService
@@ -110,8 +109,7 @@ export class FinancialYearUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -131,8 +129,12 @@ export class FinancialYearUpdateComponent implements OnInit {
       is_current: financialYear.is_current,
       status: financialYear.status,
       sort_order: financialYear.sort_order,
-      start_date: this.datePipe.transform(financialYear.start_date,'yyyy-MM-dd'),
-      end_date: this.datePipe.transform(financialYear.end_date,'yyyy-MM-dd'),
+      start_date: financialYear.start_date
+        ? new Date(financialYear.start_date)
+        : financialYear.start_date,
+      end_date: financialYear.end_date
+        ? new Date(financialYear.end_date)
+        : financialYear.end_date,
     });
   }
 
@@ -143,16 +145,18 @@ export class FinancialYearUpdateComponent implements OnInit {
   protected createFromForm(): FinancialYear {
     return {
       ...new FinancialYear(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      description: this.editForm.get(["description"])!.value,
-      previous_financial_year_id: this.editForm.get(["previous_financial_year_id"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
-      is_current: this.editForm.get(["is_current"])!.value,
-      status: this.editForm.get(["status"])!.value,
-      sort_order: this.editForm.get(["sort_order"])!.value,
-      start_date: this.editForm.get(["start_date"])!.value,
-      end_date: this.editForm.get(["end_date"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      description: this.editForm.get(['description'])!.value,
+      previous_financial_year_id: this.editForm.get([
+        'previous_financial_year_id',
+      ])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
+      is_current: this.editForm.get(['is_current'])!.value,
+      status: this.editForm.get(['status'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
+      start_date: this.editForm.get(['start_date'])!.value,
+      end_date: this.editForm.get(['end_date'])!.value,
     };
   }
 }

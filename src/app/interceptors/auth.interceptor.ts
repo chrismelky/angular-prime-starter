@@ -2,27 +2,41 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 import {
-  HttpEvent,
-  HttpHandler,
   HttpInterceptor,
   HttpRequest,
+  HttpHandler,
+  HttpEvent,
 } from '@angular/common/http';
 
 @Injectable()
-export class MyInterceptor implements HttpInterceptor {
+export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private localStorage: LocalStorageService,
     private sessionStorage: SessionStorageService
-  ) {
-    console.log('contracted');
-  }
+  ) {}
 
   intercept(
-    req: HttpRequest<any>,
+    request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    console.log('inetrcepting');
-
-    return next.handle(req);
+    if (!request.url || request.url.startsWith('http')) {
+      return next.handle(request);
+    }
+    request = request.clone({
+      setHeaders: {
+        Accept: 'application/json',
+      },
+    });
+    const token: string | null =
+      this.localStorage.retrieve('authenticationToken') ??
+      this.sessionStorage.retrieve('authenticationToken');
+    if (token) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
+    return next.handle(request);
   }
 }

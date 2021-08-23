@@ -1,21 +1,28 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+/**
+ * @license
+ * Copyright TAMISEMI All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache-style license that can be
+ * found in the LICENSE file at https://tamisemi.go.tz/license
+ */
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { SectionLevel } from "src/app/setup/section-level/section-level.model";
-import { SectionLevelService } from "src/app/setup/section-level/section-level.service";
-import { DecisionLevel } from "../decision-level.model";
-import { DecisionLevelService } from "../decision-level.service";
-import { ToastService } from "src/app/shared/toast.service";
-import {AdminHierarchyLevel} from "../../admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchyLevelService} from "../../admin-hierarchy-level/admin-hierarchy-level.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
+import { SectionLevel } from 'src/app/setup/section-level/section-level.model';
+import { SectionLevelService } from 'src/app/setup/section-level/section-level.service';
+import { DecisionLevel } from '../decision-level.model';
+import { DecisionLevelService } from '../decision-level.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-decision-level-update",
-  templateUrl: "./decision-level-update.component.html",
+  selector: 'app-decision-level-update',
+  templateUrl: './decision-level-update.component.html',
 })
 export class DecisionLevelUpdateComponent implements OnInit {
   isSaving = false;
@@ -24,6 +31,7 @@ export class DecisionLevelUpdateComponent implements OnInit {
 
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
   sectionLevels?: SectionLevel[] = [];
+  nextDecisionLevels?: DecisionLevel[] = [];
 
   /**
    * Declare form
@@ -31,8 +39,8 @@ export class DecisionLevelUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    admin_hierarchy_position_id: [null, [Validators.required]],
-    section_level_id: [null, [Validators.required]],
+    admin_hierarchy_level_position: [null, [Validators.required]],
+    section_level_position: [null, [Validators.required]],
     next_decision_level_ids: [null, []],
   });
 
@@ -48,22 +56,34 @@ export class DecisionLevelUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.adminHierarchyLevelService
-      .query()
+      .query({
+        columns: ['id', 'name', 'position'],
+      })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
     this.sectionLevelService
-      .query()
+      .query({
+        columns: ['id', 'name', 'position'],
+      })
       .subscribe(
         (resp: CustomResponse<SectionLevel[]>) =>
           (this.sectionLevels = resp.data)
       );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.decisionLevelService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe(
+        (resp: CustomResponse<DecisionLevel[]>) =>
+          (this.nextDecisionLevels = resp.data)
+      );
+    this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
   }
 
   /**
-   * When form is valid Create DecisionLevel or Update Facility type if exist else set form has error and return
+   * When form is valid Create DecisionLevel or Update Facilitiy type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -121,9 +141,13 @@ export class DecisionLevelUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: decisionLevel.id,
       name: decisionLevel.name,
-      admin_hierarchy_position_id: decisionLevel.admin_hierarchy_position_id,
-      section_level_id: decisionLevel.section_level_id,
-      next_decision_level_ids: decisionLevel.next_decision_level_ids,
+      admin_hierarchy_level_position:
+        decisionLevel.admin_hierarchy_level_position,
+      section_level_position: decisionLevel.section_level_position,
+      next_decision_level_ids:
+        decisionLevel.next_decision_level_ids !== undefined
+          ? JSON.parse(decisionLevel.next_decision_level_ids!)
+          : decisionLevel.next_decision_level_ids,
     });
   }
 
@@ -134,14 +158,19 @@ export class DecisionLevelUpdateComponent implements OnInit {
   protected createFromForm(): DecisionLevel {
     return {
       ...new DecisionLevel(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      admin_hierarchy_position_id: this.editForm.get([
-        "admin_hierarchy_position_id",
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      admin_hierarchy_level_position: this.editForm.get([
+        'admin_hierarchy_level_position',
       ])!.value,
-      section_level_id: this.editForm.get(["section_level_id"])!.value,
-      next_decision_level_ids: this.editForm.get(["next_decision_level_ids"])!
+      section_level_position: this.editForm.get(['section_level_position'])!
         .value,
+      next_decision_level_ids:
+        this.editForm.get(['next_decision_level_ids'])!.value !== undefined
+          ? JSON.stringify(
+              this.editForm.get(['next_decision_level_ids'])!.value
+            )
+          : undefined,
     };
   }
 }

@@ -1,1 +1,111 @@
-<p>login works!</p>
+<div
+  fxLayout="row"
+  fxLayoutGap="10px"
+  fxLayoutAlign="center center"
+  style="height: 100%; width: 100%; background-color: #f8f9fa"
+>
+  <p-card fxFlex="70%">
+    <div fxLayout="row" fxLayoutGap="0px">
+      <div fxLayout="column" fxLayoutGap="10px" fxFlex="60%">
+        <img src="../../../assets/images/advart.jpeg" />
+      </div>
+      <p-divider layout="vertical"></p-divider>
+      <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="center" fxFlex>
+        <form
+          name="loginForm"
+          role="form"
+          novalidate
+          (ngSubmit)="login()"
+          [formGroup]="loginForm"
+          autocomplete="off"
+        >
+          <div
+            fxLayout="column"
+            fxLayoutGap="20px"
+            fxLayoutAlign="center"
+            fxFlex
+          >
+            <div
+              fxLayout="column"
+              fxLayoutGap="10px"
+              fxLayoutAlign="start center"
+            >
+              <img src="../../../assets/images/coat.png" style="width: 80px" />
+              <h3>Login To Planrep</h3>
+            </div>
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <input
+                  #email
+                  id="email"
+                  type="text"
+                  pInputText
+                  formControlName="email"
+                  autocomplete="off"
+                />
+                <label for="email">Email </label>
+              </span>
+              <span
+                *ngIf="
+                  loginForm.get('email')!.invalid &&
+                  (loginForm.get('email')!.dirty ||
+                    loginForm.get('email')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="loginForm.get('email')?.errors?.required"
+                  >Name is required.</small
+                >
+              </span>
+            </div>
+            <div fxLayout="column" fxLayoutGap="4px">
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-password
+                    formControlName="password"
+                    appendTo="body"
+                    [toggleMask]="true"
+                    inputId="password"
+                  ></p-password>
+                  <label for="password">Password</label>
+                </span>
+                <span
+                  *ngIf="
+                    loginForm.get('password')!.invalid &&
+                    (loginForm.get('password')!.dirty ||
+                      loginForm.get('password')!.touched ||
+                      formError)
+                  "
+                >
+                  <small
+                    class="p-error"
+                    *ngIf="loginForm.get('password')?.errors?.required"
+                    >Password is required.</small
+                  >
+                </span>
+              </div>
+              <div fxLayout="row" fxLayoutGap="10px">
+                <span fxFlex></span>
+                <a>Forgot your password?</a>
+              </div>
+            </div>
+            <!-- <p-captcha siteKey="'YOUR_SITE_KEY'"></p-captcha> -->
+
+            <button
+              pRipple
+              #loginPanel
+              (disabled)="(isLoading)"
+              class="p-button p-button-raised"
+              pButton
+              [icon]="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-user'"
+              type="submit"
+              label="Sign In"
+            ></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </p-card>
+</div>

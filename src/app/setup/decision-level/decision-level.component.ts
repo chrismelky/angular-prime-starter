@@ -1,34 +1,41 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+/**
+ * @license
+ * Copyright TAMISEMI All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache-style license that can be
+ * found in the LICENSE file at https://tamisemi.go.tz/license
+ */
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { SectionLevel } from "src/app/setup/section-level/section-level.model";
-import { SectionLevelService } from "src/app/setup/section-level/section-level.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
+import { SectionLevel } from 'src/app/setup/section-level/section-level.model';
+import { SectionLevelService } from 'src/app/setup/section-level/section-level.service';
 
-import { DecisionLevel } from "./decision-level.model";
-import { DecisionLevelService } from "./decision-level.service";
-import { DecisionLevelUpdateComponent } from "./update/decision-level-update.component";
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
+import { DecisionLevel } from './decision-level.model';
+import { DecisionLevelService } from './decision-level.service';
+import { DecisionLevelUpdateComponent } from './update/decision-level-update.component';
 
 @Component({
-  selector: "app-decision-level",
-  templateUrl: "./decision-level.component.html",
+  selector: 'app-decision-level',
+  templateUrl: './decision-level.component.html',
 })
 export class DecisionLevelComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   decisionLevels?: DecisionLevel[] = [];
 
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
@@ -36,13 +43,23 @@ export class DecisionLevelComponent implements OnInit {
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "next_decision_level_ids",
-      header: "Next Decision Level s",
+      field: 'admin_hierarchy_position_id',
+      header: 'Admin Hierarchy Position ',
+      sort: true,
+    },
+    {
+      field: 'section_level_id',
+      header: 'Section Level ',
+      sort: false,
+    },
+    {
+      field: 'next_decision_level_ids',
+      header: 'Next Decision Level s',
       sort: false,
     },
   ]; //Table display columns
@@ -57,8 +74,6 @@ export class DecisionLevelComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_position_id!: number;
-  section_level_id!: number;
 
   constructor(
     protected decisionLevelService: DecisionLevelService,
@@ -94,9 +109,6 @@ export class DecisionLevelComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_position_id || !this.section_level_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -105,8 +117,6 @@ export class DecisionLevelComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_position_id: this.admin_hierarchy_position_id,
-        section_level_id: this.section_level_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -130,31 +140,19 @@ export class DecisionLevelComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -209,8 +207,8 @@ export class DecisionLevelComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -221,12 +219,10 @@ export class DecisionLevelComponent implements OnInit {
   createOrUpdate(decisionLevel?: DecisionLevel): void {
     const data: DecisionLevel = decisionLevel ?? {
       ...new DecisionLevel(),
-      admin_hierarchy_position_id: this.admin_hierarchy_position_id,
-      section_level_id: this.section_level_id,
     };
     const ref = this.dialogService.open(DecisionLevelUpdateComponent, {
       data,
-      header: "Create/Update DecisionLevel",
+      header: 'Create/Update DecisionLevel',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -241,7 +237,7 @@ export class DecisionLevelComponent implements OnInit {
    */
   delete(decisionLevel: DecisionLevel): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this DecisionLevel?",
+      message: 'Are you sure that you want to delete this DecisionLevel?',
       accept: () => {
         this.decisionLevelService
           .delete(decisionLevel.id!)
@@ -267,12 +263,12 @@ export class DecisionLevelComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/decision-level"], {
+      this.router.navigate(['/decision-level'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -285,6 +281,6 @@ export class DecisionLevelComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Decision Level");
+    this.toastService.error('Error loading Decision Level');
   }
 }

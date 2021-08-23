@@ -5,37 +5,37 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import { CustomResponse } from '../../utils/custom-response';
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
-import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+} from "../../config/pagination.constants";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
 
-import { StrategicPlan } from './strategic-plan.model';
-import { StrategicPlanService } from './strategic-plan.service';
-import { StrategicPlanUpdateComponent } from './update/strategic-plan-update.component';
+import { StrategicPlan } from "./strategic-plan.model";
+import { StrategicPlanService } from "./strategic-plan.service";
+import { StrategicPlanUpdateComponent } from "./update/strategic-plan-update.component";
 
 @Component({
-  selector: 'app-strategic-plan',
-  templateUrl: './strategic-plan.component.html',
+  selector: "app-strategic-plan",
+  templateUrl: "./strategic-plan.component.html",
 })
 export class StrategicPlanComponent implements OnInit {
-  @ViewChild('paginator') paginator!: Paginator;
-  @ViewChild('table') table!: Table;
+  @ViewChild("paginator") paginator!: Paginator;
+  @ViewChild("table") table!: Table;
   strategicPlans?: StrategicPlan[] = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
@@ -44,8 +44,23 @@ export class StrategicPlanComponent implements OnInit {
 
   cols = [
     {
-      field: 'url',
-      header: 'Url',
+      field: "name",
+      header: "Name",
+      sort: true,
+    },
+    {
+      field: "description",
+      header: "Description",
+      sort: true,
+    },
+    {
+      field: "is_active",
+      header: "Is Active",
+      sort: false,
+    },
+    {
+      field: "url",
+      header: "Url",
       sort: true,
     },
   ]; //Table display columns
@@ -79,19 +94,19 @@ export class StrategicPlanComponent implements OnInit {
 
   ngOnInit(): void {
     this.adminHierarchyService
-      .query()
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
       );
     this.startFinancialYearService
-      .query()
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.startFinancialYears = resp.data)
       );
     this.endFinancialYearService
-      .query()
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.endFinancialYears = resp.data)
@@ -146,11 +161,11 @@ export class StrategicPlanComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+      const page = params.get("page");
+      const perPage = params.get("per_page");
+      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
       const predicate = sort[0];
-      const ascending = sort[1] === 'asc';
+      const ascending = sort[1] === "asc";
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -225,8 +240,8 @@ export class StrategicPlanComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : 'id';
-    const direction = this.ascending ? 'asc' : 'desc';
+    const predicate = this.predicate ? this.predicate : "id";
+    const direction = this.ascending ? "asc" : "desc";
     return [`${predicate}:${direction}`];
   }
 
@@ -243,7 +258,7 @@ export class StrategicPlanComponent implements OnInit {
     };
     const ref = this.dialogService.open(StrategicPlanUpdateComponent, {
       data,
-      header: 'Create/Update StrategicPlan',
+      header: "Create/Update StrategicPlan",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -258,7 +273,7 @@ export class StrategicPlanComponent implements OnInit {
    */
   delete(strategicPlan: StrategicPlan): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this StrategicPlan?',
+      message: "Are you sure that you want to delete this StrategicPlan?",
       accept: () => {
         this.strategicPlanService
           .delete(strategicPlan.id!)
@@ -284,12 +299,12 @@ export class StrategicPlanComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/strategic-plan'], {
+      this.router.navigate(["/strategic-plan"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
         },
       });
     }
@@ -302,6 +317,6 @@ export class StrategicPlanComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error('Error loading Strategic Plan');
+    this.toastService.error("Error loading Strategic Plan");
   }
 }

@@ -105,6 +105,11 @@ export class MainComponent implements OnInit {
           routerLink: 'admin-hierarchy',
         },
         {
+          label: 'Admin Hierarchies',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'admin-hierarchy',
+        },
+        {
           label: 'Sectors',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'sector',
@@ -170,6 +175,21 @@ export class MainComponent implements OnInit {
           routerLink: 'reference-document-type',
         },
         {
+          label: 'Cas Plans',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-plan',
+        },
+        {
+          label: 'Cas Plan Contents',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-plan-content',
+        },
+        {
+          label: 'Activity Task Natures',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'activity-task-nature',
+        },
+        {
           label: 'Activity Task Natures',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'activity-task-nature',
@@ -185,6 +205,16 @@ export class MainComponent implements OnInit {
           routerLink: 'objective',
         },
         {
+          label: 'Long Term Targets',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'long-term-target',
+        },
+        {
+          label: 'Calendar Events',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'calendar-event',
+        },
+        {
           label: 'Calendar Events',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'calendar-event',
@@ -198,6 +228,81 @@ export class MainComponent implements OnInit {
           label: 'Cas Assessment Rounds',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'cas-assessment-round',
+        },
+        {
+          label: 'Cas Assessment States',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-assessment-state',
+        },
+        {
+          label: 'Cas Assessment Criteria',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-assessment-criteria',
+        },
+        {
+          label: 'Cas Assessment Sub Criteria',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-assessment-sub-criteria',
+        },
+        {
+          label: 'Cas Assessment Sub Criteria Options',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-assessment-sub-criteria-option',
+        },
+        {
+          label: 'Cas Assessment Category Versions',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-assessment-category-version',
+        },
+        {
+          label: 'Cas Assessment Criteria Options',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-assessment-criteria-option',
+        },
+        {
+          label: 'Cas Assessment Categories',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'cas-assessment-category',
+        },
+        {
+          label: 'Reference Documents',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'reference-document',
+        },
+        {
+          label: 'Period Groups',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'period-group',
+        },
+        {
+          label: 'Data Sets',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'data-set',
+        },
+        {
+          label: 'Option Sets',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'option-set',
+        },
+        {
+          label: 'Category Options',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'category-option',
+        },
+        {
+          label: 'Category Combinations',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'category-combination',
+        },
+        {
+          label: 'Category Category Options',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'category-category-option',
+        },
+        {
+          label: 'Categories',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'category',
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

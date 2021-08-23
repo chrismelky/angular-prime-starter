@@ -12,7 +12,6 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
 import { Sector } from "src/app/setup/sector/sector.model";
 import { SectorService } from "src/app/setup/sector/sector.service";
 import { ReferenceType } from "../reference-type.model";
@@ -30,15 +29,13 @@ export class ReferenceTypeUpdateComponent implements OnInit {
 
   sectors?: Sector[] = [];
 
-  linkLevels?: PlanrepEnum[] = [];
-
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    multi_select: [null, [Validators.required]],
+    multi_select: [false, [Validators.required]],
     link_level: [null, [Validators.required]],
     sector_id: [null, [Validators.required]],
   });
@@ -49,22 +46,20 @@ export class ReferenceTypeUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService,
-    protected enumService: EnumService
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.sectorService
-      .query()
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
-    this.linkLevels = this.enumService.get("linkLevels");
-    this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
+    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create ReferenceType or Update Facilitiy type if exist else set form has error and return
+   * When form is valid Create ReferenceType or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -95,7 +90,7 @@ export class ReferenceTypeUpdateComponent implements OnInit {
   }
 
   /**
-   * When save successfully close dialog and dispaly info message
+   * When save successfully close dialog and display info message
    * @param result
    */
   protected onSaveSuccess(result: any): void {
@@ -104,8 +99,8 @@ export class ReferenceTypeUpdateComponent implements OnInit {
   }
 
   /**
-   * Error handiling specific to this component
-   * Note; general error handleing is done by ErrorInterceptor
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
   protected onSaveError(error: any): void {}

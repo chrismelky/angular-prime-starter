@@ -95,18 +95,19 @@
                 </span>
               </div>
               <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
+                <span class="p-float-label p-input-icon-right">
+                  <input
                     id="link_level"
-                    optionValue="value"
-                    optionLabel="display"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
+                    type="text"
                     class="p-inputtext-sm"
-                    [options]="linkLevels!"
+                    pInputText
                     [(ngModel)]="search['link_level']"
-                  ></p-dropdown>
+                  />
                   <label for="link_level">Link Level </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['link_level'] = undefined; onSearch()"
+                  ></i>
                 </span>
               </div>
             </div>

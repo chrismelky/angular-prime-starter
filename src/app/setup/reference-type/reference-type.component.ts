@@ -20,7 +20,6 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
 import { Sector } from "src/app/setup/sector/sector.model";
 import { SectorService } from "src/app/setup/sector/sector.service";
 
@@ -38,7 +37,6 @@ export class ReferenceTypeComponent implements OnInit {
   referenceTypes?: ReferenceType[] = [];
 
   sectors?: Sector[] = [];
-  linkLevels?: PlanrepEnum[] = [];
 
   cols = [
     {
@@ -78,17 +76,15 @@ export class ReferenceTypeComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
+    protected toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.sectorService
-      .query()
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
-    this.linkLevels = this.enumService.get("linkLevels");
     this.handleNavigation();
   }
 

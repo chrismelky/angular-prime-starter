@@ -180,39 +180,165 @@ const routes: Routes = [
           ).then((m) => m.ActivityTaskNatureModule),
       },
       {
-        path: "objective-type",
+        path: 'objective-type',
         loadChildren: () =>
-          import("../setup/objective-type/objective-type.module").then(
+          import('../setup/objective-type/objective-type.module').then(
             (m) => m.ObjectiveTypeModule
           ),
       },
       {
-        path: "objective",
+        path: 'objective',
         loadChildren: () =>
-          import("../setup/objective/objective.module").then(
+          import('../setup/objective/objective.module').then(
             (m) => m.ObjectiveModule
           ),
       },
       {
-        path: "calendar-event",
+        path: 'long-term-target',
         loadChildren: () =>
-          import("../setup/calendar-event/calendar-event.module").then(
+          import('../setup/long-term-target/long-term-target.module').then(
+            (m) => m.LongTermTargetModule
+          ),
+      },
+      {
+        path: 'calendar-event',
+        loadChildren: () =>
+          import('../setup/calendar-event/calendar-event.module').then(
             (m) => m.CalendarEventModule
           ),
       },
       {
-        path: "calendar",
+        path: 'calendar',
         loadChildren: () =>
-          import("../setup/calendar/calendar.module").then(
+          import('../setup/calendar/calendar.module').then(
             (m) => m.CalendarModule
           ),
       },
       {
-        path: "cas-assessment-round",
+        path: 'cas-assessment-round',
         loadChildren: () =>
           import(
-            "../setup/cas-assessment-round/cas-assessment-round.module"
+            '../setup/cas-assessment-round/cas-assessment-round.module'
           ).then((m) => m.CasAssessmentRoundModule),
+      },
+      {
+        path: 'cas-plan',
+        loadChildren: () =>
+          import('../setup/cas-plan/cas-plan.module').then(
+            (m) => m.CasPlanModule
+          ),
+      },
+      {
+        path: 'cas-plan-content',
+        loadChildren: () =>
+          import('../setup/cas-plan-content/cas-plan-content.module').then(
+            (m) => m.CasPlanContentModule
+          ),
+      },
+      {
+        path: 'cas-assessment-state',
+        loadChildren: () =>
+          import(
+            '../setup/cas-assessment-state/cas-assessment-state.module'
+          ).then((m) => m.CasAssessmentStateModule),
+      },
+      {
+        path: 'cas-assessment-criteria',
+        loadChildren: () =>
+          import(
+            '../setup/cas-assessment-criteria/cas-assessment-criteria.module'
+          ).then((m) => m.CasAssessmentCriteriaModule),
+      },
+      {
+        path: 'cas-assessment-sub-criteria',
+        loadChildren: () =>
+          import(
+            '../setup/cas-assessment-sub-criteria/cas-assessment-sub-criteria.module'
+          ).then((m) => m.CasAssessmentSubCriteriaModule),
+      },
+      {
+        path: 'cas-assessment-sub-criteria-option',
+        loadChildren: () =>
+          import(
+            '../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.module'
+          ).then((m) => m.CasAssessmentSubCriteriaOptionModule),
+      },
+      {
+        path: 'cas-assessment-category-version',
+        loadChildren: () =>
+          import(
+            '../setup/cas-assessment-category-version/cas-assessment-category-version.module'
+          ).then((m) => m.CasAssessmentCategoryVersionModule),
+      },
+      {
+        path: 'cas-assessment-criteria-option',
+        loadChildren: () =>
+          import(
+            '../setup/cas-assessment-criteria-option/cas-assessment-criteria-option.module'
+          ).then((m) => m.CasAssessmentCriteriaOptionModule),
+      },
+      {
+        path: 'cas-assessment-category',
+        loadChildren: () =>
+          import(
+            '../setup/cas-assessment-category/cas-assessment-category.module'
+          ).then((m) => m.CasAssessmentCategoryModule),
+      },
+      {
+        path: 'reference-document',
+        loadChildren: () =>
+          import('../setup/reference-document/reference-document.module').then(
+            (m) => m.ReferenceDocumentModule
+          ),
+      },
+      {
+        path: 'period-group',
+        loadChildren: () =>
+          import('../setup/period-group/period-group.module').then(
+            (m) => m.PeriodGroupModule
+          ),
+      },
+      {
+        path: 'data-set',
+        loadChildren: () =>
+          import('../setup/data-set/data-set.module').then(
+            (m) => m.DataSetModule
+          ),
+      },
+      {
+        path: 'option-set',
+        loadChildren: () =>
+          import('../setup/option-set/option-set.module').then(
+            (m) => m.OptionSetModule
+          ),
+      },
+      {
+        path: 'category-option',
+        loadChildren: () =>
+          import('../setup/category-option/category-option.module').then(
+            (m) => m.CategoryOptionModule
+          ),
+      },
+      {
+        path: 'category-combination',
+        loadChildren: () =>
+          import(
+            '../setup/category-combination/category-combination.module'
+          ).then((m) => m.CategoryCombinationModule),
+      },
+      {
+        path: 'category-category-option',
+        loadChildren: () =>
+          import(
+            '../setup/category-category-option/category-category-option.module'
+          ).then((m) => m.CategoryCategoryOptionModule),
+      },
+      {
+        path: 'category',
+        loadChildren: () =>
+          import('../setup/category/category.module').then(
+            (m) => m.CategoryModule
+          ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

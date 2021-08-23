@@ -15,7 +15,7 @@ import { CasAssessmentRound } from "./cas-assessment-round.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentRoundService {
-  public resourceUrl = "api/cas_assessment_rounds";
+  public resourceUrl = "api/rounds";
 
   constructor(protected http: HttpClient) {}
 

@@ -6,6 +6,7 @@ import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 
 import { Login } from 'src/app/login/login.model';
 import { CustomResponse } from 'coverage/planrep-frontend/src/app/utils/custom-response';
+import { StateStorageService } from './state-storage.service';
 
 type LoginRespose = {
   token: string;
@@ -17,7 +18,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private $localStorage: LocalStorageService,
-    private $sessionStorage: SessionStorageService
+    private $sessionStorage: SessionStorageService,
+    private stateService: StateStorageService
   ) {}
 
   getToken(): string {
@@ -41,19 +43,16 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    console.log('service called');
-    return this.http.post<any>('api/logout', {});
+    return this.http
+      .post<any>('api/logout', {})
+      .pipe(map((response) => this.clearAuth()));
   }
 
-  clearAuth(): Observable<void> {
-    return new Observable((observer) => {
-      this.$localStorage.clear('authenticationToken');
-      this.$sessionStorage.clear('authenticationToken');
-      observer.complete();
-    });
+  clearAuth(): void {
+    this.$localStorage.clear('authenticationToken');
+    this.$sessionStorage.clear('authenticationToken');
+    this.stateService.clearUrl();
   }
-
-  private logoutSuccess(): void {}
 
   private authenticateSuccess(
     response: LoginRespose,

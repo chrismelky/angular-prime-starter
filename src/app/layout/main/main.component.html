@@ -7,7 +7,7 @@
   >
     <mat-toolbar class="mat-elevation-z0">
       <div fxLayout="row" fxLayoutGap="0.1rem">
-        <span class="logo-text">Planrep</span>
+        <span class="logo-text">PlanRep</span>
       </div>
     </mat-toolbar>
     <div
@@ -17,7 +17,7 @@
       fxLayoutGap="1rem"
     >
       <img src="../../../assets/images/coat.png" />
-      <span>Porlarg</span>
+      <span>PORALG</span>
     </div>
     <div class="sidenav-item">
       <p-panelMenu
@@ -35,6 +35,30 @@
         class="p-button-plain p-button-rounded p-button-text p-ripple"
         (click)="drawer.toggle()"
       ></button>
+      <span fxFlex></span>
+
+      <div fxLayout="row" fxLayoutGap="8px" style="margin-right: 0.75rem">
+        <button
+          pButton
+          class="p-button-icon p-button-rounded p-button-plain p-button-text"
+          icon="pi pi-bell"
+        ></button>
+        <p-avatar
+          pRipple
+          class="p-ripple"
+          size="large"
+          id="avator"
+          [label]="avator"
+          shape="circle"
+          (click)="userMenu.toggle($event)"
+        ></p-avatar>
+        <p-menu
+          #userMenu
+          [popup]="true"
+          [model]="userMenus"
+          appendTo="body"
+        ></p-menu>
+      </div>
     </mat-toolbar>
     <div>
       <router-outlet></router-outlet>

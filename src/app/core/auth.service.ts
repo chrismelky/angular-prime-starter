@@ -5,8 +5,8 @@ import { map } from 'rxjs/operators';
 import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 
 import { Login } from 'src/app/login/login.model';
-import { CustomResponse } from 'coverage/planrep-frontend/src/app/utils/custom-response';
 import { StateStorageService } from './state-storage.service';
+import {CustomResponse} from "../utils/custom-response";
 
 type LoginRespose = {
   token: string;

@@ -20,85 +20,56 @@ import {
 } from "../../config/pagination.constants";
 import {HelperService} from "src/app/utils/helper.service";
 import {ToastService} from "src/app/shared/toast.service";
+import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
+import {FacilityType} from "src/app/setup/facility-type/facility-type.model";
+import {FacilityTypeService} from "src/app/setup/facility-type/facility-type.service";
+import {AdminHierarchy} from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import {AdminHierarchyService} from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
 
-import {AdminHierarchy} from "./admin-hierarchy.model";
-import {AdminHierarchyService} from "./admin-hierarchy.service";
-import {AdminHierarchyUpdateComponent} from "./update/admin-hierarchy-update.component";
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
-import {DecisionLevel} from "../decision-level/decision-level.model";
-import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
-import {DecisionLevelService} from "../decision-level/decision-level.service";
+import {Facility} from "./facility.model";
+import {FacilityService} from "./facility.service";
+import {FacilityUpdateComponent} from "./update/facility-update.component";
 
 @Component({
-  selector: "app-admin-hierarchy",
-  templateUrl: "./admin-hierarchy.component.html",
+  selector: "app-facility",
+  templateUrl: "./facility.component.html",
 })
-export class AdminHierarchyComponent implements OnInit {
+export class FacilityComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  adminHierarchies?: AdminHierarchy[] = [];
+  facilities?: Facility[] = [];
 
-  parents?: AdminHierarchy[] = [];
-  adminHierarchyPositions?: AdminHierarchyLevel[] = [];
-  currentBudgetDecisionLevels?: DecisionLevel[] = [];
-  carryoverBudgetDecisionLevels?: DecisionLevel[] = [];
-  supplementaryBudgetDecisionLevels?: DecisionLevel[] = [];
+  facilityTypes?: FacilityType[] = [];
+  adminHierarchies?: AdminHierarchy[] = [];
+  ownerships?: PlanrepEnum[] = [];
+  physicalStates?: PlanrepEnum[] = [];
+  starRatings?: PlanrepEnum[] = [];
 
   cols = [
-    {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
     {
       field: "code",
       header: "Code",
       sort: true,
     },
     {
-      field: "current_budget_locked",
-      header: "Current Budget Locked",
-      sort: false,
+      field: "name",
+      header: "Name",
+      sort: true,
     },
     {
-      field: "is_carryover_budget_locked",
-      header: "Is Carryover Budget Locked",
-      sort: false,
+      field: "ownership",
+      header: "Ownership",
+      sort: true,
     },
     {
-      field: "is_supplementary_budget_locked",
-      header: "Is Supplementary Budget Locked",
-      sort: false,
+      field: "physical_state",
+      header: "Physical State",
+      sort: true,
     },
     {
-      field: "is_current_budget_approved",
-      header: "Is Current Budget Approved",
-      sort: false,
-    },
-    {
-      field: "is_carryover_budget_approved",
-      header: "Is Carryover Budget Approved",
-      sort: false,
-    },
-    {
-      field: "is_supplementary_budget_approved",
-      header: "Is Supplementary Budget Approved",
-      sort: false,
-    },
-    {
-      field: "current_budget_decision_level_id",
-      header: "Current Budget Decision Level ",
-      sort: false,
-    },
-    {
-      field: "carryover_budget_decision_level_id",
-      header: "Carryover Budget Decision Level ",
-      sort: false,
-    },
-    {
-      field: "supplementary_budget_decision_level_id",
-      header: "Supplementary Budget Decision Level ",
-      sort: false,
+      field: "star_rating",
+      header: "Star Rating",
+      sort: true,
     },
   ]; //Table display columns
 
@@ -112,52 +83,39 @@ export class AdminHierarchyComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  parent_id!: number;
-  admin_hierarchy_position!: number;
+  facility_type_id!: number;
+  admin_hierarchy_id!: number;
 
   constructor(
+    protected facilityService: FacilityService,
+    protected facilityTypeService: FacilityTypeService,
     protected adminHierarchyService: AdminHierarchyService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
-    protected decisionLevelService: DecisionLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    protected enumService: EnumService
   ) {
   }
 
   ngOnInit(): void {
+    this.facilityTypeService
+      .query({columns: ["id", "name", "code"]})
+      .subscribe(
+        (resp: CustomResponse<FacilityType[]>) =>
+          (this.facilityTypes = resp.data)
+      );
     this.adminHierarchyService
-      .query()
+      .query({columns: ["id", "name", "code"]})
       .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) => (this.parents = resp.data)
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.adminHierarchies = resp.data)
       );
-    this.adminHierarchyLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyPositions = resp.data)
-      );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.currentBudgetDecisionLevels = resp.data)
-      );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.carryoverBudgetDecisionLevels = resp.data)
-      );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.supplementaryBudgetDecisionLevels = resp.data)
-      );
+    this.ownerships = this.enumService.get("ownerships");
+    this.physicalStates = this.enumService.get("physicalStates");
+    this.starRatings = this.enumService.get("starRatings");
     this.handleNavigation();
   }
 
@@ -167,23 +125,23 @@ export class AdminHierarchyComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.parent_id || !this.admin_hierarchy_position) {
+    if (!this.facility_type_id || !this.admin_hierarchy_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.adminHierarchyService
+    this.facilityService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        parent_id: this.parent_id,
-        admin_hierarchy_position: this.admin_hierarchy_position,
+        facility_type_id: this.facility_type_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<AdminHierarchy[]>) => {
+        (res: CustomResponse<Facility[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -288,18 +246,18 @@ export class AdminHierarchyComponent implements OnInit {
   }
 
   /**
-   * Creating or updating AdminHierarchy
-   * @param adminHierarchy ; If undefined initize new model to create else edit existing model
+   * Creating or updating Facility
+   * @param facility ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(adminHierarchy?: AdminHierarchy): void {
-    const data: AdminHierarchy = adminHierarchy ?? {
-      ...new AdminHierarchy(),
-      parent_id: this.parent_id,
-      admin_hierarchy_position: this.admin_hierarchy_position,
+  createOrUpdate(facility?: Facility): void {
+    const data: Facility = facility ?? {
+      ...new Facility(),
+      facility_type_id: this.facility_type_id,
+      admin_hierarchy_id: this.admin_hierarchy_id,
     };
-    const ref = this.dialogService.open(AdminHierarchyUpdateComponent, {
+    const ref = this.dialogService.open(FacilityUpdateComponent, {
       data,
-      header: "Create/Update AdminHierarchy",
+      header: "Create/Update Facility",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -309,19 +267,17 @@ export class AdminHierarchyComponent implements OnInit {
   }
 
   /**
-   * Delete AdminHierarchy
-   * @param adminHierarchy
+   * Delete Facility
+   * @param facility
    */
-  delete(adminHierarchy: AdminHierarchy): void {
+  delete(facility: Facility): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this AdminHierarchy?",
+      message: "Are you sure that you want to delete this Facility?",
       accept: () => {
-        this.adminHierarchyService
-          .delete(adminHierarchy.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
+        this.facilityService.delete(facility.id!).subscribe((resp) => {
+          this.loadPage(this.page);
+          this.toastService.info(resp.message);
+        });
       },
     });
   }
@@ -333,14 +289,14 @@ export class AdminHierarchyComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<AdminHierarchy[]> | null,
+    resp: CustomResponse<Facility[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/admin-hierarchy"], {
+      this.router.navigate(["/facility"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -349,7 +305,7 @@ export class AdminHierarchyComponent implements OnInit {
         },
       });
     }
-    this.adminHierarchies = resp?.data ?? [];
+    this.facilities = resp?.data ?? [];
   }
 
   /**
@@ -358,25 +314,6 @@ export class AdminHierarchyComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Admin Hierarchy");
-  }
-
-  filterParentByLevel(): void {
-    let position = this.admin_hierarchy_position;
-    if (position == 1) {
-      position = 1;
-    } else if (position === 2) {
-      position = 1
-    } else if (position === 3) {
-      position = 2
-    }
-    else if (position === 4) {
-      position = 3
-    }
-    this.adminHierarchyService
-      .query({'admin_hierarchy_position': position, 'page': 1})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) => (this.parents = resp.data)
-      );
+    this.toastService.error("Error loading Facility");
   }
 }

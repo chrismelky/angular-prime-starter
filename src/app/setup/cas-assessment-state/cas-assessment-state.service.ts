@@ -15,7 +15,7 @@ import { CasAssessmentState } from "./cas-assessment-state.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentStateService {
-  public resourceUrl = "api/states";
+  public resourceUrl = "api/cas_states";
 
   constructor(protected http: HttpClient) {}
 

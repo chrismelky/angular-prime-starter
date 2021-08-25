@@ -15,7 +15,7 @@ import { CasAssessmentSubCriteria } from "./cas-assessment-sub-criteria.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentSubCriteriaService {
-  public resourceUrl = "api/sub_criterias";
+  public resourceUrl = "api/cas_sub_criterias";
 
   constructor(protected http: HttpClient) {}
 

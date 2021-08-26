@@ -105,11 +105,6 @@ export class MainComponent implements OnInit {
           routerLink: "admin-hierarchy",
         },
         {
-          label: "Admin Hierarchies",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy"
-        },
-        {
           label: "Sectors",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "sector",

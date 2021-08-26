@@ -5,74 +5,53 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
-import {FacilityType} from "src/app/setup/facility-type/facility-type.model";
-import {FacilityTypeService} from "src/app/setup/facility-type/facility-type.service";
-import {AdminHierarchy} from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import {AdminHierarchyService} from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
 
-import {Facility} from "./facility.model";
-import {FacilityService} from "./facility.service";
-import {FacilityUpdateComponent} from "./update/facility-update.component";
+import { CeilingChain } from "./ceiling-chain.model";
+import { CeilingChainService } from "./ceiling-chain.service";
+import { CeilingChainUpdateComponent } from "./update/ceiling-chain-update.component";
+import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import {SectionLevel} from "../section-level/section-level.model";
+import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
+import {SectionLevelService} from "../section-level/section-level.service";
 
 @Component({
-  selector: "app-facility",
-  templateUrl: "./facility.component.html",
+  selector: "app-ceiling-chain",
+  templateUrl: "./ceiling-chain.component.html",
 })
-export class FacilityComponent implements OnInit {
+export class CeilingChainComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  facilities?: Facility[] = [];
-
-  facilityTypes?: FacilityType[] = [];
-  regions?: AdminHierarchy[] = [];
-  councils?: AdminHierarchy[] = [];
-  wards?: AdminHierarchy[] = [];
-  villages?: AdminHierarchy[] = [];
-  ownerships?: PlanrepEnum[] = [];
-  physicalStates?: PlanrepEnum[] = [];
-  starRatings?: PlanrepEnum[] = [];
+  ceilingChains?: CeilingChain[] = [];
+  forAdminHierarchyLevelPositions?: AdminHierarchyLevel[] = [];
+  adminHierarchyLevelPositions?: AdminHierarchyLevel[] = [];
+  nexts?: CeilingChain[] = [];
+  sectionLevelPositions?: SectionLevel[] = [];
 
   cols = [
     {
-      field: "code",
-      header: "Code",
+      field: "next_id",
+      header: "Next ",
       sort: true,
     },
     {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
-    {
-      field: "ownership",
-      header: "Ownership",
-      sort: true,
-    },
-    {
-      field: "physical_state",
-      header: "Physical State",
-      sort: true,
-    },
-    {
-      field: "star_rating",
-      header: "Star Rating",
-      sort: true,
+      field: "active",
+      header: "Active",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -86,68 +65,69 @@ export class FacilityComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  facility_type_id!: number;
-  region_id!: number;
-  council_id!: number;
-  ward_id!: number;
-  village_id!: number;
+  admin_hierarchy_level_position!: number;
+  section_level_position!: number;
 
   constructor(
-    protected facilityService: FacilityService,
-    protected facilityTypeService: FacilityTypeService,
-    protected adminHierarchyService: AdminHierarchyService,
+    protected ceilingChainService: CeilingChainService,
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
+    protected sectionLevelService: SectionLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
-  ) {
-  }
+    protected toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
-    this.facilityTypeService
-      .query({columns: ["id", "name", "code"]})
+    this.adminHierarchyLevelService
+      .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<FacilityType[]>) =>
-          (this.facilityTypes = resp.data)
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
+          (this.forAdminHierarchyLevelPositions = resp.data)
       );
-    this.adminHierarchyService
-      .query({columns: ["id", "name", "code"], 'admin_hierarchy_position': 8, 'page': 1, 'per_page': 20})
+    this.adminHierarchyLevelService
+      .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.regions = resp.data)
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
+          (this.adminHierarchyLevelPositions = resp.data)
       );
-    this.ownerships = this.enumService.get("ownerships");
-    this.physicalStates = this.enumService.get("physicalStates");
-    this.starRatings = this.enumService.get("starRatings");
+    this.ceilingChainService
+      .query({ columns: ["id", "name"] })
+      .subscribe((resp: CustomResponse<CeilingChain[]>) => (this.nexts = resp.data));
+    this.sectionLevelService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<SectionLevel[]>) =>
+          (this.sectionLevelPositions = resp.data)
+      );
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.facility_type_id || !this.region_id) {
+    if (!this.admin_hierarchy_level_position || !this.section_level_position) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.facilityService
+    this.ceilingChainService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        facility_type_id: this.facility_type_id,
-        admin_hierarchy_id: this.village_id,
+        admin_hierarchy_level_position: this.admin_hierarchy_level_position,
+        section_level_position: this.section_level_position,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<Facility[]>) => {
+        (res: CustomResponse<CeilingChain[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -179,33 +159,6 @@ export class FacilityComponent implements OnInit {
         this.ascending = ascending;
       }
     });
-  }
-
-  filterCouncils(): void {
-    this.adminHierarchyService
-      .query({columns: ["id", "name", "code"], 'parent_id': this.region_id, 'page': 1, 'per_page': 200})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.councils = resp.data)
-      );
-  }
-
-  filterWards(): void {
-    this.adminHierarchyService
-      .query({columns: ["id", "name", "code"], 'parent_id': this.council_id, 'page': 1, 'per_page': 200})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.wards = resp.data)
-      );
-  }
-
-  filterVillages(): void {
-    this.adminHierarchyService
-      .query({columns: ["id", "name", "code"], 'parent_id': this.ward_id, 'page': 1, 'per_page': 200})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.villages = resp.data)
-      );
   }
 
   /**
@@ -279,18 +232,18 @@ export class FacilityComponent implements OnInit {
   }
 
   /**
-   * Creating or updating Facility
-   * @param facility ; If undefined initize new model to create else edit existing model
+   * Creating or updating CeilingChain
+   * @param ceilingChain ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(facility?: Facility): void {
-    const data: Facility = facility ?? {
-      ...new Facility(),
-      facility_type_id: this.facility_type_id,
-      admin_hierarchy_id: this.region_id,
+  createOrUpdate(ceilingChain?: CeilingChain): void {
+    const data: CeilingChain = ceilingChain ?? {
+      ...new CeilingChain(),
+      admin_hierarchy_level_position: this.admin_hierarchy_level_position,
+      section_level_position: this.section_level_position,
     };
-    const ref = this.dialogService.open(FacilityUpdateComponent, {
+    const ref = this.dialogService.open(CeilingChainUpdateComponent, {
       data,
-      header: "Create/Update Facility",
+      header: "Create/Update CeilingChain",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -300,14 +253,14 @@ export class FacilityComponent implements OnInit {
   }
 
   /**
-   * Delete Facility
-   * @param facility
+   * Delete CeilingChain
+   * @param ceilingChain
    */
-  delete(facility: Facility): void {
+  delete(ceilingChain: CeilingChain): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Facility?",
+      message: "Are you sure that you want to delete this CeilingChain?",
       accept: () => {
-        this.facilityService.delete(facility.id!).subscribe((resp) => {
+        this.ceilingChainService.delete(ceilingChain.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -322,14 +275,14 @@ export class FacilityComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<Facility[]> | null,
+    resp: CustomResponse<CeilingChain[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/facility"], {
+      this.router.navigate(["/ceiling-chain"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -338,7 +291,7 @@ export class FacilityComponent implements OnInit {
         },
       });
     }
-    this.facilities = resp?.data ?? [];
+    this.ceilingChains = resp?.data ?? [];
   }
 
   /**
@@ -347,6 +300,6 @@ export class FacilityComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Facility");
+    this.toastService.error("Error loading Ceiling Chain");
   }
 }

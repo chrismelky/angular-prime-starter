@@ -34,17 +34,65 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="admin_hierarchy_id"
+                id="region_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="adminHierarchies!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_id"
+                [options]="regions!"
+                (onChange)="filterCouncils()"
+                [(ngModel)]="region_id"
               ></p-dropdown>
-              <label for="admin_hierarchy_id">Admin Hierarchy </label>
+              <label for="region_id">Region</label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="council_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="councils!"
+                (onChange)="filterWards()"
+                [(ngModel)]="council_id"
+              ></p-dropdown>
+              <label for="council_id">Council</label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="ward_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="wards!"
+                (onChange)="filterVillages()"
+                [(ngModel)]="ward_id"
+              ></p-dropdown>
+              <label for="council_id">Ward</label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="village_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="villages!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="village_id"
+              ></p-dropdown>
+              <label for="council_id">Village</label>
             </span>
           </div>
         </div>
@@ -217,7 +265,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!facility_type_id || !admin_hierarchy_id"
+            [disabled]="!facility_type_id || !village_id"
             (click)="createOrUpdate()"
             label="Add Facility"
           ></button>

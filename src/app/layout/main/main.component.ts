@@ -324,6 +324,11 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "facility",
         },
+        {
+          label: "Ceiling Chains",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "ceiling-chain",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

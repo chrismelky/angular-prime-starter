@@ -5,25 +5,27 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {ConfirmationService, LazyLoadEvent} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Table} from "primeng/table";
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchyUpdateComponent} from "./update/admin-hierarchy-update.component";
-import {AdminHierarchy} from "./admin-hierarchy.model";
-import {ToastService} from "../../shared/toast.service";
-import {ITEMS_PER_PAGE, PER_PAGE_OPTIONS} from "../../config/pagination.constants";
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {HelperService} from "../../utils/helper.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
-import {Paginator} from "primeng/paginator";
-import {combineLatest} from "rxjs";
-import {DecisionLevelService} from "../decision-level/decision-level.service";
-import {CustomResponse} from "../../utils/custom-response";
-import {DecisionLevel} from "../decision-level/decision-level.model";
-import {AdminHierarchyService} from "./admin-hierarchy.service";
-
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Table } from 'primeng/table';
+import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyUpdateComponent } from './update/admin-hierarchy-update.component';
+import { AdminHierarchy } from './admin-hierarchy.model';
+import { ToastService } from '../../shared/toast.service';
+import {
+  ITEMS_PER_PAGE,
+  PER_PAGE_OPTIONS,
+} from '../../config/pagination.constants';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { HelperService } from '../../utils/helper.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
+import { Paginator } from 'primeng/paginator';
+import { combineLatest } from 'rxjs';
+import { DecisionLevelService } from '../decision-level/decision-level.service';
+import { CustomResponse } from '../../utils/custom-response';
+import { DecisionLevel } from '../decision-level/decision-level.model';
+import { AdminHierarchyService } from './admin-hierarchy.service';
 
 @Component({
   selector: 'app-admin-hierarchy',
@@ -33,7 +35,7 @@ export class AdminHierarchyComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
   adminHierarchies?: AdminHierarchy[] = [];
-  title = 'Administration Hierarchies'
+  title = 'Administration Hierarchies';
 
   parents?: AdminHierarchy[] = [];
   adminHierarchyPositions?: AdminHierarchyLevel[] = [];
@@ -77,8 +79,7 @@ export class AdminHierarchyComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.adminHierarchyService
@@ -180,6 +181,18 @@ export class AdminHierarchyComponent implements OnInit {
     } else {
       this.loadPage(1);
     }
+  }
+
+  /**
+   *
+   * @param parentAdminHierarchy
+   */
+  onAdminHierarchySelection(parentAdminHierarchy: AdminHierarchy): void {
+    console.log(parentAdminHierarchy);
+    this.parent_id = parentAdminHierarchy.id!;
+    this.admin_hierarchy_position =
+      parentAdminHierarchy.admin_hierarchy_position! + 1;
+    this.filterChanged();
   }
 
   /**
@@ -327,7 +340,11 @@ export class AdminHierarchyComponent implements OnInit {
       this.title = 'Village/Mtaa';
     }
     this.adminHierarchyService
-      .query({'admin_hierarchy_position': position - 1, 'page': 1, 'per_page': 2000})
+      .query({
+        admin_hierarchy_position: position - 1,
+        page: 1,
+        per_page: 2000,
+      })
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) => (this.parents = resp.data)
       );

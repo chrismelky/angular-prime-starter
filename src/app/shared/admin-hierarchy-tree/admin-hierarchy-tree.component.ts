@@ -50,6 +50,7 @@ export class AdminHierarchyTreeComponent implements OnInit {
       })
       .subscribe(
         (resp) => {
+          console.log(resp);
           this.treeLoading = false;
           selected.children = resp.data?.map((a) => {
             return {
@@ -67,7 +68,9 @@ export class AdminHierarchyTreeComponent implements OnInit {
   onSelectionChange(event: any): void {
     const selection =
       typeof this.selectedValue === 'object'
-        ? this.selectedValue?.data?.id
+        ? this.returnType === 'object'
+          ? this.selectedValue?.data
+          : this.selectedValue?.data?.id
         : this.selectedValue?.data?.map((d: AdminHierarchy) => {
             return this.returnType === 'object' ? d : d.id;
           });

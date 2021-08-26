@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
-import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
-import { CasAssessmentCriteria } from "../cas-assessment-criteria.model";
-import { CasAssessmentCriteriaService } from "../cas-assessment-criteria.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasAssessmentCategoryVersion } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model';
+import { CasAssessmentCategoryVersionService } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service';
+import { CasAssessmentCriteria } from '../cas-assessment-criteria.model';
+import { CasAssessmentCriteriaService } from '../cas-assessment-criteria.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-cas-assessment-criteria-update",
-  templateUrl: "./cas-assessment-criteria-update.component.html",
+  selector: 'app-cas-assessment-criteria-update',
+  templateUrl: './cas-assessment-criteria-update.component.html',
 })
 export class CasAssessmentCriteriaUpdateComponent implements OnInit {
   isSaving = false;
@@ -52,7 +52,7 @@ export class CasAssessmentCriteriaUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)
@@ -61,7 +61,7 @@ export class CasAssessmentCriteriaUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create CasAssessmentCriteria or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasAssessmentCriteria Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -134,14 +134,14 @@ export class CasAssessmentCriteriaUpdateComponent implements OnInit {
   protected createFromForm(): CasAssessmentCriteria {
     return {
       ...new CasAssessmentCriteria(),
-      id: this.editForm.get(["id"])!.value,
+      id: this.editForm.get(['id'])!.value,
       cas_assessment_category_version_id: this.editForm.get([
-        "cas_assessment_category_version_id",
+        'cas_assessment_category_version_id',
       ])!.value,
-      name: this.editForm.get(["name"])!.value,
-      number: this.editForm.get(["number"])!.value,
-      how_to_assess: this.editForm.get(["how_to_assess"])!.value,
-      how_to_score: this.editForm.get(["how_to_score"])!.value,
+      name: this.editForm.get(['name'])!.value,
+      number: this.editForm.get(['number'])!.value,
+      how_to_assess: this.editForm.get(['how_to_assess'])!.value,
+      how_to_score: this.editForm.get(['how_to_score'])!.value,
     };
   }
 }

@@ -5,28 +5,28 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { CasAssessmentRound } from "src/app/setup/cas-assessment-round/cas-assessment-round.model";
-import { CasAssessmentRoundService } from "src/app/setup/cas-assessment-round/cas-assessment-round.service";
-import { SectionLevel } from "src/app/setup/section-level/section-level.model";
-import { SectionLevelService } from "src/app/setup/section-level/section-level.service";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
-import { Calendar } from "../calendar.model";
-import { CalendarService } from "../calendar.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { CasAssessmentRound } from 'src/app/setup/cas-assessment-round/cas-assessment-round.model';
+import { CasAssessmentRoundService } from 'src/app/setup/cas-assessment-round/cas-assessment-round.service';
+import { SectionLevel } from 'src/app/setup/section-level/section-level.model';
+import { SectionLevelService } from 'src/app/setup/section-level/section-level.service';
+import { Sector } from 'src/app/setup/sector/sector.model';
+import { SectorService } from 'src/app/setup/sector/sector.service';
+import { Calendar } from '../calendar.model';
+import { CalendarService } from '../calendar.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-calendar-update",
-  templateUrl: "./calendar-update.component.html",
+  selector: 'app-calendar-update',
+  templateUrl: './calendar-update.component.html',
 })
 export class CalendarUpdateComponent implements OnInit {
   isSaving = false;
@@ -71,25 +71,25 @@ export class CalendarUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
       );
     this.casAssessmentRoundService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentRound[]>) =>
           (this.casAssessmentRounds = resp.data)
       );
     this.sectionLevelService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<SectionLevel[]>) =>
           (this.sectionLevels = resp.data)
       );
     this.sectorService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
@@ -97,7 +97,7 @@ export class CalendarUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create Calendar or Update Facility type if exist else set form has error and return
+   * When form is valid Create Calendar Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -178,26 +178,26 @@ export class CalendarUpdateComponent implements OnInit {
   protected createFromForm(): Calendar {
     return {
       ...new Calendar(),
-      id: this.editForm.get(["id"])!.value,
-      description: this.editForm.get(["description"])!.value,
-      start_date: this.editForm.get(["start_date"])!.value,
-      end_date: this.editForm.get(["end_date"])!.value,
-      hierarchy_position: this.editForm.get(["hierarchy_position"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      description: this.editForm.get(['description'])!.value,
+      start_date: this.editForm.get(['start_date'])!.value,
+      end_date: this.editForm.get(['end_date'])!.value,
+      hierarchy_position: this.editForm.get(['hierarchy_position'])!.value,
       before_start_reminder_sms: this.editForm.get([
-        "before_start_reminder_sms",
+        'before_start_reminder_sms',
       ])!.value,
-      before_end_reminder_sms: this.editForm.get(["before_end_reminder_sms"])!
+      before_end_reminder_sms: this.editForm.get(['before_end_reminder_sms'])!
         .value,
       before_start_reminder_days: this.editForm.get([
-        "before_start_reminder_days",
+        'before_start_reminder_days',
       ])!.value,
-      before_end_reminder_days: this.editForm.get(["before_end_reminder_days"])!
+      before_end_reminder_days: this.editForm.get(['before_end_reminder_days'])!
         .value,
-      financial_year_id: this.editForm.get(["financial_year_id"])!.value,
-      cas_assessment_round_id: this.editForm.get(["cas_assessment_round_id"])!
+      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
+      cas_assessment_round_id: this.editForm.get(['cas_assessment_round_id'])!
         .value,
-      section_level_id: this.editForm.get(["section_level_id"])!.value,
-      sector_id: this.editForm.get(["sector_id"])!.value,
+      section_level_id: this.editForm.get(['section_level_id'])!.value,
+      sector_id: this.editForm.get(['sector_id'])!.value,
     };
   }
 }

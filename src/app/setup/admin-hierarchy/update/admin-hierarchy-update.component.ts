@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {AdminHierarchy} from "../admin-hierarchy.model";
-import {AdminHierarchyService} from "../admin-hierarchy.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {AdminHierarchyLevel} from "../../admin-hierarchy-level/admin-hierarchy-level.model";
-import {DecisionLevel} from "../../decision-level/decision-level.model";
-import {AdminHierarchyLevelService} from "../../admin-hierarchy-level/admin-hierarchy-level.service";
-import {DecisionLevelService} from "../../decision-level/decision-level.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AdminHierarchy } from '../admin-hierarchy.model';
+import { AdminHierarchyService } from '../admin-hierarchy.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { AdminHierarchyLevel } from '../../admin-hierarchy-level/admin-hierarchy-level.model';
+import { DecisionLevel } from '../../decision-level/decision-level.model';
+import { AdminHierarchyLevelService } from '../../admin-hierarchy-level/admin-hierarchy-level.service';
+import { DecisionLevelService } from '../../decision-level/decision-level.service';
 
 @Component({
-  selector: "app-admin-hierarchy-update",
-  templateUrl: "./admin-hierarchy-update.component.html",
+  selector: 'app-admin-hierarchy-update',
+  templateUrl: './admin-hierarchy-update.component.html',
 })
 export class AdminHierarchyUpdateComponent implements OnInit {
   isSaving = false;
@@ -63,8 +63,7 @@ export class AdminHierarchyUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.adminHierarchyService
@@ -100,7 +99,7 @@ export class AdminHierarchyUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create AdminHierarchy or Update Facility type if exist else set form has error and return
+   * When form is valid Create AdminHierarchy Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -144,8 +143,7 @@ export class AdminHierarchyUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -162,15 +160,32 @@ export class AdminHierarchyUpdateComponent implements OnInit {
       code: adminHierarchy.code,
       parent_id: adminHierarchy.parent_id,
       admin_hierarchy_position: adminHierarchy.admin_hierarchy_position,
-      current_budget_locked: adminHierarchy.current_budget_locked ? adminHierarchy.current_budget_locked : false,
-      is_carryover_budget_locked: adminHierarchy.is_carryover_budget_locked ? adminHierarchy.is_carryover_budget_locked : false,
-      is_supplementary_budget_locked: adminHierarchy.is_supplementary_budget_locked ? adminHierarchy.is_supplementary_budget_locked : false,
-      is_current_budget_approved: adminHierarchy.is_current_budget_approved ? adminHierarchy.is_current_budget_approved : false,
-      is_carryover_budget_approved: adminHierarchy.is_carryover_budget_approved ? adminHierarchy.is_carryover_budget_approved : false,
-      is_supplementary_budget_approved: adminHierarchy.is_supplementary_budget_approved ? adminHierarchy.is_supplementary_budget_approved : false,
-      current_budget_decision_level_id: adminHierarchy.current_budget_decision_level_id,
-      carryover_budget_decision_level_id: adminHierarchy.carryover_budget_decision_level_id,
-      supplementary_budget_decision_level_id: adminHierarchy.supplementary_budget_decision_level_id,
+      current_budget_locked: adminHierarchy.current_budget_locked
+        ? adminHierarchy.current_budget_locked
+        : false,
+      is_carryover_budget_locked: adminHierarchy.is_carryover_budget_locked
+        ? adminHierarchy.is_carryover_budget_locked
+        : false,
+      is_supplementary_budget_locked:
+        adminHierarchy.is_supplementary_budget_locked
+          ? adminHierarchy.is_supplementary_budget_locked
+          : false,
+      is_current_budget_approved: adminHierarchy.is_current_budget_approved
+        ? adminHierarchy.is_current_budget_approved
+        : false,
+      is_carryover_budget_approved: adminHierarchy.is_carryover_budget_approved
+        ? adminHierarchy.is_carryover_budget_approved
+        : false,
+      is_supplementary_budget_approved:
+        adminHierarchy.is_supplementary_budget_approved
+          ? adminHierarchy.is_supplementary_budget_approved
+          : false,
+      current_budget_decision_level_id:
+        adminHierarchy.current_budget_decision_level_id,
+      carryover_budget_decision_level_id:
+        adminHierarchy.carryover_budget_decision_level_id,
+      supplementary_budget_decision_level_id:
+        adminHierarchy.supplementary_budget_decision_level_id,
     });
   }
 
@@ -181,37 +196,37 @@ export class AdminHierarchyUpdateComponent implements OnInit {
   protected createFromForm(): AdminHierarchy {
     return {
       ...new AdminHierarchy(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      admin_hierarchy_position: this.editForm.get(["admin_hierarchy_position"])!
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      admin_hierarchy_position: this.editForm.get(['admin_hierarchy_position'])!
         .value,
-      current_budget_locked: this.editForm.get(["current_budget_locked"])!
+      current_budget_locked: this.editForm.get(['current_budget_locked'])!
         .value,
       is_carryover_budget_locked: this.editForm.get([
-        "is_carryover_budget_locked",
+        'is_carryover_budget_locked',
       ])!.value,
       is_supplementary_budget_locked: this.editForm.get([
-        "is_supplementary_budget_locked",
+        'is_supplementary_budget_locked',
       ])!.value,
       is_current_budget_approved: this.editForm.get([
-        "is_current_budget_approved",
+        'is_current_budget_approved',
       ])!.value,
       is_carryover_budget_approved: this.editForm.get([
-        "is_carryover_budget_approved",
+        'is_carryover_budget_approved',
       ])!.value,
       is_supplementary_budget_approved: this.editForm.get([
-        "is_supplementary_budget_approved",
+        'is_supplementary_budget_approved',
       ])!.value,
       current_budget_decision_level_id: this.editForm.get([
-        "current_budget_decision_level_id",
+        'current_budget_decision_level_id',
       ])!.value,
       carryover_budget_decision_level_id: this.editForm.get([
-        "carryover_budget_decision_level_id",
+        'carryover_budget_decision_level_id',
       ])!.value,
       supplementary_budget_decision_level_id: this.editForm.get([
-        "supplementary_budget_decision_level_id",
+        'supplementary_budget_decision_level_id',
       ])!.value,
     };
   }

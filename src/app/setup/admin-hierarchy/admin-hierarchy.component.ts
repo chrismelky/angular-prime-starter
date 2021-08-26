@@ -33,6 +33,7 @@ export class AdminHierarchyComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
   adminHierarchies?: AdminHierarchy[] = [];
+  title = 'Administration Hierarchies'
 
   parents?: AdminHierarchy[] = [];
   adminHierarchyPositions?: AdminHierarchyLevel[] = [];
@@ -314,6 +315,17 @@ export class AdminHierarchyComponent implements OnInit {
 
   filterParentByLevel(): void {
     let position = this.admin_hierarchy_position;
+    if (position === 7) {
+      this.title = 'Regions';
+    } else if (position === 8) {
+      this.title = 'Regions';
+    } else if (position === 9) {
+      this.title = 'Councils';
+    } else if (position === 10) {
+      this.title = 'Wards';
+    } else {
+      this.title = 'Village/Mtaa';
+    }
     this.adminHierarchyService
       .query({'admin_hierarchy_position': position - 1, 'page': 1, 'per_page': 2000})
       .subscribe(

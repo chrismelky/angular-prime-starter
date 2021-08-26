@@ -107,7 +107,7 @@ export class MainComponent implements OnInit {
         {
           label: "Admin Hierarchies",
           icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy",
+          routerLink: "admin-hierarchy"
         },
         {
           label: "Sectors",
@@ -308,6 +308,26 @@ export class MainComponent implements OnInit {
           label: "Calendars",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "calendar",
+        },
+        {
+          label: "Category Category Combinations",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "category-category-combination",
+        },
+        {
+          label: "Data Elements",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "data-element",
+        },
+        {
+          label: "Facility Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "facility-type",
+        },
+        {
+          label: "Facilities",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "facility",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

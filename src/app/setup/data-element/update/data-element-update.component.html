@@ -1,0 +1,252 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="name" type="text" pInputText formControlName="name" />
+          <label for="name">Name </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('name')!.invalid &&
+            (editForm.get('name')!.dirty ||
+              editForm.get('name')!.touched ||
+              formError)
+          "
+        >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
+            >Name is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="display_name"
+            type="text"
+            pInputText
+            formControlName="display_name"
+          />
+          <label for="display_name">Display Name </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('display_name')!.invalid &&
+            (editForm.get('display_name')!.dirty ||
+              editForm.get('display_name')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('display_name')?.errors?.required"
+            >Display Name is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="code" type="text" pInputText formControlName="code" />
+          <label for="code">Code </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('code')!.invalid &&
+            (editForm.get('code')!.dirty ||
+              editForm.get('code')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="question_number"
+            type="text"
+            pInputText
+            formControlName="question_number"
+          />
+          <label for="question_number">Question Number </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('question_number')!.invalid &&
+            (editForm.get('question_number')!.dirty ||
+              editForm.get('question_number')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="sort_order"
+            formControlName="sort_order"
+          ></p-inputNumber>
+          <label for="sort_order">Sort Order </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sort_order')!.invalid &&
+            (editForm.get('sort_order')!.dirty ||
+              editForm.get('sort_order')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_required"
+          name="is_required"
+          formControlName="is_required"
+        ></p-inputSwitch>
+        <label for="is_required">Is Required </label>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="data_set_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="dataSets!"
+            formControlName="data_set_id"
+          ></p-dropdown>
+          <label for="data_set_id">Data Set </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('data_set_id')!.invalid &&
+            (editForm.get('data_set_id')!.dirty ||
+              editForm.get('data_set_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('data_set_id')?.errors?.required"
+            >Data Set is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="category_combination_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="categoryCombinations!"
+            formControlName="category_combination_id"
+          ></p-dropdown>
+          <label for="category_combination_id">Category Combination </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('category_combination_id')!.invalid &&
+            (editForm.get('category_combination_id')!.dirty ||
+              editForm.get('category_combination_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('category_combination_id')?.errors?.required"
+            >Category Combination is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="option_set_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="optionSets!"
+            formControlName="option_set_id"
+          ></p-dropdown>
+          <label for="option_set_id">Option Set </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('option_set_id')!.invalid &&
+            (editForm.get('option_set_id')!.dirty ||
+              editForm.get('option_set_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('option_set_id')?.errors?.required"
+            >Option Set is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="value_type"
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="valueTypes!"
+            formControlName="value_type"
+          ></p-dropdown>
+          <label for="value_type">Value Type </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('value_type')!.invalid &&
+            (editForm.get('value_type')!.dirty ||
+              editForm.get('value_type')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('value_type')?.errors?.required"
+            >Value Type is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -5,29 +5,25 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import {ConfirmationService, LazyLoadEvent} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Table} from "primeng/table";
+import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import {AdminHierarchyUpdateComponent} from "./update/admin-hierarchy-update.component";
+import {AdminHierarchy} from "./admin-hierarchy.model";
+import {ToastService} from "../../shared/toast.service";
+import {ITEMS_PER_PAGE, PER_PAGE_OPTIONS} from "../../config/pagination.constants";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {HelperService} from "../../utils/helper.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
+import {Paginator} from "primeng/paginator";
+import {combineLatest} from "rxjs";
+import {DecisionLevelService} from "../decision-level/decision-level.service";
+import {CustomResponse} from "../../utils/custom-response";
+import {DecisionLevel} from "../decision-level/decision-level.model";
+import {AdminHierarchyService} from "./admin-hierarchy.service";
 
-import { CustomResponse } from '../../utils/custom-response';
-import {
-  ITEMS_PER_PAGE,
-  PER_PAGE_OPTIONS,
-} from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-
-import { AdminHierarchy } from './admin-hierarchy.model';
-import { AdminHierarchyService } from './admin-hierarchy.service';
-import { AdminHierarchyUpdateComponent } from './update/admin-hierarchy-update.component';
-import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
-import { DecisionLevel } from '../decision-level/decision-level.model';
-import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
-import { DecisionLevelService } from '../decision-level/decision-level.service';
 
 @Component({
   selector: 'app-admin-hierarchy',
@@ -80,7 +76,8 @@ export class AdminHierarchyComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.adminHierarchyService
@@ -118,7 +115,7 @@ export class AdminHierarchyComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (!this.parent_id || !this.admin_hierarchy_position) {
@@ -313,5 +310,14 @@ export class AdminHierarchyComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Admin Hierarchy');
+  }
+
+  filterParentByLevel(): void {
+    let position = this.admin_hierarchy_position;
+    this.adminHierarchyService
+      .query({'admin_hierarchy_position': position - 1, 'page': 1, 'per_page': 2000})
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) => (this.parents = resp.data)
+      );
   }
 }

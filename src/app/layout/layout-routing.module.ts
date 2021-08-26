@@ -344,7 +344,33 @@ const routes: Routes = [
         path: "calendar",
         loadChildren: () =>
           import("../setup/calendar/calendar.module").then(
-            (m) => m.CalendarModule
+            (m) => m.CalendarModule),
+      },
+      { path: "category-category-combination",
+        loadChildren: () =>
+          import(
+            "../setup/category-category-combination/category-category-combination.module"
+          ).then((m) => m.CategoryCategoryCombinationModule),
+      },
+      {
+        path: "data-element",
+        loadChildren: () =>
+          import("../setup/data-element/data-element.module").then(
+            (m) => m.DataElementModule
+          ),
+      },
+      {
+        path: "facility-type",
+        loadChildren: () =>
+          import("../setup/facility-type/facility-type.module").then(
+            (m) => m.FacilityTypeModule
+          ),
+      },
+      {
+        path: "facility",
+        loadChildren: () =>
+          import("../setup/facility/facility.module").then(
+            (m) => m.FacilityModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

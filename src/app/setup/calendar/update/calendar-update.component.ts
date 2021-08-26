@@ -20,6 +20,8 @@ import { SectionLevel } from "src/app/setup/section-level/section-level.model";
 import { SectionLevelService } from "src/app/setup/section-level/section-level.service";
 import { Sector } from "src/app/setup/sector/sector.model";
 import { SectorService } from "src/app/setup/sector/sector.service";
+import { CalendarEvent } from "src/app/setup/calendar-event/calendar-event.model";
+import { CalendarEventService } from "src/app/setup/calendar-event/calendar-event.service";
 import { Calendar } from "../calendar.model";
 import { CalendarService } from "../calendar.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -37,24 +39,26 @@ export class CalendarUpdateComponent implements OnInit {
   casAssessmentRounds?: CasAssessmentRound[] = [];
   sectionLevels?: SectionLevel[] = [];
   sectors?: Sector[] = [];
+  calendarEvents?: CalendarEvent[] = [];
 
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
-    description: [null, [Validators.required]],
-    start_date: [null, [Validators.required]],
-    end_date: [null, [Validators.required]],
-    hierarchy_position: [null, [Validators.required]],
+    description: [null, []],
+    start_date: [null, []],
+    end_date: [null, []],
+    hierarchy_position: [null, []],
     before_start_reminder_sms: [null, []],
     before_end_reminder_sms: [null, []],
     before_start_reminder_days: [null, []],
     before_end_reminder_days: [null, []],
     financial_year_id: [null, [Validators.required]],
-    cas_assessment_round_id: [null, []],
+    cas_assessment_round_id: [null, [Validators.required]],
     section_level_id: [null, [Validators.required]],
-    sector_id: [null, []],
+    sector_id: [null, [Validators.required]],
+    calendar_event_id: [null, [Validators.required]],
   });
 
   constructor(
@@ -63,6 +67,7 @@ export class CalendarUpdateComponent implements OnInit {
     protected casAssessmentRoundService: CasAssessmentRoundService,
     protected sectionLevelService: SectionLevelService,
     protected sectorService: SectorService,
+    protected calendarEventService: CalendarEventService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -92,6 +97,12 @@ export class CalendarUpdateComponent implements OnInit {
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
+      );
+    this.calendarEventService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CalendarEvent[]>) =>
+          (this.calendarEvents = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
@@ -168,6 +179,7 @@ export class CalendarUpdateComponent implements OnInit {
       cas_assessment_round_id: calendar.cas_assessment_round_id,
       section_level_id: calendar.section_level_id,
       sector_id: calendar.sector_id,
+      calendar_event_id: calendar.calendar_event_id,
     });
   }
 
@@ -198,6 +210,7 @@ export class CalendarUpdateComponent implements OnInit {
         .value,
       section_level_id: this.editForm.get(["section_level_id"])!.value,
       sector_id: this.editForm.get(["sector_id"])!.value,
+      calendar_event_id: this.editForm.get(["calendar_event_id"])!.value,
     };
   }
 }

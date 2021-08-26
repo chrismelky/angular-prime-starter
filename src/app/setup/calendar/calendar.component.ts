@@ -28,6 +28,8 @@ import { SectionLevel } from "src/app/setup/section-level/section-level.model";
 import { SectionLevelService } from "src/app/setup/section-level/section-level.service";
 import { Sector } from "src/app/setup/sector/sector.model";
 import { SectorService } from "src/app/setup/sector/sector.service";
+import { CalendarEvent } from "src/app/setup/calendar-event/calendar-event.model";
+import { CalendarEventService } from "src/app/setup/calendar-event/calendar-event.service";
 
 import { Calendar } from "./calendar.model";
 import { CalendarService } from "./calendar.service";
@@ -46,6 +48,7 @@ export class CalendarComponent implements OnInit {
   casAssessmentRounds?: CasAssessmentRound[] = [];
   sectionLevels?: SectionLevel[] = [];
   sectors?: Sector[] = [];
+  calendarEvents?: CalendarEvent[] = [];
 
   cols = [
     {
@@ -88,16 +91,6 @@ export class CalendarComponent implements OnInit {
       header: "Before End Reminder Days",
       sort: false,
     },
-    {
-      field: "cas_assessment_round_id",
-      header: "Cas Assessment Round ",
-      sort: false,
-    },
-    {
-      field: "sector_id",
-      header: "Sector ",
-      sort: false,
-    },
   ]; //Table display columns
 
   isLoading = false;
@@ -111,7 +104,10 @@ export class CalendarComponent implements OnInit {
 
   //Mandatory filter
   financial_year_id!: number;
+  cas_assessment_round_id!: number;
   section_level_id!: number;
+  sector_id!: number;
+  calendar_event_id!: number;
 
   constructor(
     protected calendarService: CalendarService,
@@ -119,6 +115,7 @@ export class CalendarComponent implements OnInit {
     protected casAssessmentRoundService: CasAssessmentRoundService,
     protected sectionLevelService: SectionLevelService,
     protected sectorService: SectorService,
+    protected calendarEventService: CalendarEventService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -151,6 +148,12 @@ export class CalendarComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
+    this.calendarEventService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CalendarEvent[]>) =>
+          (this.calendarEvents = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -160,7 +163,13 @@ export class CalendarComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.financial_year_id || !this.section_level_id) {
+    if (
+      !this.financial_year_id ||
+      !this.cas_assessment_round_id ||
+      !this.section_level_id ||
+      !this.sector_id ||
+      !this.calendar_event_id
+    ) {
       return;
     }
     this.isLoading = true;
@@ -172,7 +181,10 @@ export class CalendarComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         financial_year_id: this.financial_year_id,
+        cas_assessment_round_id: this.cas_assessment_round_id,
         section_level_id: this.section_level_id,
+        sector_id: this.sector_id,
+        calendar_event_id: this.calendar_event_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -288,7 +300,10 @@ export class CalendarComponent implements OnInit {
     const data: Calendar = calendar ?? {
       ...new Calendar(),
       financial_year_id: this.financial_year_id,
+      cas_assessment_round_id: this.cas_assessment_round_id,
       section_level_id: this.section_level_id,
+      sector_id: this.sector_id,
+      calendar_event_id: this.calendar_event_id,
     };
     const ref = this.dialogService.open(CalendarUpdateComponent, {
       data,

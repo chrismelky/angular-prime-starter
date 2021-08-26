@@ -12,6 +12,7 @@ export class Calendar {
     public financial_year_id?: number,
     public cas_assessment_round_id?: number,
     public section_level_id?: number,
-    public sector_id?: number
+    public sector_id?: number,
+    public calendar_event_id?: number
   ) {}
 }

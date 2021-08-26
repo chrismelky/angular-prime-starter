@@ -40,7 +40,10 @@ export class FacilityComponent implements OnInit {
   facilities?: Facility[] = [];
 
   facilityTypes?: FacilityType[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
+  regions?: AdminHierarchy[] = [];
+  councils?: AdminHierarchy[] = [];
+  wards?: AdminHierarchy[] = [];
+  villages?: AdminHierarchy[] = [];
   ownerships?: PlanrepEnum[] = [];
   physicalStates?: PlanrepEnum[] = [];
   starRatings?: PlanrepEnum[] = [];
@@ -84,7 +87,10 @@ export class FacilityComponent implements OnInit {
 
   //Mandatory filter
   facility_type_id!: number;
-  admin_hierarchy_id!: number;
+  region_id!: number;
+  council_id!: number;
+  ward_id!: number;
+  village_id!: number;
 
   constructor(
     protected facilityService: FacilityService,
@@ -108,10 +114,10 @@ export class FacilityComponent implements OnInit {
           (this.facilityTypes = resp.data)
       );
     this.adminHierarchyService
-      .query({columns: ["id", "name", "code"]})
+      .query({columns: ["id", "name", "code"], 'admin_hierarchy_position': 8, 'page': 1, 'per_page': 20})
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
+          (this.regions = resp.data)
       );
     this.ownerships = this.enumService.get("ownerships");
     this.physicalStates = this.enumService.get("physicalStates");
@@ -125,7 +131,7 @@ export class FacilityComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.facility_type_id || !this.admin_hierarchy_id) {
+    if (!this.facility_type_id || !this.region_id) {
       return;
     }
     this.isLoading = true;
@@ -137,7 +143,7 @@ export class FacilityComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         facility_type_id: this.facility_type_id,
-        admin_hierarchy_id: this.admin_hierarchy_id,
+        admin_hierarchy_id: this.village_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -173,6 +179,33 @@ export class FacilityComponent implements OnInit {
         this.ascending = ascending;
       }
     });
+  }
+
+  filterCouncils(): void {
+    this.adminHierarchyService
+      .query({columns: ["id", "name", "code"], 'parent_id': this.region_id, 'page': 1, 'per_page': 200})
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.councils = resp.data)
+      );
+  }
+
+  filterWards(): void {
+    this.adminHierarchyService
+      .query({columns: ["id", "name", "code"], 'parent_id': this.council_id, 'page': 1, 'per_page': 200})
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.wards = resp.data)
+      );
+  }
+
+  filterVillages(): void {
+    this.adminHierarchyService
+      .query({columns: ["id", "name", "code"], 'parent_id': this.ward_id, 'page': 1, 'per_page': 200})
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.villages = resp.data)
+      );
   }
 
   /**
@@ -253,7 +286,7 @@ export class FacilityComponent implements OnInit {
     const data: Facility = facility ?? {
       ...new Facility(),
       facility_type_id: this.facility_type_id,
-      admin_hierarchy_id: this.admin_hierarchy_id,
+      admin_hierarchy_id: this.region_id,
     };
     const ref = this.dialogService.open(FacilityUpdateComponent, {
       data,

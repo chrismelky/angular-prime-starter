@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {AdminHierarchy} from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import {AdminHierarchyService} from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import {ReferenceDocument} from "../reference-document.model";
-import {ReferenceDocumentService} from "../reference-document.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {FinancialYear} from "../../financial-year/financial-year.model";
-import {FinancialYearService} from "../../financial-year/financial-year.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { ReferenceDocument } from '../reference-document.model';
+import { ReferenceDocumentService } from '../reference-document.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { FinancialYear } from '../../financial-year/financial-year.model';
+import { FinancialYearService } from '../../financial-year/financial-year.service';
 
 @Component({
-  selector: "app-reference-document-update",
-  templateUrl: "./reference-document-update.component.html",
+  selector: 'app-reference-document-update',
+  templateUrl: './reference-document-update.component.html',
 })
 export class ReferenceDocumentUpdateComponent implements OnInit {
   isSaving = false;
@@ -53,24 +53,23 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.financialYearService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.startFinancialYears = resp.data)
       );
     this.financialYearService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.endFinancialYears = resp.data)
       );
     this.adminHierarchyService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
@@ -79,7 +78,7 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create ReferenceDocument or Update Facility type if exist else set form has error and return
+   * When form is valid Create ReferenceDocument Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -123,8 +122,7 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -152,14 +150,14 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
   protected createFromForm(): ReferenceDocument {
     return {
       ...new ReferenceDocument(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      url: this.editForm.get(["url"])!.value,
-      start_financial_year_id: this.editForm.get(["start_financial_year_id"])!
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      url: this.editForm.get(['url'])!.value,
+      start_financial_year_id: this.editForm.get(['start_financial_year_id'])!
         .value,
-      end_financial_year_id: this.editForm.get(["end_financial_year_id"])!
+      end_financial_year_id: this.editForm.get(['end_financial_year_id'])!
         .value,
-      admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
     };
   }
 }

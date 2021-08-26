@@ -1,0 +1,29 @@
+<button
+  type="text"
+  pButton
+  iconPos="left"
+  class="p-button-outlined p-button-plain p-admin-hierarchy-tree"
+  (click)="op.toggle($event)"
+>
+  <i class="pi pi-sitemap"></i>&nbsp;
+  {{
+    selectedValue
+      ? selectionMode === "single"
+        ? selectedValue?.data?.name
+        : "Admin Hierarchies Selected(" + selectedValue?.length + ")"
+      : "Select Admin hierarchy"
+  }}
+</button>
+<p-overlayPanel #op [dismissable]="true" appendTo="body">
+  <ng-template pTemplate>
+    <p-tree
+      [value]="nodes"
+      [filter]="true"
+      (onNodeExpand)="nodeExpand($event)"
+      [selectionMode]="selectionMode"
+      [(selection)]="selectedValue"
+      [loading]="treeLoading"
+      (onNodeSelect)="onSelectionChange($event)"
+    ></p-tree>
+  </ng-template>
+</p-overlayPanel>

@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { Category } from "src/app/setup/category/category.model";
-import { CategoryService } from "src/app/setup/category/category.service";
-import { CategoryOption } from "src/app/setup/category-option/category-option.model";
-import { CategoryOptionService } from "src/app/setup/category-option/category-option.service";
-import { CategoryCategoryOption } from "../category-category-option.model";
-import { CategoryCategoryOptionService } from "../category-category-option.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { Category } from 'src/app/setup/category/category.model';
+import { CategoryService } from 'src/app/setup/category/category.service';
+import { CategoryOption } from 'src/app/setup/category-option/category-option.model';
+import { CategoryOptionService } from 'src/app/setup/category-option/category-option.service';
+import { CategoryCategoryOption } from '../category-category-option.model';
+import { CategoryCategoryOptionService } from '../category-category-option.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-category-category-option-update",
-  templateUrl: "./category-category-option-update.component.html",
+  selector: 'app-category-category-option-update',
+  templateUrl: './category-category-option-update.component.html',
 })
 export class CategoryCategoryOptionUpdateComponent implements OnInit {
   isSaving = false;
@@ -54,12 +54,12 @@ export class CategoryCategoryOptionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.categoryService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Category[]>) => (this.categories = resp.data)
       );
     this.categoryOptionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CategoryOption[]>) =>
           (this.categoryOptions = resp.data)
@@ -68,7 +68,7 @@ export class CategoryCategoryOptionUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create CategoryCategoryOption or Update Facility type if exist else set form has error and return
+   * When form is valid Create CategoryCategoryOption Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -138,10 +138,10 @@ export class CategoryCategoryOptionUpdateComponent implements OnInit {
   protected createFromForm(): CategoryCategoryOption {
     return {
       ...new CategoryCategoryOption(),
-      id: this.editForm.get(["id"])!.value,
-      category_id: this.editForm.get(["category_id"])!.value,
-      category_option_id: this.editForm.get(["category_option_id"])!.value,
-      sort_order: this.editForm.get(["sort_order"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      category_id: this.editForm.get(['category_id'])!.value,
+      category_option_id: this.editForm.get(['category_option_id'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
     };
   }
 }

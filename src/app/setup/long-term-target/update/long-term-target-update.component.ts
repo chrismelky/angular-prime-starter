@@ -5,26 +5,26 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { StrategicPlan } from "src/app/setup/strategic-plan/strategic-plan.model";
-import { StrategicPlanService } from "src/app/setup/strategic-plan/strategic-plan.service";
-import { Objective } from "src/app/setup/objective/objective.model";
-import { ObjectiveService } from "src/app/setup/objective/objective.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
-import { LongTermTarget } from "../long-term-target.model";
-import { LongTermTargetService } from "../long-term-target.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { StrategicPlan } from 'src/app/setup/strategic-plan/strategic-plan.model';
+import { StrategicPlanService } from 'src/app/setup/strategic-plan/strategic-plan.service';
+import { Objective } from 'src/app/setup/objective/objective.model';
+import { ObjectiveService } from 'src/app/setup/objective/objective.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
+import { LongTermTarget } from '../long-term-target.model';
+import { LongTermTargetService } from '../long-term-target.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-long-term-target-update",
-  templateUrl: "./long-term-target-update.component.html",
+  selector: 'app-long-term-target-update',
+  templateUrl: './long-term-target-update.component.html',
 })
 export class LongTermTargetUpdateComponent implements OnInit {
   isSaving = false;
@@ -60,18 +60,18 @@ export class LongTermTargetUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.strategicPlanService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<StrategicPlan[]>) =>
           (this.strategicPlans = resp.data)
       );
     this.objectiveService
-      .query({ columns: ["id", "description"] })
+      .query({ columns: ['id', 'description'] })
       .subscribe(
         (resp: CustomResponse<Objective[]>) => (this.objectives = resp.data)
       );
     this.sectionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
@@ -79,7 +79,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create LongTermTarget or Update Facility type if exist else set form has error and return
+   * When form is valid Create LongTermTarget Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -151,12 +151,12 @@ export class LongTermTargetUpdateComponent implements OnInit {
   protected createFromForm(): LongTermTarget {
     return {
       ...new LongTermTarget(),
-      id: this.editForm.get(["id"])!.value,
-      description: this.editForm.get(["description"])!.value,
-      strategic_plan_id: this.editForm.get(["strategic_plan_id"])!.value,
-      objective_id: this.editForm.get(["objective_id"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      section_id: this.editForm.get(["section_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      description: this.editForm.get(['description'])!.value,
+      strategic_plan_id: this.editForm.get(['strategic_plan_id'])!.value,
+      objective_id: this.editForm.get(['objective_id'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      section_id: this.editForm.get(['section_id'])!.value,
     };
   }
 }

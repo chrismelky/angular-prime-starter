@@ -7,6 +7,7 @@
         <span class="card-header-text">Filter</span>
       </div>
     </ng-template>
+
     <div fxLayout="column" fxLayoutGap="4px">
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
@@ -15,6 +16,13 @@
           fxFlex
           fxLayoutAlign="start center"
         >
+          <button
+            type="text"
+            pButton
+            class="p-button-outlined p-button-plain"
+            [label]="'Admin Area ' + selectedValue?.length"
+            (click)="op.toggle($event)"
+          ></button>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -31,7 +39,7 @@
               <label for="facility_type_id">Facility Type </label>
             </span>
           </div>
-          <div class="p-field" fxFlex>
+          <!-- <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
                 id="region_id"
@@ -94,7 +102,7 @@
               ></p-dropdown>
               <label for="council_id">Village</label>
             </span>
-          </div>
+          </div> -->
         </div>
         <div
           fxLayout="row wrap"
@@ -341,3 +349,16 @@
   header="Confirmation Delete Facility"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>
+
+<p-overlayPanel #op [dismissable]="true">
+  <ng-template pTemplate>
+    <p-tree
+      [value]="nodes"
+      (onNodeExpand)="nodeExpand($event)"
+      selectionMode="checkbox"
+      [(selection)]="selectedValue"
+      [loading]="treeLoading"
+      (onNodeSelect)="onSelect($event)"
+    ></p-tree>
+  </ng-template>
+</p-overlayPanel>

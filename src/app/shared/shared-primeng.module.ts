@@ -23,6 +23,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RippleModule } from 'primeng/ripple';
+import { TreeSelectModule } from 'primeng/treeselect';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
   declarations: [],
@@ -50,6 +52,8 @@ import { RippleModule } from 'primeng/ripple';
     InputSwitchModule,
     MultiSelectModule,
     RippleModule,
+    TreeSelectModule,
+    OverlayPanelModule,
   ],
 })
 export class SharedPrimengModule {}

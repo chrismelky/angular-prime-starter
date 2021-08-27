@@ -1,0 +1,124 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="description"
+            type="text"
+            pInputText
+            formControlName="description"
+          />
+          <label for="description">Description </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('description')!.invalid &&
+            (editForm.get('description')!.dirty ||
+              editForm.get('description')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('description')?.errors?.required"
+            >Description is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="code" type="text" pInputText formControlName="code" />
+          <label for="code">Code </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('code')!.invalid &&
+            (editForm.get('code')!.dirty ||
+              editForm.get('code')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="default_value"
+            type="text"
+            pInputText
+            formControlName="default_value"
+          />
+          <label for="default_value">Default Value </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('default_value')!.invalid &&
+            (editForm.get('default_value')!.dirty ||
+              editForm.get('default_value')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_common"
+          name="is_common"
+          formControlName="is_common"
+        ></p-inputSwitch>
+        <label for="is_common">Is Common </label>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="hmis_uid"
+            type="text"
+            pInputText
+            formControlName="hmis_uid"
+          />
+          <label for="hmis_uid">Hmis Uid </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('hmis_uid')!.invalid &&
+            (editForm.get('hmis_uid')!.dirty ||
+              editForm.get('hmis_uid')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="active"
+          name="active"
+          formControlName="active"
+        ></p-inputSwitch>
+        <label for="active">Active </label>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -324,6 +324,21 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "facility",
         },
+        {
+          label: "Baseline Statistics",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "baseline-statistic",
+        },
+        {
+          label: "Baseline Statistic Values",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "baseline-statistic-value",
+        },
+        {
+          label: "Advertisements",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "advertisement",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

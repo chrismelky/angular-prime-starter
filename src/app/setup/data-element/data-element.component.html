@@ -191,8 +191,6 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="dataElements!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -211,11 +209,16 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="dataElements?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header }} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header }}
+            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'category_combination_id'">
-            Category Combination <p-sortIcon [field]="'category_combination_id'"></p-sortIcon>
+            Category Combination
+            <p-sortIcon [field]="'category_combination_id'"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'option_set_id'">
             Option Set <p-sortIcon [field]="'option_set_id'"></p-sortIcon>
@@ -230,7 +233,7 @@
           </td>
           <td>{{ rowData.category_combination?.name }}</td>
           <td>{{ rowData.option_set?.name }}</td>
-          <td style="flex: 0 0 2 rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

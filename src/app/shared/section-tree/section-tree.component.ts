@@ -1,17 +1,16 @@
-import { EventEmitter } from '@angular/core';
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
 import { User } from 'src/app/setup/user/user.model';
 import { UserService } from 'src/app/setup/user/user.service';
 
 @Component({
-  selector: 'app-admin-hierarchy-tree',
-  templateUrl: './admin-hierarchy-tree.component.html',
-  styleUrls: ['./admin-hierarchy-tree.component.scss'],
+  selector: 'app-section-tree',
+  templateUrl: './section-tree.component.html',
+  styleUrls: ['./section-tree.component.scss'],
 })
-export class AdminHierarchyTreeComponent implements OnInit {
+export class SectionTreeComponent implements OnInit {
   currentUser!: User;
   treeLoading: boolean = false;
   nodes: TreeNode[] = [];
@@ -22,15 +21,15 @@ export class AdminHierarchyTreeComponent implements OnInit {
 
   constructor(
     protected userService: UserService,
-    protected adminHierarchyService: AdminHierarchyService
+    protected sectionService: SectionService
   ) {
     this.currentUser = userService.getCurrentUser();
-    const rootAdminHierarchy = this.currentUser.admin_hierarchy;
-    this.nodes = rootAdminHierarchy
+    const rootSection = this.currentUser.section;
+    this.nodes = rootSection
       ? [
           {
-            label: rootAdminHierarchy.name,
-            data: rootAdminHierarchy,
+            label: rootSection.name,
+            data: rootSection,
             children: [],
             leaf: false,
           },
@@ -43,10 +42,10 @@ export class AdminHierarchyTreeComponent implements OnInit {
   nodeExpand(event: any): any {
     let selected: TreeNode = event.node;
     this.treeLoading = true;
-    this.adminHierarchyService
+    this.sectionService
       .query({
         parent_id: selected.data.id,
-        columns: ['id', 'name', 'code', 'admin_hierarchy_position'],
+        columns: ['id', 'name', 'code', 'position'],
       })
       .subscribe(
         (resp) => {
@@ -72,7 +71,7 @@ export class AdminHierarchyTreeComponent implements OnInit {
         ? this.returnType === 'object'
           ? this.selectedValue?.data
           : this.selectedValue?.data?.id
-        : this.selectedValue?.data?.map((d: AdminHierarchy) => {
+        : this.selectedValue?.data?.map((d: Section) => {
             return this.returnType === 'object' ? d : d.id;
           });
     this.onSelect.next(selection);

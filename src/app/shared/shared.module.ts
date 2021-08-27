@@ -5,14 +5,16 @@ import { SharedPrimengModule } from './shared-primeng.module';
 import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AdminHierarchyTreeComponent } from '../shared/admin-hierarchy-tree/admin-hierarchy-tree.component';
+import { SectionTreeComponent } from './section-tree/section-tree.component';
 
 @NgModule({
-  declarations: [AdminHierarchyTreeComponent],
+  declarations: [AdminHierarchyTreeComponent, SectionTreeComponent],
   imports: [SharedMaterialModule, SharedPrimengModule],
   exports: [
     SharedMaterialModule,
     SharedPrimengModule,
     AdminHierarchyTreeComponent,
+    SectionTreeComponent,
     CommonModule,
   ],
   providers: [ConfirmationService, DialogService],

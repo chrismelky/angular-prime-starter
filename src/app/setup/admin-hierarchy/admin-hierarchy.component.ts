@@ -188,7 +188,6 @@ export class AdminHierarchyComponent implements OnInit {
    * @param parentAdminHierarchy
    */
   onAdminHierarchySelection(parentAdminHierarchy: AdminHierarchy): void {
-    console.log(parentAdminHierarchy);
     this.parent_id = parentAdminHierarchy.id!;
     this.admin_hierarchy_position =
       parentAdminHierarchy.admin_hierarchy_position! + 1;

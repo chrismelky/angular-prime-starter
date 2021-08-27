@@ -1,33 +1,33 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {Sector} from "src/app/setup/sector/sector.model";
-import {SectorService} from "src/app/setup/sector/sector.service";
-import {SectionLevel} from "src/app/setup/section-level/section-level.model";
-import {SectionLevelService} from "src/app/setup/section-level/section-level.service";
-import {Section} from "src/app/setup/section/section.model";
-import {SectionService} from "src/app/setup/section/section.service";
-import {SectionUpdateComponent} from "./update/section-update.component";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Sector } from 'src/app/setup/sector/sector.model';
+import { SectorService } from 'src/app/setup/sector/sector.service';
+import { SectionLevel } from 'src/app/setup/section-level/section-level.model';
+import { SectionLevelService } from 'src/app/setup/section-level/section-level.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
+import { SectionUpdateComponent } from './update/section-update.component';
 
 @Component({
-  selector: "app-section",
-  templateUrl: "./section.component.html",
+  selector: 'app-section',
+  templateUrl: './section.component.html',
 })
 export class SectionComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   sections?: Section[] = [];
 
   sectors?: Sector[] = [];
@@ -36,15 +36,15 @@ export class SectionComponent implements OnInit {
 
   cols = [
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: false,
     },
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
-    }
+    },
   ]; //Table display columns
 
   isLoading = false;
@@ -57,7 +57,7 @@ export class SectionComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  section_level_id!: number;
+  position!: number;
   parent_id!: number;
 
   constructor(
@@ -70,8 +70,7 @@ export class SectionComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.sectorService
@@ -99,7 +98,7 @@ export class SectionComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.section_level_id || !this.parent_id) {
+    if (!this.position || !this.parent_id) {
       return;
     }
     this.isLoading = true;
@@ -110,7 +109,7 @@ export class SectionComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        section_level_id: this.section_level_id,
+        position: this.position,
         parent_id: this.parent_id,
         ...this.helper.buildFilter(this.search),
       })
@@ -135,11 +134,11 @@ export class SectionComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -160,6 +159,16 @@ export class SectionComponent implements OnInit {
     } else {
       this.loadPage(1);
     }
+  }
+
+  /**
+   * Parent section selected set parent filter and next section-level-id
+   * @param parentSection
+   */
+  onSectionSelection(parentSection: Section): void {
+    this.parent_id = parentSection.id!;
+    this.position = parentSection.position! + 1;
+    this.filterChanged();
   }
 
   /**
@@ -214,8 +223,8 @@ export class SectionComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -226,12 +235,12 @@ export class SectionComponent implements OnInit {
   createOrUpdate(section?: Section): void {
     const data: Section = section ?? {
       ...new Section(),
-      section_level_id: this.section_level_id,
+      position: this.position,
       parent_id: this.parent_id,
     };
     const ref = this.dialogService.open(SectionUpdateComponent, {
       data,
-      header: "Create/Update Section",
+      header: 'Create/Update Section',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -246,7 +255,7 @@ export class SectionComponent implements OnInit {
    */
   delete(section: Section): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Section?",
+      message: 'Are you sure that you want to delete this Section?',
       accept: () => {
         this.sectionService.delete(section.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -270,12 +279,12 @@ export class SectionComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/section"], {
+      this.router.navigate(['/section'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -288,6 +297,6 @@ export class SectionComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Section");
+    this.toastService.error('Error loading Section');
   }
 }

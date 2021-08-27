@@ -169,11 +169,11 @@ body {
 .p-overlaypanel .p-overlaypanel-content {
   padding: 0.75rem;
 }
-.p-button.p-admin-hierarchy-tree {
+.p-button.planrep-tree {
   width: 100%;
   min-width: 200px;
 }
-.p-button.p-button-outlined.p-button-plain.p-admin-hierarchy-tree{
+.p-button.p-button-outlined.p-button-plain.planrep-tree{
   border-color: rgba(0, 0, 0, 0.38);
   font-size: 0.8125rem;
   line-height: 0.8125rem;
@@ -294,6 +294,7 @@ i.clear {
 
   }
 }
+
 .p-datatable {
   position: relative;
   .p-datatable-header {

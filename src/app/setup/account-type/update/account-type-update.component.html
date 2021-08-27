@@ -21,7 +21,10 @@
           "
         >
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
-            >Name is required.</small
+            >Name is required</small
+          >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.maxlength"
+            >Name maximum length is 200 characters</small
           >
         </span>
       </div>
@@ -40,6 +43,9 @@
         >
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
             >Code is required.</small
+          >
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.maxlength"
+            >Code maximum length is 50 characters</small
           >
         </span>
       </div>
@@ -61,6 +67,11 @@
               formError)
           "
         >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('balance_type')?.errors?.maxlength"
+            >Balance Type maximum length is 100 characters</small
+          >
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">

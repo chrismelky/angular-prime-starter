@@ -373,6 +373,39 @@ const routes: Routes = [
         loadChildren: () =>
           import('../setup/user/user.module').then((m) => m.UserModule),
       },
+      {
+        path: 'ceiling-chain',
+        loadChildren: () =>
+          import('../setup/ceiling-chain/ceiling-chain.module').then(
+            (m) => m.CeilingChainModule
+          ),
+      },
+      {
+        path: 'pe-form',
+        loadChildren: () =>
+          import('../setup/pe-form/pe-form.module').then((m) => m.PeFormModule),
+      },
+      {
+        path: 'pe-definition',
+        loadChildren: () =>
+          import('../setup/pe-definition/pe-definition.module').then(
+            (m) => m.PeDefinitionModule
+          ),
+      },
+      {
+        path: 'gfs-code-category',
+        loadChildren: () =>
+          import('../setup/gfs-code-category/gfs-code-category.module').then(
+            (m) => m.GfsCodeCategoryModule
+          ),
+      },
+      {
+        path: 'gfs-code',
+        loadChildren: () =>
+          import('../setup/gfs-code/gfs-code.module').then(
+            (m) => m.GfsCodeModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: '**',

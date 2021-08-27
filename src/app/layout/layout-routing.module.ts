@@ -56,13 +56,6 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'activity-task_nature',
-        loadChildren: () =>
-          import(
-            '../setup/activity-task_nature/activity-task_nature.module'
-          ).then((m) => m.ActivityTaskNatureModule),
-      },
-      {
         path: 'admin-hierarchy_level',
         loadChildren: () =>
           import(

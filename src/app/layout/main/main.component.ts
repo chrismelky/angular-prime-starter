@@ -90,11 +90,6 @@ export class MainComponent implements OnInit {
           routerLink: 'activity-type',
         },
         {
-          label: 'Activity Task Natures',
-          icon: 'pi pi-fw pi-arrow-right',
-          routerLink: 'activity-task_nature',
-        },
-        {
           label: 'Admin Hierarchy Levels',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'admin-hierarchy_level',

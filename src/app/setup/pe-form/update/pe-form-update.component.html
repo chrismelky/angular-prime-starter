@@ -1,0 +1,118 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="name" type="text" pInputText formControlName="name" />
+          <label for="name">Name </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('name')!.invalid &&
+            (editForm.get('name')!.dirty ||
+              editForm.get('name')!.touched ||
+              formError)
+          "
+        >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
+            >Name is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="description"
+            type="text"
+            pInputText
+            formControlName="description"
+          />
+          <label for="description">Description </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('description')!.invalid &&
+            (editForm.get('description')!.dirty ||
+              editForm.get('description')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('description')?.errors?.required"
+            >Description is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="budget_classes"
+            type="text"
+            pInputText
+            formControlName="budget_classes"
+          />
+          <label for="budget_classes">Budget Classes </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('budget_classes')!.invalid &&
+            (editForm.get('budget_classes')!.dirty ||
+              editForm.get('budget_classes')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="fund_sources"
+            type="text"
+            pInputText
+            formControlName="fund_sources"
+          />
+          <label for="fund_sources">Fund Sources </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('fund_sources')!.invalid &&
+            (editForm.get('fund_sources')!.dirty ||
+              editForm.get('fund_sources')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_active"
+          name="is_active"
+          formControlName="is_active"
+        ></p-inputSwitch>
+        <label for="is_active">Is Active </label>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

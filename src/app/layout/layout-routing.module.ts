@@ -344,11 +344,9 @@ const routes: Routes = [
         path: "calendar",
         loadChildren: () =>
           import("../setup/calendar/calendar.module").then(
-            (m) => m.CalendarModule
-          ),
+            (m) => m.CalendarModule),
       },
-      {
-        path: "category-category-combination",
+      { path: "category-category-combination",
         loadChildren: () =>
           import(
             "../setup/category-category-combination/category-category-combination.module"
@@ -394,6 +392,39 @@ const routes: Routes = [
         loadChildren: () =>
           import("../setup/advertisement/advertisement.module").then(
             (m) => m.AdvertisementModule
+          ),
+      },
+      {
+        path: "ceiling-chain",
+        loadChildren: () =>
+          import("../setup/ceiling-chain/ceiling-chain.module").then(
+            (m) => m.CeilingChainModule
+          ),
+      },
+      {
+        path: "pe-form",
+        loadChildren: () =>
+          import("../setup/pe-form/pe-form.module").then((m) => m.PeFormModule),
+      },
+      {
+        path: "pe-definition",
+        loadChildren: () =>
+          import("../setup/pe-definition/pe-definition.module").then(
+            (m) => m.PeDefinitionModule
+          ),
+      },
+      {
+        path: "gfs-code-category",
+        loadChildren: () =>
+          import("../setup/gfs-code-category/gfs-code-category.module").then(
+            (m) => m.GfsCodeCategoryModule
+          ),
+      },
+      {
+        path: "gfs-code",
+        loadChildren: () =>
+          import("../setup/gfs-code/gfs-code.module").then(
+            (m) => m.GfsCodeModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

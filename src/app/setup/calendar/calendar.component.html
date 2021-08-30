@@ -199,20 +199,29 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="calendars?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th [pSortableColumn]="'description'">
+            Description<p-sortIcon [field]="'description'"></p-sortIcon>
           </th>
+          <th [pSortableColumn]="'start_date'">
+            Start Date<p-sortIcon [field]="'start_date'"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'end_date'">
+            End Date<p-sortIcon [field]="'end_date'"></p-sortIcon>
+          </th>
+
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+          <td>
+            {{ rowData.description }}
+          </td>
+          <td>
+            {{ rowData.start_date | date }}
+          </td>
+          <td>
+            {{ rowData.end_date | date }}
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

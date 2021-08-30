@@ -264,19 +264,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="calendars?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="calendars?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

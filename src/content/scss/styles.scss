@@ -278,7 +278,9 @@ i.clear {
   }
 }
 
-
+.p-toast-top-center {
+  z-index: 1105 !important;
+}
 .p-datatable .p-datatable-thead > tr > th {
   color: rgba(0,0,0,.54);
   font-size: 0.75rem;

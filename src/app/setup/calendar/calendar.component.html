@@ -105,6 +105,7 @@
                     class="p-inputtext-sm"
                     [options]="casAssessmentRounds!"
                     (onChange)="onSearch()"
+                    [showClear]="true"
                     [(ngModel)]="search['cas_assessment_round_id']"
                   ></p-dropdown>
                   <label for="cas_assessment_round_id"
@@ -119,6 +120,7 @@
                     optionValue="id"
                     optionLabel="name"
                     [autoDisplayFirst]="false"
+                    [showClear]="true"
                     [filter]="true"
                     class="p-inputtext-sm"
                     [options]="sectionLevels!"
@@ -134,6 +136,7 @@
                     id="sector_id"
                     optionValue="id"
                     optionLabel="name"
+                    [showClear]="true"
                     [autoDisplayFirst]="false"
                     [filter]="true"
                     class="p-inputtext-sm"

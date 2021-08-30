@@ -25,20 +25,23 @@ export class AdminHierarchyTreeComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService
   ) {
     this.currentUser = userService.getCurrentUser();
-    const rootAdminHierarchy = this.currentUser.admin_hierarchy;
-    this.nodes = rootAdminHierarchy
-      ? [
-          {
-            label: rootAdminHierarchy.name,
-            data: rootAdminHierarchy,
-            children: [],
-            leaf: false,
-          },
-        ]
-      : [];
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const rootAdminHierarchy = this.currentUser.admin_hierarchy;
+    if (rootAdminHierarchy) {
+      this.nodes = [
+        {
+          label: rootAdminHierarchy.name,
+          data: rootAdminHierarchy,
+          children: [],
+          leaf: false,
+        },
+      ];
+      this.selectedValue = this.nodes[0];
+      this.onSelectionChange();
+    }
+  }
 
   nodeExpand(event: any): any {
     let selected: TreeNode = event.node;
@@ -66,7 +69,7 @@ export class AdminHierarchyTreeComponent implements OnInit {
       );
   }
 
-  onSelectionChange(event: any): void {
+  onSelectionChange(event?: any): void {
     const selection =
       typeof this.selectedValue === 'object'
         ? this.returnType === 'object'

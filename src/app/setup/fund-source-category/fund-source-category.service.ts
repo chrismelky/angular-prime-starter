@@ -11,41 +11,41 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { ActivityTaskNature } from "./activity-task_nature.model";
+import { FundSourceCategory } from "./fund-source-category.model";
 
 @Injectable({ providedIn: "root" })
-export class ActivityTaskNatureService {
-  public resourceUrl = "api/activity_task_natures";
+export class FundSourceCategoryService {
+  public resourceUrl = "api/fund_source_categories";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    activityTaskNature: ActivityTaskNature
-  ): Observable<CustomResponse<ActivityTaskNature>> {
-    return this.http.post<CustomResponse<ActivityTaskNature>>(
+    fundSourceCategory: FundSourceCategory
+  ): Observable<CustomResponse<FundSourceCategory>> {
+    return this.http.post<CustomResponse<FundSourceCategory>>(
       this.resourceUrl,
-      activityTaskNature
+      fundSourceCategory
     );
   }
 
   update(
-    activityTaskNature: ActivityTaskNature
-  ): Observable<CustomResponse<ActivityTaskNature>> {
-    return this.http.put<CustomResponse<ActivityTaskNature>>(
-      `${this.resourceUrl}/${activityTaskNature.id}`,
-      activityTaskNature
+    fundSourceCategory: FundSourceCategory
+  ): Observable<CustomResponse<FundSourceCategory>> {
+    return this.http.put<CustomResponse<FundSourceCategory>>(
+      `${this.resourceUrl}/${fundSourceCategory.id}`,
+      fundSourceCategory
     );
   }
 
-  find(id: number): Observable<CustomResponse<ActivityTaskNature>> {
-    return this.http.get<CustomResponse<ActivityTaskNature>>(
+  find(id: number): Observable<CustomResponse<FundSourceCategory>> {
+    return this.http.get<CustomResponse<FundSourceCategory>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<ActivityTaskNature[]>> {
+  query(req?: any): Observable<CustomResponse<FundSourceCategory[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<ActivityTaskNature[]>>(
+    return this.http.get<CustomResponse<FundSourceCategory[]>>(
       this.resourceUrl,
       { params: options }
     );

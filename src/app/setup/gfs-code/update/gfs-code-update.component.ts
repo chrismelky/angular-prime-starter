@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import {Component, Inject, OnInit} from "@angular/core";
+import {FormBuilder, Validators} from "@angular/forms";
+import {Observable} from "rxjs";
+import {finalize} from "rxjs/operators";
+import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { AccountType } from "src/app/setup/account-type/account-type.model";
-import { AccountTypeService } from "src/app/setup/account-type/account-type.service";
-import { GfsCodeCategory } from "src/app/setup/gfs-code-category/gfs-code-category.model";
-import { GfsCodeCategoryService } from "src/app/setup/gfs-code-category/gfs-code-category.service";
-import { GfsCode } from "../gfs-code.model";
-import { GfsCodeService } from "../gfs-code.service";
-import { ToastService } from "src/app/shared/toast.service";
+import {CustomResponse} from "../../../utils/custom-response";
+import {AccountType} from "src/app/setup/account-type/account-type.model";
+import {AccountTypeService} from "src/app/setup/account-type/account-type.service";
+import {GfsCode} from "../gfs-code.model";
+import {GfsCodeService} from "../gfs-code.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {GfsCodeCategory} from "../../gfs-code-category/gfs-code-category.model";
+import {GfsCodeCategoryService} from "../../gfs-code-category/gfs-code-category.service";
 
 @Component({
   selector: "app-gfs-code-update",
@@ -29,7 +29,6 @@ export class GfsCodeUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
-  aggregatedCodes?: GfsCode[] = [];
   accountTypes?: AccountType[] = [];
   categories?: GfsCodeCategory[] = [];
 
@@ -40,7 +39,7 @@ export class GfsCodeUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
-    aggregated_code: [null, []],
+    aggregated_code: [null, [Validators.required]],
     account_type_id: [null, [Validators.required]],
     category_id: [null, [Validators.required]],
     is_procurement: [false, []],
@@ -50,27 +49,22 @@ export class GfsCodeUpdateComponent implements OnInit {
   constructor(
     protected gfsCodeService: GfsCodeService,
     protected accountTypeService: AccountTypeService,
-    protected categoryService: GfsCodeCategoryService,
+    protected gfsCodeCategoryService: GfsCodeCategoryService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
-    this.gfsCodeService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<GfsCode[]>) =>
-          (this.aggregatedCodes = resp.data)
-      );
     this.accountTypeService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<AccountType[]>) => (this.accountTypes = resp.data)
       );
-    this.categoryService
-      .query({ columns: ["id", "name"] })
+    this.gfsCodeCategoryService
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<GfsCodeCategory[]>) => (this.categories = resp.data)
       );
@@ -118,7 +112,8 @@ export class GfsCodeUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

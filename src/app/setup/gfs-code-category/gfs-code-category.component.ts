@@ -22,7 +22,6 @@ import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
 
-
 import { GfsCodeCategory } from "./gfs-code-category.model";
 import { GfsCodeCategoryService } from "./gfs-code-category.service";
 import { GfsCodeCategoryUpdateComponent } from "./update/gfs-code-category-update.component";
@@ -46,6 +45,11 @@ export class GfsCodeCategoryComponent implements OnInit {
       sort: true,
     },
     {
+      field: "parent_id",
+      header: "Parent ",
+      sort: false,
+    },
+    {
       field: "type",
       header: "Type",
       sort: true,
@@ -65,7 +69,6 @@ export class GfsCodeCategoryComponent implements OnInit {
 
   constructor(
     protected gfsCodeCategoryService: GfsCodeCategoryService,
-    protected parentService: GfsCodeCategoryService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -76,12 +79,12 @@ export class GfsCodeCategoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.parentService
+    this.gfsCodeCategoryService
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<GfsCodeCategory[]>) => (this.parents = resp.data)
       );
-    this.types = this.enumService.get("gfsCodeCategorType");
+    this.types = this.enumService.get("types");
     this.handleNavigation();
   }
 

@@ -117,12 +117,12 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="gfsCodeCategories?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'parent_id'">
-            Parent <p-sortIcon [field]="'parent_id'"></p-sortIcon>
           </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
@@ -132,7 +132,6 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{rowData.gfs_code_categories?.name}}</td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

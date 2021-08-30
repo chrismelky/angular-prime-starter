@@ -1,21 +1,21 @@
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {Sector} from "src/app/setup/sector/sector.model";
-import {SectorService} from "src/app/setup/sector/sector.service";
-import {SectionLevel} from "src/app/setup/section-level/section-level.model";
-import {SectionLevelService} from "src/app/setup/section-level/section-level.service";
-import {Section} from "../section.model";
-import {SectionService} from "../section.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { Sector } from 'src/app/setup/sector/sector.model';
+import { SectorService } from 'src/app/setup/sector/sector.service';
+import { SectionLevel } from 'src/app/setup/section-level/section-level.model';
+import { SectionLevelService } from 'src/app/setup/section-level/section-level.service';
+import { Section } from '../section.model';
+import { SectionService } from '../section.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-section-update",
-  templateUrl: "./section-update.component.html",
+  selector: 'app-section-update',
+  templateUrl: './section-update.component.html',
 })
 export class SectionUpdateComponent implements OnInit {
   isSaving = false;
@@ -34,7 +34,7 @@ export class SectionUpdateComponent implements OnInit {
     code: [null, [Validators.required]],
     name: [null, [Validators.required]],
     sector_id: [null, []],
-    section_level_id: [null, [Validators.required]],
+    position: [null, [Validators.required]],
     parent_id: [null, [Validators.required]],
   });
 
@@ -46,8 +46,7 @@ export class SectionUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.sectorService
@@ -56,7 +55,9 @@ export class SectionUpdateComponent implements OnInit {
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
     this.sectionLevelService
-      .query()
+      .query({
+        columns: ['id', 'name', 'code', 'position'],
+      })
       .subscribe(
         (resp: CustomResponse<SectionLevel[]>) =>
           (this.sectionLevels = resp.data)
@@ -110,8 +111,7 @@ export class SectionUpdateComponent implements OnInit {
    * Note; general error handleing is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -127,7 +127,7 @@ export class SectionUpdateComponent implements OnInit {
       code: section.code,
       name: section.name,
       sector_id: section.sector_id,
-      section_level_id: section.section_level_id,
+      position: section.position,
       parent_id: section.parent_id,
     });
   }
@@ -139,12 +139,12 @@ export class SectionUpdateComponent implements OnInit {
   protected createFromForm(): Section {
     return {
       ...new Section(),
-      id: this.editForm.get(["id"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      sector_id: this.editForm.get(["sector_id"])!.value,
-      section_level_id: this.editForm.get(["section_level_id"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      sector_id: this.editForm.get(['sector_id'])!.value,
+      position: this.editForm.get(['position'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
     };
   }
 }

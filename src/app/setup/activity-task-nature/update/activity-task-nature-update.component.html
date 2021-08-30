@@ -23,6 +23,9 @@
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
             >Name is required.</small
           >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.maxlength"
+            >Name maximum length is 100 characters.</small
+          >
         </span>
       </div>
 
@@ -41,6 +44,9 @@
         >
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
             >Code is required.</small
+          >
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.maxlength"
+            >Code maximum length is 50 characters.</small
           >
         </span>
       </div>

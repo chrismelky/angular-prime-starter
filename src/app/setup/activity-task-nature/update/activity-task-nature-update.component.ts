@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { ActivityType } from "src/app/setup/activity-type/activity-type.model";
-import { ActivityTypeService } from "src/app/setup/activity-type/activity-type.service";
-import { ActivityTaskNature } from "../activity-task-nature.model";
-import { ActivityTaskNatureService } from "../activity-task-nature.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { ActivityType } from 'src/app/setup/activity-type/activity-type.model';
+import { ActivityTypeService } from 'src/app/setup/activity-type/activity-type.service';
+import { ActivityTaskNature } from '../activity-task-nature.model';
+import { ActivityTaskNatureService } from '../activity-task-nature.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-activity-task-nature-update",
-  templateUrl: "./activity-task-nature-update.component.html",
+  selector: 'app-activity-task-nature-update',
+  templateUrl: './activity-task-nature-update.component.html',
 })
 export class ActivityTaskNatureUpdateComponent implements OnInit {
   isSaving = false;
@@ -34,8 +34,8 @@ export class ActivityTaskNatureUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
-    code: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(100)]],
+    code: [null, [Validators.required, Validators.maxLength(50)]],
     activity_type_id: [null, [Validators.required]],
   });
 
@@ -129,10 +129,10 @@ export class ActivityTaskNatureUpdateComponent implements OnInit {
   protected createFromForm(): ActivityTaskNature {
     return {
       ...new ActivityTaskNature(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      activity_type_id: this.editForm.get(["activity_type_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      activity_type_id: this.editForm.get(['activity_type_id'])!.value,
     };
   }
 }

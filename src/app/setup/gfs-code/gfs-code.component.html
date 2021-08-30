@@ -31,6 +31,22 @@
               <label for="account_type_id">Account Type </label>
             </span>
           </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="category_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="categories!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="category_id"
+              ></p-dropdown>
+              <label for="category_id">Category </label>
+            </span>
+          </div>
         </div>
         <div
           fxLayout="row wrap"
@@ -110,6 +126,22 @@
                   ></i>
                 </span>
               </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="aggregated_code"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['aggregated_code']"
+                  />
+                  <label for="aggregated_code">Aggregated Code </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['aggregated_code'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
             </div>
             <div
               fxLayout="row"
@@ -156,7 +188,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!account_type_id"
+            [disabled]="!account_type_id || !category_id"
             (click)="createOrUpdate()"
             label="Add Gfs Code"
           ></button>
@@ -171,12 +203,6 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'account_type_id'">
-            Account Type <p-sortIcon [field]="'account_type_id'"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'category_id'">
-            Category <p-sortIcon [field]="'category_id'"></p-sortIcon>
-          </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
@@ -185,8 +211,6 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td><pre>{{rowData.account_type?.name}}</pre></td>
-          <td>{{rowData.category?.name}}</td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

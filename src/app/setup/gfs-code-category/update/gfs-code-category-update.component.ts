@@ -41,7 +41,6 @@ export class GfsCodeCategoryUpdateComponent implements OnInit {
 
   constructor(
     protected gfsCodeCategoryService: GfsCodeCategoryService,
-    protected parentService: GfsCodeCategoryService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -50,12 +49,12 @@ export class GfsCodeCategoryUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.parentService
+    this.gfsCodeCategoryService
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<GfsCodeCategory[]>) => (this.parents = resp.data)
       );
-    this.types = this.enumService.get("gfsCodeCategorType");
+    this.types = this.enumService.get("gfsCodeCategoryTypes");
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 

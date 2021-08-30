@@ -5,38 +5,45 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import {
+  ConfirmationService,
+  LazyLoadEvent,
+  MenuItem,
+  TreeNode,
+} from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
-import {FacilityType} from "src/app/setup/facility-type/facility-type.model";
-import {FacilityTypeService} from "src/app/setup/facility-type/facility-type.service";
-import {AdminHierarchy} from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import {AdminHierarchyService} from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
+import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 
-import {Facility} from "./facility.model";
-import {FacilityService} from "./facility.service";
-import {FacilityUpdateComponent} from "./update/facility-update.component";
+import { Facility } from './facility.model';
+import { FacilityService } from './facility.service';
+import { FacilityUpdateComponent } from './update/facility-update.component';
+import { User } from '../user/user.model';
+import { UserService } from '../user/user.service';
 
 @Component({
-  selector: "app-facility",
-  templateUrl: "./facility.component.html",
+  selector: 'app-facility',
+  templateUrl: './facility.component.html',
 })
 export class FacilityComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   facilities?: Facility[] = [];
 
   facilityTypes?: FacilityType[] = [];
@@ -50,28 +57,28 @@ export class FacilityComponent implements OnInit {
 
   cols = [
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: true,
     },
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "ownership",
-      header: "Ownership",
+      field: 'ownership',
+      header: 'Ownership',
       sort: true,
     },
     {
-      field: "physical_state",
-      header: "Physical State",
+      field: 'physical_state',
+      header: 'Physical State',
       sort: true,
     },
     {
-      field: "star_rating",
-      header: "Star Rating",
+      field: 'star_rating',
+      header: 'Star Rating',
       sort: true,
     },
   ]; //Table display columns
@@ -87,10 +94,7 @@ export class FacilityComponent implements OnInit {
 
   //Mandatory filter
   facility_type_id!: number;
-  region_id!: number;
-  council_id!: number;
-  ward_id!: number;
-  village_id!: number;
+  admin_hierarchy_id!: number;
 
   constructor(
     protected facilityService: FacilityService,
@@ -102,26 +106,21 @@ export class FacilityComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected enumService: EnumService
-  ) {
-  }
+    protected enumService: EnumService,
+    protected userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.facilityTypeService
-      .query({columns: ["id", "name", "code"]})
+      .query({ columns: ['id', 'name', 'code'] })
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
       );
-    this.adminHierarchyService
-      .query({columns: ["id", "name", "code"], 'admin_hierarchy_position': 8, 'page': 1, 'per_page': 20})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.regions = resp.data)
-      );
-    this.ownerships = this.enumService.get("ownerships");
-    this.physicalStates = this.enumService.get("physicalStates");
-    this.starRatings = this.enumService.get("starRatings");
+
+    this.ownerships = this.enumService.get('ownerships');
+    this.physicalStates = this.enumService.get('physicalStates');
+    this.starRatings = this.enumService.get('starRatings');
     this.handleNavigation();
   }
 
@@ -131,7 +130,7 @@ export class FacilityComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.facility_type_id || !this.region_id) {
+    if (!this.facility_type_id || !this.admin_hierarchy_id) {
       return;
     }
     this.isLoading = true;
@@ -143,7 +142,7 @@ export class FacilityComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         facility_type_id: this.facility_type_id,
-        admin_hierarchy_id: this.village_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -167,11 +166,11 @@ export class FacilityComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -181,31 +180,12 @@ export class FacilityComponent implements OnInit {
     });
   }
 
-  filterCouncils(): void {
-    this.adminHierarchyService
-      .query({columns: ["id", "name", "code"], 'parent_id': this.region_id, 'page': 1, 'per_page': 200})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.councils = resp.data)
-      );
-  }
-
-  filterWards(): void {
-    this.adminHierarchyService
-      .query({columns: ["id", "name", "code"], 'parent_id': this.council_id, 'page': 1, 'per_page': 200})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.wards = resp.data)
-      );
-  }
-
-  filterVillages(): void {
-    this.adminHierarchyService
-      .query({columns: ["id", "name", "code"], 'parent_id': this.ward_id, 'page': 1, 'per_page': 200})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.villages = resp.data)
-      );
+  /**
+   *
+   * @param event adminhierarchyId or Ids
+   */
+  onAdminHierarchySelection(event: number): void {
+    this.admin_hierarchy_id = event;
   }
 
   /**
@@ -273,8 +253,8 @@ export class FacilityComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -286,11 +266,11 @@ export class FacilityComponent implements OnInit {
     const data: Facility = facility ?? {
       ...new Facility(),
       facility_type_id: this.facility_type_id,
-      admin_hierarchy_id: this.region_id,
+      admin_hierarchy_id: this.admin_hierarchy_id,
     };
     const ref = this.dialogService.open(FacilityUpdateComponent, {
       data,
-      header: "Create/Update Facility",
+      header: 'Create/Update Facility',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -305,7 +285,7 @@ export class FacilityComponent implements OnInit {
    */
   delete(facility: Facility): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Facility?",
+      message: 'Are you sure that you want to delete this Facility?',
       accept: () => {
         this.facilityService.delete(facility.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -329,12 +309,12 @@ export class FacilityComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/facility"], {
+      this.router.navigate(['/facility'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -347,6 +327,6 @@ export class FacilityComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Facility");
+    this.toastService.error('Error loading Facility');
   }
 }

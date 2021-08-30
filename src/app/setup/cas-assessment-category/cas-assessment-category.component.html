@@ -162,8 +162,6 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="casAssessmentCategories!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -199,7 +197,7 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

@@ -32,9 +32,11 @@ export class AuthExpiredInterceptor implements HttpInterceptor {
             err.url &&
             !err.url.includes('api/authenticate')
           ) {
-            this.stateStorageService.storeUrl(
-              this.router.routerState.snapshot.url.split('?')[0]
-            );
+            if (this.router.routerState.snapshot.url.includes('/login')) {
+              this.stateStorageService.storeUrl(
+                this.router.routerState.snapshot.url.split('?')[0]
+              );
+            }
             this.router.navigate(['/login']);
           }
         },

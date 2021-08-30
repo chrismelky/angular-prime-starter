@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { PeriodGroup } from "../period-group.model";
-import { PeriodGroupService } from "../period-group.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { PeriodGroup } from '../period-group.model';
+import { PeriodGroupService } from '../period-group.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-period-group-update",
-  templateUrl: "./period-group-update.component.html",
+  selector: 'app-period-group-update',
+  templateUrl: './period-group-update.component.html',
 })
 export class PeriodGroupUpdateComponent implements OnInit {
   isSaving = false;
@@ -47,7 +47,7 @@ export class PeriodGroupUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create PeriodGroup or Update Facility type if exist else set form has error and return
+   * When form is valid Create PeriodGroup Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -101,7 +101,7 @@ export class PeriodGroupUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: periodGroup.id,
       name: periodGroup.name,
-      number: periodGroup.number
+      number: periodGroup.number,
     });
   }
 
@@ -112,9 +112,9 @@ export class PeriodGroupUpdateComponent implements OnInit {
   protected createFromForm(): PeriodGroup {
     return {
       ...new PeriodGroup(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      number: this.editForm.get(["number"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      number: this.editForm.get(['number'])!.value,
     };
   }
 }

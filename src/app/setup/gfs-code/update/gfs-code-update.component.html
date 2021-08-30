@@ -5,7 +5,6 @@
     novalidate
     (ngSubmit)="save()"
     [formGroup]="editForm"
-    autocomplete="off"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
@@ -46,6 +45,32 @@
         </span>
       </div>
 
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="aggregated_code"
+            type="text"
+            pInputText
+            formControlName="aggregated_code"
+          />
+          <label for="aggregated_code">Aggregated Code </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('aggregated_code')!.invalid &&
+            (editForm.get('aggregated_code')!.dirty ||
+              editForm.get('aggregated_code')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('aggregated_code')?.errors?.required"
+            >Aggregated Code is required.</small
+          >
+        </span>
+      </div>
+
       <div fxLayout="row" fxLayoutGap="2px">
         <p-inputSwitch
           id="is_procurement"
@@ -64,31 +89,6 @@
         <label for="is_protected">Is Protected </label>
       </div>
 
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="aggregated_code"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="aggregatedCodes!"
-            formControlName="aggregated_code"
-          ></p-dropdown>
-          <label for="aggregated_code">Aggregated Code </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('aggregated_code')!.invalid &&
-            (editForm.get('aggregated_code')!.dirty ||
-              editForm.get('aggregated_code')!.touched ||
-              formError)
-          "
-        >
-        </span>
-      </div>
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown

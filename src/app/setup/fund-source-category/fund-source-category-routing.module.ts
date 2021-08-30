@@ -8,12 +8,12 @@
 
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { ActivityTaskNatureComponent } from "./activity-task_nature.component";
+import { FundSourceCategoryComponent } from "./fund-source-category.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: ActivityTaskNatureComponent,
+    component: FundSourceCategoryComponent,
     data: {
       defaultSort: "id:asc",
     },
@@ -25,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ActivityTaskNatureRoutingModule {}
+export class FundSourceCategoryRoutingModule {}

@@ -73,31 +73,31 @@
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="section_level_id"
+            id="position"
             optionValue="id"
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
-            optionValue="id"
+            optionValue="position"
             optionLabel="name"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="sectionLevels!"
-            formControlName="section_level_id"
+            formControlName="position"
           ></p-dropdown>
-          <label for="section_level_id">Section Level </label>
+          <label for="position">Section Level </label>
         </span>
         <span
           *ngIf="
-            editForm.get('section_level_id')!.invalid &&
-            (editForm.get('section_level_id')!.dirty ||
-              editForm.get('section_level_id')!.touched ||
+            editForm.get('position')!.invalid &&
+            (editForm.get('position')!.dirty ||
+              editForm.get('position')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('section_level_id')?.errors?.required"
+            *ngIf="editForm.get('position')?.errors?.required"
             >Section Level is required.</small
           >
         </span>

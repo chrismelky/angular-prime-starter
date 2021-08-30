@@ -4,7 +4,7 @@ export class Section {
     public code?: string,
     public name?: string,
     public sector_id?: number,
-    public section_level_id?: number,
+    public position?: number,
     public parent_id?: number
   ) {}
 }

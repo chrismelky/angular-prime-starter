@@ -349,6 +349,11 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "gfs-code",
         },
+        {
+          label: "Pe Sub Forms",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "pe-sub-form",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

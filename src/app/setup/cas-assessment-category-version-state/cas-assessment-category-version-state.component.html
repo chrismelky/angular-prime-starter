@@ -104,6 +104,12 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="casAssessmentCategoryVersionStates?.length">
+          <th [pSortableColumn]="'cas_assessment_category_version_id'">
+            Cas Assessment Category Version <p-sortIcon [field]="'cas_assessment_category_version_id'"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'cas_assessment_state_id'">
+            Cas Assessment State <p-sortIcon [field]="'cas_assessment_state_id'"></p-sortIcon>
+          </th>
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -116,6 +122,8 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
+          <td>{{ rowData.cas_assessment_category_version?.name }}</td>
+          <td>{{ rowData.cas_assessment_state?.name }}</td>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>

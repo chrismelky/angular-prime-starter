@@ -48,16 +48,6 @@ export class CasAssessmentCategoryVersionStateComponent implements OnInit {
       sort: false,
     },
     {
-      field: "cas_assessment_category_version_id",
-      header: "Cas Assessment Category Version ",
-      sort: false,
-    },
-    {
-      field: "cas_assessment_state_id",
-      header: "Cas Assessment State ",
-      sort: false,
-    },
-    {
       field: "max_value",
       header: "Max Value",
       sort: false,

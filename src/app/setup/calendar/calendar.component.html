@@ -34,54 +34,6 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_round_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="casAssessmentRounds!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="cas_assessment_round_id"
-              ></p-dropdown>
-              <label for="cas_assessment_round_id">Cas Assessment Round </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="section_level_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="sectionLevels!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="section_level_id"
-              ></p-dropdown>
-              <label for="section_level_id">Section Level </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="sector_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="sectors!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="sector_id"
-              ></p-dropdown>
-              <label for="sector_id">Sector </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
                 id="calendar_event_id"
                 optionValue="id"
                 optionLabel="name"
@@ -143,21 +95,53 @@
               fxLayoutAlign="start center"
             >
               <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <label for="start_date">Start Date </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['start_date'] = undefined; onSearch()"
-                  ></i>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="cas_assessment_round_id"
+                    optionValue="id"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="casAssessmentRounds!"
+                    (onChange)="onSearch()"
+                    [(ngModel)]="search['cas_assessment_round_id']"
+                  ></p-dropdown>
+                  <label for="cas_assessment_round_id"
+                    >Cas Assessment Round
+                  </label>
                 </span>
               </div>
               <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <label for="end_date">End Date </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['end_date'] = undefined; onSearch()"
-                  ></i>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="section_level_id"
+                    optionValue="id"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="sectionLevels!"
+                    (onChange)="onSearch()"
+                    [(ngModel)]="search['section_level_id']"
+                  ></p-dropdown>
+                  <label for="section_level_id">Section Level </label>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="sector_id"
+                    optionValue="id"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="sectors!"
+                    (onChange)="onSearch()"
+                    [(ngModel)]="search['sector_id']"
+                  ></p-dropdown>
+                  <label for="sector_id">Sector </label>
                 </span>
               </div>
             </div>
@@ -204,13 +188,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !financial_year_id ||
-              !cas_assessment_round_id ||
-              !section_level_id ||
-              !sector_id ||
-              !calendar_event_id
-            "
+            [disabled]="!calendar_event_id || !financial_year_id"
             (click)="createOrUpdate()"
             label="Add Calendar"
           ></button>

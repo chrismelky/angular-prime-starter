@@ -5,84 +5,49 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
-import { CalendarEvent } from "./calendar-event.model";
-import { CalendarEventService } from "./calendar-event.service";
-import { CalendarEventUpdateComponent } from "./update/calendar-event-update.component";
+import { CalendarEvent } from './calendar-event.model';
+import { CalendarEventService } from './calendar-event.service';
+import { CalendarEventUpdateComponent } from './update/calendar-event-update.component';
 
 @Component({
-  selector: "app-calendar-event",
-  templateUrl: "./calendar-event.component.html",
+  selector: 'app-calendar-event',
+  templateUrl: './calendar-event.component.html',
 })
 export class CalendarEventComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   calendarEvents?: CalendarEvent[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "number",
-      header: "Number",
+      field: 'number',
+      header: 'Number',
       sort: false,
     },
     {
-      field: "before_start_reminder_sms",
-      header: "Before Start Reminder Sms",
-      sort: false,
-    },
-    {
-      field: "before_end_reminder_sms",
-      header: "Before End Reminder Sms",
-      sort: false,
-    },
-    {
-      field: "before_start_reminder_days",
-      header: "Before Start Reminder Days",
-      sort: false,
-    },
-    {
-      field: "before_end_reminder_days",
-      header: "Before End Reminder Days",
-      sort: false,
-    },
-    {
-      field: "url",
-      header: "Url",
-      sort: false,
-    },
-    {
-      field: "expected_value_query",
-      header: "Expected Value Query",
-      sort: false,
-    },
-    {
-      field: "actual_value_query",
-      header: "Actual Value Query",
-      sort: false,
-    },
-    {
-      field: "is_system_event",
-      header: "Is System Event",
+      field: 'is_system_event',
+      header: 'Is System Event',
       sort: false,
     },
   ]; //Table display columns
@@ -149,11 +114,11 @@ export class CalendarEventComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -216,8 +181,8 @@ export class CalendarEventComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -231,7 +196,7 @@ export class CalendarEventComponent implements OnInit {
     };
     const ref = this.dialogService.open(CalendarEventUpdateComponent, {
       data,
-      header: "Create/Update CalendarEvent",
+      header: 'Create/Update CalendarEvent',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -246,7 +211,7 @@ export class CalendarEventComponent implements OnInit {
    */
   delete(calendarEvent: CalendarEvent): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this CalendarEvent?",
+      message: 'Are you sure that you want to delete this CalendarEvent?',
       accept: () => {
         this.calendarEventService
           .delete(calendarEvent.id!)
@@ -272,12 +237,12 @@ export class CalendarEventComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/calendar-event"], {
+      this.router.navigate(['/calendar-event'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -290,6 +255,6 @@ export class CalendarEventComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Calendar Event");
+    this.toastService.error('Error loading Calendar Event');
   }
 }

@@ -441,20 +441,6 @@ const routes: Routes = [
             (m) => m.PeDefinitionModule
           ),
       },
-      {
-        path: "gfs-code-category",
-        loadChildren: () =>
-          import("../setup/gfs-code-category/gfs-code-category.module").then(
-            (m) => m.GfsCodeCategoryModule
-          ),
-      },
-      {
-        path: "gfs-code",
-        loadChildren: () =>
-          import("../setup/gfs-code/gfs-code.module").then(
-            (m) => m.GfsCodeModule
-          ),
-      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 
-import { BreakpointObserver } from "@angular/cdk/layout";
-import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
-import { MenuItem } from "primeng/api";
-import { LocalStorageService } from "ngx-webstorage";
-import { AuthService } from "src/app/core/auth.service";
-import { Router } from "@angular/router";
+import {BreakpointObserver} from "@angular/cdk/layout";
+import {map} from "rxjs/operators";
+import {Observable} from "rxjs";
+import {MenuItem} from "primeng/api";
+import {LocalStorageService} from "ngx-webstorage";
+import {AuthService} from "src/app/core/auth.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: "app-main",
@@ -45,7 +45,7 @@ export class MainComponent implements OnInit {
   }
 
   userMenus: MenuItem[] = [
-    { label: "Change password", icon: "pi pi-fw pi-lock" },
+    {label: "Change password", icon: "pi pi-fw pi-lock"},
     {
       label: "Logout",
       icon: "pi pi-fw pi-power-off",
@@ -65,84 +65,177 @@ export class MainComponent implements OnInit {
       separator: true,
       items: [
         {
+          label: "Financial Year",
+          icon: "pi pi-fw pi-arrow-right",
+          items: [
+            {
+              label: "Financial Years",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "financial-year",
+            },
+            {
+              label: "Period Groups",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "period-group",
+            }
+          ]
+        },
+        {
+          label: "Finance",
+          icon: "pi pi-fw pi-arrow-right",
+          items: [
+            {
+              label: "Fund Source Categories",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "fund-source-category",
+            },
+            {
+              label: "Fund Types",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "fund-type",
+            },
+            {
+              label: "Bank Accounts",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "bank-account",
+            },
+          ]
+        },
+        {
+          label: "Admin Hierarchy",
+          icon: "pi pi-fw pi-arrow-right",
+          items: [
+            {
+              label: "Admin Hierarchy Levels",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "admin-hierarchy-level",
+            },
+            {
+              label: "Admin Hierarchies",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "admin-hierarchy",
+            },
+            {
+              label: "Planning Units",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "section",
+            },
+            {
+              label: "Planning & Budgeting Decision Levels",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "decision-level",
+            },
+            {
+              label: "Sectors",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "sector",
+            },
+            {
+              label: "Planning Unit Levels",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "section-level",
+            },
+            {
+              label: "Calendars",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "calendar",
+            },
+            {
+              label: "Calendar Events",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "calendar-event",
+            }
+          ]
+        },
+        {
+          label: "Facility",
+          icon: "pi pi-fw pi-arrow-right",
+          items: [
+            {
+              label: "Facilities",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "facility",
+            }
+          ]
+        },
+        {
+          label: "GFS Code Management",
+          icon: "pi pi-fw pi-arrow-right",
+          items: [
+            {
+              label: "GFS Code",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "gfs-code",
+            },
+            {
+              label: "Gfs Code Categories",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "gfs-code-category",
+            },
+            {
+              label: "Account Types",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "account-type",
+            },
+          ]
+        },
+        {
+          label: "Planning",
+          icon: "pi pi-fw pi-arrow-right",
+          items: [
+            {
+              label: "Objective Types",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "objective-type",
+            },
+            {
+              label: "Objectives",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "objective",
+            },
+            {
+              label: "Long Term Targets",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "long-term-target",
+            },
+            {
+              label: "Activity Types",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "activity-type",
+            },
+            {
+              label: "Activity Task Natures",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "activity-task_nature",
+            },
+            {
+              label: "Reference Document Types",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "reference-document_type",
+            },
+          ]
+        },
+        {
           label: "Asset Uses",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "asset-use",
-        },
-        {
-          label: "Bank Accounts",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "bank-account",
         },
         {
           label: "Asset Conditions",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "asset-condition",
         },
-        {
-          label: "Account Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "account-type",
-        },
-        {
-          label: "Activity Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "activity-type",
-        },
-        {
-          label: "Activity Task Natures",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "activity-task_nature",
-        },
-        {
-          label: "Admin Hierarchy Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy_level",
-        },
-        {
-          label: "Admin Hierarchies",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "admin-hierarchy",
-        },
-        {
-          label: "Sectors",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "sector",
-        },
-        {
-          label: "Section Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "section-level",
-        },
-        {
-          label: "Sections",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "section",
-        },
+
         {
           label: "Decision Levels",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "decision-level",
         },
-        {
-          label: "Reference Document Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "reference-document_type",
-        },
+
         {
           label: "Reference Types",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "reference-type",
-        },
-        {
-          label: "Financial Years",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "financial-year",
-        },
-        {
-          label: "Decision Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "decision-level",
         },
         {
           label: "Strategic Plans",
@@ -190,36 +283,6 @@ export class MainComponent implements OnInit {
           routerLink: "activity-task-nature",
         },
         {
-          label: "Objective Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "objective-type",
-        },
-        {
-          label: "Objectives",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "objective",
-        },
-        {
-          label: "Long Term Targets",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "long-term-target",
-        },
-        {
-          label: "Calendar Events",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "calendar-event",
-        },
-        {
-          label: "Calendar Events",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "calendar-event",
-        },
-        {
-          label: "Calendars",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "calendar",
-        },
-        {
           label: "Cas Assessment Rounds",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "cas-assessment-round",
@@ -263,11 +326,6 @@ export class MainComponent implements OnInit {
           label: "Reference Documents",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "reference-document",
-        },
-        {
-          label: "Period Groups",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "period-group",
         },
         {
           label: "Data Sets",
@@ -345,44 +403,14 @@ export class MainComponent implements OnInit {
           routerLink: "ceiling-chain",
         },
         {
-          label: "Fund Source Categories",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "fund-source-category",
-        },
-        {
-          label: "Fund Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "fund-type",
-        },
-        {
-          label: "Gfs Code Categories",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "gfs-code-category",
-        },
-        {
-          label: "Gfs Codes",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "gfs-code",
-        },
-        {
-          label: "Pe Forms",
+          label: "PE Forms",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "pe-form",
         },
         {
-          label: "Pe Definitions",
+          label: "PE Definitions",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "pe-definition",
-        },
-        {
-          label: "Gfs Code Categories",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "gfs-code-category",
-        },
-        {
-          label: "Gfs Codes",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "gfs-code",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
@@ -412,6 +440,7 @@ export class MainComponent implements OnInit {
 
   logout(): void {
     console.log("called");
-    this.authService.logout().subscribe(() => {});
+    this.authService.logout().subscribe(() => {
+    });
   }
 }

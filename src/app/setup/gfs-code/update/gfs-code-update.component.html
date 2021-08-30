@@ -5,6 +5,7 @@
     novalidate
     (ngSubmit)="save()"
     [formGroup]="editForm"
+    autocomplete="off"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
@@ -26,49 +27,115 @@
         </span>
       </div>
 
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="code" type="text" pInputText formControlName="code" />
-          <label for="code">Code </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('code')!.invalid &&
-            (editForm.get('code')!.dirty ||
-              editForm.get('code')!.touched ||
-              formError)
-          "
-        >
-          <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
-            >Code is required.</small
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="code" type="text" pInputText formControlName="code" />
+            <label for="code">Code </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('code')!.invalid &&
+              (editForm.get('code')!.dirty ||
+                editForm.get('code')!.touched ||
+                formError)
+            "
           >
-        </span>
+            <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
+              >Code is required.</small
+            >
+          </span>
+        </div>
+
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input
+              id="aggregated_code"
+              type="text"
+              pInputText
+              formControlName="aggregated_code"
+            />
+            <label for="aggregated_code">Aggregated Code </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('aggregated_code')!.invalid &&
+              (editForm.get('aggregated_code')!.dirty ||
+                editForm.get('aggregated_code')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('aggregated_code')?.errors?.required"
+              >Aggregated Code is required.</small
+            >
+          </span>
+        </div>
       </div>
 
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <input
-            id="aggregated_code"
-            type="text"
-            pInputText
-            formControlName="aggregated_code"
-          />
-          <label for="aggregated_code">Aggregated Code </label>
+          <p-dropdown
+            id="account_type_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="accountTypes!"
+            formControlName="account_type_id"
+          ></p-dropdown>
+          <label for="account_type_id">Account Type </label>
         </span>
-        <span
-          *ngIf="
-            editForm.get('aggregated_code')!.invalid &&
-            (editForm.get('aggregated_code')!.dirty ||
-              editForm.get('aggregated_code')!.touched ||
+          <span
+            *ngIf="
+            editForm.get('account_type_id')!.invalid &&
+            (editForm.get('account_type_id')!.dirty ||
+              editForm.get('account_type_id')!.touched ||
               formError)
           "
-        >
+          >
           <small
             class="p-error"
-            *ngIf="editForm.get('aggregated_code')?.errors?.required"
-            >Aggregated Code is required.</small
+            *ngIf="editForm.get('account_type_id')?.errors?.required"
+          >Account Type is required.</small
           >
         </span>
+        </div>
+
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="category_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="categories!"
+              formControlName="category_id"
+            ></p-dropdown>
+            <label for="category_id">Category </label>
+          </span>
+            <span
+              *ngIf="
+              editForm.get('category_id')!.invalid &&
+              (editForm.get('category_id')!.dirty ||
+                editForm.get('category_id')!.touched ||
+                formError)
+            "
+            >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('category_id')?.errors?.required"
+            >Category is required.</small
+            >
+          </span>
+        </div>
       </div>
 
       <div fxLayout="row" fxLayoutGap="2px">
@@ -89,66 +156,8 @@
         <label for="is_protected">Is Protected </label>
       </div>
 
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="account_type_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="accountTypes!"
-            formControlName="account_type_id"
-          ></p-dropdown>
-          <label for="account_type_id">Account Type </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('account_type_id')!.invalid &&
-            (editForm.get('account_type_id')!.dirty ||
-              editForm.get('account_type_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('account_type_id')?.errors?.required"
-            >Account Type is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="category_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="categories!"
-            formControlName="category_id"
-          ></p-dropdown>
-          <label for="category_id">Category </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('category_id')!.invalid &&
-            (editForm.get('category_id')!.dirty ||
-              editForm.get('category_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('category_id')?.errors?.required"
-            >Category is required.</small
-          >
-        </span>
-      </div>
+
+
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

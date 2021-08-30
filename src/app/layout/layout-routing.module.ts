@@ -475,6 +475,13 @@ const routes: Routes = [
             (m) => m.PeSubFormModule
           ),
       },
+      {
+        path: "pe-select-option",
+        loadChildren: () =>
+          import("../setup/pe-select-option/pe-select-option.module").then(
+            (m) => m.PeSelectOptionModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: '**',

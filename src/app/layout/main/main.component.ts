@@ -440,7 +440,12 @@ export class MainComponent implements OnInit {
           label: "Pe Sub Forms",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "pe-sub-form",
-        }
+        },
+        {
+          label: "Pe Select Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "pe-select-option",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

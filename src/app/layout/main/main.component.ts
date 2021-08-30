@@ -1,19 +1,11 @@
 import {Component, OnInit} from "@angular/core";
-
+import {LocalStorageService} from "ngx-webstorage";
+import {AuthService} from "../../core/auth.service";
+import {Router} from "@angular/router";
 import {BreakpointObserver} from "@angular/cdk/layout";
+import {MenuItem} from "primeng/api";
 import {map} from "rxjs/operators";
 import {Observable} from "rxjs";
-import {MenuItem} from "primeng/api";
-import {LocalStorageService} from "ngx-webstorage";
-import {AuthService} from "src/app/core/auth.service";
-import {Router} from "@angular/router";
-import {BreakpointObserver} from '@angular/cdk/layout';
-import {map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
-import {MenuItem} from 'primeng/api';
-import {LocalStorageService} from 'ngx-webstorage';
-import {AuthService} from 'src/app/core/auth.service';
-import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-main',

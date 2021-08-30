@@ -93,24 +93,7 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            >
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="value"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['value']"
-                  />
-                  <label for="value">Value </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['value'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-            </div>
+            ></div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -215,19 +198,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="baselineStatisticValues?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="baselineStatisticValues?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

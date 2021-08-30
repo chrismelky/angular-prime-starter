@@ -5,60 +5,52 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { BaselineStatistic } from "src/app/setup/baseline-statistic/baseline-statistic.model";
-import { BaselineStatisticService } from "src/app/setup/baseline-statistic/baseline-statistic.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { BaselineStatistic } from 'src/app/setup/baseline-statistic/baseline-statistic.model';
+import { BaselineStatisticService } from 'src/app/setup/baseline-statistic/baseline-statistic.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 
-import { BaselineStatisticValue } from "./baseline-statistic-value.model";
-import { BaselineStatisticValueService } from "./baseline-statistic-value.service";
-import { BaselineStatisticValueUpdateComponent } from "./update/baseline-statistic-value-update.component";
+import { BaselineStatisticValue } from './baseline-statistic-value.model';
+import { BaselineStatisticValueService } from './baseline-statistic-value.service';
+import { BaselineStatisticValueUpdateComponent } from './update/baseline-statistic-value-update.component';
+import { UserService } from '../user/user.service';
+import { User } from '../user/user.model';
 
 @Component({
-  selector: "app-baseline-statistic-value",
-  templateUrl: "./baseline-statistic-value.component.html",
+  selector: 'app-baseline-statistic-value',
+  templateUrl: './baseline-statistic-value.component.html',
 })
 export class BaselineStatisticValueComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   baselineStatisticValues?: BaselineStatisticValue[] = [];
 
   baselineStatistics?: BaselineStatistic[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
-  financialYears?: FinancialYear[] = [];
+  adminHierarchies: AdminHierarchy[] = [];
+  financialYears: FinancialYear[] = [];
 
   cols = [
-    /*{
-      field: "baseline_statistic_id",
-      header: "Baseline Statistic ",
-      sort: true,
-    },*/
     {
-      field: "value",
-      header: "Value",
+      field: 'value',
+      header: 'Value',
       sort: true,
-    },
-    {
-      field: "active",
-      header: "Active",
-      sort: false,
     },
   ]; //Table display columns
 
@@ -74,38 +66,39 @@ export class BaselineStatisticValueComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
+  currentUser?: User;
 
   constructor(
     protected baselineStatisticValueService: BaselineStatisticValueService,
     protected baselineStatisticService: BaselineStatisticService,
-    protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
-  ) {}
+    protected toastService: ToastService,
+    protected userService: UserService
+  ) {
+    this.currentUser = userService.getCurrentUser();
+    if (this.currentUser.admin_hierarchy) {
+      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
+      this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+    }
+  }
 
   ngOnInit(): void {
     this.baselineStatisticService
-      .query({ columns: ["id", "description"] })
+      .query({ columns: ['id', 'description'] })
       .subscribe(
         (resp: CustomResponse<BaselineStatistic[]>) =>
           (this.baselineStatistics = resp.data)
       );
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
+          (this.financialYears = resp.data!)
       );
     this.handleNavigation();
   }
@@ -152,11 +145,11 @@ export class BaselineStatisticValueComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -231,8 +224,8 @@ export class BaselineStatisticValueComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -248,7 +241,7 @@ export class BaselineStatisticValueComponent implements OnInit {
     };
     const ref = this.dialogService.open(BaselineStatisticValueUpdateComponent, {
       data,
-      header: "Create/Update BaselineStatisticValue",
+      header: 'Create/Update BaselineStatisticValue',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -264,7 +257,7 @@ export class BaselineStatisticValueComponent implements OnInit {
   delete(baselineStatisticValue: BaselineStatisticValue): void {
     this.confirmationService.confirm({
       message:
-        "Are you sure that you want to delete this BaselineStatisticValue?",
+        'Are you sure that you want to delete this BaselineStatisticValue?',
       accept: () => {
         this.baselineStatisticValueService
           .delete(baselineStatisticValue.id!)
@@ -290,16 +283,16 @@ export class BaselineStatisticValueComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/baseline-statistic-value"], {
+      this.router.navigate(['/baseline-statistic-value'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
-    this.baselineStatisticValues = resp?.data?? [];
+    this.baselineStatisticValues = resp?.data ?? [];
   }
 
   /**
@@ -308,6 +301,6 @@ export class BaselineStatisticValueComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Baseline Statistic Value");
+    this.toastService.error('Error loading Baseline Statistic Value');
   }
 }

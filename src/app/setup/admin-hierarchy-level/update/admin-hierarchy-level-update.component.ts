@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { AdminHierarchyLevel } from "../admin-hierarchy-level.model";
-import { AdminHierarchyLevelService } from "../admin-hierarchy-level.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AdminHierarchyLevel } from '../admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from '../admin-hierarchy-level.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-admin-hierarchy-level-update",
-  templateUrl: "./admin-hierarchy-level-update.component.html",
+  selector: 'app-admin-hierarchy-level-update',
+  templateUrl: './admin-hierarchy-level-update.component.html',
 })
 export class AdminHierarchyLevelUpdateComponent implements OnInit {
   isSaving = false;
@@ -31,9 +31,12 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     code: [null, [Validators.required]],
-    name: [null, [Validators.required]],
-    position: [null, [Validators.required]],
-    code_required: [null, []],
+    name: [null, [Validators.required, Validators.maxLength(50)]],
+    position: [
+      null,
+      [Validators.required, Validators.min(1), Validators.max(6)],
+    ],
+    code_required: [true, []],
     code_length: [null, []],
   });
 
@@ -122,12 +125,12 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
   protected createFromForm(): AdminHierarchyLevel {
     return {
       ...new AdminHierarchyLevel(),
-      id: this.editForm.get(["id"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      position: this.editForm.get(["position"])!.value,
-      code_required: this.editForm.get(["code_required"])!.value,
-      code_length: this.editForm.get(["code_length"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      position: this.editForm.get(['position'])!.value,
+      code_required: this.editForm.get(['code_required'])!.value,
+      code_length: this.editForm.get(['code_length'])!.value,
     };
   }
 }

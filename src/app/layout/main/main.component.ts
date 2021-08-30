@@ -325,6 +325,21 @@ export class MainComponent implements OnInit {
           routerLink: "facility",
         },
         {
+          label: "Baseline Statistics",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "baseline-statistic",
+        },
+        {
+          label: "Baseline Statistic Values",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "baseline-statistic-value",
+        },
+        {
+          label: "Advertisements",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "advertisement",
+        },
+        {
           label: "Ceiling Chains",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "ceiling-chain",
@@ -338,6 +353,26 @@ export class MainComponent implements OnInit {
           label: "Fund Types",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "fund-type",
+        },
+        {
+          label: "Gfs Code Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "gfs-code-category",
+        },
+        {
+          label: "Gfs Codes",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "gfs-code",
+        },
+        {
+          label: "Pe Forms",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "pe-form",
+        },
+        {
+          label: "Pe Definitions",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "pe-definition",
         },
         {
           label: "Gfs Code Categories",

@@ -1,0 +1,296 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+    autocomplete="off"
+  >
+   <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="field_name"
+            type="text"
+            pInputText
+            formControlName="field_name"
+          />
+          <label for="field_name">Field Name </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('field_name')!.invalid &&
+            (editForm.get('field_name')!.dirty ||
+              editForm.get('field_name')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('field_name')?.errors?.required"
+            >Field Name is required.</small
+          >
+        </span>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_input"
+          name="is_input"
+          formControlName="is_input"
+        ></p-inputSwitch>
+        <label for="is_input">Is Input </label>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="has_breakdown"
+          name="has_breakdown"
+          formControlName="has_breakdown"
+        ></p-inputSwitch>
+        <label for="has_breakdown">Has Breakdown </label>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_active"
+          name="is_active"
+          formControlName="is_active"
+        ></p-inputSwitch>
+        <label for="is_active">Is Active </label>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="column_number"
+            formControlName="column_number"
+          ></p-inputNumber>
+          <label for="column_number">Column Number </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('column_number')!.invalid &&
+            (editForm.get('column_number')!.dirty ||
+              editForm.get('column_number')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="formula"
+            type="text"
+            pInputText
+            formControlName="formula"
+          />
+          <label for="formula">Formula </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('formula')!.invalid &&
+            (editForm.get('formula')!.dirty ||
+              editForm.get('formula')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="type" type="text" pInputText formControlName="type" />
+          <label for="type">Type </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('type')!.invalid &&
+            (editForm.get('type')!.dirty ||
+              editForm.get('type')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="select_option"
+            type="text"
+            pInputText
+            formControlName="select_option"
+          />
+          <label for="select_option">Select Option </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('select_option')!.invalid &&
+            (editForm.get('select_option')!.dirty ||
+              editForm.get('select_option')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('select_option')?.errors?.required"
+            >Select Option is required.</small
+          >
+        </span>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_vertical"
+          name="is_vertical"
+          formControlName="is_vertical"
+        ></p-inputSwitch>
+        <label for="is_vertical">Is Vertical </label>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="output_type"
+            type="text"
+            pInputText
+            formControlName="output_type"
+          />
+          <label for="output_type">Output Type </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('output_type')!.invalid &&
+            (editForm.get('output_type')!.dirty ||
+              editForm.get('output_type')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="parent_id"
+            optionValue="id"
+            optionLabel="field_name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="parents!"
+            formControlName="parent_id"
+          ></p-dropdown>
+          <label for="parent_id">Parent </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('parent_id')!.invalid &&
+            (editForm.get('parent_id')!.dirty ||
+              editForm.get('parent_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="gfs_code_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="gfsCodes!"
+            formControlName="gfs_code_id"
+          ></p-dropdown>
+          <label for="gfs_code_id">Gfs Code </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('gfs_code_id')!.invalid &&
+            (editForm.get('gfs_code_id')!.dirty ||
+              editForm.get('gfs_code_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="pe_form_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="peForms!"
+            formControlName="pe_form_id"
+          ></p-dropdown>
+          <label for="pe_form_id">Pe Form </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('pe_form_id')!.invalid &&
+            (editForm.get('pe_form_id')!.dirty ||
+              editForm.get('pe_form_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('pe_form_id')?.errors?.required"
+            >Pe Form is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="unit"
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="units!"
+            formControlName="unit"
+          ></p-dropdown>
+          <label for="unit">Unit </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('unit')!.invalid &&
+            (editForm.get('unit')!.dirty ||
+              editForm.get('unit')!.touched ||
+              formError)
+          "
+        >
+          <small class="p-error" *ngIf="editForm.get('unit')?.errors?.required"
+            >Unit is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

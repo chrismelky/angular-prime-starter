@@ -468,6 +468,13 @@ const routes: Routes = [
           ),
 
       },
+      {
+        path: "pe-sub-form",
+        loadChildren: () =>
+          import("../setup/pe-sub-form/pe-sub-form.module").then(
+            (m) => m.PeSubFormModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: '**',

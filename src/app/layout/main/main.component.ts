@@ -185,11 +185,11 @@ export class MainComponent implements OnInit {
           routerLink: 'admin-hierarchy',
         },
         {
-<<<<<<< HEAD
           label: "Objective Types",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "objective-type",
-=======
+        },
+        {
           label: 'Sectors',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'sector',
@@ -198,7 +198,6 @@ export class MainComponent implements OnInit {
           label: 'Section Levels',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'section-level',
->>>>>>> 2e36bcc02b71e0183d6842203eba8ad2278d1870
         },
         {
           label: 'Sections',
@@ -216,11 +215,11 @@ export class MainComponent implements OnInit {
           routerLink: 'reference-document_type',
         },
         {
-<<<<<<< HEAD
           label: "Calendars",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "calendar",
-=======
+        },
+        {
           label: 'Reference Types',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'reference-type',
@@ -229,7 +228,6 @@ export class MainComponent implements OnInit {
           label: 'Financial Years',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'financial-year',
->>>>>>> 2e36bcc02b71e0183d6842203eba8ad2278d1870
         },
         {
           label: 'Decision Levels',
@@ -591,6 +589,10 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "cas-assessment-category-version-state",
         },
+        {
+          label: "Pe Sub Forms",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "pe-sub-form",}
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

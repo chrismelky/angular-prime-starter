@@ -5,25 +5,25 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
-import {Sector} from "src/app/setup/sector/sector.model";
-import {SectorService} from "src/app/setup/sector/sector.service";
-import {AdminHierarchyLevel} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchyLevelService} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
-import {CasPlan} from "../cas-plan.model";
-import {CasPlanService} from "../cas-plan.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { Sector } from 'src/app/setup/sector/sector.model';
+import { SectorService } from 'src/app/setup/sector/sector.service';
+import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
+import { CasPlan } from '../cas-plan.model';
+import { CasPlanService } from '../cas-plan.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-cas-plan-update",
-  templateUrl: "./cas-plan-update.component.html",
+  selector: 'app-cas-plan-update',
+  templateUrl: './cas-plan-update.component.html',
 })
 export class CasPlanUpdateComponent implements OnInit {
   isSaving = false;
@@ -57,28 +57,27 @@ export class CasPlanUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected enumService: EnumService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.sectorService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
     this.adminHierarchyLevelService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
-    this.periodTypes = this.enumService.get("periodTypes");
-    this.contentTypes = this.enumService.get("contentTypes");
+    this.periodTypes = this.enumService.get('periodTypes');
+    this.contentTypes = this.enumService.get('contentTypes');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create CasPlan or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasPlan Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -118,8 +117,7 @@ export class CasPlanUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -148,14 +146,14 @@ export class CasPlanUpdateComponent implements OnInit {
   protected createFromForm(): CasPlan {
     return {
       ...new CasPlan(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      sector_id: this.editForm.get(["sector_id"])!.value,
-      admin_hierarchy_level_id: this.editForm.get(["admin_hierarchy_level_id"])!
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      sector_id: this.editForm.get(['sector_id'])!.value,
+      admin_hierarchy_level_id: this.editForm.get(['admin_hierarchy_level_id'])!
         .value,
-      period_type: this.editForm.get(["period_type"])!.value,
-      content_type: this.editForm.get(["content_type"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      period_type: this.editForm.get(['period_type'])!.value,
+      content_type: this.editForm.get(['content_type'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

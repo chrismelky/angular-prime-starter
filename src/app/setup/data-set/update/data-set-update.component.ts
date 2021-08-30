@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
-import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
-import { DataSet } from "../data-set.model";
-import { DataSetService } from "../data-set.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasPlanContent } from 'src/app/setup/cas-plan-content/cas-plan-content.model';
+import { CasPlanContentService } from 'src/app/setup/cas-plan-content/cas-plan-content.service';
+import { DataSet } from '../data-set.model';
+import { DataSetService } from '../data-set.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-data-set-update",
-  templateUrl: "./data-set-update.component.html",
+  selector: 'app-data-set-update',
+  templateUrl: './data-set-update.component.html',
 })
 export class DataSetUpdateComponent implements OnInit {
   isSaving = false;
@@ -52,7 +52,7 @@ export class DataSetUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.casPlanContentService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasPlanContent[]>) =>
           (this.casPlanContents = resp.data)
@@ -61,7 +61,7 @@ export class DataSetUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create DataSet or Update Facility type if exist else set form has error and return
+   * When form is valid Create DataSet Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -129,12 +129,12 @@ export class DataSetUpdateComponent implements OnInit {
   protected createFromForm(): DataSet {
     return {
       ...new DataSet(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      cas_plan_content_id: this.editForm.get(["cas_plan_content_id"])!.value,
-      is_locked: this.editForm.get(["is_locked"])!.value,
-      is_submitted: this.editForm.get(["is_submitted"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      cas_plan_content_id: this.editForm.get(['cas_plan_content_id'])!.value,
+      is_locked: this.editForm.get(['is_locked'])!.value,
+      is_submitted: this.editForm.get(['is_submitted'])!.value,
     };
   }
 }

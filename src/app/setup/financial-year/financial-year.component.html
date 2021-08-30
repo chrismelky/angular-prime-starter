@@ -116,8 +116,6 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="financialYears!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -136,8 +134,12 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="financialYears?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'start_date'">
             Start Date<p-sortIcon [field]="'start_date'"></p-sortIcon>
@@ -154,12 +156,12 @@
             {{ rowData[col.field] }}
           </td>
           <td>
-            {{ rowData['start_date']|date:'mediumDate' }}
+            {{ rowData["start_date"] | date: "mediumDate" }}
           </td>
           <td>
-            {{ rowData['end_date']|date:'mediumDate' }}
+            {{ rowData["end_date"] | date: "mediumDate" }}
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

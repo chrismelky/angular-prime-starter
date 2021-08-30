@@ -20,9 +20,6 @@
               formError)
           "
         >
-          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
-            >Name is required.</small
-          >
         </span>
       </div>
 
@@ -49,11 +46,6 @@
               formError)
           "
         >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('cas_plan_id')?.errors?.required"
-            >Cas Plan is required.</small
-          >
         </span>
       </div>
       <div class="p-field" fxFlex>
@@ -79,41 +71,6 @@
               formError)
           "
         >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('period_group_id')?.errors?.required"
-            >Period Group is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="admin_hierarchy_level_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="adminHierarchyLevels!"
-            formControlName="admin_hierarchy_level_id"
-          ></p-dropdown>
-          <label for="admin_hierarchy_level_id">Admin Hierarchy Level </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('admin_hierarchy_level_id')!.invalid &&
-            (editForm.get('admin_hierarchy_level_id')!.dirty ||
-              editForm.get('admin_hierarchy_level_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_level_id')?.errors?.required"
-            >Admin Hierarchy Level is required.</small
-          >
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">

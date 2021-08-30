@@ -22,6 +22,8 @@ import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
 import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+import { ReferenceDocument } from "src/app/setup/reference-document/reference-document.model";
+import { ReferenceDocumentService } from "src/app/setup/reference-document/reference-document.service";
 import { CasAssessmentState } from "src/app/setup/cas-assessment-state/cas-assessment-state.model";
 import { CasAssessmentStateService } from "src/app/setup/cas-assessment-state/cas-assessment-state.service";
 import { CasAssessmentCategory } from "src/app/setup/cas-assessment-category/cas-assessment-category.model";
@@ -30,8 +32,7 @@ import { CasAssessmentCategoryService } from "src/app/setup/cas-assessment-categ
 import { CasAssessmentCategoryVersion } from "./cas-assessment-category-version.model";
 import { CasAssessmentCategoryVersionService } from "./cas-assessment-category-version.service";
 import { CasAssessmentCategoryVersionUpdateComponent } from "./update/cas-assessment-category-version-update.component";
-import {ReferenceDocumentService} from "src/app/setup/reference-document/reference-document.service";
-import {ReferenceDocument} from "../reference-document/reference-document.model";
+
 @Component({
   selector: "app-cas-assessment-category-version",
   templateUrl: "./cas-assessment-category-version.component.html",
@@ -47,15 +48,25 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
   casAssessmentCategories?: CasAssessmentCategory[] = [];
 
   cols = [
-    {
+    /*{
       field: "reference_document_id",
       header: "Reference Document ",
       sort: false,
     },
     {
+      field: "cas_assessment_state_id",
+      header: "Cas Assessment State ",
+      sort: false,
+    },
+    {
+      field: "cas_assessment_category_id",
+      header: "Cas Assessment Category ",
+      sort: false,
+    },*/
+    {
       field: "minimum_passmark",
       header: "Minimum Passmark",
-      sort: false,
+      sort: true,
     },
   ]; //Table display columns
 
@@ -70,8 +81,6 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
 
   //Mandatory filter
   financial_year_id!: number;
-  cas_assessment_state_id!: number;
-  cas_assessment_category_id!: number;
 
   constructor(
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
@@ -121,11 +130,7 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (
-      !this.financial_year_id ||
-      !this.cas_assessment_state_id ||
-      !this.cas_assessment_category_id
-    ) {
+    if (!this.financial_year_id) {
       return;
     }
     this.isLoading = true;
@@ -137,8 +142,6 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         financial_year_id: this.financial_year_id,
-        cas_assessment_state_id: this.cas_assessment_state_id,
-        cas_assessment_category_id: this.cas_assessment_category_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -256,8 +259,6 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
     const data: CasAssessmentCategoryVersion = casAssessmentCategoryVersion ?? {
       ...new CasAssessmentCategoryVersion(),
       financial_year_id: this.financial_year_id,
-      cas_assessment_state_id: this.cas_assessment_state_id,
-      cas_assessment_category_id: this.cas_assessment_category_id,
     };
     const ref = this.dialogService.open(
       CasAssessmentCategoryVersionUpdateComponent,

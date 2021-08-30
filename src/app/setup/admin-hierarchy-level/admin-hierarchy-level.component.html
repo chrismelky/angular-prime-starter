@@ -19,22 +19,6 @@
           <div class="p-field">
             <span class="p-float-label p-input-icon-right">
               <input
-                id="code"
-                type="text"
-                class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['code']"
-              />
-              <label for="code">Code </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['code'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
                 id="name"
                 type="text"
                 class="p-inputtext-sm"
@@ -80,8 +64,6 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="adminHierarchyLevels!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -115,7 +97,7 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
@@ -146,19 +128,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="adminHierarchyLevels?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="adminHierarchyLevels?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

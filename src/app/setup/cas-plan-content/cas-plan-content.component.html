@@ -128,8 +128,6 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="casPlanContents!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -148,8 +146,12 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="casPlanContents?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'parent_id'">
             Parent <p-sortIcon [field]="'parent_id'"></p-sortIcon>
@@ -165,7 +167,7 @@
           <td>
             {{ rowData.parent?.name }}
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

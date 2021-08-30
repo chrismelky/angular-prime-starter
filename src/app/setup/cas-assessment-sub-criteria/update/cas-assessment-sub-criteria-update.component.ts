@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasAssessmentCriteria } from "src/app/setup/cas-assessment-criteria/cas-assessment-criteria.model";
-import { CasAssessmentCriteriaService } from "src/app/setup/cas-assessment-criteria/cas-assessment-criteria.service";
-import { CasAssessmentSubCriteria } from "../cas-assessment-sub-criteria.model";
-import { CasAssessmentSubCriteriaService } from "../cas-assessment-sub-criteria.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasAssessmentCriteria } from 'src/app/setup/cas-assessment-criteria/cas-assessment-criteria.model';
+import { CasAssessmentCriteriaService } from 'src/app/setup/cas-assessment-criteria/cas-assessment-criteria.service';
+import { CasAssessmentSubCriteria } from '../cas-assessment-sub-criteria.model';
+import { CasAssessmentSubCriteriaService } from '../cas-assessment-sub-criteria.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-cas-assessment-sub-criteria-update",
-  templateUrl: "./cas-assessment-sub-criteria-update.component.html",
+  selector: 'app-cas-assessment-sub-criteria-update',
+  templateUrl: './cas-assessment-sub-criteria-update.component.html',
 })
 export class CasAssessmentSubCriteriaUpdateComponent implements OnInit {
   isSaving = false;
@@ -54,7 +54,7 @@ export class CasAssessmentSubCriteriaUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.casAssessmentCriteriaService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCriteria[]>) =>
           (this.casAssessmentCriteria = resp.data)
@@ -63,7 +63,7 @@ export class CasAssessmentSubCriteriaUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create CasAssessmentSubCriteria or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasAssessmentSubCriteria Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -140,16 +140,16 @@ export class CasAssessmentSubCriteriaUpdateComponent implements OnInit {
   protected createFromForm(): CasAssessmentSubCriteria {
     return {
       ...new CasAssessmentSubCriteria(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      serial_number: this.editForm.get(["serial_number"])!.value,
-      how_to_assess: this.editForm.get(["how_to_assess"])!.value,
-      how_to_score: this.editForm.get(["how_to_score"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      serial_number: this.editForm.get(['serial_number'])!.value,
+      how_to_assess: this.editForm.get(['how_to_assess'])!.value,
+      how_to_score: this.editForm.get(['how_to_score'])!.value,
       cas_assessment_criteria_id: this.editForm.get([
-        "cas_assessment_criteria_id",
+        'cas_assessment_criteria_id',
       ])!.value,
-      score_value: this.editForm.get(["score_value"])!.value,
-      is_free_score: this.editForm.get(["is_free_score"])!.value,
+      score_value: this.editForm.get(['score_value'])!.value,
+      is_free_score: this.editForm.get(['is_free_score'])!.value,
     };
   }
 }

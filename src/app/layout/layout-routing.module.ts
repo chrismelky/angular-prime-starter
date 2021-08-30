@@ -344,9 +344,11 @@ const routes: Routes = [
         path: "calendar",
         loadChildren: () =>
           import("../setup/calendar/calendar.module").then(
-            (m) => m.CalendarModule),
+            (m) => m.CalendarModule
+          ),
       },
-      { path: "category-category-combination",
+      {
+        path: "category-category-combination",
         loadChildren: () =>
           import(
             "../setup/category-category-combination/category-category-combination.module"
@@ -372,6 +374,13 @@ const routes: Routes = [
           import("../setup/facility/facility.module").then(
             (m) => m.FacilityModule
           ),
+      },
+      {
+        path: "cas-assessment-category-version-state",
+        loadChildren: () =>
+          import(
+            "../setup/cas-assessment-category-version-state/cas-assessment-category-version-state.module"
+          ).then((m) => m.CasAssessmentCategoryVersionStateModule),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

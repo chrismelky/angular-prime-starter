@@ -24,8 +24,6 @@ import { CasPlan } from "src/app/setup/cas-plan/cas-plan.model";
 import { CasPlanService } from "src/app/setup/cas-plan/cas-plan.service";
 import { PeriodGroup } from "src/app/setup/period-group/period-group.model";
 import { PeriodGroupService } from "src/app/setup/period-group/period-group.service";
-import { AdminHierarchyLevel } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
-import { AdminHierarchyLevelService } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
 
 import { CasAssessmentCategory } from "./cas-assessment-category.model";
 import { CasAssessmentCategoryService } from "./cas-assessment-category.service";
@@ -42,7 +40,6 @@ export class CasAssessmentCategoryComponent implements OnInit {
 
   casPlans?: CasPlan[] = [];
   periodGroups?: PeriodGroup[] = [];
-  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
 
   cols = [
     {
@@ -62,15 +59,11 @@ export class CasAssessmentCategoryComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  cas_plan_id!: number;
-  period_group_id!: number;
-  admin_hierarchy_level_id!: number;
 
   constructor(
     protected casAssessmentCategoryService: CasAssessmentCategoryService,
     protected casPlanService: CasPlanService,
     protected periodGroupService: PeriodGroupService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -90,12 +83,6 @@ export class CasAssessmentCategoryComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<PeriodGroup[]>) => (this.periodGroups = resp.data)
       );
-    this.adminHierarchyLevelService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
-      );
     this.handleNavigation();
   }
 
@@ -105,13 +92,6 @@ export class CasAssessmentCategoryComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (
-      !this.cas_plan_id ||
-      !this.period_group_id ||
-      !this.admin_hierarchy_level_id
-    ) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -120,9 +100,6 @@ export class CasAssessmentCategoryComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_plan_id: this.cas_plan_id,
-        period_group_id: this.period_group_id,
-        admin_hierarchy_level_id: this.admin_hierarchy_level_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -157,20 +134,8 @@ export class CasAssessmentCategoryComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -237,9 +202,6 @@ export class CasAssessmentCategoryComponent implements OnInit {
   createOrUpdate(casAssessmentCategory?: CasAssessmentCategory): void {
     const data: CasAssessmentCategory = casAssessmentCategory ?? {
       ...new CasAssessmentCategory(),
-      cas_plan_id: this.cas_plan_id,
-      period_group_id: this.period_group_id,
-      admin_hierarchy_level_id: this.admin_hierarchy_level_id,
     };
     const ref = this.dialogService.open(CasAssessmentCategoryUpdateComponent, {
       data,

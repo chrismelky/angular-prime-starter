@@ -31,40 +31,6 @@
               <label for="financial_year_id">Financial Year </label>
             </span>
           </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="cas_assessment_state_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="casAssessmentStates!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="cas_assessment_state_id"
-              ></p-dropdown>
-              <label for="cas_assessment_state_id">Cas Assessment State </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="cas_assessment_category_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="casAssessmentCategories!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="cas_assessment_category_id"
-              ></p-dropdown>
-              <label for="cas_assessment_category_id"
-                >Cas Assessment Category
-              </label>
-            </span>
-          </div>
         </div>
         <div
           fxLayout="row wrap"
@@ -157,11 +123,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !financial_year_id ||
-              !cas_assessment_state_id ||
-              !cas_assessment_category_id
-            "
+            [disabled]="!financial_year_id"
             (click)="createOrUpdate()"
             label="Add Cas Assessment Category Version"
           ></button>
@@ -169,21 +131,30 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="casAssessmentCategoryVersions?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th [pSortableColumn]="'reference_document_id'">
+            Reference Document <p-sortIcon  [field]="'reference_document_id'"></p-sortIcon>
+          </th>
+
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'cas_assessment_state_id'">
+            Cas Assessment State <p-sortIcon  [field]="'cas_assessment_state_id'"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'cas_assessment_category_id'">
+            Cas Assessment Category <p-sortIcon  [field]="'cas_assessment_category_id'"></p-sortIcon>
           </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
+          <td>{{rowData.reference_document?.name}}</td>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
+          <td>{{rowData.cas_assessment_state?.name}}</td>
+          <td>{{rowData.cas_assessment_category?.name}}</td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

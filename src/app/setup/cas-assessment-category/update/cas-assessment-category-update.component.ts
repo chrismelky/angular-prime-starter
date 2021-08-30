@@ -16,8 +16,6 @@ import { CasPlan } from "src/app/setup/cas-plan/cas-plan.model";
 import { CasPlanService } from "src/app/setup/cas-plan/cas-plan.service";
 import { PeriodGroup } from "src/app/setup/period-group/period-group.model";
 import { PeriodGroupService } from "src/app/setup/period-group/period-group.service";
-import { AdminHierarchyLevel } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
-import { AdminHierarchyLevelService } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
 import { CasAssessmentCategory } from "../cas-assessment-category.model";
 import { CasAssessmentCategoryService } from "../cas-assessment-category.service";
 import { ToastService } from "src/app/shared/toast.service";
@@ -33,24 +31,21 @@ export class CasAssessmentCategoryUpdateComponent implements OnInit {
 
   casPlans?: CasPlan[] = [];
   periodGroups?: PeriodGroup[] = [];
-  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
 
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
-    cas_plan_id: [null, [Validators.required]],
-    period_group_id: [null, [Validators.required]],
-    admin_hierarchy_level_id: [null, [Validators.required]],
+    name: [null, []],
+    cas_plan_id: [null, []],
+    period_group_id: [null, []],
   });
 
   constructor(
     protected casAssessmentCategoryService: CasAssessmentCategoryService,
     protected casPlanService: CasPlanService,
     protected periodGroupService: PeriodGroupService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -67,12 +62,6 @@ export class CasAssessmentCategoryUpdateComponent implements OnInit {
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<PeriodGroup[]>) => (this.periodGroups = resp.data)
-      );
-    this.adminHierarchyLevelService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
@@ -138,7 +127,6 @@ export class CasAssessmentCategoryUpdateComponent implements OnInit {
       name: casAssessmentCategory.name,
       cas_plan_id: casAssessmentCategory.cas_plan_id,
       period_group_id: casAssessmentCategory.period_group_id,
-      admin_hierarchy_level_id: casAssessmentCategory.admin_hierarchy_level_id,
     });
   }
 
@@ -153,8 +141,6 @@ export class CasAssessmentCategoryUpdateComponent implements OnInit {
       name: this.editForm.get(["name"])!.value,
       cas_plan_id: this.editForm.get(["cas_plan_id"])!.value,
       period_group_id: this.editForm.get(["period_group_id"])!.value,
-      admin_hierarchy_level_id: this.editForm.get(["admin_hierarchy_level_id"])!
-        .value,
     };
   }
 }

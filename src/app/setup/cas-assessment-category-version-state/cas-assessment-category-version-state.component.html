@@ -17,51 +17,37 @@
           fxLayoutAlign="start center"
         >
           <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
-                id="name"
-                type="text"
-                class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['name']"
-              />
-              <label for="name">Name </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['name'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
             <span class="p-float-label">
               <p-dropdown
-                id="cas_plan_id"
+                id="cas_assessment_category_version_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 (onChange)="onSearch()"
                 [showClear]="true"
                 [filter]="true"
-                [options]="casPlans!"
-                [(ngModel)]="search['cas_plan_id']"
+                [options]="casAssessmentCategoryVersions!"
+                [(ngModel)]="search['cas_assessment_category_version_id']"
               ></p-dropdown>
-              <label for="cas_plan_id">Cas Plan </label>
+              <label for="cas_assessment_category_version_id"
+                >Cas Assessment Category Version
+              </label>
             </span>
           </div>
           <div class="p-field">
             <span class="p-float-label">
               <p-dropdown
-                id="period_group_id"
+                id="cas_assessment_state_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 (onChange)="onSearch()"
                 [showClear]="true"
                 [filter]="true"
-                [options]="periodGroups!"
-                [(ngModel)]="search['period_group_id']"
+                [options]="casAssessmentStates!"
+                [(ngModel)]="search['cas_assessment_state_id']"
               ></p-dropdown>
-              <label for="period_group_id">Period Group </label>
+              <label for="cas_assessment_state_id">Cas Assessment State </label>
             </span>
           </div>
         </div>
@@ -95,7 +81,7 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="casAssessmentCategories!"
+      [value]="casAssessmentCategoryVersionStates!"
       [scrollable]="true"
       scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
@@ -103,31 +89,27 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Cas Assessment Categories</span>
+          <span class="card-header-text"
+            >Cas Assessment Category Version States</span
+          >
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]=""
             (click)="createOrUpdate()"
-            label="Add Cas Assessment Category"
+            label="Add Cas Assessment Category Version State"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="casAssessmentCategories?.length">
+        <tr *ngIf="casAssessmentCategoryVersionStates?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
           >
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'cas_plan_id'">
-            Cas Plan <p-sortIcon  [field]="'cas_plan_id'"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'period_group_id'">
-            Period Group <p-sortIcon  [field]="'period_group_id'"></p-sortIcon>
           </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
@@ -137,8 +119,6 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{rowData.cas_plan?.name}}</td>
-          <td>{{rowData.period_group?.name}}</td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
@@ -173,7 +153,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="casAssessmentCategories?.length! > 0"
+          [alwaysShow]="casAssessmentCategoryVersionStates?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -189,6 +169,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Cas Assessment Category"
+  header="Confirmation Delete Cas Assessment Category Version State"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

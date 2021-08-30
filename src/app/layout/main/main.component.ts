@@ -185,11 +185,6 @@ export class MainComponent implements OnInit {
           routerLink: "activity-task-nature",
         },
         {
-          label: "Activity Task Natures",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "activity-task-nature",
-        },
-        {
           label: "Objective Types",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "objective-type",
@@ -203,11 +198,6 @@ export class MainComponent implements OnInit {
           label: "Long Term Targets",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "long-term-target",
-        },
-        {
-          label: "Calendar Events",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "calendar-event",
         },
         {
           label: "Calendar Events",
@@ -323,6 +313,11 @@ export class MainComponent implements OnInit {
           label: "Facilities",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "facility",
+        },
+        {
+          label: "Cas Assessment Category Version States",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category-version-state",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

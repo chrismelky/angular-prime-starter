@@ -46,7 +46,7 @@ export class CasAssessmentCategoryVersionUpdateComponent implements OnInit {
     financial_year_id: [null, [Validators.required]],
     reference_document_id: [null, [Validators.required]],
     cas_assessment_state_id: [null, [Validators.required]],
-    cas_assessment_category_id: [null, [Validators.required]],
+    cas_assessment_category_id: [null, []],
     minimum_passmark: [null, [Validators.required]],
   });
 

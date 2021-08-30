@@ -20,37 +20,36 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { ReferenceDocument } from "src/app/setup/reference-document/reference-document.model";
-import { ReferenceDocumentService } from "src/app/setup/reference-document/reference-document.service";
+import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
+import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
 import { CasAssessmentState } from "src/app/setup/cas-assessment-state/cas-assessment-state.model";
 import { CasAssessmentStateService } from "src/app/setup/cas-assessment-state/cas-assessment-state.service";
-import { CasAssessmentCategory } from "src/app/setup/cas-assessment-category/cas-assessment-category.model";
-import { CasAssessmentCategoryService } from "src/app/setup/cas-assessment-category/cas-assessment-category.service";
 
-import { CasAssessmentCategoryVersion } from "./cas-assessment-category-version.model";
-import { CasAssessmentCategoryVersionService } from "./cas-assessment-category-version.service";
-import { CasAssessmentCategoryVersionUpdateComponent } from "./update/cas-assessment-category-version-update.component";
+import { CasAssessmentCategoryVersionState } from "./cas-assessment-category-version-state.model";
+import { CasAssessmentCategoryVersionStateService } from "./cas-assessment-category-version-state.service";
+import { CasAssessmentCategoryVersionStateUpdateComponent } from "./update/cas-assessment-category-version-state-update.component";
 
 @Component({
-  selector: "app-cas-assessment-category-version",
-  templateUrl: "./cas-assessment-category-version.component.html",
+  selector: "app-cas-assessment-category-version-state",
+  templateUrl: "./cas-assessment-category-version-state.component.html",
 })
-export class CasAssessmentCategoryVersionComponent implements OnInit {
+export class CasAssessmentCategoryVersionStateComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
+  casAssessmentCategoryVersionStates?: CasAssessmentCategoryVersionState[] = [];
 
-  financialYears?: FinancialYear[] = [];
-  referenceDocuments?: ReferenceDocument[] = [];
+  casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
   casAssessmentStates?: CasAssessmentState[] = [];
-  casAssessmentCategories?: CasAssessmentCategory[] = [];
 
   cols = [
-    /*{
-      field: "reference_document_id",
-      header: "Reference Document ",
+    {
+      field: "min_value",
+      header: "Min Value",
+      sort: false,
+    },
+    {
+      field: "cas_assessment_category_version_id",
+      header: "Cas Assessment Category Version ",
       sort: false,
     },
     {
@@ -59,14 +58,9 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
       sort: false,
     },
     {
-      field: "cas_assessment_category_id",
-      header: "Cas Assessment Category ",
+      field: "max_value",
+      header: "Max Value",
       sort: false,
-    },*/
-    {
-      field: "minimum_passmark",
-      header: "Minimum Passmark",
-      sort: true,
     },
   ]; //Table display columns
 
@@ -80,14 +74,11 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  financial_year_id!: number;
 
   constructor(
+    protected casAssessmentCategoryVersionStateService: CasAssessmentCategoryVersionStateService,
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
-    protected financialYearService: FinancialYearService,
-    protected referenceDocumentService: ReferenceDocumentService,
     protected casAssessmentStateService: CasAssessmentStateService,
-    protected casAssessmentCategoryService: CasAssessmentCategoryService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -97,29 +88,17 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.financialYearService
+    this.casAssessmentCategoryVersionService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
-    this.referenceDocumentService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<ReferenceDocument[]>) =>
-          (this.referenceDocuments = resp.data)
+        (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
+          (this.casAssessmentCategoryVersions = resp.data)
       );
     this.casAssessmentStateService
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentState[]>) =>
           (this.casAssessmentStates = resp.data)
-      );
-    this.casAssessmentCategoryService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<CasAssessmentCategory[]>) =>
-          (this.casAssessmentCategories = resp.data)
       );
     this.handleNavigation();
   }
@@ -130,22 +109,18 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.financial_year_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.casAssessmentCategoryVersionService
+    this.casAssessmentCategoryVersionStateService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        financial_year_id: this.financial_year_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<CasAssessmentCategoryVersion[]>) => {
+        (res: CustomResponse<CasAssessmentCategoryVersionState[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -176,20 +151,8 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -250,21 +213,21 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
   }
 
   /**
-   * Creating or updating CasAssessmentCategoryVersion
-   * @param casAssessmentCategoryVersion ; If undefined initize new model to create else edit existing model
+   * Creating or updating CasAssessmentCategoryVersionState
+   * @param casAssessmentCategoryVersionState ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(
-    casAssessmentCategoryVersion?: CasAssessmentCategoryVersion
+    casAssessmentCategoryVersionState?: CasAssessmentCategoryVersionState
   ): void {
-    const data: CasAssessmentCategoryVersion = casAssessmentCategoryVersion ?? {
-      ...new CasAssessmentCategoryVersion(),
-      financial_year_id: this.financial_year_id,
-    };
+    const data: CasAssessmentCategoryVersionState =
+      casAssessmentCategoryVersionState ?? {
+        ...new CasAssessmentCategoryVersionState(),
+      };
     const ref = this.dialogService.open(
-      CasAssessmentCategoryVersionUpdateComponent,
+      CasAssessmentCategoryVersionStateUpdateComponent,
       {
         data,
-        header: "Create/Update CasAssessmentCategoryVersion",
+        header: "Create/Update CasAssessmentCategoryVersionState",
       }
     );
     ref.onClose.subscribe((result) => {
@@ -275,16 +238,18 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
   }
 
   /**
-   * Delete CasAssessmentCategoryVersion
-   * @param casAssessmentCategoryVersion
+   * Delete CasAssessmentCategoryVersionState
+   * @param casAssessmentCategoryVersionState
    */
-  delete(casAssessmentCategoryVersion: CasAssessmentCategoryVersion): void {
+  delete(
+    casAssessmentCategoryVersionState: CasAssessmentCategoryVersionState
+  ): void {
     this.confirmationService.confirm({
       message:
-        "Are you sure that you want to delete this CasAssessmentCategoryVersion?",
+        "Are you sure that you want to delete this CasAssessmentCategoryVersionState?",
       accept: () => {
-        this.casAssessmentCategoryVersionService
-          .delete(casAssessmentCategoryVersion.id!)
+        this.casAssessmentCategoryVersionStateService
+          .delete(casAssessmentCategoryVersionState.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -300,14 +265,14 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<CasAssessmentCategoryVersion[]> | null,
+    resp: CustomResponse<CasAssessmentCategoryVersionState[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-assessment-category-version"], {
+      this.router.navigate(["/cas-assessment-category-version-state"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -316,7 +281,7 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
         },
       });
     }
-    this.casAssessmentCategoryVersions = resp?.data ?? [];
+    this.casAssessmentCategoryVersionStates = resp?.data ?? [];
   }
 
   /**
@@ -325,6 +290,8 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Cas Assessment Category Version");
+    this.toastService.error(
+      "Error loading Cas Assessment Category Version State"
+    );
   }
 }

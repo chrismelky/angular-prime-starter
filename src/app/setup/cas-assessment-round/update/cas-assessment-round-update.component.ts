@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasAssessmentRound } from "../cas-assessment-round.model";
-import { CasAssessmentRoundService } from "../cas-assessment-round.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasAssessmentRound } from '../cas-assessment-round.model';
+import { CasAssessmentRoundService } from '../cas-assessment-round.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-cas-assessment-round-update",
-  templateUrl: "./cas-assessment-round-update.component.html",
+  selector: 'app-cas-assessment-round-update',
+  templateUrl: './cas-assessment-round-update.component.html',
 })
 export class CasAssessmentRoundUpdateComponent implements OnInit {
   isSaving = false;
@@ -47,7 +47,7 @@ export class CasAssessmentRoundUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create CasAssessmentRound or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasAssessmentRound Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -116,9 +116,9 @@ export class CasAssessmentRoundUpdateComponent implements OnInit {
   protected createFromForm(): CasAssessmentRound {
     return {
       ...new CasAssessmentRound(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      number: this.editForm.get(["number"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      number: this.editForm.get(['number'])!.value,
     };
   }
 }

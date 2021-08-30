@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
   Component,
@@ -7,8 +8,10 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { AuthService } from '../core/auth.service';
 import { StateStorageService } from '../core/state-storage.service';
+import { ToastService } from '../shared/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -36,7 +39,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private stateStorage: StateStorageService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService,
+    protected messageService: MessageService
   ) {}
 
   ngOnInit(): void {}
@@ -66,9 +71,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
           this.router.navigate([this.stateStorage.getUrl()]);
         }
       },
-      () => {
+      (error: HttpErrorResponse) => {
         this.authenticationError = true;
         this.isLoading = false;
+        console.log(error.error.message);
+        if (error.status === 401) {
+          this.toastService.error('Invalid Login');
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error' });
+        }
       }
     );
   }

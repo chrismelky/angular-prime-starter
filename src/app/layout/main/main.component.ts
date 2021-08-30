@@ -329,6 +329,26 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "ceiling-chain",
         },
+        {
+          label: "Fund Source Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "fund-source-category",
+        },
+        {
+          label: "Fund Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "fund-type",
+        },
+        {
+          label: "Gfs Code Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "gfs-code-category",
+        },
+        {
+          label: "Gfs Codes",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "gfs-code",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],
     },

@@ -382,6 +382,34 @@ const routes: Routes = [
             (m) => m.CeilingChainModule
           ),
       },
+      {
+        path: "fund-source-category",
+        loadChildren: () =>
+          import(
+            "../setup/fund-source-category/fund-source-category.module"
+          ).then((m) => m.FundSourceCategoryModule),
+      },
+      {
+        path: "fund-type",
+        loadChildren: () =>
+          import("../setup/fund-type/fund-type.module").then(
+            (m) => m.FundTypeModule
+          ),
+      },
+      {
+        path: "gfs-code-category",
+        loadChildren: () =>
+          import("../setup/gfs-code-category/gfs-code-category.module").then(
+            (m) => m.GfsCodeCategoryModule
+          ),
+      },
+      {
+        path: "gfs-code",
+        loadChildren: () =>
+          import("../setup/gfs-code/gfs-code.module").then(
+            (m) => m.GfsCodeModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

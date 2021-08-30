@@ -86,7 +86,6 @@ export class EnumService {
         value: "INTEGER_ZERO_OR_POSITIVE",
       },
     ],
-    //'PR', 'PU', 'FB', 'DE', 'PA', 'PO'
     ownerships: [
       { display: "Private", value: "PR" },
       { display: "Public", value: "PU" },
@@ -115,6 +114,10 @@ export class EnumService {
       { display: "3 Stars", value: "3" },
       { display: "4 Stars", value: "4" },
       { display: "5 Stars", value: "5" },
+    ],
+    gfsCodeCategoryTypes: [
+      { display: "Category", value: "category" },
+      { display: "Sub-Category", value: "sub_category" },
     ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };

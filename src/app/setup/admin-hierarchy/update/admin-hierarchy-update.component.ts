@@ -31,9 +31,6 @@ export class AdminHierarchyUpdateComponent implements OnInit {
 
   parents?: AdminHierarchy[] = [];
   adminHierarchyPositions?: AdminHierarchyLevel[] = [];
-  currentBudgetDecisionLevels?: DecisionLevel[] = [];
-  carryoverBudgetDecisionLevels?: DecisionLevel[] = [];
-  supplementaryBudgetDecisionLevels?: DecisionLevel[] = [];
 
   /**
    * Declare form
@@ -42,8 +39,11 @@ export class AdminHierarchyUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
-    parent_id: [null, [Validators.required]],
-    admin_hierarchy_position: [null, [Validators.required]],
+    parent_id: [{ value: null, disabled: true }, [Validators.required]],
+    admin_hierarchy_position: [
+      { value: null, disabled: true },
+      [Validators.required],
+    ],
     current_budget_locked: [false, [Validators.required]],
     is_carryover_budget_locked: [false, [Validators.required]],
     is_supplementary_budget_locked: [false, [Validators.required]],
@@ -66,36 +66,17 @@ export class AdminHierarchyUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) => (this.parents = resp.data)
-      );
     this.adminHierarchyLevelService
       .query()
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyPositions = resp.data)
       );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.currentBudgetDecisionLevels = resp.data)
-      );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.carryoverBudgetDecisionLevels = resp.data)
-      );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.supplementaryBudgetDecisionLevels = resp.data)
-      );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const data: AdminHierarchy = this.dialogConfig.data;
+    this.parents?.push(data.parent!);
+    console.log(data);
+    console.log(this.parents);
+    this.updateForm(data); //Initialize form with data from dialog
   }
 
   /**

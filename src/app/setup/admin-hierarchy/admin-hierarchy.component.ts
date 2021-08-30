@@ -68,6 +68,7 @@ export class AdminHierarchyComponent implements OnInit {
   //Mandatory filter
   parent_id!: number;
   admin_hierarchy_position!: number;
+  parent!: AdminHierarchy; //for display purposes when updating admin hierarchy
 
   constructor(
     protected adminHierarchyService: AdminHierarchyService,
@@ -188,7 +189,9 @@ export class AdminHierarchyComponent implements OnInit {
    * @param parentAdminHierarchy
    */
   onAdminHierarchySelection(parentAdminHierarchy: AdminHierarchy): void {
+    console.log(parentAdminHierarchy);
     this.parent_id = parentAdminHierarchy.id!;
+    this.parent = parentAdminHierarchy!;
     this.admin_hierarchy_position =
       parentAdminHierarchy.admin_hierarchy_position! + 1;
     this.filterChanged();
@@ -260,6 +263,7 @@ export class AdminHierarchyComponent implements OnInit {
       ...new AdminHierarchy(),
       parent_id: this.parent_id,
       admin_hierarchy_position: this.admin_hierarchy_position,
+      parent: this.parent,
     };
     const ref = this.dialogService.open(AdminHierarchyUpdateComponent, {
       data,

@@ -22,8 +22,10 @@ export class SectionTreeComponent implements OnInit {
   constructor(
     protected userService: UserService,
     protected sectionService: SectionService
-  ) {
-    this.currentUser = userService.getCurrentUser();
+  ) {}
+
+  ngOnInit(): void {
+    this.currentUser = this.userService.getCurrentUser();
     const rootSection = this.currentUser.section;
     this.nodes = rootSection
       ? [
@@ -35,9 +37,9 @@ export class SectionTreeComponent implements OnInit {
           },
         ]
       : [];
+    this.selectedValue = this.nodes[0];
+    this.onSelectionChange();
   }
-
-  ngOnInit(): void {}
 
   nodeExpand(event: any): any {
     let selected: TreeNode = event.node;
@@ -65,7 +67,7 @@ export class SectionTreeComponent implements OnInit {
       );
   }
 
-  onSelectionChange(event: any): void {
+  onSelectionChange(event?: any): void {
     const selection =
       typeof this.selectedValue === 'object'
         ? this.returnType === 'object'

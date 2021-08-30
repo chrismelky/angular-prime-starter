@@ -13,6 +13,7 @@ export class AdminHierarchy {
     public is_supplementary_budget_approved?: string,
     public current_budget_decision_level_id?: number,
     public carryover_budget_decision_level_id?: number,
-    public supplementary_budget_decision_level_id?: number
+    public supplementary_budget_decision_level_id?: number,
+    public parent?: AdminHierarchy
   ) {}
 }

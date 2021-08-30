@@ -55,26 +55,6 @@ export class PeSubFormComponent implements OnInit {
       header: "Code",
       sort: true,
     },
-    // {
-    //   field: "is_lowest",
-    //   header: "Is Lowest",
-    //   sort: false,
-    // },
-    // {
-    //   field: "sort_order",
-    //   header: "Sort Order",
-    //   sort: false,
-    // },
-    // {
-    //   field: "is_multiple",
-    //   header: "Is Multiple",
-    //   sort: false,
-    // },
-    // {
-    //   field: "is_active",
-    //   header: "Is Active",
-    //   sort: false,
-    // },
   ]; //Table display columns
 
   isLoading = false;

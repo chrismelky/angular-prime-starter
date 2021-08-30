@@ -12,22 +12,18 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { GfsCodeCategory } from "../gfs-code-category.model";
-import { GfsCodeCategoryService } from "../gfs-code-category.service";
+import { FundType } from "../fund-type.model";
+import { FundTypeService } from "../fund-type.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-gfs-code-category-update",
-  templateUrl: "./gfs-code-category-update.component.html",
+  selector: "app-fund-type-update",
+  templateUrl: "./fund-type-update.component.html",
 })
-export class GfsCodeCategoryUpdateComponent implements OnInit {
+export class FundTypeUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-
-  parents?: GfsCodeCategory[] = [];
-  types?: PlanrepEnum[] = [];
 
   /**
    * Declare form
@@ -35,31 +31,25 @@ export class GfsCodeCategoryUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    parent_id: [null, []],
-    type: [null, [Validators.required]],
+    current_budget_code: [null, [Validators.required]],
+    carry_over_budget_code: [null, [Validators.required]],
+    is_active: [false, []],
   });
 
   constructor(
-    protected gfsCodeCategoryService: GfsCodeCategoryService,
+    protected fundTypeService: FundTypeService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService,
-    protected enumService: EnumService
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.gfsCodeCategoryService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<GfsCodeCategory[]>) => (this.parents = resp.data)
-      );
-    this.types = this.enumService.get("gfsCodeCategoryTypes");
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create GfsCodeCategory or Update Facility type if exist else set form has error and return
+   * When form is valid Create FundType or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -68,20 +58,16 @@ export class GfsCodeCategoryUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const gfsCodeCategory = this.createFromForm();
-    if (gfsCodeCategory.id !== undefined) {
-      this.subscribeToSaveResponse(
-        this.gfsCodeCategoryService.update(gfsCodeCategory)
-      );
+    const fundType = this.createFromForm();
+    if (fundType.id !== undefined) {
+      this.subscribeToSaveResponse(this.fundTypeService.update(fundType));
     } else {
-      this.subscribeToSaveResponse(
-        this.gfsCodeCategoryService.create(gfsCodeCategory)
-      );
+      this.subscribeToSaveResponse(this.fundTypeService.create(fundType));
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<GfsCodeCategory>>
+    result: Observable<CustomResponse<FundType>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -111,28 +97,31 @@ export class GfsCodeCategoryUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param gfsCodeCategory
+   * @param fundType
    */
-  protected updateForm(gfsCodeCategory: GfsCodeCategory): void {
+  protected updateForm(fundType: FundType): void {
     this.editForm.patchValue({
-      id: gfsCodeCategory.id,
-      name: gfsCodeCategory.name,
-      parent_id: gfsCodeCategory.parent_id,
-      type: gfsCodeCategory.type,
+      id: fundType.id,
+      name: fundType.name,
+      current_budget_code: fundType.current_budget_code,
+      carry_over_budget_code: fundType.carry_over_budget_code,
+      is_active: fundType.is_active,
     });
   }
 
   /**
-   * Return form values as object of type GfsCodeCategory
-   * @returns GfsCodeCategory
+   * Return form values as object of type FundType
+   * @returns FundType
    */
-  protected createFromForm(): GfsCodeCategory {
+  protected createFromForm(): FundType {
     return {
-      ...new GfsCodeCategory(),
+      ...new FundType(),
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      type: this.editForm.get(["type"])!.value,
+      current_budget_code: this.editForm.get(["current_budget_code"])!.value,
+      carry_over_budget_code: this.editForm.get(["carry_over_budget_code"])!
+        .value,
+      is_active: this.editForm.get(["is_active"])!.value,
     };
   }
 }

@@ -20,23 +20,19 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
 
-import { GfsCodeCategory } from "./gfs-code-category.model";
-import { GfsCodeCategoryService } from "./gfs-code-category.service";
-import { GfsCodeCategoryUpdateComponent } from "./update/gfs-code-category-update.component";
+import { FundType } from "./fund-type.model";
+import { FundTypeService } from "./fund-type.service";
+import { FundTypeUpdateComponent } from "./update/fund-type-update.component";
 
 @Component({
-  selector: "app-gfs-code-category",
-  templateUrl: "./gfs-code-category.component.html",
+  selector: "app-fund-type",
+  templateUrl: "./fund-type.component.html",
 })
-export class GfsCodeCategoryComponent implements OnInit {
+export class FundTypeComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  gfsCodeCategories?: GfsCodeCategory[] = [];
-
-  parents?: GfsCodeCategory[] = [];
-  types?: PlanrepEnum[] = [];
+  fundTypes?: FundType[] = [];
 
   cols = [
     {
@@ -45,14 +41,19 @@ export class GfsCodeCategoryComponent implements OnInit {
       sort: true,
     },
     {
-      field: "parent_id",
-      header: "Parent ",
-      sort: false,
+      field: "current_budget_code",
+      header: "Current Budget Code",
+      sort: true,
     },
     {
-      field: "type",
-      header: "Type",
+      field: "carry_over_budget_code",
+      header: "Carry Over Budget Code",
       sort: true,
+    },
+    {
+      field: "is_active",
+      header: "Is Active",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -68,23 +69,16 @@ export class GfsCodeCategoryComponent implements OnInit {
   //Mandatory filter
 
   constructor(
-    protected gfsCodeCategoryService: GfsCodeCategoryService,
+    protected fundTypeService: FundTypeService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
+    protected toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.gfsCodeCategoryService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<GfsCodeCategory[]>) => (this.parents = resp.data)
-      );
-    this.types = this.enumService.get("types");
     this.handleNavigation();
   }
 
@@ -97,7 +91,7 @@ export class GfsCodeCategoryComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.gfsCodeCategoryService
+    this.fundTypeService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -105,7 +99,7 @@ export class GfsCodeCategoryComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<GfsCodeCategory[]>) => {
+        (res: CustomResponse<FundType[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -198,16 +192,16 @@ export class GfsCodeCategoryComponent implements OnInit {
   }
 
   /**
-   * Creating or updating GfsCodeCategory
-   * @param gfsCodeCategory ; If undefined initize new model to create else edit existing model
+   * Creating or updating FundType
+   * @param fundType ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(gfsCodeCategory?: GfsCodeCategory): void {
-    const data: GfsCodeCategory = gfsCodeCategory ?? {
-      ...new GfsCodeCategory(),
+  createOrUpdate(fundType?: FundType): void {
+    const data: FundType = fundType ?? {
+      ...new FundType(),
     };
-    const ref = this.dialogService.open(GfsCodeCategoryUpdateComponent, {
+    const ref = this.dialogService.open(FundTypeUpdateComponent, {
       data,
-      header: "Create/Update GfsCodeCategory",
+      header: "Create/Update FundType",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -217,19 +211,17 @@ export class GfsCodeCategoryComponent implements OnInit {
   }
 
   /**
-   * Delete GfsCodeCategory
-   * @param gfsCodeCategory
+   * Delete FundType
+   * @param fundType
    */
-  delete(gfsCodeCategory: GfsCodeCategory): void {
+  delete(fundType: FundType): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this GfsCodeCategory?",
+      message: "Are you sure that you want to delete this FundType?",
       accept: () => {
-        this.gfsCodeCategoryService
-          .delete(gfsCodeCategory.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
+        this.fundTypeService.delete(fundType.id!).subscribe((resp) => {
+          this.loadPage(this.page);
+          this.toastService.info(resp.message);
+        });
       },
     });
   }
@@ -241,14 +233,14 @@ export class GfsCodeCategoryComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<GfsCodeCategory[]> | null,
+    resp: CustomResponse<FundType[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/gfs-code-category"], {
+      this.router.navigate(["/fund-type"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -257,7 +249,7 @@ export class GfsCodeCategoryComponent implements OnInit {
         },
       });
     }
-    this.gfsCodeCategories = resp?.data ?? [];
+    this.fundTypes = resp?.data ?? [];
   }
 
   /**
@@ -266,6 +258,6 @@ export class GfsCodeCategoryComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Gfs Code Category");
+    this.toastService.error("Error loading Fund Type");
   }
 }

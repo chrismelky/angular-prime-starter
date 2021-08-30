@@ -33,36 +33,19 @@
             </span>
           </div>
           <div class="p-field">
-            <span class="p-float-label">
-              <p-dropdown
-                id="parent_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                (onChange)="onSearch()"
-                [showClear]="true"
-                [filter]="true"
-                [options]="parents!"
-                [(ngModel)]="search['parent_id']"
-              ></p-dropdown>
-              <label for="parent_id">Parent </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="type"
-                optionValue="value"
-                optionLabel="display"
-                (onChange)="onSearch()"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                [showClear]="true"
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="code"
+                type="text"
                 class="p-inputtext-sm"
-                [options]="types!"
-                [(ngModel)]="search['type']"
-              ></p-dropdown>
-              <label for="type">Type </label>
+                pInputText
+                [(ngModel)]="search['code']"
+              />
+              <label for="code">Code </label>
+              <i
+                class="pi pi-times clear"
+                (click)="search['code'] = undefined; onSearch()"
+              ></i>
             </span>
           </div>
         </div>
@@ -96,7 +79,7 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="gfsCodeCategories!"
+      [value]="fundSourceCategories!"
       [scrollable]="true"
       scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
@@ -104,19 +87,19 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Gfs Code Categories</span>
+          <span class="card-header-text">Fund Source Categories</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]=""
             (click)="createOrUpdate()"
-            label="Add Gfs Code Category"
+            label="Add Fund Source Category"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="gfsCodeCategories?.length">
+        <tr *ngIf="fundSourceCategories?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -166,7 +149,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="gfsCodeCategories?.length! > 0"
+          [alwaysShow]="fundSourceCategories?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -182,6 +165,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Gfs Code Category"
+  header="Confirmation Delete Fund Source Category"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

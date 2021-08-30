@@ -20,39 +20,50 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
 
-import { GfsCodeCategory } from "./gfs-code-category.model";
-import { GfsCodeCategoryService } from "./gfs-code-category.service";
-import { GfsCodeCategoryUpdateComponent } from "./update/gfs-code-category-update.component";
+import { BaselineStatistic } from "./baseline-statistic.model";
+import { BaselineStatisticService } from "./baseline-statistic.service";
+import { BaselineStatisticUpdateComponent } from "./update/baseline-statistic-update.component";
 
 @Component({
-  selector: "app-gfs-code-category",
-  templateUrl: "./gfs-code-category.component.html",
+  selector: "app-baseline-statistic",
+  templateUrl: "./baseline-statistic.component.html",
 })
-export class GfsCodeCategoryComponent implements OnInit {
+export class BaselineStatisticComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  gfsCodeCategories?: GfsCodeCategory[] = [];
-
-  parents?: GfsCodeCategory[] = [];
-  types?: PlanrepEnum[] = [];
+  baselineStatistics?: BaselineStatistic[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "description",
+      header: "Description",
       sort: true,
     },
     {
-      field: "parent_id",
-      header: "Parent ",
+      field: "code",
+      header: "Code",
+      sort: true,
+    },
+    {
+      field: "default_value",
+      header: "Default Value",
+      sort: true,
+    },
+    {
+      field: "is_common",
+      header: "Is Common",
       sort: false,
     },
     {
-      field: "type",
-      header: "Type",
-      sort: true,
+      field: "hmis_uid",
+      header: "Hmis Uid",
+      sort: false,
+    },
+    {
+      field: "active",
+      header: "Active",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -68,23 +79,16 @@ export class GfsCodeCategoryComponent implements OnInit {
   //Mandatory filter
 
   constructor(
-    protected gfsCodeCategoryService: GfsCodeCategoryService,
+    protected baselineStatisticService: BaselineStatisticService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
+    protected toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.gfsCodeCategoryService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<GfsCodeCategory[]>) => (this.parents = resp.data)
-      );
-    this.types = this.enumService.get("types");
     this.handleNavigation();
   }
 
@@ -97,7 +101,7 @@ export class GfsCodeCategoryComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.gfsCodeCategoryService
+    this.baselineStatisticService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -105,7 +109,7 @@ export class GfsCodeCategoryComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<GfsCodeCategory[]>) => {
+        (res: CustomResponse<BaselineStatistic[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -198,16 +202,16 @@ export class GfsCodeCategoryComponent implements OnInit {
   }
 
   /**
-   * Creating or updating GfsCodeCategory
-   * @param gfsCodeCategory ; If undefined initize new model to create else edit existing model
+   * Creating or updating BaselineStatistic
+   * @param baselineStatistic ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(gfsCodeCategory?: GfsCodeCategory): void {
-    const data: GfsCodeCategory = gfsCodeCategory ?? {
-      ...new GfsCodeCategory(),
+  createOrUpdate(baselineStatistic?: BaselineStatistic): void {
+    const data: BaselineStatistic = baselineStatistic ?? {
+      ...new BaselineStatistic(),
     };
-    const ref = this.dialogService.open(GfsCodeCategoryUpdateComponent, {
+    const ref = this.dialogService.open(BaselineStatisticUpdateComponent, {
       data,
-      header: "Create/Update GfsCodeCategory",
+      header: "Create/Update BaselineStatistic",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -217,15 +221,15 @@ export class GfsCodeCategoryComponent implements OnInit {
   }
 
   /**
-   * Delete GfsCodeCategory
-   * @param gfsCodeCategory
+   * Delete BaselineStatistic
+   * @param baselineStatistic
    */
-  delete(gfsCodeCategory: GfsCodeCategory): void {
+  delete(baselineStatistic: BaselineStatistic): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this GfsCodeCategory?",
+      message: "Are you sure that you want to delete this BaselineStatistic?",
       accept: () => {
-        this.gfsCodeCategoryService
-          .delete(gfsCodeCategory.id!)
+        this.baselineStatisticService
+          .delete(baselineStatistic.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -241,14 +245,14 @@ export class GfsCodeCategoryComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<GfsCodeCategory[]> | null,
+    resp: CustomResponse<BaselineStatistic[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/gfs-code-category"], {
+      this.router.navigate(["/baseline-statistic"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -257,7 +261,7 @@ export class GfsCodeCategoryComponent implements OnInit {
         },
       });
     }
-    this.gfsCodeCategories = resp?.data ?? [];
+    this.baselineStatistics = resp?.data ?? [];
   }
 
   /**
@@ -266,6 +270,6 @@ export class GfsCodeCategoryComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Gfs Code Category");
+    this.toastService.error("Error loading Baseline Statistic");
   }
 }

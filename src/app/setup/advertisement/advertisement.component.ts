@@ -7,7 +7,7 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
@@ -20,39 +20,26 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
 
-import { GfsCodeCategory } from "./gfs-code-category.model";
-import { GfsCodeCategoryService } from "./gfs-code-category.service";
-import { GfsCodeCategoryUpdateComponent } from "./update/gfs-code-category-update.component";
+import { Advertisement } from "./advertisement.model";
+import { AdvertisementService } from "./advertisement.service";
+import { AdvertisementUpdateComponent } from "./update/advertisement-update.component";
+import {finalize} from "rxjs/operators";
 
 @Component({
-  selector: "app-gfs-code-category",
-  templateUrl: "./gfs-code-category.component.html",
+  selector: "app-advertisement",
+  templateUrl: "./advertisement.component.html",
 })
-export class GfsCodeCategoryComponent implements OnInit {
+export class AdvertisementComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  gfsCodeCategories?: GfsCodeCategory[] = [];
-
-  parents?: GfsCodeCategory[] = [];
-  types?: PlanrepEnum[] = [];
+  advertisements?: Advertisement[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
-    {
-      field: "parent_id",
-      header: "Parent ",
+      field: "description",
+      header: "Description",
       sort: false,
-    },
-    {
-      field: "type",
-      header: "Type",
-      sort: true,
     },
   ]; //Table display columns
 
@@ -65,26 +52,18 @@ export class GfsCodeCategoryComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
 
-  //Mandatory filter
 
   constructor(
-    protected gfsCodeCategoryService: GfsCodeCategoryService,
+    protected advertisementService: AdvertisementService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
+    protected toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.gfsCodeCategoryService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<GfsCodeCategory[]>) => (this.parents = resp.data)
-      );
-    this.types = this.enumService.get("types");
     this.handleNavigation();
   }
 
@@ -97,7 +76,7 @@ export class GfsCodeCategoryComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.gfsCodeCategoryService
+    this.advertisementService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -105,7 +84,7 @@ export class GfsCodeCategoryComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<GfsCodeCategory[]>) => {
+        (res: CustomResponse<Advertisement[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -149,6 +128,55 @@ export class GfsCodeCategoryComponent implements OnInit {
     } else {
       this.loadPage();
     }
+  }
+
+  toggleActivation(row:any){
+    var advertisement = this.createFromForm(row);
+    this.subscribeToSaveResponse(
+      this.advertisementService.update(advertisement)
+    );
+    this.handleNavigation();
+  }
+
+  protected createFromForm(values:any): Advertisement {
+    return {
+      ...new Advertisement(),
+      id: values.id,
+      description: values.description,
+      status:values.status,
+      start_date: values.start_date,
+      end_date: values.end_date,
+      ad_url:values.ad_url
+    };
+  }
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<Advertisement>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+    //this.isSaving = false;
   }
 
   /**
@@ -198,16 +226,16 @@ export class GfsCodeCategoryComponent implements OnInit {
   }
 
   /**
-   * Creating or updating GfsCodeCategory
-   * @param gfsCodeCategory ; If undefined initize new model to create else edit existing model
+   * Creating or updating Advertisement
+   * @param advertisement ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(gfsCodeCategory?: GfsCodeCategory): void {
-    const data: GfsCodeCategory = gfsCodeCategory ?? {
-      ...new GfsCodeCategory(),
+  createOrUpdate(advertisement?: Advertisement): void {
+    const data: Advertisement = advertisement ?? {
+      ...new Advertisement(),
     };
-    const ref = this.dialogService.open(GfsCodeCategoryUpdateComponent, {
+    const ref = this.dialogService.open(AdvertisementUpdateComponent, {
       data,
-      header: "Create/Update GfsCodeCategory",
+      header: "Create/Update Advertisement",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -217,15 +245,15 @@ export class GfsCodeCategoryComponent implements OnInit {
   }
 
   /**
-   * Delete GfsCodeCategory
-   * @param gfsCodeCategory
+   * Delete Advertisement
+   * @param advertisement
    */
-  delete(gfsCodeCategory: GfsCodeCategory): void {
+  delete(advertisement: Advertisement): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this GfsCodeCategory?",
+      message: "Are you sure that you want to delete this Advertisement?",
       accept: () => {
-        this.gfsCodeCategoryService
-          .delete(gfsCodeCategory.id!)
+        this.advertisementService
+          .delete(advertisement.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -241,14 +269,14 @@ export class GfsCodeCategoryComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<GfsCodeCategory[]> | null,
+    resp: CustomResponse<Advertisement[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/gfs-code-category"], {
+      this.router.navigate(["/advertisement"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -257,7 +285,7 @@ export class GfsCodeCategoryComponent implements OnInit {
         },
       });
     }
-    this.gfsCodeCategories = resp?.data ?? [];
+    this.advertisements = resp?.data ?? [];
   }
 
   /**
@@ -266,6 +294,6 @@ export class GfsCodeCategoryComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Gfs Code Category");
+    this.toastService.error("Error loading Advertisement");
   }
 }

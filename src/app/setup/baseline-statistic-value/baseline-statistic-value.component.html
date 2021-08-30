@@ -18,33 +18,33 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="account_type_id"
+                id="admin_hierarchy_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="accountTypes!"
+                [options]="adminHierarchies!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="account_type_id"
+                [(ngModel)]="admin_hierarchy_id"
               ></p-dropdown>
-              <label for="account_type_id">Account Type </label>
+              <label for="admin_hierarchy_id">Admin Hierarchy </label>
             </span>
           </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="category_id"
+                id="financial_year_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="categories!"
+                [options]="financialYears!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="category_id"
+                [(ngModel)]="financial_year_id"
               ></p-dropdown>
-              <label for="category_id">Category </label>
+              <label for="financial_year_id">Financial Year </label>
             </span>
           </div>
         </div>
@@ -97,48 +97,16 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
-                    id="name"
+                    id="value"
                     type="text"
                     class="p-inputtext-sm"
                     pInputText
-                    [(ngModel)]="search['name']"
+                    [(ngModel)]="search['value']"
                   />
-                  <label for="name">Name </label>
+                  <label for="value">Value </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="code"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['code']"
-                  />
-                  <label for="code">Code </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['code'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="aggregated_code"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['aggregated_code']"
-                  />
-                  <label for="aggregated_code">Aggregated Code </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['aggregated_code'] = undefined; onSearch()"
+                    (click)="search['value'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>
@@ -175,7 +143,7 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="gfsCodes!"
+      [value]="baselineStatisticValues!"
       [scrollable]="true"
       scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
@@ -183,35 +151,38 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Gfs Codes</span>
+          <span class="card-header-text">Baseline Statistic Values</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!account_type_id || !category_id"
+            [disabled]="!admin_hierarchy_id || !financial_year_id"
             (click)="createOrUpdate()"
-            label="Add Gfs Code"
+            label="Add Baseline Statistic Value"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="gfsCodes?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+        <tr *ngIf="baselineStatisticValues?.length">
+          <th [pSortableColumn]="'baseline_statistic_id'">
+            Baseline Statistics <p-sortIcon [field]="'baseline_statistic_id'"></p-sortIcon>
+          </th>
+          <th *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
+          <td>
+            {{ rowData.baseline_statistic?.description }}
+          </td>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td style="flex: 0 0 2rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
@@ -245,7 +216,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="gfsCodes?.length! > 0"
+          [alwaysShow]="baselineStatisticValues?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -261,6 +232,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Gfs Code"
+  header="Confirmation Delete Baseline Statistic Value"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

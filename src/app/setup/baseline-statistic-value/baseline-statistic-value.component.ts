@@ -20,39 +20,45 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
+import { BaselineStatistic } from "src/app/setup/baseline-statistic/baseline-statistic.model";
+import { BaselineStatisticService } from "src/app/setup/baseline-statistic/baseline-statistic.service";
+import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
+import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
 
-import { GfsCodeCategory } from "./gfs-code-category.model";
-import { GfsCodeCategoryService } from "./gfs-code-category.service";
-import { GfsCodeCategoryUpdateComponent } from "./update/gfs-code-category-update.component";
+import { BaselineStatisticValue } from "./baseline-statistic-value.model";
+import { BaselineStatisticValueService } from "./baseline-statistic-value.service";
+import { BaselineStatisticValueUpdateComponent } from "./update/baseline-statistic-value-update.component";
 
 @Component({
-  selector: "app-gfs-code-category",
-  templateUrl: "./gfs-code-category.component.html",
+  selector: "app-baseline-statistic-value",
+  templateUrl: "./baseline-statistic-value.component.html",
 })
-export class GfsCodeCategoryComponent implements OnInit {
+export class BaselineStatisticValueComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  gfsCodeCategories?: GfsCodeCategory[] = [];
+  baselineStatisticValues?: BaselineStatisticValue[] = [];
 
-  parents?: GfsCodeCategory[] = [];
-  types?: PlanrepEnum[] = [];
+  baselineStatistics?: BaselineStatistic[] = [];
+  adminHierarchies?: AdminHierarchy[] = [];
+  financialYears?: FinancialYear[] = [];
 
   cols = [
+    /*{
+      field: "baseline_statistic_id",
+      header: "Baseline Statistic ",
+      sort: true,
+    },*/
     {
-      field: "name",
-      header: "Name",
+      field: "value",
+      header: "Value",
       sort: true,
     },
     {
-      field: "parent_id",
-      header: "Parent ",
+      field: "active",
+      header: "Active",
       sort: false,
-    },
-    {
-      field: "type",
-      header: "Type",
-      sort: true,
     },
   ]; //Table display columns
 
@@ -66,25 +72,41 @@ export class GfsCodeCategoryComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  admin_hierarchy_id!: number;
+  financial_year_id!: number;
 
   constructor(
-    protected gfsCodeCategoryService: GfsCodeCategoryService,
+    protected baselineStatisticValueService: BaselineStatisticValueService,
+    protected baselineStatisticService: BaselineStatisticService,
+    protected adminHierarchyService: AdminHierarchyService,
+    protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
+    protected toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.gfsCodeCategoryService
+    this.baselineStatisticService
+      .query({ columns: ["id", "description"] })
+      .subscribe(
+        (resp: CustomResponse<BaselineStatistic[]>) =>
+          (this.baselineStatistics = resp.data)
+      );
+    this.adminHierarchyService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<GfsCodeCategory[]>) => (this.parents = resp.data)
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.adminHierarchies = resp.data)
       );
-    this.types = this.enumService.get("types");
+    this.financialYearService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.financialYears = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -94,18 +116,23 @@ export class GfsCodeCategoryComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.admin_hierarchy_id || !this.financial_year_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.gfsCodeCategoryService
+    this.baselineStatisticValueService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        financial_year_id: this.financial_year_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<GfsCodeCategory[]>) => {
+        (res: CustomResponse<BaselineStatisticValue[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -136,8 +163,20 @@ export class GfsCodeCategoryComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -198,16 +237,18 @@ export class GfsCodeCategoryComponent implements OnInit {
   }
 
   /**
-   * Creating or updating GfsCodeCategory
-   * @param gfsCodeCategory ; If undefined initize new model to create else edit existing model
+   * Creating or updating BaselineStatisticValue
+   * @param baselineStatisticValue ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(gfsCodeCategory?: GfsCodeCategory): void {
-    const data: GfsCodeCategory = gfsCodeCategory ?? {
-      ...new GfsCodeCategory(),
+  createOrUpdate(baselineStatisticValue?: BaselineStatisticValue): void {
+    const data: BaselineStatisticValue = baselineStatisticValue ?? {
+      ...new BaselineStatisticValue(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
     };
-    const ref = this.dialogService.open(GfsCodeCategoryUpdateComponent, {
+    const ref = this.dialogService.open(BaselineStatisticValueUpdateComponent, {
       data,
-      header: "Create/Update GfsCodeCategory",
+      header: "Create/Update BaselineStatisticValue",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -217,15 +258,16 @@ export class GfsCodeCategoryComponent implements OnInit {
   }
 
   /**
-   * Delete GfsCodeCategory
-   * @param gfsCodeCategory
+   * Delete BaselineStatisticValue
+   * @param baselineStatisticValue
    */
-  delete(gfsCodeCategory: GfsCodeCategory): void {
+  delete(baselineStatisticValue: BaselineStatisticValue): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this GfsCodeCategory?",
+      message:
+        "Are you sure that you want to delete this BaselineStatisticValue?",
       accept: () => {
-        this.gfsCodeCategoryService
-          .delete(gfsCodeCategory.id!)
+        this.baselineStatisticValueService
+          .delete(baselineStatisticValue.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -241,14 +283,14 @@ export class GfsCodeCategoryComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<GfsCodeCategory[]> | null,
+    resp: CustomResponse<BaselineStatisticValue[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/gfs-code-category"], {
+      this.router.navigate(["/baseline-statistic-value"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -257,7 +299,7 @@ export class GfsCodeCategoryComponent implements OnInit {
         },
       });
     }
-    this.gfsCodeCategories = resp?.data ?? [];
+    this.baselineStatisticValues = resp?.data?? [];
   }
 
   /**
@@ -266,6 +308,6 @@ export class GfsCodeCategoryComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Gfs Code Category");
+    this.toastService.error("Error loading Baseline Statistic Value");
   }
 }

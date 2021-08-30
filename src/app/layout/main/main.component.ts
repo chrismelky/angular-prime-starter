@@ -515,9 +515,44 @@ export class MainComponent implements OnInit {
           routerLink: 'user',
         },
         {
+          label: "Baseline Statistics",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "baseline-statistic",
+        },
+        {
+          label: "Baseline Statistic Values",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "baseline-statistic-value",
+        },
+        {
+          label: "Advertisements",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "advertisement",
+        },
+        {
           label: "Ceiling Chains",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "ceiling-chain",
+        },
+        {
+          label: "Fund Source Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "fund-source-category",
+        },
+        {
+          label: "Fund Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "fund-type",
+        },
+        {
+          label: "Gfs Code Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "gfs-code-category",
+        },
+        {
+          label: "Gfs Codes",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "gfs-code",
         },
         {
           label: "Pe Forms",

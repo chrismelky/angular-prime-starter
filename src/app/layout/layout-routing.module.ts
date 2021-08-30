@@ -374,10 +374,59 @@ const routes: Routes = [
           import('../setup/user/user.module').then((m) => m.UserModule),
       },
       {
+        path: 'baseline-statistic',
+        loadChildren: () =>
+          import('../setup/baseline-statistic/baseline-statistic.module').then(
+            (m) => m.BaselineStatisticModule
+          ),
+      },
+      {
+        path: 'baseline-statistic-value',
+        loadChildren: () =>
+          import(
+            '../setup/baseline-statistic-value/baseline-statistic-value.module'
+          ).then((m) => m.BaselineStatisticValueModule),
+      },
+      {
+        path: 'advertisement',
+        loadChildren: () =>
+          import('../setup/advertisement/advertisement.module').then(
+            (m) => m.AdvertisementModule
+          ),
+      },
+      {
         path: 'ceiling-chain',
         loadChildren: () =>
           import('../setup/ceiling-chain/ceiling-chain.module').then(
             (m) => m.CeilingChainModule
+          ),
+      },
+      {
+        path: 'fund-source-category',
+        loadChildren: () =>
+          import(
+            '../setup/fund-source-category/fund-source-category.module'
+          ).then((m) => m.FundSourceCategoryModule),
+      },
+      {
+        path: 'fund-type',
+        loadChildren: () =>
+          import('../setup/fund-type/fund-type.module').then(
+            (m) => m.FundTypeModule
+          ),
+      },
+      {
+        path: 'gfs-code-category',
+        loadChildren: () =>
+          import('../setup/gfs-code-category/gfs-code-category.module').then(
+            (m) => m.GfsCodeCategoryModule
+          ),
+      },
+      {
+        path: 'gfs-code',
+        loadChildren: () =>
+          import('../setup/gfs-code/gfs-code.module').then(
+            (m) => m.GfsCodeModule
           ),
       },
       {

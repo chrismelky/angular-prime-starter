@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { AssetCondition } from "../asset-condition.model";
-import { AssetConditionService } from "../asset-condition.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AssetCondition } from '../asset-condition.model';
+import { AssetConditionService } from '../asset-condition.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-asset-condition-update",
-  templateUrl: "./asset-condition-update.component.html",
+  selector: 'app-asset-condition-update',
+  templateUrl: './asset-condition-update.component.html',
 })
 export class AssetConditionUpdateComponent implements OnInit {
   isSaving = false;
@@ -30,8 +30,8 @@ export class AssetConditionUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
-    code: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(100)]],
+    code: [null, [Validators.required, Validators.maxLength(100)]],
   });
 
   constructor(
@@ -116,9 +116,9 @@ export class AssetConditionUpdateComponent implements OnInit {
   protected createFromForm(): AssetCondition {
     return {
       ...new AssetCondition(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
     };
   }
 }

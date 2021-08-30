@@ -207,8 +207,6 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="peDefinitions!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -237,7 +235,7 @@
           <th [pSortableColumn]="'gfs_code_id'">
             Gfs Code <p-sortIcon [field]="'gfs_code_id'"></p-sortIcon>
           </th>
-          <th style="flex: 0 0 2rem"></th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -245,8 +243,14 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{rowData.gfs_code?'['+rowData.gfs_code?.code+'] '+ rowData.gfs_code?.name:''}}</td>
-          <td style="flex: 0 0 2 rem">
+          <td>
+            {{
+              rowData.gfs_code
+                ? "[" + rowData.gfs_code?.code + "] " + rowData.gfs_code?.name
+                : ""
+            }}
+          </td>
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

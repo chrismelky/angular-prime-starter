@@ -14,6 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { BlockUIModule } from 'primeng/blockui';
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   declarations: [MainComponent, NotFoundComponent],
@@ -29,6 +30,7 @@ import { BlockUIModule } from 'primeng/blockui';
     ButtonModule,
     MenuModule,
     BlockUIModule,
+    RippleModule,
   ],
 })
 export class LayoutModule {}

@@ -29,6 +29,7 @@ import { StrategicPlan } from "./strategic-plan.model";
 import { StrategicPlanService } from "./strategic-plan.service";
 import { StrategicPlanUpdateComponent } from "./update/strategic-plan-update.component";
 import {UserService} from "../user/user.service";
+import {User} from "../user/user.model";
 
 @Component({
   selector: "app-strategic-plan",
@@ -79,6 +80,7 @@ export class StrategicPlanComponent implements OnInit {
   admin_hierarchy_id!: number;
   start_financial_year_id!: number;
   end_financial_year_id!: number;
+  currentUser?: User;
 
   constructor(
     protected strategicPlanService: StrategicPlanService,
@@ -93,12 +95,12 @@ export class StrategicPlanComponent implements OnInit {
     protected toastService: ToastService,
     protected userService:UserService
   ) {
-
-    // this.currentUser = userService.getCurrentUser();
-    // if (this.currentUser.admin_hierarchy) {
-    //   this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
-    //   this.admin_hierarchy_id = this.adminHierarchies[0].id!;
-    // }
+    this.currentUser = userService.getCurrentUser();
+    if (this.currentUser.admin_hierarchy) {
+      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
+      //this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+      this.admin_hierarchy_id = 382;
+    }
   }
 
   ngOnInit(): void {

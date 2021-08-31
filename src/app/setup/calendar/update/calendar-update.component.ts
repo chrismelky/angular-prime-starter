@@ -55,9 +55,9 @@ export class CalendarUpdateComponent implements OnInit {
     before_start_reminder_days: [null, []],
     before_end_reminder_days: [null, []],
     financial_year_id: [null, [Validators.required]],
-    cas_assessment_round_id: [null, [Validators.required]],
-    section_level_id: [null, [Validators.required]],
-    sector_id: [null, [Validators.required]],
+    cas_assessment_round_id: [null, []],
+    section_level_id: [null, []],
+    sector_id: [null, []],
     calendar_event_id: [null, [Validators.required]],
   });
 

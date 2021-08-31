@@ -40,6 +40,7 @@
         >
           <button
             pButton
+            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -57,6 +58,8 @@
           ></button>
           <button
             pButton
+            pRipple
+            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -86,6 +89,7 @@
             >
               <button
                 pButton
+                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -119,6 +123,7 @@
           <span class="card-header-text">Cas Assessment Category Versions</span>
           <button
             pButton
+            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]="!financial_year_id"
@@ -142,7 +147,7 @@
           <th [pSortableColumn]="'cas_assessment_category_id'">
             Cas Assessment Category <p-sortIcon  [field]="'cas_assessment_category_id'"></p-sortIcon>
           </th>
-          <th style="flex: 0 0 2rem"></th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -159,6 +164,7 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -170,6 +176,7 @@
                 ></button>
                 <button
                   pButton
+                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -185,19 +192,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="casAssessmentCategoryVersions?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="casAssessmentCategoryVersions?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

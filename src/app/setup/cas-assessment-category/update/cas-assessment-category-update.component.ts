@@ -10,14 +10,14 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasPlan } from "src/app/setup/cas-plan/cas-plan.model";
-import { CasPlanService } from "src/app/setup/cas-plan/cas-plan.service";
-import { PeriodGroup } from "src/app/setup/period-group/period-group.model";
-import { PeriodGroupService } from "src/app/setup/period-group/period-group.service";
-import { CasAssessmentCategory } from "../cas-assessment-category.model";
-import { CasAssessmentCategoryService } from "../cas-assessment-category.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasPlan } from 'src/app/setup/cas-plan/cas-plan.model';
+import { CasPlanService } from 'src/app/setup/cas-plan/cas-plan.service';
+import { PeriodGroup } from 'src/app/setup/period-group/period-group.model';
+import { PeriodGroupService } from 'src/app/setup/period-group/period-group.service';
+import { CasAssessmentCategory } from '../cas-assessment-category.model';
+import { CasAssessmentCategoryService } from '../cas-assessment-category.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
   selector: 'app-cas-assessment-category-update',
@@ -36,9 +36,10 @@ export class CasAssessmentCategoryUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, []],
-    cas_plan_id: [null, []],
-    period_group_id: [null, []],
+    name: [null, [Validators.required, Validators.maxLength(200)]],
+    cas_plan_id: [null, [Validators.required]],
+    period_group_id: [null, [Validators.required]],
+    admin_hierarchy_level_id: [null, [Validators.required]],
   });
 
   constructor(
@@ -136,10 +137,10 @@ export class CasAssessmentCategoryUpdateComponent implements OnInit {
   protected createFromForm(): CasAssessmentCategory {
     return {
       ...new CasAssessmentCategory(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      cas_plan_id: this.editForm.get(["cas_plan_id"])!.value,
-      period_group_id: this.editForm.get(["period_group_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      cas_plan_id: this.editForm.get(['cas_plan_id'])!.value,
+      period_group_id: this.editForm.get(['period_group_id'])!.value,
     };
   }
 }

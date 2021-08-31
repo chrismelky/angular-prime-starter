@@ -35,10 +35,10 @@ export class CasAssessmentCriteriaUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     cas_assessment_category_version_id: [null, [Validators.required]],
-    name: [null, [Validators.required]],
-    number: [null, [Validators.required]],
-    how_to_assess: [null, [Validators.required]],
-    how_to_score: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(200)]],
+    number: [null, [Validators.required, Validators.min(0)]],
+    how_to_assess: [null, [Validators.required, Validators.maxLength(200)]],
+    how_to_score: [null, [Validators.required, Validators.maxLength(200)]],
   });
 
   constructor(

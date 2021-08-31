@@ -26,6 +26,7 @@ import { RippleModule } from 'primeng/ripple';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { InputMaskModule } from 'primeng/inputmask';
+import { TreeTableModule } from 'primeng/treetable';
 
 @NgModule({
   declarations: [],
@@ -56,6 +57,7 @@ import { InputMaskModule } from 'primeng/inputmask';
     TreeSelectModule,
     OverlayPanelModule,
     InputMaskModule,
+    TreeTableModule,
   ],
 })
 export class SharedPrimengModule {}

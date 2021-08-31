@@ -35,9 +35,10 @@ export class CasPlanContentUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(255)]],
     parent_id: [null, []],
     cas_plan_id: [null, [Validators.required]],
+    sort_order: [null, [Validators.required, Validators.min(1)]],
   });
 
   constructor(
@@ -124,6 +125,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
       name: casPlanContent.name,
       parent_id: casPlanContent.parent_id,
       cas_plan_id: casPlanContent.cas_plan_id,
+      sort_order: casPlanContent.sort_order,
     });
   }
 
@@ -138,6 +140,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       parent_id: this.editForm.get(['parent_id'])!.value,
       cas_plan_id: this.editForm.get(['cas_plan_id'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
     };
   }
 }

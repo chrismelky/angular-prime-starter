@@ -23,6 +23,9 @@
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
             >Name is required.</small
           >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.maxlength"
+            >name maximum length is 200 characters</small
+          >
         </span>
       </div>
 
@@ -47,6 +50,11 @@
             *ngIf="editForm.get('serial_number')?.errors?.required"
             >Serial Number is required.</small
           >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('serial_number')?.errors?.min"
+            >Serial Number minimum value is 0</small
+          >
         </span>
       </div>
 
@@ -69,6 +77,11 @@
               formError)
           "
         >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('score_value')?.errors?.min"
+            >Score Value minimum value is 0.00</small
+          >
         </span>
       </div>
 

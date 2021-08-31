@@ -6,16 +6,16 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { CasPlanContentComponent } from "./cas-plan-content.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { CasPlanContentComponent } from './cas-plan-content.component';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: CasPlanContentComponent,
     data: {
-      defaultSort: "id:asc",
+      defaultSort: 'sort_order:asc',
     },
     //canActivate: [UserRouteAccessService],
   },

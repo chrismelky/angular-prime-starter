@@ -34,8 +34,8 @@ export class CategoryUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
-    code: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(255)]],
+    code: [null, [Validators.required, Validators.maxLength(50)]],
     category_combination_id: [null, [Validators.required]],
   });
 

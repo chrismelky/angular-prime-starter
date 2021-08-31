@@ -1,0 +1,112 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="min_value"
+            formControlName="min_value"
+          ></p-inputNumber>
+          <label for="min_value">Min Value </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('min_value')!.invalid &&
+            (editForm.get('min_value')!.dirty ||
+              editForm.get('min_value')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="max_value"
+            formControlName="max_value"
+          ></p-inputNumber>
+          <label for="max_value">Max Value </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('max_value')!.invalid &&
+            (editForm.get('max_value')!.dirty ||
+              editForm.get('max_value')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="cas_assessment_category_version_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="casAssessmentCategoryVersions!"
+            formControlName="cas_assessment_category_version_id"
+          ></p-dropdown>
+          <label for="cas_assessment_category_version_id"
+            >Cas Assessment Category Version
+          </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('cas_assessment_category_version_id')!.invalid &&
+            (editForm.get('cas_assessment_category_version_id')!.dirty ||
+              editForm.get('cas_assessment_category_version_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="cas_assessment_state_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="casAssessmentStates!"
+            formControlName="cas_assessment_state_id"
+          ></p-dropdown>
+          <label for="cas_assessment_state_id">Cas Assessment State </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('cas_assessment_state_id')!.invalid &&
+            (editForm.get('cas_assessment_state_id')!.dirty ||
+              editForm.get('cas_assessment_state_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

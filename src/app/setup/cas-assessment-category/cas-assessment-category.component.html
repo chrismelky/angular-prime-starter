@@ -1,13 +1,14 @@
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
-  <p-card class="filter">
-    <ng-template pTemplate="header">
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-        <i class="pi pi-filter"></i>
-        <span class="card-header-text">Filter</span>
-      </div>
-    </ng-template>
-    <div fxLayout="column" fxLayoutGap="4px">
+  <p-accordion>
+    <p-accordionTab [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'">
+      <ng-template pTemplate="header">
+        <span fxLayout="row" fxLayoutGap="0.5rem">
+          <i class="pi pi-filter"></i>
+          <span class="filter-text">Filter</span>
+        </span>
+      </ng-template>
+
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
           fxLayout="row wrap"
@@ -15,63 +16,56 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
+          <div class="p-field">
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="name"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="search['name']"
+              />
+              <label for="name">Name </label>
+              <i
+                class="pi pi-times clear"
+                (click)="search['name'] = undefined; onSearch()"
+              ></i>
+            </span>
+          </div>
+          <div class="p-field">
             <span class="p-float-label">
               <p-dropdown
                 id="cas_plan_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
+                (onChange)="onSearch()"
+                [showClear]="true"
                 [filter]="true"
-                class="p-inputtext-sm"
                 [options]="casPlans!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="cas_plan_id"
+                [(ngModel)]="search['cas_plan_id']"
               ></p-dropdown>
               <label for="cas_plan_id">Cas Plan </label>
             </span>
           </div>
-          <div class="p-field" fxFlex>
+          <div class="p-field">
             <span class="p-float-label">
               <p-dropdown
                 id="period_group_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
+                (onChange)="onSearch()"
+                [showClear]="true"
                 [filter]="true"
-                class="p-inputtext-sm"
                 [options]="periodGroups!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="period_group_id"
+                [(ngModel)]="search['period_group_id']"
               ></p-dropdown>
               <label for="period_group_id">Period Group </label>
             </span>
           </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="admin_hierarchy_level_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="adminHierarchyLevels!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_level_id"
-              ></p-dropdown>
-              <label for="admin_hierarchy_level_id"
-                >Admin Hierarchy Level
-              </label>
-            </span>
-          </div>
         </div>
-        <div
-          fxLayout="row wrap"
-          fxFlex="140px"
-          fxLayoutGap="4px"
-          fxLayoutAlign="end center"
-        >
+        <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
           <button
             pButton
             pRipple
@@ -151,8 +145,8 @@
           </div>
         </p-accordionTab>
       </p-accordion>
-    </div>
-  </p-card>
+    </p-accordionTab>
+  </p-accordion>
 
   <!-- Table Panel -->
   <p-card>
@@ -176,9 +170,7 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !cas_plan_id || !period_group_id || !admin_hierarchy_level_id
-            "
+            [disabled]=""
             (click)="createOrUpdate()"
             label="Add Cas Assessment Category"
           ></button>
@@ -201,6 +193,10 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
+          <td>{{ rowData.cas_plan?.name }}</td>
+          <td>{{ rowData.period_group?.name }}</td>
+          <td style="flex: 0 0 2 rem"></td>
+
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

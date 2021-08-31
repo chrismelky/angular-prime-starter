@@ -9,7 +9,12 @@
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="name" type="text" pInputText formControlName="name" />
+          <p-inputMask
+            mask="2099/99"
+            id="name"
+            type="text"
+            formControlName="name"
+          ></p-inputMask>
           <label for="name">Name </label>
         </span>
         <span
@@ -25,75 +30,7 @@
           >
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input
-            id="description"
-            type="text"
-            pInputText
-            formControlName="description"
-          />
-          <label for="description">Description </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('description')!.invalid &&
-            (editForm.get('description')!.dirty ||
-              editForm.get('description')!.touched ||
-              formError)
-          "
-        >
-        </span>
-      </div>
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
-          id="is_active"
-          name="is_active"
-          formControlName="is_active"
-        ></p-inputSwitch>
-        <label for="is_active">Is Active </label>
-      </div>
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
-          id="is_current"
-          name="is_current"
-          formControlName="is_current"
-        ></p-inputSwitch>
-        <label for="is_current">Is Current </label>
-      </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <p-inputNumber id="status" formControlName="status"></p-inputNumber>
-          <label for="status">Status </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('status')!.invalid &&
-            (editForm.get('status')!.dirty ||
-              editForm.get('status')!.touched ||
-              formError)
-          "
-        >
-        </span>
-      </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <p-inputNumber
-            id="sort_order"
-            formControlName="sort_order"
-          ></p-inputNumber>
-          <label for="sort_order">Sort Order </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('sort_order')!.invalid &&
-            (editForm.get('sort_order')!.dirty ||
-              editForm.get('sort_order')!.touched ||
-              formError)
-          "
-        >
-        </span>
-      </div>
+
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <p-calendar

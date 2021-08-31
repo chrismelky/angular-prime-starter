@@ -32,58 +32,6 @@
               ></i>
             </span>
           </div>
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
-                id="description"
-                type="text"
-                class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['description']"
-              />
-              <label for="description">Description </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['description'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <label for="start_date">Start Date </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['start_date'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <label for="end_date">End Date </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['end_date'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
-            <span class="p-float-label">
-              <p-dropdown
-                id="previous_financial_year_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                (onChange)="onSearch()"
-                [showClear]="true"
-                [filter]="true"
-                [options]="previousFinancialYears!"
-                [(ngModel)]="search['previous_financial_year_id']"
-              ></p-dropdown>
-              <label for="previous_financial_year_id"
-                >Previous Financial Year
-              </label>
-            </span>
-          </div>
         </div>
         <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
           <button
@@ -197,19 +145,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="financialYears?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="financialYears?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

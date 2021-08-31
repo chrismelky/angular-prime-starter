@@ -28,6 +28,7 @@ import { FinancialYear } from "src/app/setup/financial-year/financial-year.model
 import { StrategicPlan } from "./strategic-plan.model";
 import { StrategicPlanService } from "./strategic-plan.service";
 import { StrategicPlanUpdateComponent } from "./update/strategic-plan-update.component";
+import {UserService} from "../user/user.service";
 
 @Component({
   selector: "app-strategic-plan",
@@ -89,16 +90,24 @@ export class StrategicPlanComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
-  ) {}
+    protected toastService: ToastService,
+    protected userService:UserService
+  ) {
+
+    // this.currentUser = userService.getCurrentUser();
+    // if (this.currentUser.admin_hierarchy) {
+    //   this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
+    //   this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+    // }
+  }
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
+    // this.adminHierarchyService
+    //   .query({ columns: ["id", "name"] })
+    //   .subscribe(
+    //     (resp: CustomResponse<AdminHierarchy[]>) =>
+    //       (this.adminHierarchies = resp.data)
+    //   );
     this.startFinancialYearService
       .query({ columns: ["id", "name"] })
       .subscribe(

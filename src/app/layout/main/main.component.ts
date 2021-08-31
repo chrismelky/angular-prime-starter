@@ -421,7 +421,6 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "baseline-statistic-value",
         },
-<<<<<<< HEAD
         {
           label: "Advertisements",
           icon: "pi pi-fw pi-arrow-right",

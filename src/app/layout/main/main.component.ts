@@ -105,6 +105,11 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           items: [
             {
+              label: "Projects",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "project",
+            },
+            {
               label: "Fund Source Categories",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "fund-source-category",
@@ -246,7 +251,7 @@ export class MainComponent implements OnInit {
             {
               label: "Comprehensive Plans",
               icon: "pi pi-fw pi-arrow-right",
-              items:[
+              items: [
                 {
                   label: "Cas Plans",
                   icon: "pi pi-fw pi-arrow-right",
@@ -297,7 +302,7 @@ export class MainComponent implements OnInit {
                   icon: "pi pi-fw pi-arrow-right",
                   routerLink: "baseline-statistic",
                 },
-              ]
+              ],
             },
           ],
         },
@@ -329,7 +334,7 @@ export class MainComponent implements OnInit {
                   icon: "pi pi-fw pi-arrow-right",
                   routerLink: "pe-definition",
                 },
-              ]
+              ],
             },
           ],
         },
@@ -465,6 +470,11 @@ export class MainComponent implements OnInit {
           label: "Pe Select Options",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "pe-select-option",
+        },
+        {
+          label: "Transport Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "transport-category",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

@@ -480,8 +480,20 @@ const routes: Routes = [
       {
         path: "role",
         loadChildren: () =>
-          import("../setup/role/role.module").then(
-            (m) => m.RoleModule
+          import("../setup/role/role.module").then((m) => m.RoleModule),
+      },
+      {
+        path: "project",
+        loadChildren: () =>
+          import("../setup/project/project.module").then(
+            (m) => m.ProjectModule
+          ),
+      },
+      {
+        path: "transport-category",
+        loadChildren: () =>
+          import("../setup/transport-category/transport-category.module").then(
+            (m) => m.TransportCategoryModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

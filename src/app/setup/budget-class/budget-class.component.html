@@ -18,19 +18,17 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_category_version_id"
+                id="parent_id"
                 optionValue="id"
-                optionLabel="cas_assessment_category.name"
+                optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="casAssessmentCategoryVersions!"
+                [options]="parents!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="cas_assessment_category_version_id"
+                [(ngModel)]="parent_id"
               ></p-dropdown>
-              <label for="cas_assessment_category_version_id"
-                >Cas Assessment Category Version
-              </label>
+              <label for="parent_id">Parent </label>
             </span>
           </div>
         </div>
@@ -42,7 +40,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -60,7 +57,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -98,6 +94,22 @@
                   ></i>
                 </span>
               </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="code"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['code']"
+                  />
+                  <label for="code">Code </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['code'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
             </div>
             <div
               fxLayout="row"
@@ -107,7 +119,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -132,27 +143,25 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="casAssessmentCriteria!"
+      [value]="budgetClasses!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Cas Assessment Criteria</span>
+          <span class="card-header-text">Budget Classes</span>
           <button
             pButton
-            pRipple
-            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!cas_assessment_category_version_id"
+            [disabled]="!parent_id"
             (click)="createOrUpdate()"
-            label="Add Cas Assessment Criteria"
+            label="Add Budget Class"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="casAssessmentCriteria?.length">
+        <tr *ngIf="budgetClasses?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -173,7 +182,6 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -185,7 +193,6 @@
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -205,7 +212,7 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="casAssessmentCriteria?.length! > 0"
+        [alwaysShow]="budgetClasses?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -220,6 +227,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Cas Assessment Criteria"
+  header="Confirmation Delete Budget Class"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

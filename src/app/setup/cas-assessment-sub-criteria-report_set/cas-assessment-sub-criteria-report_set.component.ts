@@ -20,33 +20,36 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
-import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
+import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
+import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
+import { CasAssessmentSubCriteriaOption } from "src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
+import { CasAssessmentSubCriteriaOptionService } from "src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service";
 
-import { CasAssessmentCriteriaOption } from "./cas-assessment-criteria-option.model";
-import { CasAssessmentCriteriaOptionService } from "./cas-assessment-criteria-option.service";
-import { CasAssessmentCriteriaOptionUpdateComponent } from "./update/cas-assessment-criteria-option-update.component";
+import { CasAssessmentSubCriteriaReportSet } from "./cas-assessment-sub-criteria-report_set.model";
+import { CasAssessmentSubCriteriaReportSetService } from "./cas-assessment-sub-criteria-report_set.service";
+import { CasAssessmentSubCriteriaReportSetUpdateComponent } from "./update/cas-assessment-sub-criteria-report_set-update.component";
 
 @Component({
-  selector: "app-cas-assessment-criteria-option",
-  templateUrl: "./cas-assessment-criteria-option.component.html",
+  selector: "app-cas-assessment-sub-criteria-report_set",
+  templateUrl: "./cas-assessment-sub-criteria-report_set.component.html",
 })
-export class CasAssessmentCriteriaOptionComponent implements OnInit {
+export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  casAssessmentCriteriaOptions?: CasAssessmentCriteriaOption[] = [];
+  casAssessmentSubCriteriaReportSets?: CasAssessmentSubCriteriaReportSet[] = [];
 
-  casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
+  casPlanContents?: CasPlanContent[] = [];
+  casAssessmentSubCriteriaOptions?: CasAssessmentSubCriteriaOption[] = [];
 
   cols = [
     {
       field: "name",
       header: "Name",
-      sort: true,
+      sort: false,
     },
     {
-      field: "number",
-      header: "Number",
+      field: "report_path",
+      header: "Report Path",
       sort: false,
     },
   ]; //Table display columns
@@ -61,11 +64,13 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  cas_assessment_category_version_id!: number;
+  cas_plan_content_id!: number;
+  cas_assessment_sub_criteria_option_id!: number;
 
   constructor(
-    protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
-    protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
+    protected casAssessmentSubCriteriaReportSetService: CasAssessmentSubCriteriaReportSetService,
+    protected casPlanContentService: CasPlanContentService,
+    protected casAssessmentSubCriteriaOptionService: CasAssessmentSubCriteriaOptionService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -75,11 +80,17 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "cas_assessment_category_id"] })
+    this.casPlanContentService
+      .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
-          (this.casAssessmentCategoryVersions = resp.data)
+        (resp: CustomResponse<CasPlanContent[]>) =>
+          (this.casPlanContents = resp.data)
+      );
+    this.casAssessmentSubCriteriaOptionService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) =>
+          (this.casAssessmentSubCriteriaOptions = resp.data)
       );
     this.handleNavigation();
   }
@@ -90,23 +101,27 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_assessment_category_version_id) {
+    if (
+      !this.cas_plan_content_id ||
+      !this.cas_assessment_sub_criteria_option_id
+    ) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.casAssessmentCriteriaOptionService
+    this.casAssessmentSubCriteriaReportSetService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_assessment_category_version_id:
-          this.cas_assessment_category_version_id,
+        cas_plan_content_id: this.cas_plan_content_id,
+        cas_assessment_sub_criteria_option_id:
+          this.cas_assessment_sub_criteria_option_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<CasAssessmentCriteriaOption[]>) => {
+        (res: CustomResponse<CasAssessmentSubCriteriaReportSet[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -211,22 +226,24 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   }
 
   /**
-   * Creating or updating CasAssessmentCriteriaOption
-   * @param casAssessmentCriteriaOption ; If undefined initize new model to create else edit existing model
+   * Creating or updating CasAssessmentSubCriteriaReportSet
+   * @param casAssessmentSubCriteriaReportSet ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(
-    casAssessmentCriteriaOption?: CasAssessmentCriteriaOption
+    casAssessmentSubCriteriaReportSet?: CasAssessmentSubCriteriaReportSet
   ): void {
-    const data: CasAssessmentCriteriaOption = casAssessmentCriteriaOption ?? {
-      ...new CasAssessmentCriteriaOption(),
-      cas_assessment_category_version_id:
-        this.cas_assessment_category_version_id,
-    };
+    const data: CasAssessmentSubCriteriaReportSet =
+      casAssessmentSubCriteriaReportSet ?? {
+        ...new CasAssessmentSubCriteriaReportSet(),
+        cas_plan_content_id: this.cas_plan_content_id,
+        cas_assessment_sub_criteria_option_id:
+          this.cas_assessment_sub_criteria_option_id,
+      };
     const ref = this.dialogService.open(
-      CasAssessmentCriteriaOptionUpdateComponent,
+      CasAssessmentSubCriteriaReportSetUpdateComponent,
       {
         data,
-        header: "Create/Update CasAssessmentCriteriaOption",
+        header: "Create/Update CasAssessmentSubCriteriaReportSet",
       }
     );
     ref.onClose.subscribe((result) => {
@@ -237,16 +254,18 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   }
 
   /**
-   * Delete CasAssessmentCriteriaOption
-   * @param casAssessmentCriteriaOption
+   * Delete CasAssessmentSubCriteriaReportSet
+   * @param casAssessmentSubCriteriaReportSet
    */
-  delete(casAssessmentCriteriaOption: CasAssessmentCriteriaOption): void {
+  delete(
+    casAssessmentSubCriteriaReportSet: CasAssessmentSubCriteriaReportSet
+  ): void {
     this.confirmationService.confirm({
       message:
-        "Are you sure that you want to delete this CasAssessmentCriteriaOption?",
+        "Are you sure that you want to delete this CasAssessmentSubCriteriaReportSet?",
       accept: () => {
-        this.casAssessmentCriteriaOptionService
-          .delete(casAssessmentCriteriaOption.id!)
+        this.casAssessmentSubCriteriaReportSetService
+          .delete(casAssessmentSubCriteriaReportSet.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -262,14 +281,14 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<CasAssessmentCriteriaOption[]> | null,
+    resp: CustomResponse<CasAssessmentSubCriteriaReportSet[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-assessment-criteria-option"], {
+      this.router.navigate(["/cas-assessment-sub-criteria-report_set"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -278,7 +297,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
         },
       });
     }
-    this.casAssessmentCriteriaOptions = resp?.data ?? [];
+    this.casAssessmentSubCriteriaReportSets = resp?.data ?? [];
   }
 
   /**
@@ -287,6 +306,8 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Cas Assessment Criteria Option");
+    this.toastService.error(
+      "Error loading Cas Assessment Sub Criteria Report Set"
+    );
   }
 }

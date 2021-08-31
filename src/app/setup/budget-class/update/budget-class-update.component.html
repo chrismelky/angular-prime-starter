@@ -23,68 +23,52 @@
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
             >Name is required.</small
           >
-          <small class="p-error" *ngIf="editForm.get('name')?.errors?.maxlength"
-            >name maximum length is 200 characters</small
-          >
         </span>
       </div>
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <p-inputNumber id="number" formControlName="number"></p-inputNumber>
-          <label for="number">Number </label>
+          <input id="code" type="text" pInputText formControlName="code" />
+          <label for="code">Code </label>
         </span>
         <span
           *ngIf="
-            editForm.get('number')!.invalid &&
-            (editForm.get('number')!.dirty ||
-              editForm.get('number')!.touched ||
+            editForm.get('code')!.invalid &&
+            (editForm.get('code')!.dirty ||
+              editForm.get('code')!.touched ||
               formError)
           "
         >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('number')?.errors?.required"
-            >Number is required.</small
-          >
-          <small class="p-error" *ngIf="editForm.get('number')?.errors?.min"
-            >number minimum value is 0</small
-          >
         </span>
       </div>
 
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="cas_assessment_category_version_id"
+            id="parent_id"
             optionValue="id"
-            optionLabel="cas_assessment_category.name"
+            optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
-            [options]="casAssessmentCategoryVersions!"
-            formControlName="cas_assessment_category_version_id"
+            [options]="parents!"
+            formControlName="parent_id"
           ></p-dropdown>
-          <label for="cas_assessment_category_version_id"
-            >Cas Assessment Category Version
-          </label>
+          <label for="parent_id">Parent </label>
         </span>
         <span
           *ngIf="
-            editForm.get('cas_assessment_category_version_id')!.invalid &&
-            (editForm.get('cas_assessment_category_version_id')!.dirty ||
-              editForm.get('cas_assessment_category_version_id')!.touched ||
+            editForm.get('parent_id')!.invalid &&
+            (editForm.get('parent_id')!.dirty ||
+              editForm.get('parent_id')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="
-              editForm.get('cas_assessment_category_version_id')?.errors
-                ?.required
-            "
-            >Cas Assessment Category Version is required.</small
+            *ngIf="editForm.get('parent_id')?.errors?.required"
+            >Parent is required.</small
           >
         </span>
       </div>
@@ -95,7 +79,6 @@
           icon="pi pi-check"
           label="Save"
           pButton
-          pRipple
           type="submit"
         ></button>
       </div>

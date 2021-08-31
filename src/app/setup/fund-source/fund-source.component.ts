@@ -20,23 +20,26 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
-import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
+import { GfsCode } from "src/app/setup/gfs-code/gfs-code.model";
+import { GfsCodeService } from "src/app/setup/gfs-code/gfs-code.service";
+import { FundSourceCategory } from "src/app/setup/fund-source-category/fund-source-category.model";
+import { FundSourceCategoryService } from "src/app/setup/fund-source-category/fund-source-category.service";
 
-import { CasAssessmentCriteriaOption } from "./cas-assessment-criteria-option.model";
-import { CasAssessmentCriteriaOptionService } from "./cas-assessment-criteria-option.service";
-import { CasAssessmentCriteriaOptionUpdateComponent } from "./update/cas-assessment-criteria-option-update.component";
+import { FundSource } from "./fund-source.model";
+import { FundSourceService } from "./fund-source.service";
+import { FundSourceUpdateComponent } from "./update/fund-source-update.component";
 
 @Component({
-  selector: "app-cas-assessment-criteria-option",
-  templateUrl: "./cas-assessment-criteria-option.component.html",
+  selector: "app-fund-source",
+  templateUrl: "./fund-source.component.html",
 })
-export class CasAssessmentCriteriaOptionComponent implements OnInit {
+export class FundSourceComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  casAssessmentCriteriaOptions?: CasAssessmentCriteriaOption[] = [];
+  fundSources?: FundSource[] = [];
 
-  casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
+  gfsCodes?: GfsCode[] = [];
+  fundSourceCategories?: FundSourceCategory[] = [];
 
   cols = [
     {
@@ -45,8 +48,33 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
       sort: true,
     },
     {
-      field: "number",
-      header: "Number",
+      field: "code",
+      header: "Code",
+      sort: true,
+    },
+    {
+      field: "is_conditional",
+      header: "Is Conditional",
+      sort: false,
+    },
+    {
+      field: "is_foreign",
+      header: "Is Foreign",
+      sort: false,
+    },
+    {
+      field: "is_treasurer",
+      header: "Is Treasurer",
+      sort: false,
+    },
+    {
+      field: "can_project",
+      header: "Can Project",
+      sort: false,
+    },
+    {
+      field: "is_active",
+      header: "Is Active",
       sort: false,
     },
   ]; //Table display columns
@@ -61,11 +89,13 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  cas_assessment_category_version_id!: number;
+  gfs_code_id!: number;
+  fund_source_category_id!: number;
 
   constructor(
-    protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
-    protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
+    protected fundSourceService: FundSourceService,
+    protected gfsCodeService: GfsCodeService,
+    protected fundSourceCategoryService: FundSourceCategoryService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -75,11 +105,16 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "cas_assessment_category_id"] })
+    this.gfsCodeService
+      .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
-          (this.casAssessmentCategoryVersions = resp.data)
+        (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
+      );
+    this.fundSourceCategoryService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<FundSourceCategory[]>) =>
+          (this.fundSourceCategories = resp.data)
       );
     this.handleNavigation();
   }
@@ -90,23 +125,23 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_assessment_category_version_id) {
+    if (!this.gfs_code_id || !this.fund_source_category_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.casAssessmentCriteriaOptionService
+    this.fundSourceService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_assessment_category_version_id:
-          this.cas_assessment_category_version_id,
+        gfs_code_id: this.gfs_code_id,
+        fund_source_category_id: this.fund_source_category_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<CasAssessmentCriteriaOption[]>) => {
+        (res: CustomResponse<FundSource[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -211,24 +246,19 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   }
 
   /**
-   * Creating or updating CasAssessmentCriteriaOption
-   * @param casAssessmentCriteriaOption ; If undefined initize new model to create else edit existing model
+   * Creating or updating FundSource
+   * @param fundSource ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(
-    casAssessmentCriteriaOption?: CasAssessmentCriteriaOption
-  ): void {
-    const data: CasAssessmentCriteriaOption = casAssessmentCriteriaOption ?? {
-      ...new CasAssessmentCriteriaOption(),
-      cas_assessment_category_version_id:
-        this.cas_assessment_category_version_id,
+  createOrUpdate(fundSource?: FundSource): void {
+    const data: FundSource = fundSource ?? {
+      ...new FundSource(),
+      gfs_code_id: this.gfs_code_id,
+      fund_source_category_id: this.fund_source_category_id,
     };
-    const ref = this.dialogService.open(
-      CasAssessmentCriteriaOptionUpdateComponent,
-      {
-        data,
-        header: "Create/Update CasAssessmentCriteriaOption",
-      }
-    );
+    const ref = this.dialogService.open(FundSourceUpdateComponent, {
+      data,
+      header: "Create/Update FundSource",
+    });
     ref.onClose.subscribe((result) => {
       if (result) {
         this.loadPage(this.page);
@@ -237,20 +267,17 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   }
 
   /**
-   * Delete CasAssessmentCriteriaOption
-   * @param casAssessmentCriteriaOption
+   * Delete FundSource
+   * @param fundSource
    */
-  delete(casAssessmentCriteriaOption: CasAssessmentCriteriaOption): void {
+  delete(fundSource: FundSource): void {
     this.confirmationService.confirm({
-      message:
-        "Are you sure that you want to delete this CasAssessmentCriteriaOption?",
+      message: "Are you sure that you want to delete this FundSource?",
       accept: () => {
-        this.casAssessmentCriteriaOptionService
-          .delete(casAssessmentCriteriaOption.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
+        this.fundSourceService.delete(fundSource.id!).subscribe((resp) => {
+          this.loadPage(this.page);
+          this.toastService.info(resp.message);
+        });
       },
     });
   }
@@ -262,14 +289,14 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<CasAssessmentCriteriaOption[]> | null,
+    resp: CustomResponse<FundSource[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-assessment-criteria-option"], {
+      this.router.navigate(["/fund-source"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -278,7 +305,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
         },
       });
     }
-    this.casAssessmentCriteriaOptions = resp?.data ?? [];
+    this.fundSources = resp?.data ?? [];
   }
 
   /**
@@ -287,6 +314,6 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Cas Assessment Criteria Option");
+    this.toastService.error("Error loading Fund Source");
   }
 }

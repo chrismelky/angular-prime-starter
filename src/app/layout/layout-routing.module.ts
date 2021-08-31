@@ -511,6 +511,20 @@ const routes: Routes = [
           ),
 
       },
+      {
+        path: "budget-class",
+        loadChildren: () =>
+          import("../setup/budget-class/budget-class.module").then(
+            (m) => m.BudgetClassModule
+          ),
+      },
+      {
+        path: "fund-source",
+        loadChildren: () =>
+          import("../setup/fund-source/fund-source.module").then(
+            (m) => m.FundSourceModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

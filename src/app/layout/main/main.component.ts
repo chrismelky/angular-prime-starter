@@ -115,6 +115,16 @@ export class MainComponent implements OnInit {
               routerLink: "fund-source-category",
             },
             {
+              label: "Budget Classes",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "budget-class",
+            },
+            {
+              label: "Fund Sources",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "fund-source",
+            },
+            {
               label: "Fund Types",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "fund-type",
@@ -473,16 +483,6 @@ export class MainComponent implements OnInit {
           label: "Transport Categories",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "transport-category",
-        },
-        {
-          label: "Budget Classes",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "budget-class",
-        },
-        {
-          label: "Fund Sources",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "fund-source",
         },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
       ],

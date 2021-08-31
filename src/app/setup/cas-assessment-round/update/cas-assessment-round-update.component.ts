@@ -30,8 +30,8 @@ export class CasAssessmentRoundUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
-    number: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(200)]],
+    number: [null, [Validators.required, Validators.min(0)]],
   });
 
   constructor(

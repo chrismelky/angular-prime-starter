@@ -23,6 +23,9 @@
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
             >Name is required.</small
           >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.maxlength"
+            >name maximum length is 200 characters</small
+          >
         </span>
       </div>
 
@@ -44,6 +47,9 @@
             *ngIf="editForm.get('number')?.errors?.required"
             >Number is required.</small
           >
+          <small class="p-error" *ngIf="editForm.get('number')?.errors?.min"
+            >number minimum value is 0</small
+          >
         </span>
       </div>
 
@@ -54,6 +60,7 @@
           icon="pi pi-check"
           label="Save"
           pButton
+          pRipple
           type="submit"
         ></button>
       </div>

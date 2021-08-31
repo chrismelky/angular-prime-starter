@@ -40,7 +40,7 @@ export class CasAssessmentCategoryUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(200)]],
     cas_plan_id: [null, [Validators.required]],
     period_group_id: [null, [Validators.required]],
     admin_hierarchy_level_id: [null, [Validators.required]],

@@ -79,7 +79,7 @@ export class CasAssessmentCategoryVersionStateComponent implements OnInit {
 
   ngOnInit(): void {
     this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "cas_assessment_category_id"] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)

@@ -23,6 +23,9 @@
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
             >Name is required.</small
           >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.maxlength"
+            >Name maximum length is 255 characters</small
+          >
         </span>
       </div>
 
@@ -42,39 +45,12 @@
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
             >Code is required.</small
           >
-        </span>
-      </div>
-
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="category_combination_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="categoryCombinations!"
-            formControlName="category_combination_id"
-          ></p-dropdown>
-          <label for="category_combination_id">Category Combination </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('category_combination_id')!.invalid &&
-            (editForm.get('category_combination_id')!.dirty ||
-              editForm.get('category_combination_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('category_combination_id')?.errors?.required"
-            >Category Combination is required.</small
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.maxlength"
+            >Code maximum length is 50 characters</small
           >
         </span>
       </div>
+
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button
@@ -82,6 +58,7 @@
           icon="pi pi-check"
           label="Save"
           pButton
+          pRipple
           type="submit"
         ></button>
       </div>

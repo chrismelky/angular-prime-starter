@@ -56,6 +56,7 @@
         >
           <button
             pButton
+            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -73,6 +74,7 @@
           ></button>
           <button
             pButton
+            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -93,24 +95,7 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            >
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="value"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['value']"
-                  />
-                  <label for="value">Value </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['value'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-            </div>
+            ></div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -119,6 +104,7 @@
             >
               <button
                 pButton
+                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -144,8 +130,6 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="baselineStatisticValues!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -154,6 +138,7 @@
           <span class="card-header-text">Baseline Statistic Values</span>
           <button
             pButton
+            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]="!admin_hierarchy_id || !financial_year_id"
@@ -165,13 +150,17 @@
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="baselineStatisticValues?.length">
           <th [pSortableColumn]="'baseline_statistic_id'">
-            Baseline Statistics <p-sortIcon [field]="'baseline_statistic_id'"></p-sortIcon>
+            Baseline Statistics
+            <p-sortIcon [field]="'baseline_statistic_id'"></p-sortIcon>
           </th>
-          <th *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header }}
+            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th style="flex: 0 0 2rem"></th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -182,11 +171,12 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="flex: 0 0 2rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -198,6 +188,7 @@
                 ></button>
                 <button
                   pButton
+                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -213,19 +204,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="baselineStatisticValues?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="baselineStatisticValues?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

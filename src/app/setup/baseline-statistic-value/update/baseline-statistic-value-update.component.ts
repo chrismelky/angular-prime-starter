@@ -5,26 +5,26 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { BaselineStatistic } from "src/app/setup/baseline-statistic/baseline-statistic.model";
-import { BaselineStatisticService } from "src/app/setup/baseline-statistic/baseline-statistic.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { BaselineStatisticValue } from "../baseline-statistic-value.model";
-import { BaselineStatisticValueService } from "../baseline-statistic-value.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { BaselineStatistic } from 'src/app/setup/baseline-statistic/baseline-statistic.model';
+import { BaselineStatisticService } from 'src/app/setup/baseline-statistic/baseline-statistic.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { BaselineStatisticValue } from '../baseline-statistic-value.model';
+import { BaselineStatisticValueService } from '../baseline-statistic-value.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-baseline-statistic-value-update",
-  templateUrl: "./baseline-statistic-value-update.component.html",
+  selector: 'app-baseline-statistic-value-update',
+  templateUrl: './baseline-statistic-value-update.component.html',
 })
 export class BaselineStatisticValueUpdateComponent implements OnInit {
   isSaving = false;
@@ -41,8 +41,11 @@ export class BaselineStatisticValueUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     baseline_statistic_id: [null, [Validators.required]],
-    admin_hierarchy_id: [null, [Validators.required]],
-    financial_year_id: [null, [Validators.required]],
+    admin_hierarchy_id: [
+      { value: null, disabled: true },
+      [Validators.required],
+    ],
+    financial_year_id: [{ value: null, disabled: true }, [Validators.required]],
     value: [null, []],
     active: [false, []],
   });
@@ -60,19 +63,19 @@ export class BaselineStatisticValueUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.baselineStatisticService
-      .query({ columns: ["id", "description"] })
+      .query({ columns: ['id', 'description'] })
       .subscribe(
         (resp: CustomResponse<BaselineStatistic[]>) =>
           (this.baselineStatistics = resp.data)
       );
     this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
       );
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
@@ -153,13 +156,13 @@ export class BaselineStatisticValueUpdateComponent implements OnInit {
   protected createFromForm(): BaselineStatisticValue {
     return {
       ...new BaselineStatisticValue(),
-      id: this.editForm.get(["id"])!.value,
-      baseline_statistic_id: this.editForm.get(["baseline_statistic_id"])!
+      id: this.editForm.get(['id'])!.value,
+      baseline_statistic_id: this.editForm.get(['baseline_statistic_id'])!
         .value,
-      admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
-      financial_year_id: this.editForm.get(["financial_year_id"])!.value,
-      value: this.editForm.get(["value"])!.value,
-      active: this.editForm.get(["active"])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
+      value: this.editForm.get(['value'])!.value,
+      active: this.editForm.get(['active'])!.value,
     };
   }
 }

@@ -471,7 +471,21 @@ const routes: Routes = [
           ),
       },
       {
-        path: "pe-select-option",
+
+        path: "cas-assessment-sub-criteria-possible_score",
+        loadChildren: () =>
+          import(
+            "../setup/cas-assessment-sub-criteria-possible_score/cas-assessment-sub-criteria-possible_score.module"
+          ).then((m) => m.CasAssessmentSubCriteriaPossibleScoreModule),
+      },
+      {
+        path: "cas-assessment-sub-criteria-report_set",
+        loadChildren: () =>
+          import(
+            "../setup/cas-assessment-sub-criteria-report_set/cas-assessment-sub-criteria-report_set.module"
+            ).then((m) => m.CasAssessmentSubCriteriaReportSetModule),
+      },
+      {path: "pe-select-option",
         loadChildren: () =>
           import("../setup/pe-select-option/pe-select-option.module").then(
             (m) => m.PeSelectOptionModule
@@ -480,8 +494,35 @@ const routes: Routes = [
       {
         path: "role",
         loadChildren: () =>
-          import("../setup/role/role.module").then(
-            (m) => m.RoleModule
+          import("../setup/role/role.module").then((m) => m.RoleModule),
+      },
+      {
+        path: "project",
+        loadChildren: () =>
+          import("../setup/project/project.module").then(
+            (m) => m.ProjectModule
+          ),
+      },
+      {
+        path: "transport-category",
+        loadChildren: () =>
+          import("../setup/transport-category/transport-category.module").then(
+            (m) => m.TransportCategoryModule
+          ),
+
+      },
+      {
+        path: "budget-class",
+        loadChildren: () =>
+          import("../setup/budget-class/budget-class.module").then(
+            (m) => m.BudgetClassModule
+          ),
+      },
+      {
+        path: "fund-source",
+        loadChildren: () =>
+          import("../setup/fund-source/fund-source.module").then(
+            (m) => m.FundSourceModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

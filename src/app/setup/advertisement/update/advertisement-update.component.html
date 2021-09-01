@@ -89,8 +89,19 @@
         </span>
       </div>
 
-      <div *ngIf="dialogConfig.data.id == undefined" class="p-field p-col-12 p-md-4" fxFlex>
-        <p-fileUpload [showUploadButton]="false" name="ad_url" id="ad_url" url=""  (onSelect)="onSelect($event)" accept="image/*">
+      <div
+        *ngIf="dialogConfig.data.id == undefined"
+        class="p-field p-col-12 p-md-4"
+        fxFlex
+      >
+        <p-fileUpload
+          [showUploadButton]="false"
+          name="ad_url"
+          id="ad_url"
+          url=""
+          (onSelect)="onSelect($event)"
+          accept="image/*"
+        >
         </p-fileUpload>
       </div>
 
@@ -101,6 +112,7 @@
           icon="pi pi-check"
           label="Save"
           pButton
+          pRipple
           type="submit"
         ></button>
       </div>

@@ -23,6 +23,9 @@
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
             >Name is required.</small
           >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.maxlength"
+            >Name maximum length is 100 characters</small
+          >
         </span>
       </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
@@ -41,6 +44,9 @@
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
             >Code is required.</small
           >
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.maxlength"
+            >Code maximum length is 100 characters</small
+          >
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
@@ -50,6 +56,7 @@
           icon="pi pi-check"
           label="Save"
           pButton
+          pRipple
           type="submit"
         ></button>
       </div>

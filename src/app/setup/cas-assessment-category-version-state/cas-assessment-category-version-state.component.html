@@ -122,7 +122,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td>{{ rowData.cas_assessment_category_version?.name }}</td>
+          <td>{{ rowData.cas_assessment_category?.name}}</td>
           <td>{{ rowData.cas_assessment_state?.name }}</td>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}

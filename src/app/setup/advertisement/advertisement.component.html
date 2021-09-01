@@ -1,4 +1,4 @@
-j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
+<div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
   <p-accordion>
     <p-accordionTab [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'">
@@ -15,20 +15,11 @@ j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
           fxLayoutGap="0.75 rem"
           fxFlex
           fxLayoutAlign="start center"
-        >
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-<!--              <label for="end_date">End Date </label>-->
-<!--              <i-->
-<!--                class="pi pi-times clear"-->
-<!--                (click)="search['end_date'] = undefined; onSearch()"-->
-<!--              ></i>-->
-            </span>
-          </div>
-        </div>
+        ></div>
         <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
           <button
             pButton
+            pRipple
             class="p-button-text p-button-plain"
             icon="pi pi-times"
             label="Clear"
@@ -36,6 +27,7 @@ j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
           ></button>
           <button
             pButton
+            pRipple
             class="p-button-text p-button-plain"
             icon="pi pi-search"
             label="Search"
@@ -57,8 +49,6 @@ j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
       [loading]="isLoading"
       [columns]="cols"
       [value]="advertisements!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -67,6 +57,7 @@ j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
           <span class="card-header-text">Advertisements</span>
           <button
             pButton
+            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]=""
@@ -77,36 +68,38 @@ j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="advertisements?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th>
-            Start Date <p-sortIcon  field="start_date"></p-sortIcon>
-          </th>
-          <th>
-            End Date <p-sortIcon  field="end_date"></p-sortIcon>
-          </th>
-          <th>
-            Status <p-sortIcon  field="status"></p-sortIcon>
-          </th>
-          <th style="flex: 0 0 2 rem">Actions</th>
+          <th>Start Date <p-sortIcon field="start_date"></p-sortIcon></th>
+          <th>End Date <p-sortIcon field="end_date"></p-sortIcon></th>
+          <th>Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th>Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
           <td *ngFor="let col of columns">
-            {{ rowData[col.field]}}
+            {{ rowData[col.field] }}
           </td>
-          <td>{{ rowData['start_date'] | date:'fullDate'}}</td>
-          <td>{{ rowData['end_date'] | date:'fullDate'}}</td>
+          <td>{{ rowData["start_date"] | date: "fullDate" }}</td>
+          <td>{{ rowData["end_date"] | date: "fullDate" }}</td>
           <td>
-            <p-inputSwitch (onChange)="toggleActivation(rowData)" [(ngModel)]="rowData['status']"></p-inputSwitch>
+            <p-inputSwitch
+              (onChange)="toggleActivation(rowData)"
+              [(ngModel)]="rowData['status']"
+            ></p-inputSwitch>
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pRipple
                   pTooltip="Preview"
                   tooltipPosition="bottom"
                   class="
@@ -118,6 +111,7 @@ j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
                 ></button>
                 <button
                   pButton
+                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -129,6 +123,7 @@ j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
                 ></button>
                 <button
                   pButton
+                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -144,19 +139,19 @@ j<div class="content" fxLayout="column" fxLayoutGap="0.75 rem">
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="advertisements?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="advertisements?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

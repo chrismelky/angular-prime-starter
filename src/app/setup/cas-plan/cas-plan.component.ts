@@ -5,38 +5,38 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
-import { AdminHierarchyLevel } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
-import { AdminHierarchyLevelService } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { Sector } from 'src/app/setup/sector/sector.model';
+import { SectorService } from 'src/app/setup/sector/sector.service';
+import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
 
-import { CasPlan } from "./cas-plan.model";
-import { CasPlanService } from "./cas-plan.service";
-import { CasPlanUpdateComponent } from "./update/cas-plan-update.component";
+import { CasPlan } from './cas-plan.model';
+import { CasPlanService } from './cas-plan.service';
+import { CasPlanUpdateComponent } from './update/cas-plan-update.component';
 
 @Component({
-  selector: "app-cas-plan",
-  templateUrl: "./cas-plan.component.html",
+  selector: 'app-cas-plan',
+  templateUrl: './cas-plan.component.html',
 })
 export class CasPlanComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   casPlans?: CasPlan[] = [];
 
   sectors?: Sector[] = [];
@@ -46,23 +46,23 @@ export class CasPlanComponent implements OnInit {
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "period_type",
-      header: "Period Type",
+      field: 'period_type',
+      header: 'Period Type',
       sort: true,
     },
     {
-      field: "content_type",
-      header: "Content Type",
+      field: 'content_type',
+      header: 'Content Type',
       sort: true,
     },
     {
-      field: "is_active",
-      header: "Is Active",
+      field: 'is_active',
+      header: 'Is Active',
       sort: false,
     },
   ]; //Table display columns
@@ -75,10 +75,6 @@ export class CasPlanComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-
-  //Mandatory filter
-  sector_id!: number;
-  admin_hierarchy_level_id!: number;
 
   constructor(
     protected casPlanService: CasPlanService,
@@ -95,18 +91,18 @@ export class CasPlanComponent implements OnInit {
 
   ngOnInit(): void {
     this.sectorService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
     this.adminHierarchyLevelService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
-    this.periodTypes = this.enumService.get("periodTypes");
-    this.contentTypes = this.enumService.get("contentTypes");
+    this.periodTypes = this.enumService.get('periodTypes');
+    this.contentTypes = this.enumService.get('contentTypes');
     this.handleNavigation();
   }
 
@@ -116,9 +112,6 @@ export class CasPlanComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.sector_id || !this.admin_hierarchy_level_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -127,8 +120,6 @@ export class CasPlanComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        sector_id: this.sector_id,
-        admin_hierarchy_level_id: this.admin_hierarchy_level_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -152,31 +143,19 @@ export class CasPlanComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -231,8 +210,8 @@ export class CasPlanComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -243,12 +222,11 @@ export class CasPlanComponent implements OnInit {
   createOrUpdate(casPlan?: CasPlan): void {
     const data: CasPlan = casPlan ?? {
       ...new CasPlan(),
-      sector_id: this.sector_id,
-      admin_hierarchy_level_id: this.admin_hierarchy_level_id,
+      is_active: true,
     };
     const ref = this.dialogService.open(CasPlanUpdateComponent, {
       data,
-      header: "Create/Update CasPlan",
+      header: 'Create/Update CasPlan',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -263,7 +241,7 @@ export class CasPlanComponent implements OnInit {
    */
   delete(casPlan: CasPlan): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this CasPlan?",
+      message: 'Are you sure that you want to delete this CasPlan?',
       accept: () => {
         this.casPlanService.delete(casPlan.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -287,12 +265,12 @@ export class CasPlanComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-plan"], {
+      this.router.navigate(['/cas-plan'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -305,6 +283,6 @@ export class CasPlanComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Cas Plan");
+    this.toastService.error('Error loading Cas Plan');
   }
 }

@@ -5,64 +5,64 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
-import { BaselineStatistic } from "./baseline-statistic.model";
-import { BaselineStatisticService } from "./baseline-statistic.service";
-import { BaselineStatisticUpdateComponent } from "./update/baseline-statistic-update.component";
+import { BaselineStatistic } from './baseline-statistic.model';
+import { BaselineStatisticService } from './baseline-statistic.service';
+import { BaselineStatisticUpdateComponent } from './update/baseline-statistic-update.component';
 
 @Component({
-  selector: "app-baseline-statistic",
-  templateUrl: "./baseline-statistic.component.html",
+  selector: 'app-baseline-statistic',
+  templateUrl: './baseline-statistic.component.html',
 })
 export class BaselineStatisticComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   baselineStatistics?: BaselineStatistic[] = [];
 
   cols = [
     {
-      field: "description",
-      header: "Description",
+      field: 'description',
+      header: 'Description',
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: true,
     },
     {
-      field: "default_value",
-      header: "Default Value",
+      field: 'default_value',
+      header: 'Default Value',
       sort: true,
     },
     {
-      field: "is_common",
-      header: "Is Common",
+      field: 'is_common',
+      header: 'Is Common',
       sort: false,
     },
     {
-      field: "hmis_uid",
-      header: "Hmis Uid",
+      field: 'hmis_uid',
+      header: 'Hmis Uid',
       sort: false,
     },
     {
-      field: "active",
-      header: "Active",
+      field: 'active',
+      header: 'Active',
       sort: false,
     },
   ]; //Table display columns
@@ -129,11 +129,11 @@ export class BaselineStatisticComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -196,8 +196,8 @@ export class BaselineStatisticComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -208,10 +208,12 @@ export class BaselineStatisticComponent implements OnInit {
   createOrUpdate(baselineStatistic?: BaselineStatistic): void {
     const data: BaselineStatistic = baselineStatistic ?? {
       ...new BaselineStatistic(),
+      is_common: false,
+      active: true,
     };
     const ref = this.dialogService.open(BaselineStatisticUpdateComponent, {
       data,
-      header: "Create/Update BaselineStatistic",
+      header: 'Create/Update BaselineStatistic',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -226,7 +228,7 @@ export class BaselineStatisticComponent implements OnInit {
    */
   delete(baselineStatistic: BaselineStatistic): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this BaselineStatistic?",
+      message: 'Are you sure that you want to delete this BaselineStatistic?',
       accept: () => {
         this.baselineStatisticService
           .delete(baselineStatistic.id!)
@@ -252,12 +254,12 @@ export class BaselineStatisticComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/baseline-statistic"], {
+      this.router.navigate(['/baseline-statistic'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -270,6 +272,6 @@ export class BaselineStatisticComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Baseline Statistic");
+    this.toastService.error('Error loading Baseline Statistic');
   }
 }

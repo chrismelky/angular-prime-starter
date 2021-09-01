@@ -4,8 +4,8 @@ export class BaselineStatistic {
     public description?: string,
     public code?: string,
     public default_value?: string,
-    public is_common?: string,
+    public is_common?: boolean,
     public hmis_uid?: string,
-    public active?: string
+    public active?: boolean
   ) {}
 }

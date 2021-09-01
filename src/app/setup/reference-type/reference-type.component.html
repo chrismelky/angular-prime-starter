@@ -40,6 +40,7 @@
         >
           <button
             pButton
+            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -57,6 +58,7 @@
           ></button>
           <button
             pButton
+            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -119,6 +121,7 @@
             >
               <button
                 pButton
+                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -152,6 +155,7 @@
           <span class="card-header-text">Reference Types</span>
           <button
             pButton
+            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]="!sector_id"
@@ -169,7 +173,7 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th style="flex: 0 0 2rem"></th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -182,6 +186,7 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -193,6 +198,7 @@
                 ></button>
                 <button
                   pButton
+                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="

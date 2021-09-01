@@ -34,8 +34,8 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
-    number: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(200)]],
+    number: [null, [Validators.required, Validators.min(0)]],
     cas_assessment_category_version_id: [null, [Validators.required]],
   });
 
@@ -50,7 +50,7 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.casAssessmentCategoryVersionService
-      .query({ columns: ['id', 'name'] })
+      .query({ columns: ['id', 'cas_assessment_category_id'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)

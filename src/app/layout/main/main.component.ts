@@ -70,7 +70,7 @@ export class MainComponent implements OnInit {
         },
         {
           label: "Financial Year",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
             {
               label: "Financial Years",
@@ -86,7 +86,7 @@ export class MainComponent implements OnInit {
         },
         {
           label: "User Management",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
             {
               label: "Users",
@@ -94,6 +94,15 @@ export class MainComponent implements OnInit {
               routerLink: "user",
             },
             {
+              label: "Period Groups",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "period-group",
+            },
+            {
+              label: 'Roles',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'role',
+            },{
               label: "Roles",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "role",
@@ -102,12 +111,27 @@ export class MainComponent implements OnInit {
         },
         {
           label: "Finance",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
+            {
+              label: "Projects",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "project",
+            },
             {
               label: "Fund Source Categories",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "fund-source-category",
+            },
+            {
+              label: "Budget Classes",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "budget-class",
+            },
+            {
+              label: "Fund Sources",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "fund-source",
             },
             {
               label: "Fund Types",
@@ -123,7 +147,7 @@ export class MainComponent implements OnInit {
         },
         {
           label: "Administrative Settings",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
             {
               label: "Admin Hierarchy Levels",
@@ -165,13 +189,31 @@ export class MainComponent implements OnInit {
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "calendar-event",
             },
+            {
+              label: 'Calendar Events',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'calendar-event',
+            },{
+              label: "Calendar Events",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "calendar-event",
+            },
           ],
         },
         {
           label: "Facility",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
             {
+              label: "Facilities",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "facility",
+            },
+            {
+              label: 'Facilities',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'facility',
+            },{
               label: "Facilities",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "facility",
@@ -185,7 +227,7 @@ export class MainComponent implements OnInit {
         },
         {
           label: "GFS Code Management",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
             {
               label: "GFS Code",
@@ -206,7 +248,7 @@ export class MainComponent implements OnInit {
         },
         {
           label: "Planning",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
             {
               label: "Objective Types",
@@ -238,6 +280,240 @@ export class MainComponent implements OnInit {
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "reference-document_type",
             },
+          ],
+        },
+        {
+          label: "Asset Uses",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "asset-use",
+        },
+        {
+          label: "Asset Conditions",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "asset-condition",
+        },
+
+        {
+          label: "Decision Levels",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "decision-level",
+        },
+
+        {
+          label: "Reference Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-type",
+        },
+        {
+          label: "Strategic Plans",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "strategic-plan",
+        },
+        {
+          label: "Financial Years",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "financial-year",
+        },
+        {
+          label: "Admin Hierarchy Levels",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "admin-hierarchy-level",
+        },
+        {
+          label: "Reference Document Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-document-type",
+        },
+        {
+          label: "Cas Plans",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-plan",
+        },
+        {
+          label: "Cas Plan Contents",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-plan-content",
+        },
+        {
+          label: "Activity Task Natures",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "activity-task-nature",
+        },
+        {
+          label: "Admin Hierarchies",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "admin-hierarchy",
+        },
+        {
+          label: "Data Elements",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "data-element",
+        },
+        {
+          label: "Facility Types",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "facility-type",
+        },
+        {
+          label: "Facilities",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "facility",
+        },
+        {
+          label: "Calendar Events",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "calendar-event",
+        },
+        {
+          label: "Calendars",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "calendar",
+        },
+        {
+          label: "Cas Assessment Rounds",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-round",
+        },
+        {
+          label: "Cas Assessment States",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-state",
+        },
+        {
+          label: "Cas Assessment Criteria",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-criteria",
+        },
+        {
+          label: "Cas Assessment Sub Criteria",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria",
+        },
+        {
+          label: "Cas Assessment Sub Criteria Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria-option",
+        },
+        {
+          label: "Cas Assessment Category Versions",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category-version",
+        },
+        {
+          label: "Cas Assessment Criteria Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-criteria-option",
+        },
+        {
+          label: "Cas Assessment Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category",
+        },
+        {
+          label: "Reference Documents",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-document",
+        },
+        {
+          label: "Period Groups",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "period-group",
+        },
+        {
+          label: "Data Sets",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "data-set",
+        },
+        {
+          label: "Option Sets",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "option-set",
+        },
+        {
+          label: "Category Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "category-option",
+        },
+        {
+          label: "Category Combinations",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "category-combination",
+        },
+        {
+          label: "Category Category Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "category-category-option",
+        },
+        {
+          label: "Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "category",
+        },
+        {
+          label: "Users",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "user",
+        },
+        {
+          label: "Baseline Statistics",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "baseline-statistic",
+        },
+        {
+          label: "Baseline Statistic Values",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "baseline-statistic-value",
+        },
+        {
+          label: "Advertisements",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "advertisement",
+        },
+        {
+          label: "Ceiling Chains",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "ceiling-chain",
+        },
+        {
+          label: "PE Forms",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "pe-form",
+        },
+        {
+          label: "PE Definitions",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "pe-definition",
+        },
+        {
+          label: "Gfs Code Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "gfs-code-category",
+        },
+        {
+          label: "Gfs Codes",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "gfs-code",
+        },
+        {
+          label: "Cas Assessment Category Version States",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category-version-state",
+        },
+        {
+          label: "Pe Sub Forms",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "pe-sub-form",
+        },
+        {
+          label: "Cas Assessment Sub Criteria Possible Scores",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria-possible_score",
+        },
+        {
+          label: "Cas Assessment Sub Criteria Report Sets",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria-report_set",
+        },
             {
               label: "Guidelines",
               icon: "pi pi-fw pi-arrow-right",
@@ -246,7 +522,7 @@ export class MainComponent implements OnInit {
             {
               label: "Comprehensive Plans",
               icon: "pi pi-fw pi-arrow-right",
-              items:[
+              items: [
                 {
                   label: "Cas Plans",
                   icon: "pi pi-fw pi-arrow-right",
@@ -297,13 +573,13 @@ export class MainComponent implements OnInit {
                   icon: "pi pi-fw pi-arrow-right",
                   routerLink: "baseline-statistic",
                 },
-              ]
+              ],
             },
           ],
         },
         {
           label: "Budget",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
             {
               label: "Ceiling Chains",
@@ -329,13 +605,13 @@ export class MainComponent implements OnInit {
                   icon: "pi pi-fw pi-arrow-right",
                   routerLink: "pe-definition",
                 },
-              ]
+              ],
             },
           ],
         },
         {
           label: "Assessment",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-angle-down",
           items: [
             {
               label: "Cas Assessment Rounds",
@@ -399,13 +675,11 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "asset-condition",
         },
-
         {
           label: "Decision Levels",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "decision-level",
         },
-
         {
           label: "Reference Types",
           icon: "pi pi-fw pi-arrow-right",
@@ -466,9 +740,13 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "pe-select-option",
         },
+        {
+          label: "Transport Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "transport-category",
+        },
         /**====Planrep setup Menu Generator Hook: Dont Delete====*/
-      ],
-    },
+
     {
       label: "Planning",
       icon: "pi pi-pw pi-list",
@@ -489,11 +767,11 @@ export class MainComponent implements OnInit {
       items: [
         /**====Planrep execution Menu Generator Hook: Dont Delete====*/
       ],
-    },
-  ];
+    }
+];
 
   logout(): void {
-    console.log("called");
     this.authService.logout().subscribe(() => {});
   }
+
 }

@@ -1,0 +1,47 @@
+/**
+ * @license
+ * Copyright TAMISEMI All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache-style license that can be
+ * found in the LICENSE file at https://tamisemi.go.tz/license
+ */
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+
+import { createRequestOption } from "../../utils/request-util";
+import { CustomResponse } from "../../utils/custom-response";
+import { Project } from "./project.model";
+
+@Injectable({ providedIn: "root" })
+export class ProjectService {
+  public resourceUrl = "api/projects";
+
+  constructor(protected http: HttpClient) {}
+
+  create(project: Project): Observable<CustomResponse<Project>> {
+    return this.http.post<CustomResponse<Project>>(this.resourceUrl, project);
+  }
+
+  update(project: Project): Observable<CustomResponse<Project>> {
+    return this.http.put<CustomResponse<Project>>(
+      `${this.resourceUrl}/${project.id}`,
+      project
+    );
+  }
+
+  find(id: number): Observable<CustomResponse<Project>> {
+    return this.http.get<CustomResponse<Project>>(`${this.resourceUrl}/${id}`);
+  }
+
+  query(req?: any): Observable<CustomResponse<Project[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<Project[]>>(this.resourceUrl, {
+      params: options,
+    });
+  }
+
+  delete(id: number): Observable<CustomResponse<null>> {
+    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+}

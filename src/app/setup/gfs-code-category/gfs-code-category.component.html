@@ -69,6 +69,7 @@
         <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
           <button
             pButton
+            pRipple
             class="p-button-text p-button-plain"
             icon="pi pi-times"
             label="Clear"
@@ -76,6 +77,7 @@
           ></button>
           <button
             pButton
+            pRipple
             class="p-button-text p-button-plain"
             icon="pi pi-search"
             label="Search"
@@ -97,8 +99,6 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="gfsCodeCategories!"
-      [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -107,6 +107,7 @@
           <span class="card-header-text">Gfs Code Categories</span>
           <button
             pButton
+            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]=""
@@ -124,7 +125,7 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th style="flex: 0 0 2rem"></th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -132,11 +133,12 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -148,6 +150,7 @@
                 ></button>
                 <button
                   pButton
+                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="

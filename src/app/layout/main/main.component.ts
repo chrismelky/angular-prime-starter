@@ -99,10 +99,11 @@ export class MainComponent implements OnInit {
               routerLink: "period-group",
             },
             {
-              label: 'Roles',
-              icon: 'pi pi-fw pi-arrow-right',
-              routerLink: 'role',
-            },{
+              label: "Roles",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "role",
+            },
+            {
               label: "Roles",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "role",
@@ -190,10 +191,11 @@ export class MainComponent implements OnInit {
               routerLink: "calendar-event",
             },
             {
-              label: 'Calendar Events',
-              icon: 'pi pi-fw pi-arrow-right',
-              routerLink: 'calendar-event',
-            },{
+              label: "Calendar Events",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "calendar-event",
+            },
+            {
               label: "Calendar Events",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "calendar-event",
@@ -210,10 +212,11 @@ export class MainComponent implements OnInit {
               routerLink: "facility",
             },
             {
-              label: 'Facilities',
-              icon: 'pi pi-fw pi-arrow-right',
-              routerLink: 'facility',
-            },{
+              label: "Facilities",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "facility",
+            },
+            {
               label: "Facilities",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "facility",
@@ -514,238 +517,243 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "cas-assessment-sub-criteria-report_set",
         },
-            {
-              label: "Guidelines",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "reference-document",
-            },
-            {
-              label: "Comprehensive Plans",
-              icon: "pi pi-fw pi-arrow-right",
-              items: [
-                {
-                  label: "Cas Plans",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "cas-plan",
-                },
-                {
-                  label: "Cas Plan Contents",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "cas-plan-content",
-                },
-                {
-                  label: "Data Elements",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "data-element",
-                },
-                {
-                  label: "Data Sets",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "data-set",
-                },
-                {
-                  label: "Option Sets",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "option-set",
-                },
-                {
-                  label: "Category Options",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "category-option",
-                },
-                {
-                  label: "Category Combinations",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "category-combination",
-                },
-                {
-                  label: "Category Category Options",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "category-category-option",
-                },
-                {
-                  label: "Categories",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "category",
-                },
-                {
-                  label: "Baseline Data",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "baseline-statistic",
-                },
-              ],
-            },
-          ],
+        {
+          label: "Guidelines",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "reference-document",
         },
         {
-          label: "Budget",
-          icon: "pi pi-fw pi-angle-down",
+          label: "Comprehensive Plans",
+          icon: "pi pi-fw pi-arrow-right",
           items: [
             {
-              label: "Ceiling Chains",
+              label: "Cas Plans",
               icon: "pi pi-fw pi-arrow-right",
-              routerLink: "ceiling-chain",
+              routerLink: "cas-plan",
             },
             {
-              label: "Personal Emolument",
+              label: "Cas Plan Contents",
               icon: "pi pi-fw pi-arrow-right",
-              items: [
-                {
-                  label: "Personal Emolument Budget Submission Forms",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "pe-form",
-                },
-                {
-                  label: "Pe Sub Forms",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "pe-sub-form",
-                },
-                {
-                  label: "PE Definitions",
-                  icon: "pi pi-fw pi-arrow-right",
-                  routerLink: "pe-definition",
-                },
-              ],
+              routerLink: "cas-plan-content",
+            },
+            {
+              label: "Data Elements",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "data-element",
+            },
+            {
+              label: "Data Sets",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "data-set",
+            },
+            {
+              label: "Option Sets",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "option-set",
+            },
+            {
+              label: "Category Options",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "category-option",
+            },
+            {
+              label: "Category Combinations",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "category-combination",
+            },
+            {
+              label: "Category Category Options",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "category-category-option",
+            },
+            {
+              label: "Categories",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "category",
+            },
+            {
+              label: "Baseline Data",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "baseline-statistic",
             },
           ],
         },
-        {
-          label: "Assessment",
-          icon: "pi pi-fw pi-angle-down",
-          items: [
-            {
-              label: "Cas Assessment Rounds",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-round",
-            },
-            {
-              label: "Cas Assessment Rounds",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-round",
-            },
-            {
-              label: "Cas Assessment States",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-state",
-            },
-            {
-              label: "Cas Assessment Criteria",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-criteria",
-            },
-            {
-              label: "Cas Assessment Sub Criteria",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-sub-criteria",
-            },
-            {
-              label: "Cas Assessment Sub Criteria Options",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-sub-criteria-option",
-            },
-            {
-              label: "Cas Assessment Category Versions",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-category-version",
-            },
-            {
-              label: "Cas Assessment Criteria Options",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-criteria-option",
-            },
-            {
-              label: "Cas Assessment Categories",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-category",
-            },
-            {
-              label: "Cas Assessment Category Version States",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "cas-assessment-category-version-state",
-            },
-          ],
-        },
-        {
-          label: "Asset Uses",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "asset-use",
-        },
-        {
-          label: "Asset Conditions",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "asset-condition",
-        },
-        {
-          label: "Decision Levels",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "decision-level",
-        },
-        {
-          label: "Reference Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "reference-type",
-        },
-        {
-          label: "Strategic Plans",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "strategic-plan",
-        },
-        {
-          label: "Baseline Statistic Values",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "baseline-statistic-value",
-        },
-        {
-          label: "Advertisements",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "advertisement",
-        },
+      ],
+    },
+    {
+      label: "Budget",
+      icon: "pi pi-fw pi-angle-down",
+      items: [
         {
           label: "Ceiling Chains",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "ceiling-chain",
         },
         {
-          label: "PE Forms",
+          label: "Personal Emolument",
           icon: "pi pi-fw pi-arrow-right",
-          routerLink: "pe-form",
+          items: [
+            {
+              label: "Personal Emolument Budget Submission Forms",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "pe-form",
+            },
+            {
+              label: "Pe Sub Forms",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "pe-sub-form",
+            },
+            {
+              label: "PE Definitions",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "pe-definition",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Assessment",
+      icon: "pi pi-fw pi-angle-down",
+      items: [
+        {
+          label: "Cas Assessment Rounds",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-round",
         },
         {
-          label: "PE Definitions",
+          label: "Cas Assessment Rounds",
           icon: "pi pi-fw pi-arrow-right",
-          routerLink: "pe-definition",
+          routerLink: "cas-assessment-round",
         },
         {
-          label: "Gfs Code Categories",
+          label: "Cas Assessment States",
           icon: "pi pi-fw pi-arrow-right",
-          routerLink: "gfs-code-category",
+          routerLink: "cas-assessment-state",
         },
         {
-          label: "Gfs Codes",
+          label: "Cas Assessment Criteria",
           icon: "pi pi-fw pi-arrow-right",
-          routerLink: "gfs-code",
+          routerLink: "cas-assessment-criteria",
+        },
+        {
+          label: "Cas Assessment Sub Criteria",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria",
+        },
+        {
+          label: "Cas Assessment Sub Criteria Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-sub-criteria-option",
+        },
+        {
+          label: "Cas Assessment Category Versions",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category-version",
+        },
+        {
+          label: "Cas Assessment Criteria Options",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-criteria-option",
+        },
+        {
+          label: "Cas Assessment Categories",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "cas-assessment-category",
         },
         {
           label: "Cas Assessment Category Version States",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "cas-assessment-category-version-state",
         },
-        {
-          label: "Pe Sub Forms",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "pe-sub-form",
-        },
-        {
-          label: "Pe Select Options",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "pe-select-option",
-        },
-        {
-          label: "Transport Categories",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "transport-category",
-        },
-        /**====Planrep setup Menu Generator Hook: Dont Delete====*/
+      ],
+    },
+    {
+      label: "Asset Uses",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "asset-use",
+    },
+    {
+      label: "Asset Conditions",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "asset-condition",
+    },
+    {
+      label: "Decision Levels",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "decision-level",
+    },
+    {
+      label: "Reference Types",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "reference-type",
+    },
+    {
+      label: "Strategic Plans",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "strategic-plan",
+    },
+    {
+      label: "Baseline Statistic Values",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "baseline-statistic-value",
+    },
+    {
+      label: "Advertisements",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "advertisement",
+    },
+    {
+      label: "Ceiling Chains",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "ceiling-chain",
+    },
+    {
+      label: "PE Forms",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "pe-form",
+    },
+    {
+      label: "PE Definitions",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "pe-definition",
+    },
+    {
+      label: "Gfs Code Categories",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "gfs-code-category",
+    },
+    {
+      label: "Gfs Codes",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "gfs-code",
+    },
+    {
+      label: "Cas Assessment Category Version States",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "cas-assessment-category-version-state",
+    },
+    {
+      label: "Pe Sub Forms",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "pe-sub-form",
+    },
+    {
+      label: "Pe Select Options",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "pe-select-option",
+    },
+    {
+      label: "Transport Categories",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "transport-category",
+    },
+    {
+      label: "Category Option Combinations",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "category-option-combination",
+    },
+    /**====Planrep setup Menu Generator Hook: Dont Delete====*/
 
     {
       label: "Planning",
@@ -767,11 +775,10 @@ export class MainComponent implements OnInit {
       items: [
         /**====Planrep execution Menu Generator Hook: Dont Delete====*/
       ],
-    }
-];
+    },
+  ];
 
   logout(): void {
     this.authService.logout().subscribe(() => {});
   }
-
 }

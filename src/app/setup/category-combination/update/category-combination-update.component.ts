@@ -15,6 +15,9 @@ import { CustomResponse } from '../../../utils/custom-response';
 import { CategoryCombination } from '../category-combination.model';
 import { CategoryCombinationService } from '../category-combination.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { CategoryService } from '../../category/category.service';
+import { Category } from '../../category/category.model';
+import { CategoryCategoryCombination } from '../../category-category-combination/category-category-combination.model';
 
 @Component({
   selector: 'app-category-combination-update',
@@ -24,6 +27,8 @@ export class CategoryCombinationUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  newCategoryCombCategories?: CategoryCategoryCombination[] = [];
+  existingCategoryCombCategories?: CategoryCategoryCombination[] = [];
 
   /**
    * Declare form
@@ -37,6 +42,7 @@ export class CategoryCombinationUpdateComponent implements OnInit {
 
   constructor(
     protected categoryCombinationService: CategoryCombinationService,
+    protected categoryService: CategoryService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -44,6 +50,24 @@ export class CategoryCombinationUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.existingCategoryCombCategories =
+      this.dialogConfig.data.category_category_combinations ?? [];
+    const existingCatIds = this.existingCategoryCombCategories?.map(
+      (c) => c.category_id
+    );
+    this.categoryService
+      .query({ columns: ['id', 'name'] })
+      .subscribe((resp) => {
+        this.newCategoryCombCategories = (resp.data ?? [])
+          .filter((c) => existingCatIds?.indexOf(c.id) === -1)
+          .map((c) => {
+            return {
+              category: c,
+              category_id: c.id,
+              category_combination_id: this.dialogConfig.data.id,
+            };
+          });
+      });
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -57,7 +81,9 @@ export class CategoryCombinationUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const categoryCombination = this.createFromForm();
+    let categoryCombination = this.createFromForm();
+    categoryCombination.category_category_combinations =
+      this.existingCategoryCombCategories;
     if (categoryCombination.id !== undefined) {
       this.subscribeToSaveResponse(
         this.categoryCombinationService.update(categoryCombination)

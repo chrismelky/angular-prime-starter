@@ -53,4 +53,11 @@ export class StrategicPlanService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  download(req?: any):Observable<CustomResponse<any>>{
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<any[]>>(`${this.resourceUrl}/download`, {
+      params: options,
+    });
+  }
 }

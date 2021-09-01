@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators,FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -19,6 +19,8 @@ import { FinancialYearService } from 'src/app/setup/financial-year/financial-yea
 import { StrategicPlan } from '../strategic-plan.model';
 import { StrategicPlanService } from '../strategic-plan.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import {UserService} from "../../user/user.service";
+import {User} from "../../user/user.model";
 
 @Component({
   selector: 'app-strategic-plan-update',
@@ -28,10 +30,15 @@ export class StrategicPlanUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+   uploadedFiles= [];
+
+
+
 
   adminHierarchies?: AdminHierarchy[] = [];
   startFinancialYears?: FinancialYear[] = [];
   endFinancialYears?: FinancialYear[] = [];
+  currentUser?: User;
 
   /**
    * Declare form
@@ -50,28 +57,30 @@ export class StrategicPlanUpdateComponent implements OnInit {
   constructor(
     protected strategicPlanService: StrategicPlanService,
     protected adminHierarchyService: AdminHierarchyService,
-    protected startFinancialYearService: FinancialYearService,
-    protected endFinancialYearService: FinancialYearService,
+    protected financialYearService: FinancialYearService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
-  ) {}
+    private toastService: ToastService,
+    protected userService:UserService
+  ) {
+    this.currentUser = userService.getCurrentUser();
+    if (this.currentUser.admin_hierarchy) {
+      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
+      // @ts-ignore
+      this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+    }
+  }
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.startFinancialYearService
+
+    this.financialYearService
       .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.startFinancialYears = resp.data)
       );
-    this.endFinancialYearService
+    this.financialYearService
       .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
@@ -166,5 +175,25 @@ export class StrategicPlanUpdateComponent implements OnInit {
       is_active: this.editForm.get(['is_active'])!.value,
       url: this.editForm.get(['url'])!.value,
     };
+  }
+
+
+  onSelect(event: any) {
+    // @ts-ignore
+
+    this.uploadedFiles=[];
+    for(let file of event.files) {
+      const reader = new FileReader();
+      reader.onload = this.handleReaderLoaded.bind(this);
+      reader.readAsBinaryString(file);
+    }
+  }
+
+  handleReaderLoaded(e:any) {
+
+   // @ts-ignore
+    //this.uploadedFiles.push('data:application/pdf;base64,' + btoa(e.target.result));
+    this.uploadedFiles.push(btoa(e.target.result));
+    this.editForm.get(["url"])?.setValue({file:this.uploadedFiles});
   }
 }

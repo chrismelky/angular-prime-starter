@@ -142,7 +142,7 @@ export class MainComponent implements OnInit {
           icon: 'pi pi-fw pi-angle-down',
           items: [
             {
-              label: 'Admin Hierarchy Levels',
+              label: 'Hierarchy Levels',
               icon: 'pi pi-fw pi-link',
               routerLink: 'admin-hierarchy-level',
             },
@@ -157,7 +157,7 @@ export class MainComponent implements OnInit {
               routerLink: 'section',
             },
             {
-              label: 'Planning & Budgeting Decision Levels',
+              label: 'Decision Levels',
               icon: 'pi pi-fw pi-link',
               routerLink: 'decision-level',
             },

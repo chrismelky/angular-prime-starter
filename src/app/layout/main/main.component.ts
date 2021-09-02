@@ -40,7 +40,7 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.user);
+    // console.log(this.user);
   }
 
   userMenus: MenuItem[] = [

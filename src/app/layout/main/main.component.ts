@@ -229,6 +229,11 @@ export class MainComponent implements OnInit {
               routerLink: 'objective-type',
             },
             {
+              label: "Priority Areas",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "priority-area",
+            },
+            {
               label: 'Planning Sequence',
               icon: 'pi pi-fw pi-arrow-right',
               routerLink: 'objective',

@@ -25,10 +25,22 @@ body {
     width: 100%;
     background-color: transparent;
 
-    .p-menuitem-text {
+    .p-menuitem-icon {
+      font-size: 17px;
+      font-weight: 500;
+      color: $navIcon;
+    }
+    .pi {
+      font-weight: 500;
+    }
+    .pi-chevron-right {
       font-size: 13px;
+    }
+    .p-menuitem-text {
+      font-size: 14px;
       // line-height: 20px;
       font-weight: 500;
+      overflow-x: hidden;
     }
     .p-menuitem-text:hover {
       color: #669df6;
@@ -111,7 +123,7 @@ body {
   border-right: none !important;
   .mat-toolbar {
     background-color: $navBg;
-    box-shadow: 0 -1px 0 $navBorder inset;
+    // box-shadow: 0 -1px 0 $navBorder inset;
 
     .logo {
       line-height: 32px;
@@ -123,7 +135,6 @@ body {
       font-size: 1.7rem;
       font-family: cursive;
       color: $logoWhite;
-      // margin: 0 auto;
       margin-left: -0.75rem;
 
     }
@@ -131,7 +142,7 @@ body {
   .location {
     height: 80px;
     padding-left: 1.5em;
-    box-shadow: 0 -1px 0 $navBorder inset;
+    // box-shadow: 0 -1px 0 $navBorder inset;
     background-color: #132d49;
     img {
       transition: all 0.2s ease-in-out;

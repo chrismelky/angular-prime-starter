@@ -229,9 +229,9 @@ export class MainComponent implements OnInit {
               routerLink: 'objective-type',
             },
             {
-              label: "Priority Areas",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "priority-area",
+              label: 'Priority Areas',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'priority-area',
             },
             {
               label: 'Planning Sequence',
@@ -267,6 +267,11 @@ export class MainComponent implements OnInit {
               label: 'Guidelines',
               icon: 'pi pi-fw pi-arrow-right',
               routerLink: 'reference-document',
+            },
+            {
+              label: 'National Reference Types',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-round',
             },
             {
               label: 'Comprehensive Plans',
@@ -447,17 +452,6 @@ export class MainComponent implements OnInit {
         },
       ],
     },
-    {
-      label: 'Budget',
-      icon: 'pi pi-fw pi-angle-down',
-      items: [
-        {
-          label: 'National Reference Types',
-          icon: 'pi pi-fw pi-arrow-right',
-          routerLink: 'cas-assessment-round',
-        },
-      ],
-    },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
 
     {
@@ -473,6 +467,11 @@ export class MainComponent implements OnInit {
               icon: 'pi pi-fw pi-arrow-right',
               routerLink: 'baseline-statistic-value',
             },
+            {
+              label: 'Data Values',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'data-value',
+            },
           ],
         },
         /**====Planrep planning Menu Generator Hook: Dont Delete====*/
@@ -487,7 +486,7 @@ export class MainComponent implements OnInit {
     },
     {
       label: 'Execution',
-      icon: 'pi pi-pw pi-money-bill',
+      icon: 'pi pi-pw pi-play',
       items: [
         /**====Planrep execution Menu Generator Hook: Dont Delete====*/
       ],

@@ -18,38 +18,6 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="start_financial_year_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="startFinancialYears!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="start_financial_year_id"
-              ></p-dropdown>
-              <label for="start_financial_year_id">Start Financial Year </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="end_financial_year_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="endFinancialYears!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="end_financial_year_id"
-              ></p-dropdown>
-              <label for="end_financial_year_id">End Financial Year </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
                 id="admin_hierarchy_id"
                 optionValue="id"
                 optionLabel="name"
@@ -63,6 +31,24 @@
               <label for="admin_hierarchy_id">Admin Hierarchy </label>
             </span>
           </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="reference_document_type_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="referenceDocumentTypes!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="reference_document_type_id"
+              ></p-dropdown>
+              <label for="reference_document_type_id"
+                >Reference Document Type
+              </label>
+            </span>
+          </div>
         </div>
         <div
           fxLayout="row wrap"
@@ -72,7 +58,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -90,7 +75,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -146,7 +130,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -172,6 +155,8 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="referenceDocuments!"
+      [scrollable]="true"
+      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -180,14 +165,9 @@
           <span class="card-header-text">Reference Documents</span>
           <button
             pButton
-            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !start_financial_year_id ||
-              !end_financial_year_id ||
-              !admin_hierarchy_id
-            "
+            [disabled]="!admin_hierarchy_id || !reference_document_type_id"
             (click)="createOrUpdate()"
             label="Add Reference Document"
           ></button>
@@ -202,7 +182,7 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th></th>
+          <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -210,12 +190,11 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>
+          <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -227,7 +206,6 @@
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="

@@ -26,6 +26,11 @@ import { CasAssessmentSubCriteriaOptionService } from "src/app/setup/cas-assessm
 import { CasAssessmentSubCriteriaPossibleScore } from "./cas-assessment-sub-criteria-possible_score.model";
 import { CasAssessmentSubCriteriaPossibleScoreService } from "./cas-assessment-sub-criteria-possible_score.service";
 import { CasAssessmentSubCriteriaPossibleScoreUpdateComponent } from "./update/cas-assessment-sub-criteria-possible_score-update.component";
+import {CasAssessmentCategoryService} from "../cas-assessment-category/cas-assessment-category.service";
+import {CasAssessmentCategory} from "../cas-assessment-category/cas-assessment-category.model";
+import {CasAssessmentCriteriaService} from "../cas-assessment-criteria/cas-assessment-criteria.service";
+import {CasAssessmentCriteria} from "../cas-assessment-criteria/cas-assessment-criteria.model";
+import {CasAssessmentSubCriteria} from "../cas-assessment-sub-criteria/cas-assessment-sub-criteria.model";
 
 @Component({
   selector: "app-cas-assessment-sub-criteria-possible_score",
@@ -37,7 +42,9 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
   casAssessmentSubCriteriaPossibleScores?: CasAssessmentSubCriteriaPossibleScore[] =
     [];
 
-  casAssessmentSubCriteriaOptions?: CasAssessmentSubCriteriaOption[] = [];
+  casAssessmentSubCriteria?: CasAssessmentSubCriteria[] = [];
+  casAssessmentCategories?: CasAssessmentCategory[] = [];
+  casAssessmentCriteria?: CasAssessmentCriteria [] = [];
 
   cols = [
     {
@@ -57,11 +64,15 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  cas_assessment_sub_criteria_option_id!: number;
+  cas_assessment_category_id!: number;
+  cas_assessment_criteria_id!: number;
+  cas_assessment_sub_criteria_id!: number;
 
   constructor(
     protected casAssessmentSubCriteriaPossibleScoreService: CasAssessmentSubCriteriaPossibleScoreService,
     protected casAssessmentSubCriteriaOptionService: CasAssessmentSubCriteriaOptionService,
+    protected casAssessmentCriteriaService: CasAssessmentCriteriaService,
+    protected casAssessmentCategoryService: CasAssessmentCategoryService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -71,12 +82,15 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casAssessmentSubCriteriaOptionService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) =>
-          (this.casAssessmentSubCriteriaOptions = resp.data)
-      );
+    // this.casAssessmentSubCriteriaOptionService
+    //   .query({ columns: ["id", "name"] })
+    //   .subscribe(
+    //     (resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) =>
+    //       (this.casAssessmentSubCriteriaOptions = resp.data)
+    //   );
+    this.casAssessmentCategoryService.query({columns: ["id","name"]})
+      .subscribe((resp: CustomResponse<CasAssessmentCategory[]>) =>
+        (this.casAssessmentCategories = resp.data));
     this.handleNavigation();
   }
 
@@ -86,7 +100,7 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_assessment_sub_criteria_option_id) {
+    if (!this.cas_assessment_sub_criteria_id) {
       return;
     }
     this.isLoading = true;
@@ -98,7 +112,7 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         cas_assessment_sub_criteria_option_id:
-          this.cas_assessment_sub_criteria_option_id,
+          this.cas_assessment_sub_criteria_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -149,6 +163,26 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
     }
   }
 
+  /**
+   * fetch cas assessment criteria based on selected cas assessment category
+   */
+  fetchCriteria(item: any) {
+    if (item) {
+      this.casAssessmentCriteriaService.findById({categoryId: item.value})
+        .subscribe((resp: CustomResponse<CasAssessmentCriteria[]>)=>
+          (this.casAssessmentCriteria = resp.data));
+    }
+  }
+  /**
+   * fetch cas assessment Sub criteria based on selected cas assessment criteria
+   */
+  fetchSubCriteria(item: any) {
+    if (item) {
+      this.casAssessmentSubCriteriaOptionService.findById({criteriaId: item.value})
+        .subscribe((resp: CustomResponse<CasAssessmentSubCriteria[]>)=>
+          (this.casAssessmentSubCriteria = resp.data));
+    }
+  }
   /**
    * search items by @var search params
    */
@@ -217,7 +251,7 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
       casAssessmentSubCriteriaPossibleScore ?? {
         ...new CasAssessmentSubCriteriaPossibleScore(),
         cas_assessment_sub_criteria_option_id:
-          this.cas_assessment_sub_criteria_option_id,
+          this.cas_assessment_sub_criteria_id,
       };
     const ref = this.dialogService.open(
       CasAssessmentSubCriteriaPossibleScoreUpdateComponent,

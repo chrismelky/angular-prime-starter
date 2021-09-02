@@ -28,6 +28,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { InputMaskModule } from 'primeng/inputmask';
 import { TreeTableModule } from 'primeng/treetable';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { PickListModule } from 'primeng/picklist';
 
 @NgModule({
   declarations: [],
@@ -60,6 +61,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
     InputMaskModule,
     TreeTableModule,
     ConfirmPopupModule,
+    PickListModule,
   ],
 })
 export class SharedPrimengModule {}

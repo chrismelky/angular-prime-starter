@@ -6,7 +6,7 @@
     class="mat-elevation-z2"
   >
     <mat-toolbar class="mat-elevation-z0">
-      <div fxLayout="row" fxLayoutGap="0.1rem">
+      <div fxLayout="row" fxLayoutGap="0.1rem" class="logo">
         <span class="logo-text">PlanRep</span>
       </div>
     </mat-toolbar>
@@ -14,13 +14,23 @@
       class="location"
       fxLayout="row"
       fxLayoutAlign="start center"
-      fxLayoutGap="1rem"
+      fxLayoutGap="0rem"
     >
       <img src="../../../assets/images/coat.png" />
-      <span>PORALG</span>
+      <div
+        class="location"
+        fxLayout="column"
+        fxLayoutGap="0px"
+        fxLayoutAlign="center center"
+      >
+        <span class="admin">{{ user?.admin_hierarchy?.name }}</span>
+        <span class="section">{{ user?.section?.name }}</span>
+      </div>
     </div>
+
     <div class="sidenav-item">
       <p-panelMenu
+        pRipple
         [multiple]="false"
         [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"
         [model]="items"

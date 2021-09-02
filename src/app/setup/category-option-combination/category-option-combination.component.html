@@ -17,37 +17,35 @@
           fxLayoutAlign="start center"
         >
           <div class="p-field">
-            <span class="p-float-label">
-              <p-dropdown
-                id="cas_assessment_category_version_id"
-                optionValue="id"
-                optionLabel="cas_assessment_category.name"
-                [autoDisplayFirst]="false"
-                (onChange)="onSearch()"
-                [showClear]="true"
-                [filter]="true"
-                [options]="casAssessmentCategoryVersions!"
-                [(ngModel)]="search['cas_assessment_category_version_id']"
-              ></p-dropdown>
-              <label for="cas_assessment_category_version_id"
-                >Cas Assessment Category Version
-              </label>
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="name"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="search['name']"
+              />
+              <label for="name">Name </label>
+              <i
+                class="pi pi-times clear"
+                (click)="search['name'] = undefined; onSearch()"
+              ></i>
             </span>
           </div>
           <div class="p-field">
-            <span class="p-float-label">
-              <p-dropdown
-                id="cas_assessment_state_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                (onChange)="onSearch()"
-                [showClear]="true"
-                [filter]="true"
-                [options]="casAssessmentStates!"
-                [(ngModel)]="search['cas_assessment_state_id']"
-              ></p-dropdown>
-              <label for="cas_assessment_state_id">Cas Assessment State </label>
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="code"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="search['code']"
+              />
+              <label for="code">Code </label>
+              <i
+                class="pi pi-times clear"
+                (click)="search['code'] = undefined; onSearch()"
+              ></i>
             </span>
           </div>
         </div>
@@ -81,35 +79,25 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="casAssessmentCategoryVersionStates!"
-      [scrollable]="true"
-      scrollHeight="500px"
+      [value]="categoryOptionCombinations!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text"
-            >Cas Assessment Category Version States</span
-          >
+          <span class="card-header-text">Category Option Combinations</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]=""
             (click)="createOrUpdate()"
-            label="Add Cas Assessment Category Version State"
+            label="Add Category Option Combination"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="casAssessmentCategoryVersionStates?.length">
-          <th [pSortableColumn]="'cas_assessment_category_version_id'">
-            Cas Assessment Category Version <p-sortIcon [field]="'cas_assessment_category_version_id'"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'cas_assessment_state_id'">
-            Cas Assessment State <p-sortIcon [field]="'cas_assessment_state_id'"></p-sortIcon>
-          </th>
+        <tr *ngIf="categoryOptionCombinations?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -117,17 +105,15 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th style="flex: 0 0 2rem"></th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td>{{ rowData.cas_assessment_category?.name}}</td>
-          <td>{{ rowData.cas_assessment_state?.name }}</td>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="flex: 0 0 2rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
@@ -158,25 +144,25 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="casAssessmentCategoryVersionStates?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="categoryOptionCombinations?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Cas Assessment Category Version State"
+  header="Confirmation Delete Category Option Combination"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

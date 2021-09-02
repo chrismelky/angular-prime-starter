@@ -531,6 +531,20 @@ const routes: Routes = [
             (m) => m.PriorityAreaModule
           ),
       },
+      {
+        path: "category-option-combination",
+        loadChildren: () =>
+          import(
+            "../setup/category-option-combination/category-option-combination.module"
+          ).then((m) => m.CategoryOptionCombinationModule),
+      },
+      {
+        path: "data-value",
+        loadChildren: () =>
+          import("../setup/data-value/data-value.module").then(
+            (m) => m.DataValueModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

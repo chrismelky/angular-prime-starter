@@ -7,10 +7,11 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import {combineLatest, Observable} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
 import { CustomResponse } from "../../utils/custom-response";
 import {
@@ -19,32 +20,50 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
+import { DataElement } from "src/app/setup/data-element/data-element.model";
+import { DataElementService } from "src/app/setup/data-element/data-element.service";
+import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
+import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+import { Facility } from "src/app/setup/facility/facility.model";
+import { FacilityService } from "src/app/setup/facility/facility.service";
+import { CategoryOptionCombination } from "src/app/setup/category-option-combination/category-option-combination.model";
+import { CategoryOptionCombinationService } from "src/app/setup/category-option-combination/category-option-combination.service";
 
-import { BudgetClass } from "./budget-class.model";
-import { BudgetClassService } from "./budget-class.service";
-import { BudgetClassUpdateComponent } from "./update/budget-class-update.component";
-import {finalize} from "rxjs/operators";
-import {TreeTable} from "primeng/treetable";
+import { DataValue } from "./data-value.model";
+import { DataValueService } from "./data-value.service";
+import { DataValueUpdateComponent } from "./update/data-value-update.component";
 
 @Component({
-  selector: "app-budget-class",
-  templateUrl: "./budget-class.component.html",
+  selector: "app-data-value",
+  templateUrl: "./data-value.component.html",
 })
-export class BudgetClassComponent implements OnInit {
+export class DataValueComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild('table') table!: TreeTable;
-  budgetClasses?: TreeNode[] = [];
-  parents?: BudgetClass[] = [];
+  @ViewChild("table") table!: Table;
+  dataValues?: DataValue[] = [];
+
+  dataElements?: DataElement[] = [];
+  adminHierarchies?: AdminHierarchy[] = [];
+  financialYears?: FinancialYear[] = [];
+  facilities?: Facility[] = [];
+  categoryOptionCombinations?: CategoryOptionCombination[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "data_element_id",
+      header: "Data Element ",
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: "category_option_combination_id",
+      header: "Category Option Combination ",
+      sort: true,
+    },
+    {
+      field: "value",
+      header: "Value",
       sort: true,
     },
   ]; //Table display columns
@@ -59,10 +78,17 @@ export class BudgetClassComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  parent_id!: number;
+  admin_hierarchy_id!: number;
+  financial_year_id!: number;
+  facility_id!: number;
 
   constructor(
-    protected budgetClassService: BudgetClassService,
+    protected dataValueService: DataValueService,
+    protected dataElementService: DataElementService,
+    protected adminHierarchyService: AdminHierarchyService,
+    protected financialYearService: FinancialYearService,
+    protected facilityService: FacilityService,
+    protected categoryOptionCombinationService: CategoryOptionCombinationService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -72,13 +98,35 @@ export class BudgetClassComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.budgetClassService
+    this.dataElementService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<BudgetClass[]>) => (this.parents = resp.data)
+        (resp: CustomResponse<DataElement[]>) => (this.dataElements = resp.data)
+      );
+    this.adminHierarchyService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.adminHierarchies = resp.data)
+      );
+    this.financialYearService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.financialYears = resp.data)
+      );
+    this.facilityService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
+      );
+    this.categoryOptionCombinationService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CategoryOptionCombination[]>) =>
+          (this.categoryOptionCombinations = resp.data)
       );
     this.handleNavigation();
-    this.loadPage();
   }
 
   /**
@@ -87,19 +135,28 @@ export class BudgetClassComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (
+      !this.admin_hierarchy_id ||
+      !this.financial_year_id ||
+      !this.facility_id
+    ) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.budgetClassService
+    this.dataValueService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        parent_id:null,
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        financial_year_id: this.financial_year_id,
+        facility_id: this.facility_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<BudgetClass[]>) => {
+        (res: CustomResponse<DataValue[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -204,17 +261,19 @@ export class BudgetClassComponent implements OnInit {
   }
 
   /**
-   * Creating or updating BudgetClass
-   * @param budgetClass ; If undefined initize new model to create else edit existing model
+   * Creating or updating DataValue
+   * @param dataValue ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(budgetClass?: BudgetClass): void {
-    const data: BudgetClass = budgetClass ?? {
-      ...new BudgetClass(),
-      parent_id: this.parent_id,
+  createOrUpdate(dataValue?: DataValue): void {
+    const data: DataValue = dataValue ?? {
+      ...new DataValue(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
+      facility_id: this.facility_id,
     };
-    const ref = this.dialogService.open(BudgetClassUpdateComponent, {
+    const ref = this.dialogService.open(DataValueUpdateComponent, {
       data,
-      header: "Create/Update BudgetClass",
+      header: "Create/Update DataValue",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -224,14 +283,14 @@ export class BudgetClassComponent implements OnInit {
   }
 
   /**
-   * Delete BudgetClass
-   * @param budgetClass
+   * Delete DataValue
+   * @param dataValue
    */
-  delete(budgetClass: BudgetClass): void {
+  delete(dataValue: DataValue): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this BudgetClass?",
+      message: "Are you sure that you want to delete this DataValue?",
       accept: () => {
-        this.budgetClassService.delete(budgetClass.id!).subscribe((resp) => {
+        this.dataValueService.delete(dataValue.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -246,14 +305,14 @@ export class BudgetClassComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<BudgetClass[]> | null,
+    resp: CustomResponse<DataValue[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/budget-class"], {
+      this.router.navigate(["/data-value"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -262,13 +321,7 @@ export class BudgetClassComponent implements OnInit {
         },
       });
     }
-    this.budgetClasses =(resp?.data ?? []).map((c) => {
-      return {
-        data: c,
-        children: [],
-        leaf: false,
-      };
-    });
+    this.dataValues = resp?.data ?? [];
   }
 
   /**
@@ -277,95 +330,6 @@ export class BudgetClassComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Budget Class");
-  }
-
-  /**
-   * When cas content expanded load children
-   * @param event = constist of node data
-   */
-  onNodeExpand(event: any): void {
-    const node = event.node;
-    this.isLoading = true;
-    // Load children by parent_id= node.data.id
-    this.budgetClassService
-      .query({
-        parent_id: node.data.id,
-        sort: ['code:asc'],
-      })
-      .subscribe(
-        (resp) => {
-          this.isLoading = false;
-          // Map response data to @TreeNode type
-          node.children = (resp?.data ?? []).map((c) => {
-            return {
-              data: c,
-              children: [],
-              leaf: false,
-            };
-          });
-          // Update Tree state
-          this.budgetClasses = [...this.budgetClasses!];
-        },
-        (error) => {
-          this.isLoading = false;
-        }
-      );
-  }
-
-  /**
-   * toggleActivation event
-   * @param row Data = constist of row Data
-   */
-  toggleActivation(row:any){
-    var budgetClass = this.createFromForm(row);
-    console.log(budgetClass);
-    this.subscribeToSaveResponse(
-      this.budgetClassService.update(budgetClass)
-    );
-    this.handleNavigation();
-  }
-
-  /**
-   * When save successfully close dialog and display info message
-   * @param result
-   */
-  protected onSaveSuccess(result: any): void {
-    this.toastService.info(result.message);
-    this.loadPage();
-  }
-
-  /**
-   * Error handling specific to this component
-   * Note; general error handling is done by ErrorInterceptor
-   * @param error
-   */
-  protected onSaveError(error: any): void {
-  }
-
-  protected onSaveFinalize(): void {
-  }
-
-  /**
-   * Return form values as object of type BudgetClass
-   * @returns BudgetClass
-   */
-  protected createFromForm(row:any): BudgetClass {
-    return {
-      ...new BudgetClass(),
-      id: row.id,
-      name:row.name,
-      code:row.code,
-      active:row.active,
-      parent_id:row.parent_id
-    };
-  }
-  protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<BudgetClass>>
-  ): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      (result) => this.onSaveSuccess(result),
-      (error) => this.onSaveError(error)
-    );
+    this.toastService.error("Error loading Data Value");
   }
 }

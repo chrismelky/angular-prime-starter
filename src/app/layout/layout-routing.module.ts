@@ -525,6 +525,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: "priority-area",
+        loadChildren: () =>
+          import("../setup/priority-area/priority-area.module").then(
+            (m) => m.PriorityAreaModule
+          ),
+      },
+      {
         path: "category-option-combination",
         loadChildren: () =>
           import(

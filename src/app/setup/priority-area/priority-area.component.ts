@@ -20,51 +20,30 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { ReferenceDocumentType } from "src/app/setup/reference-document-type/reference-document-type.model";
-import { ReferenceDocumentTypeService } from "src/app/setup/reference-document-type/reference-document-type.service";
 
-import { ReferenceDocument } from "./reference-document.model";
-import { ReferenceDocumentService } from "./reference-document.service";
-import { ReferenceDocumentUpdateComponent } from "./update/reference-document-update.component";
-import {FinancialYear} from "../financial-year/financial-year.model";
-import {FinancialYearService} from "../financial-year/financial-year.service";
+import { PriorityArea } from "./priority-area.model";
+import { PriorityAreaService } from "./priority-area.service";
+import { PriorityAreaUpdateComponent } from "./update/priority-area-update.component";
 
 @Component({
-  selector: "app-reference-document",
-  templateUrl: "./reference-document.component.html",
+  selector: "app-priority-area",
+  templateUrl: "./priority-area.component.html",
 })
-export class ReferenceDocumentComponent implements OnInit {
+export class PriorityAreaComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  referenceDocuments?: ReferenceDocument[] = [];
-
-  startFinancialYears?: FinancialYear[] = [];
-  endFinancialYears?: FinancialYear[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
-  referenceDocumentTypes?: ReferenceDocumentType[] = [];
+  priorityAreas?: PriorityArea[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "description",
+      header: "Description",
       sort: true,
     },
     {
-      field: "url",
-      header: "Url",
-      sort: true,
-    },
-    {
-      field: "start_financial_year_id",
-      header: "Start Financial Year ",
-      sort: true,
-    },
-    {
-      field: "end_financial_year_id",
-      header: "End Financial Year ",
-      sort: true,
+      field: "number",
+      header: "Number",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -78,14 +57,9 @@ export class ReferenceDocumentComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
-  reference_document_type_id!: number;
 
   constructor(
-    protected referenceDocumentService: ReferenceDocumentService,
-    protected financialYearService: FinancialYearService,
-    protected adminHierarchyService: AdminHierarchyService,
-    protected referenceDocumentTypeService: ReferenceDocumentTypeService,
+    protected priorityAreaService: PriorityAreaService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -95,30 +69,6 @@ export class ReferenceDocumentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.startFinancialYears = resp.data)
-      );
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.endFinancialYears = resp.data)
-      );
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.referenceDocumentTypeService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<ReferenceDocumentType[]>) =>
-          (this.referenceDocumentTypes = resp.data)
-      );
     this.handleNavigation();
   }
 
@@ -128,23 +78,18 @@ export class ReferenceDocumentComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_id || !this.reference_document_type_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceDocumentService
+    this.priorityAreaService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        reference_document_type_id: this.reference_document_type_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceDocument[]>) => {
+        (res: CustomResponse<PriorityArea[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -175,20 +120,8 @@ export class ReferenceDocumentComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -249,18 +182,16 @@ export class ReferenceDocumentComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReferenceDocument
-   * @param referenceDocument ; If undefined initize new model to create else edit existing model
+   * Creating or updating PriorityArea
+   * @param priorityArea ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(referenceDocument?: ReferenceDocument): void {
-    const data: ReferenceDocument = referenceDocument ?? {
-      ...new ReferenceDocument(),
-      admin_hierarchy_id: this.admin_hierarchy_id,
-      reference_document_type_id: this.reference_document_type_id,
+  createOrUpdate(priorityArea?: PriorityArea): void {
+    const data: PriorityArea = priorityArea ?? {
+      ...new PriorityArea(),
     };
-    const ref = this.dialogService.open(ReferenceDocumentUpdateComponent, {
+    const ref = this.dialogService.open(PriorityAreaUpdateComponent, {
       data,
-      header: "Create/Update ReferenceDocument",
+      header: "Create/Update PriorityArea",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -270,19 +201,17 @@ export class ReferenceDocumentComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceDocument
-   * @param referenceDocument
+   * Delete PriorityArea
+   * @param priorityArea
    */
-  delete(referenceDocument: ReferenceDocument): void {
+  delete(priorityArea: PriorityArea): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReferenceDocument?",
+      message: "Are you sure that you want to delete this PriorityArea?",
       accept: () => {
-        this.referenceDocumentService
-          .delete(referenceDocument.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
+        this.priorityAreaService.delete(priorityArea.id!).subscribe((resp) => {
+          this.loadPage(this.page);
+          this.toastService.info(resp.message);
+        });
       },
     });
   }
@@ -294,14 +223,14 @@ export class ReferenceDocumentComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceDocument[]> | null,
+    resp: CustomResponse<PriorityArea[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-document"], {
+      this.router.navigate(["/priority-area"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -310,7 +239,7 @@ export class ReferenceDocumentComponent implements OnInit {
         },
       });
     }
-    this.referenceDocuments = resp?.data ?? [];
+    this.priorityAreas = resp?.data ?? [];
   }
 
   /**
@@ -319,6 +248,6 @@ export class ReferenceDocumentComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Document");
+    this.toastService.error("Error loading Priority Area");
   }
 }

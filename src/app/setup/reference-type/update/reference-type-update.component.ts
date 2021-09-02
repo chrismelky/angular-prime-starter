@@ -12,11 +12,11 @@ import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
-import { Sector } from 'src/app/setup/sector/sector.model';
 import { SectorService } from 'src/app/setup/sector/sector.service';
 import { ReferenceType } from '../reference-type.model';
 import { ReferenceTypeService } from '../reference-type.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import {EnumService, PlanrepEnum} from "../../../shared/enum.service";
 
 @Component({
   selector: 'app-reference-type-update',
@@ -27,7 +27,7 @@ export class ReferenceTypeUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
-  sectors?: Sector[] = [];
+  linkLevels?: PlanrepEnum[] = [];
 
   /**
    * Declare form
@@ -37,7 +37,6 @@ export class ReferenceTypeUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     multi_select: [false, [Validators.required]],
     link_level: [null, [Validators.required]],
-    sector_id: [null, [Validators.required]],
   });
 
   constructor(
@@ -46,15 +45,12 @@ export class ReferenceTypeUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected enumService: EnumService
   ) {}
 
   ngOnInit(): void {
-    this.sectorService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
-      );
+    this.linkLevels = this.enumService.get("linkLevels");
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -119,7 +115,6 @@ export class ReferenceTypeUpdateComponent implements OnInit {
       name: referenceType.name,
       multi_select: referenceType.multi_select,
       link_level: referenceType.link_level,
-      sector_id: referenceType.sector_id,
     });
   }
 
@@ -134,7 +129,6 @@ export class ReferenceTypeUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       multi_select: this.editForm.get(['multi_select'])!.value,
       link_level: this.editForm.get(['link_level'])!.value,
-      sector_id: this.editForm.get(['sector_id'])!.value,
     };
   }
 }

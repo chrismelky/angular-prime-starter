@@ -94,9 +94,9 @@ export class MainComponent implements OnInit {
               routerLink: "user",
             },
             {
-              label: 'Roles',
-              icon: 'pi pi-fw pi-arrow-right',
-              routerLink: 'role',
+              label: "Roles",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "role",
             },
           ],
         },
@@ -316,23 +316,24 @@ export class MainComponent implements OnInit {
                   label: "Baseline Data",
                   icon: "pi pi-fw pi-arrow-right",
                   routerLink: "baseline-statistic",
-                },{
-                label: "Transport Facilities",
-                icon: "pi pi-fw pi-angle-down",
-                items: [
-                  {
-                    label: "Asset Uses",
-                    icon: "pi pi-fw pi-arrow-right",
-                    routerLink: "asset-use",
-                  },
-                  {
-                    label: "Asset Conditions",
-                    icon: "pi pi-fw pi-arrow-right",
-                    routerLink: "asset-condition",
-                  },
-                ]
                 },
-              ]
+                {
+                  label: "Transport Facilities",
+                  icon: "pi pi-fw pi-angle-down",
+                  items: [
+                    {
+                      label: "Asset Uses",
+                      icon: "pi pi-fw pi-arrow-right",
+                      routerLink: "asset-use",
+                    },
+                    {
+                      label: "Asset Conditions",
+                      icon: "pi pi-fw pi-arrow-right",
+                      routerLink: "asset-condition",
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -440,13 +441,24 @@ export class MainComponent implements OnInit {
           ],
         },
         {
-          label: "National Reference Types",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "reference-type",
+          label: "National References",
+          icon: "pi pi-fw pi-angle-down",
+          items: [
+            {
+              label: "National Reference Types",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "reference-type",
+            },
+            {
+              label: "National References",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "national-reference",
+            },
+          ]
         },
-          ],
-        },
-        /**====Planrep setup Menu Generator Hook: Dont Delete====*/
+      ],
+    },
+    /**====Planrep setup Menu Generator Hook: Dont Delete====*/
 
     {
       label: "Planning",
@@ -455,13 +467,13 @@ export class MainComponent implements OnInit {
         {
           label: "Comprehensive Plans",
           icon: "pi pi-fw pi-angle-down",
-         items: [
-           {
-             label: "Baseline Data",
-             icon: "pi pi-fw pi-arrow-right",
-             routerLink: "baseline-statistic-value",
-           },
-         ]
+          items: [
+            {
+              label: "Baseline Data",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "baseline-statistic-value",
+            },
+          ],
         },
         /**====Planrep planning Menu Generator Hook: Dont Delete====*/
       ],
@@ -479,11 +491,10 @@ export class MainComponent implements OnInit {
       items: [
         /**====Planrep execution Menu Generator Hook: Dont Delete====*/
       ],
-    }
-];
+    },
+  ];
 
   logout(): void {
     this.authService.logout().subscribe(() => {});
   }
-
 }

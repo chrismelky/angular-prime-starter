@@ -471,7 +471,6 @@ const routes: Routes = [
           ),
       },
       {
-
         path: "cas-assessment-sub-criteria-possible_score",
         loadChildren: () =>
           import(
@@ -483,9 +482,10 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/cas-assessment-sub-criteria-report_set/cas-assessment-sub-criteria-report_set.module"
-            ).then((m) => m.CasAssessmentSubCriteriaReportSetModule),
+          ).then((m) => m.CasAssessmentSubCriteriaReportSetModule),
       },
-      {path: "pe-select-option",
+      {
+        path: "pe-select-option",
         loadChildren: () =>
           import("../setup/pe-select-option/pe-select-option.module").then(
             (m) => m.PeSelectOptionModule
@@ -509,7 +509,6 @@ const routes: Routes = [
           import("../setup/transport-category/transport-category.module").then(
             (m) => m.TransportCategoryModule
           ),
-
       },
       {
         path: "budget-class",
@@ -523,6 +522,13 @@ const routes: Routes = [
         loadChildren: () =>
           import("../setup/fund-source/fund-source.module").then(
             (m) => m.FundSourceModule
+          ),
+      },
+      {
+        path: "national-reference",
+        loadChildren: () =>
+          import("../setup/national-reference/national-reference.module").then(
+            (m) => m.NationalReferenceModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

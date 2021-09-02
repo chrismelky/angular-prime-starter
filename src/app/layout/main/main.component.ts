@@ -39,6 +39,7 @@ export class MainComponent implements OnInit {
     }
   }
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
     // console.log(this.user);
   }
@@ -65,7 +66,7 @@ export class MainComponent implements OnInit {
       items: [
         {
           label: 'Advertisements',
-          icon: 'pi pi-fw pi-arrow-right',
+          icon: 'pi pi-fw pi-link',
           routerLink: 'advertisement',
         },
         {
@@ -74,12 +75,12 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'Financial Years',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'financial-year',
             },
             {
               label: 'Period Groups',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'period-group',
             },
           ],
@@ -90,12 +91,12 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'Users',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'user',
             },
             {
               label: 'Roles',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'role',
             },
           ],
@@ -106,32 +107,32 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'Projects',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'project',
             },
             {
               label: 'Fund Source Categories',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'fund-source-category',
             },
             {
               label: 'Budget Classes',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'budget-class',
             },
             {
               label: 'Fund Sources',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'fund-source',
             },
             {
               label: 'Fund Types',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'fund-type',
             },
             {
               label: 'Bank Accounts',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'bank-account',
             },
           ],
@@ -142,42 +143,42 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'Admin Hierarchy Levels',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'admin-hierarchy-level',
             },
             {
               label: 'Admin Hierarchies',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'admin-hierarchy',
             },
             {
               label: 'Planning Units',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'section',
             },
             {
               label: 'Planning & Budgeting Decision Levels',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'decision-level',
             },
             {
               label: 'Sectors',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'sector',
             },
             {
               label: 'Planning Unit Levels',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'section-level',
             },
             {
               label: 'Calendars',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'calendar',
             },
             {
               label: 'Calendar Events',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'calendar-event',
             },
           ],
@@ -188,12 +189,12 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'Facilities',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'facility',
             },
             {
               label: 'Facility Types',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'facility-type',
             },
           ],
@@ -204,17 +205,17 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'GFS Code',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'gfs-code',
             },
             {
               label: 'Gfs Code Categories',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'gfs-code-category',
             },
             {
               label: 'Account Types',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'account-type',
             },
           ],
@@ -225,52 +226,52 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'Objective Types',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'objective-type',
             },
             {
               label: 'Priority Areas',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'priority-area',
             },
             {
               label: 'Planning Sequence',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'objective',
             },
             {
               label: 'Long Term Targets',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'long-term-target',
             },
             {
               label: 'Activity Types',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'activity-type',
             },
             {
               label: 'Activity Task Natures',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'activity-task-nature',
             },
             {
               label: 'Reference Document Types',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'reference-document_type',
             },
             {
               label: 'Strategic Plans',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'strategic-plan',
             },
             {
               label: 'Guidelines',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'reference-document',
             },
             {
               label: 'National Reference Types',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'cas-assessment-round',
             },
             {
@@ -279,52 +280,52 @@ export class MainComponent implements OnInit {
               items: [
                 {
                   label: 'Cas Plans',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'cas-plan',
                 },
                 {
                   label: 'Cas Plan Contents',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'cas-plan-content',
                 },
                 {
                   label: 'Data Elements',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'data-element',
                 },
                 {
                   label: 'Data Sets',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'data-set',
                 },
                 {
                   label: 'Option Sets',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'option-set',
                 },
                 {
                   label: 'Category Options',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'category-option',
                 },
                 {
                   label: 'Category Combinations',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'category-combination',
                 },
                 {
                   label: 'Category Category Options',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'category-category-option',
                 },
                 {
                   label: 'Categories',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'category',
                 },
                 {
                   label: 'Baseline Data',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'baseline-statistic',
                 },
                 {
@@ -333,12 +334,12 @@ export class MainComponent implements OnInit {
                   items: [
                     {
                       label: 'Asset Uses',
-                      icon: 'pi pi-fw pi-arrow-right',
+                      icon: 'pi pi-fw pi-link',
                       routerLink: 'asset-use',
                     },
                     {
                       label: 'Asset Conditions',
-                      icon: 'pi pi-fw pi-arrow-right',
+                      icon: 'pi pi-fw pi-link',
                       routerLink: 'asset-condition',
                     },
                   ],
@@ -353,7 +354,7 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'Ceiling Chains',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'ceiling-chain',
             },
             {
@@ -362,22 +363,22 @@ export class MainComponent implements OnInit {
               items: [
                 {
                   label: 'Personal Emolument Budget Submission Forms',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'pe-form',
                 },
                 {
                   label: 'Pe Sub Forms',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'pe-sub-form',
                 },
                 {
                   label: 'PE Definitions',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'pe-definition',
                 },
                 {
                   label: 'Pe Select Options',
-                  icon: 'pi pi-fw pi-arrow-right',
+                  icon: 'pi pi-fw pi-link',
                   routerLink: 'pe-select-option',
                 },
               ],
@@ -386,66 +387,66 @@ export class MainComponent implements OnInit {
         },
         {
           label: 'Comprehensive Plans',
-          icon: 'pi pi-fw pi-arrow-right',
+          icon: 'pi pi-fw pi-link',
           items: [
             {
               label: 'Cas Plans',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'cas-plan',
             },
             {
               label: 'Cas Plan Contents',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'cas-plan-content',
             },
             {
               label: 'Data Elements',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'data-element',
             },
             {
               label: 'Data Sets',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'data-set',
             },
             {
               label: 'Option Sets',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'option-set',
             },
             {
               label: 'Category Options',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'category-option',
             },
             {
               label: 'Category Combinations',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'category-combination',
             },
             {
               label: 'Category Category Options',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'category-category-option',
             },
             {
               label: 'Categories',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'category',
             },
             {
               label: 'Baseline Data',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'baseline-statistic',
             },
             {
               label: 'Cas Assessment Sub Criteria Possible Scores',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'cas-assessment-sub-criteria-possible_score',
             },
             {
               label: 'Cas Assessment Sub Criteria Report Sets',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'cas-assessment-sub-criteria-report_set',
             },
           ],
@@ -464,12 +465,12 @@ export class MainComponent implements OnInit {
           items: [
             {
               label: 'Baseline Data',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'baseline-statistic-value',
             },
             {
               label: 'Data Values',
-              icon: 'pi pi-fw pi-arrow-right',
+              icon: 'pi pi-fw pi-link',
               routerLink: 'data-value',
             },
           ],

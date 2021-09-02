@@ -255,6 +255,10 @@ export class EnumService {
       { display: "Category", value: "category" },
       { display: "Sub-Category", value: "sub_category" },
     ],
+    lgaLevels: [
+      { display: "Lower Local Government", value: "LLG" },
+      { display: "Higher Local Government", value: "HLG" },
+    ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };
 

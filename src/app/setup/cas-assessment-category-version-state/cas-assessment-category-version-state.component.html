@@ -21,7 +21,7 @@
               <p-dropdown
                 id="cas_assessment_category_version_id"
                 optionValue="id"
-                optionLabel="name"
+                optionLabel="cas_assessment_category.name"
                 [autoDisplayFirst]="false"
                 (onChange)="onSearch()"
                 [showClear]="true"
@@ -127,7 +127,7 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td style="flex: 0 0 2rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

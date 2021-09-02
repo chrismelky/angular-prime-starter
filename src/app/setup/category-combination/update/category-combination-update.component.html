@@ -45,6 +45,17 @@
         </span>
       </div>
 
+      <p-pickList
+        [source]="newCategoryCombCategories!"
+        [target]="existingCategoryCombCategories!"
+      >
+        <ng-template let-cat pTemplate="item">
+          <div>
+            {{ cat.category?.name }}
+          </div>
+        </ng-template>
+      </p-pickList>
+
       <div fxLayout="row" fxLayoutGap="2px">
         <p-inputSwitch
           id="skip_total"

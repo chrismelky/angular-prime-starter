@@ -5,25 +5,29 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
+import {AdminHierarchyLevel} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
+import {AdminHierarchyLevelService} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
 
-import { FacilityType } from "./facility-type.model";
-import { FacilityTypeService } from "./facility-type.service";
-import { FacilityTypeUpdateComponent } from "./update/facility-type-update.component";
+import {FacilityType} from "./facility-type.model";
+import {FacilityTypeService} from "./facility-type.service";
+import {FacilityTypeUpdateComponent} from "./update/facility-type-update.component";
+import {FacilityTypeSectionComponent} from "./facility-type-section/facility-type-section.component";
 
 @Component({
   selector: "app-facility-type",
@@ -34,16 +38,24 @@ export class FacilityTypeComponent implements OnInit {
   @ViewChild("table") table!: Table;
   facilityTypes?: FacilityType[] = [];
 
+  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
+  lgaLevels?: PlanrepEnum[] = [];
+
   cols = [
     {
       field: "code",
       header: "Code",
-      sort: false,
+      sort: true,
     },
     {
       field: "name",
       header: "Name",
-      sort: false,
+      sort: true,
+    },
+    {
+      field: "lga_level",
+      header: "Lga Level",
+      sort: true,
     },
   ]; //Table display columns
 
@@ -57,18 +69,29 @@ export class FacilityTypeComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  admin_hierarchy_level_id!: number;
 
   constructor(
     protected facilityTypeService: FacilityTypeService,
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
-  ) {}
+    protected toastService: ToastService,
+    protected enumService: EnumService
+  ) {
+  }
 
   ngOnInit(): void {
+    this.adminHierarchyLevelService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
+          (this.adminHierarchyLevels = resp.data)
+      );
+    this.lgaLevels = this.enumService.get("lgaLevels");
     this.handleNavigation();
   }
 
@@ -78,6 +101,9 @@ export class FacilityTypeComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.admin_hierarchy_level_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -86,6 +112,7 @@ export class FacilityTypeComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        admin_hierarchy_level_id: this.admin_hierarchy_level_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -120,8 +147,20 @@ export class FacilityTypeComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -188,6 +227,7 @@ export class FacilityTypeComponent implements OnInit {
   createOrUpdate(facilityType?: FacilityType): void {
     const data: FacilityType = facilityType ?? {
       ...new FacilityType(),
+      admin_hierarchy_level_id: this.admin_hierarchy_level_id,
     };
     const ref = this.dialogService.open(FacilityTypeUpdateComponent, {
       data,
@@ -249,5 +289,19 @@ export class FacilityTypeComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Facility Type");
+  }
+
+  sections(row?: FacilityType): void {
+    const data = {
+      facilityType: row,
+    };
+    const ref = this.dialogService.open(FacilityTypeSectionComponent, {
+      data,
+      width:'60%',
+      header: "Planning Units",
+    });
+    ref.onClose.subscribe((result) => {
+      this.loadPage(this.page);
+    });
   }
 }

@@ -5,17 +5,19 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FacilityTypeRoutingModule } from "./facility-type-routing.module";
+import {NgModule} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {FacilityTypeRoutingModule} from "./facility-type-routing.module";
 
-import { SharedModule } from "../../shared/shared.module";
-import { FacilityTypeComponent } from "./facility-type.component";
-import { FacilityTypeUpdateComponent } from "./update/facility-type-update.component";
+import {SharedModule} from "../../shared/shared.module";
+import {FacilityTypeComponent} from "./facility-type.component";
+import {FacilityTypeUpdateComponent} from "./update/facility-type-update.component";
+import {FacilityTypeSectionModule} from "./facility-type-section/facility-type-section.module";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, FacilityTypeRoutingModule],
+  imports: [SharedModule, CommonModule, FacilityTypeRoutingModule, FacilityTypeSectionModule],
   declarations: [FacilityTypeComponent, FacilityTypeUpdateComponent],
   entryComponents: [FacilityTypeUpdateComponent],
 })
-export class FacilityTypeModule {}
+export class FacilityTypeModule {
+}

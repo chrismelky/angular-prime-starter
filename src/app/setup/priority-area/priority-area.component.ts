@@ -5,57 +5,45 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
-import {AdminHierarchyLevel} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchyLevelService} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
 
-import {FacilityType} from "./facility-type.model";
-import {FacilityTypeService} from "./facility-type.service";
-import {FacilityTypeUpdateComponent} from "./update/facility-type-update.component";
-import {FacilityTypeSectionComponent} from "./facility-type-section/facility-type-section.component";
+import { PriorityArea } from "./priority-area.model";
+import { PriorityAreaService } from "./priority-area.service";
+import { PriorityAreaUpdateComponent } from "./update/priority-area-update.component";
 
 @Component({
-  selector: "app-facility-type",
-  templateUrl: "./facility-type.component.html",
+  selector: "app-priority-area",
+  templateUrl: "./priority-area.component.html",
 })
-export class FacilityTypeComponent implements OnInit {
+export class PriorityAreaComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  facilityTypes?: FacilityType[] = [];
-
-  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
-  lgaLevels?: PlanrepEnum[] = [];
+  priorityAreas?: PriorityArea[] = [];
 
   cols = [
     {
-      field: "code",
-      header: "Code",
+      field: "description",
+      header: "Description",
       sort: true,
     },
     {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
-    {
-      field: "lga_level",
-      header: "Lga Level",
-      sort: true,
+      field: "number",
+      header: "Number",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -69,29 +57,18 @@ export class FacilityTypeComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_level_id!: number;
 
   constructor(
-    protected facilityTypeService: FacilityTypeService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
+    protected priorityAreaService: PriorityAreaService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
-  ) {
-  }
+    protected toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
-    this.adminHierarchyLevelService
-      .query({columns: ["id", "name"]})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
-      );
-    this.lgaLevels = this.enumService.get("lgaLevels");
     this.handleNavigation();
   }
 
@@ -101,22 +78,18 @@ export class FacilityTypeComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_level_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.facilityTypeService
+    this.priorityAreaService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_level_id: this.admin_hierarchy_level_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<FacilityType[]>) => {
+        (res: CustomResponse<PriorityArea[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -147,20 +120,8 @@ export class FacilityTypeComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -221,17 +182,16 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating FacilityType
-   * @param facilityType ; If undefined initize new model to create else edit existing model
+   * Creating or updating PriorityArea
+   * @param priorityArea ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(facilityType?: FacilityType): void {
-    const data: FacilityType = facilityType ?? {
-      ...new FacilityType(),
-      admin_hierarchy_level_id: this.admin_hierarchy_level_id,
+  createOrUpdate(priorityArea?: PriorityArea): void {
+    const data: PriorityArea = priorityArea ?? {
+      ...new PriorityArea(),
     };
-    const ref = this.dialogService.open(FacilityTypeUpdateComponent, {
+    const ref = this.dialogService.open(PriorityAreaUpdateComponent, {
       data,
-      header: "Create/Update FacilityType",
+      header: "Create/Update PriorityArea",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -241,14 +201,14 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   /**
-   * Delete FacilityType
-   * @param facilityType
+   * Delete PriorityArea
+   * @param priorityArea
    */
-  delete(facilityType: FacilityType): void {
+  delete(priorityArea: PriorityArea): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this FacilityType?",
+      message: "Are you sure that you want to delete this PriorityArea?",
       accept: () => {
-        this.facilityTypeService.delete(facilityType.id!).subscribe((resp) => {
+        this.priorityAreaService.delete(priorityArea.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -263,14 +223,14 @@ export class FacilityTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<FacilityType[]> | null,
+    resp: CustomResponse<PriorityArea[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/facility-type"], {
+      this.router.navigate(["/priority-area"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -279,7 +239,7 @@ export class FacilityTypeComponent implements OnInit {
         },
       });
     }
-    this.facilityTypes = resp?.data ?? [];
+    this.priorityAreas = resp?.data ?? [];
   }
 
   /**
@@ -288,20 +248,6 @@ export class FacilityTypeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Facility Type");
-  }
-
-  sections(row?: FacilityType): void {
-    const data = {
-      facilityType: row,
-    };
-    const ref = this.dialogService.open(FacilityTypeSectionComponent, {
-      data,
-      width:'60%',
-      header: "Planning Units",
-    });
-    ref.onClose.subscribe((result) => {
-      this.loadPage(this.page);
-    });
+    this.toastService.error("Error loading Priority Area");
   }
 }

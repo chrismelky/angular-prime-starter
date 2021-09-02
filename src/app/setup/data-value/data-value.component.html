@@ -18,17 +18,49 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="data_set_id"
+                id="admin_hierarchy_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="dataSets!"
+                [options]="adminHierarchies!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="data_set_id"
+                [(ngModel)]="admin_hierarchy_id"
               ></p-dropdown>
-              <label for="data_set_id">Data Set </label>
+              <label for="admin_hierarchy_id">Admin Hierarchy </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="financial_year_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="financialYears!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="financial_year_id"
+              ></p-dropdown>
+              <label for="financial_year_id">Financial Year </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="facility_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="facilities!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="facility_id"
+              ></p-dropdown>
+              <label for="facility_id">Facility </label>
             </span>
           </div>
         </div>
@@ -40,7 +72,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -58,7 +89,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -83,80 +113,17 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
-                    id="name"
+                    id="value"
                     type="text"
                     class="p-inputtext-sm"
                     pInputText
-                    [(ngModel)]="search['name']"
+                    [(ngModel)]="search['value']"
                   />
-                  <label for="name">Name </label>
+                  <label for="value">Value </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
+                    (click)="search['value'] = undefined; onSearch()"
                   ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="display_name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['display_name']"
-                  />
-                  <label for="display_name">Display Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['display_name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="code"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['code']"
-                  />
-                  <label for="code">Code </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['code'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="question_number"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['question_number']"
-                  />
-                  <label for="question_number">Question Number </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['question_number'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="value_type"
-                    optionValue="value"
-                    optionLabel="display"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    class="p-inputtext-sm"
-                    [options]="valueTypes!"
-                    [(ngModel)]="search['value_type']"
-                  ></p-dropdown>
-                  <label for="value_type">Value Type </label>
                 </span>
               </div>
             </div>
@@ -168,7 +135,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -193,39 +159,33 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="dataElements!"
+      [value]="dataValues!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Data Elements</span>
+          <span class="card-header-text">Data Values</span>
           <button
             pButton
-            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!data_set_id"
+            [disabled]="
+              !admin_hierarchy_id || !financial_year_id || !facility_id
+            "
             (click)="createOrUpdate()"
-            label="Add Data Element"
+            label="Add Data Value"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="dataElements?.length">
+        <tr *ngIf="dataValues?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
           >
-            {{ col.header }}
-            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'category_combination_id'">
-            Category Combination
-            <p-sortIcon [field]="'category_combination_id'"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'option_set_id'">
-            Option Set <p-sortIcon [field]="'option_set_id'"></p-sortIcon>
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -235,14 +195,11 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{ rowData.category_combination?.name }}</td>
-          <td>{{ rowData.option_set?.name }}</td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -254,7 +211,6 @@
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -274,7 +230,7 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="dataElements?.length! > 0"
+        [alwaysShow]="dataValues?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -289,6 +245,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Data Element"
+  header="Confirmation Delete Data Value"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

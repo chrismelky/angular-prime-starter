@@ -303,21 +303,34 @@ i.clear {
     border: none;
   }
 }
+.p-treetable {
+  position: relative;
+  .p-treetable-header {
+    border: none;
+  }
+}
 
-.p-datatable .p-datatable-thead > tr > th:first-of-type {
+.p-datatable .p-datatable-thead > tr > th:first-of-type,
+.p-treetable .p-treetable-thead > tr > th:first-of-type {
   padding-left: 24px;
   height: 48px;
 }
 
-.p-datatable .p-datatable-tbody > tr > td {
+.p-datatable .p-datatable-tbody > tr > td ,
+.p-treetable .p-treetable-tbody > tr > td 
+{
   padding: 0;
   padding-left: 24px;
   height: 48px;
 }
-.p-datatable .p-datatable-tbody > tr > td:first-of-type {
+.p-datatable .p-datatable-tbody > tr > td:first-of-type ,
+.p-treetable .p-treetable-tbody > tr > td:first-of-type 
+{
   padding-left: 24px;
 }
-.p-datatable .p-datatable-tbody > tr > td:last-of-type, .p-datatable .p-datatable-thead > tr > th:last-of-type {
+.p-datatable .p-datatable-tbody > tr > td:last-of-type, .p-datatable .p-datatable-thead > tr > th:last-of-type ,
+.p-treetable .p-treetable-tbody > tr > td:last-of-type, .p-treetable .p-treetable-thead > tr > th:last-of-type 
+{
   padding-right: 24px;
 }
 .mat-card-header {

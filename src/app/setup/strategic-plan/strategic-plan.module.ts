@@ -12,9 +12,11 @@ import { StrategicPlanRoutingModule } from "./strategic-plan-routing.module";
 import { SharedModule } from "../../shared/shared.module";
 import { StrategicPlanComponent } from "./strategic-plan.component";
 import { StrategicPlanUpdateComponent } from "./update/strategic-plan-update.component";
+import {FileUploadModule} from "primeng/fileupload";
+
 
 @NgModule({
-  imports: [SharedModule, CommonModule, StrategicPlanRoutingModule],
+  imports: [SharedModule, CommonModule, StrategicPlanRoutingModule,FileUploadModule],
   declarations: [StrategicPlanComponent, StrategicPlanUpdateComponent],
   entryComponents: [StrategicPlanUpdateComponent],
 })

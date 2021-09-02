@@ -7,11 +7,10 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {combineLatest, Observable} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
 
 import { CustomResponse } from "../../utils/custom-response";
 import {
@@ -24,6 +23,8 @@ import { ToastService } from "src/app/shared/toast.service";
 import { BudgetClass } from "./budget-class.model";
 import { BudgetClassService } from "./budget-class.service";
 import { BudgetClassUpdateComponent } from "./update/budget-class-update.component";
+import {finalize} from "rxjs/operators";
+import {TreeTable} from "primeng/treetable";
 
 @Component({
   selector: "app-budget-class",
@@ -31,8 +32,8 @@ import { BudgetClassUpdateComponent } from "./update/budget-class-update.compone
 })
 export class BudgetClassComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
-  budgetClasses?: BudgetClass[] = [];
+  @ViewChild('table') table!: TreeTable;
+  budgetClasses?: TreeNode[] = [];
   parents?: BudgetClass[] = [];
 
   cols = [
@@ -77,6 +78,7 @@ export class BudgetClassComponent implements OnInit {
         (resp: CustomResponse<BudgetClass[]>) => (this.parents = resp.data)
       );
     this.handleNavigation();
+    this.loadPage();
   }
 
   /**
@@ -85,9 +87,6 @@ export class BudgetClassComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.parent_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -96,7 +95,7 @@ export class BudgetClassComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        parent_id: this.parent_id,
+        parent_id:null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -263,7 +262,13 @@ export class BudgetClassComponent implements OnInit {
         },
       });
     }
-    this.budgetClasses = resp?.data ?? [];
+    this.budgetClasses =(resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
   }
 
   /**
@@ -273,5 +278,94 @@ export class BudgetClassComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Budget Class");
+  }
+
+  /**
+   * When cas content expanded load children
+   * @param event = constist of node data
+   */
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.budgetClassService
+      .query({
+        parent_id: node.data.id,
+        sort: ['code:asc'],
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+          node.children = (resp?.data ?? []).map((c) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.budgetClasses = [...this.budgetClasses!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
+  }
+
+  /**
+   * toggleActivation event
+   * @param row Data = constist of row Data
+   */
+  toggleActivation(row:any){
+    var budgetClass = this.createFromForm(row);
+    console.log(budgetClass);
+    this.subscribeToSaveResponse(
+      this.budgetClassService.update(budgetClass)
+    );
+    this.handleNavigation();
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+    this.loadPage();
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {
+  }
+
+  protected onSaveFinalize(): void {
+  }
+
+  /**
+   * Return form values as object of type BudgetClass
+   * @returns BudgetClass
+   */
+  protected createFromForm(row:any): BudgetClass {
+    return {
+      ...new BudgetClass(),
+      id: row.id,
+      name:row.name,
+      code:row.code,
+      active:row.active,
+      parent_id:row.parent_id
+    };
+  }
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<BudgetClass>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
   }
 }

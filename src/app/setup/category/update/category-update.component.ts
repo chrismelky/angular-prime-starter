@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -34,9 +34,8 @@ export class CategoryUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
-    code: [null, [Validators.required]],
-    category_combination_id: [null, [Validators.required]],
+    name: [null, [Validators.required, Validators.maxLength(255)]],
+    code: [null, [Validators.required, Validators.maxLength(50)]],
   });
 
   constructor(
@@ -114,7 +113,6 @@ export class CategoryUpdateComponent implements OnInit {
       id: category.id,
       name: category.name,
       code: category.code,
-      category_combination_id: category.category_combination_id,
     });
   }
 
@@ -128,8 +126,6 @@ export class CategoryUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
       code: this.editForm.get(['code'])!.value,
-      category_combination_id: this.editForm.get(['category_combination_id'])!
-        .value,
     };
   }
 }

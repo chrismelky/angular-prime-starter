@@ -28,6 +28,8 @@ import { FinancialYear } from "src/app/setup/financial-year/financial-year.model
 import { StrategicPlan } from "./strategic-plan.model";
 import { StrategicPlanService } from "./strategic-plan.service";
 import { StrategicPlanUpdateComponent } from "./update/strategic-plan-update.component";
+import {UserService} from "../user/user.service";
+import {User} from "../user/user.model";
 
 @Component({
   selector: "app-strategic-plan",
@@ -48,21 +50,7 @@ export class StrategicPlanComponent implements OnInit {
       header: "Name",
       sort: true,
     },
-    {
-      field: "description",
-      header: "Description",
-      sort: true,
-    },
-    {
-      field: "is_active",
-      header: "Is Active",
-      sort: false,
-    },
-    {
-      field: "url",
-      header: "Url",
-      sort: true,
-    },
+
   ]; //Table display columns
 
   isLoading = false;
@@ -76,36 +64,36 @@ export class StrategicPlanComponent implements OnInit {
 
   //Mandatory filter
   admin_hierarchy_id!: number;
-  start_financial_year_id!: number;
-  end_financial_year_id!: number;
+  currentUser?: User;
 
   constructor(
     protected strategicPlanService: StrategicPlanService,
     protected adminHierarchyService: AdminHierarchyService,
-    protected startFinancialYearService: FinancialYearService,
-    protected endFinancialYearService: FinancialYearService,
+    protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
-  ) {}
+    protected toastService: ToastService,
+    protected userService:UserService
+  ) {
+    this.currentUser = userService.getCurrentUser();
+    if (this.currentUser.admin_hierarchy) {
+      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
+      // @ts-ignore
+      this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+    }
+  }
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.startFinancialYearService
+    this.financialYearService
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.startFinancialYears = resp.data)
       );
-    this.endFinancialYearService
+    this.financialYearService
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
@@ -121,9 +109,7 @@ export class StrategicPlanComponent implements OnInit {
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
-      !this.admin_hierarchy_id ||
-      !this.start_financial_year_id ||
-      !this.end_financial_year_id
+      !this.admin_hierarchy_id
     ) {
       return;
     }
@@ -136,8 +122,6 @@ export class StrategicPlanComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         admin_hierarchy_id: this.admin_hierarchy_id,
-        start_financial_year_id: this.start_financial_year_id,
-        end_financial_year_id: this.end_financial_year_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -172,6 +156,7 @@ export class StrategicPlanComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.filterChanged();
     });
   }
 
@@ -253,8 +238,6 @@ export class StrategicPlanComponent implements OnInit {
     const data: StrategicPlan = strategicPlan ?? {
       ...new StrategicPlan(),
       admin_hierarchy_id: this.admin_hierarchy_id,
-      start_financial_year_id: this.start_financial_year_id,
-      end_financial_year_id: this.end_financial_year_id,
     };
     const ref = this.dialogService.open(StrategicPlanUpdateComponent, {
       data,
@@ -265,6 +248,15 @@ export class StrategicPlanComponent implements OnInit {
         this.loadPage(this.page);
       }
     });
+  }
+
+
+  downloadStrategicPlan(strategicPlan?: StrategicPlan){
+    this.strategicPlanService.download({url: strategicPlan?.url})
+      .subscribe(
+        (resp: CustomResponse<any[]>) =>
+          (console.log(resp))
+      );
   }
 
   /**

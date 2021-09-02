@@ -5,46 +5,52 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import {
+  ConfirmationService,
+  LazyLoadEvent,
+  MenuItem,
+  TreeNode,
+} from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {CasPlan} from "src/app/setup/cas-plan/cas-plan.model";
-import {CasPlanService} from "src/app/setup/cas-plan/cas-plan.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { CasPlan } from 'src/app/setup/cas-plan/cas-plan.model';
+import { CasPlanService } from 'src/app/setup/cas-plan/cas-plan.service';
 
-import {CasPlanContent} from "./cas-plan-content.model";
-import {CasPlanContentService} from "./cas-plan-content.service";
-import {CasPlanContentUpdateComponent} from "./update/cas-plan-content-update.component";
+import { CasPlanContent } from './cas-plan-content.model';
+import { CasPlanContentService } from './cas-plan-content.service';
+import { CasPlanContentUpdateComponent } from './update/cas-plan-content-update.component';
+import { TreeTable } from 'primeng/treetable';
 
 @Component({
-  selector: "app-cas-plan-content",
-  templateUrl: "./cas-plan-content.component.html",
+  selector: 'app-cas-plan-content',
+  templateUrl: './cas-plan-content.component.html',
 })
 export class CasPlanContentComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
-  casPlanContents?: CasPlanContent[] = [];
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: TreeTable;
+  casPlanContents?: TreeNode[] = [];
 
   parents?: CasPlanContent[] = [];
   casPlans?: CasPlan[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
-    }
+    },
   ]; //Table display columns
 
   isLoading = false;
@@ -68,17 +74,16 @@ export class CasPlanContentComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.casPlanContentService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasPlanContent[]>) => (this.parents = resp.data)
       );
     this.casPlanService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
       );
@@ -103,6 +108,7 @@ export class CasPlanContentComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         cas_plan_id: this.cas_plan_id,
+        parent_id: null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -126,11 +132,11 @@ export class CasPlanContentComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc' || sort[1] === undefined;
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -205,8 +211,8 @@ export class CasPlanContentComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -221,7 +227,7 @@ export class CasPlanContentComponent implements OnInit {
     };
     const ref = this.dialogService.open(CasPlanContentUpdateComponent, {
       data,
-      header: "Create/Update CasPlanContent",
+      header: 'Create/Update CasPlanContent',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -236,7 +242,7 @@ export class CasPlanContentComponent implements OnInit {
    */
   delete(casPlanContent: CasPlanContent): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this CasPlanContent?",
+      message: 'Are you sure that you want to delete this CasPlanContent?',
       accept: () => {
         this.casPlanContentService
           .delete(casPlanContent.id!)
@@ -262,16 +268,55 @@ export class CasPlanContentComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-plan-content"], {
+      this.router.navigate(['/cas-plan-content'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            (this.predicate ?? 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
-    this.casPlanContents = resp?.data ?? [];
+    this.casPlanContents = (resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
+  }
+
+  /**
+   * When cas content expanded load children
+   * @param event = constist of node data
+   */
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.casPlanContentService
+      .query({
+        parent_id: node.data.id,
+        sort: ['sort_order:asc'],
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+          node.children = (resp?.data ?? []).map((c) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.casPlanContents = [...this.casPlanContents!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
   }
 
   /**
@@ -280,6 +325,6 @@ export class CasPlanContentComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Cas Plan Content");
+    this.toastService.error('Error loading Cas Plan Content');
   }
 }

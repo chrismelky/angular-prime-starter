@@ -40,7 +40,7 @@ export class CasPlanUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: ['', [Validators.required]],
+    name: ['', [Validators.required, Validators.maxLength(250)]],
     sector_id: [null, [Validators.required]],
     admin_hierarchy_level_id: [null, [Validators.required]],
     period_type: ['Quarterly', [Validators.required]],

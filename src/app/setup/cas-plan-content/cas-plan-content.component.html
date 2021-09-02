@@ -122,16 +122,17 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-table
+    <p-treeTable
       #table
       [lazy]="true"
       [resizableColumns]="true"
-      [responsive]="true"
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
+      [scrollable]="true"
       [value]="casPlanContents!"
       (onLazyLoad)="onSortChange($event)"
+      (onNodeExpand)="onNodeExpand($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
@@ -148,28 +149,19 @@
           ></button>
         </div>
       </ng-template>
-      <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="casPlanContents?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'parent_id'">
-            Parent <p-sortIcon [field]="'parent_id'"></p-sortIcon>
-          </th>
-          <th></th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <ng-template
+        pTemplate="body"
+        let-rowNode
+        let-rowData="rowData"
+        let-columns="columns"
+      >
         <tr>
-          <td *ngFor="let col of columns">
+          <td *ngFor="let col of columns; let i = index">
+            <p-treeTableToggler
+              [rowNode]="rowNode"
+              *ngIf="i == 0"
+            ></p-treeTableToggler>
             {{ rowData[col.field] }}
-          </td>
-          <td>
-            {{ rowData.parent?.name }}
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
@@ -183,7 +175,7 @@
                     p-button-text p-button-plain p-button-rounded p-button-icon
                   "
                   icon="pi pi-pencil
-              "
+            "
                   (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
@@ -195,7 +187,7 @@
                     p-button-text p-button-plain p-button-rounded p-button-icon
                   "
                   icon="pi pi-trash
-              "
+            "
                   (click)="delete(rowData)"
                 ></button>
               </div>
@@ -204,19 +196,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="casPlanContents?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
-    </p-table>
+    </p-treeTable>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="casPlanContents?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

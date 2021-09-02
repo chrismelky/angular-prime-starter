@@ -25,6 +25,9 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { RippleModule } from 'primeng/ripple';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { InputMaskModule } from 'primeng/inputmask';
+import { TreeTableModule } from 'primeng/treetable';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 @NgModule({
   declarations: [],
@@ -54,6 +57,9 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     RippleModule,
     TreeSelectModule,
     OverlayPanelModule,
+    InputMaskModule,
+    TreeTableModule,
+    ConfirmPopupModule,
   ],
 })
 export class SharedPrimengModule {}

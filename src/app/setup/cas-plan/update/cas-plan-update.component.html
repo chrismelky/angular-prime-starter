@@ -23,16 +23,10 @@
           <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
             >Name is required.</small
           >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.maxlength"
+            >Name maximum length is 250 characters</small
+          >
         </span>
-      </div>
-
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
-          id="is_active"
-          name="is_active"
-          formControlName="is_active"
-        ></p-inputSwitch>
-        <label for="is_active">Is Active </label>
       </div>
 
       <div class="p-field" fxFlex>
@@ -154,6 +148,14 @@
             >Content Type is required.</small
           >
         </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_active"
+          name="is_active"
+          formControlName="is_active"
+        ></p-inputSwitch>
+        <label for="is_active">Is Active </label>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

@@ -15,22 +15,22 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="parent_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="parents!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="parent_id"
-              ></p-dropdown>
-              <label for="parent_id">Parent </label>
-            </span>
-          </div>
+<!--          <div class="p-field" fxFlex>-->
+<!--            <span class="p-float-label">-->
+<!--              <p-dropdown-->
+<!--                id="parent_id"-->
+<!--                optionValue="id"-->
+<!--                optionLabel="name"-->
+<!--                [autoDisplayFirst]="false"-->
+<!--                [filter]="true"-->
+<!--                class="p-inputtext-sm"-->
+<!--                [options]="parents!"-->
+<!--                (onChange)="filterChanged()"-->
+<!--                [(ngModel)]="parent_id"-->
+<!--              ></p-dropdown>-->
+<!--              <label for="parent_id">Parent </label>-->
+<!--            </span>-->
+<!--          </div>-->
         </div>
         <div
           fxLayout="row wrap"
@@ -135,16 +135,17 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-table
+    <p-treeTable
       #table
       [lazy]="true"
       [resizableColumns]="true"
-      [responsive]="true"
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
+      [scrollable]="true"
       [value]="budgetClasses!"
       (onLazyLoad)="onSortChange($event)"
+      (onNodeExpand)="onNodeExpand($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
@@ -154,28 +155,40 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!parent_id"
             (click)="createOrUpdate()"
             label="Add Budget Class"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="budgetClasses?.length">
+        <tr #header *ngIf="budgetClasses?.length">
           <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
+          *ngFor="let col of columns"
+        >
+          {{ col.header
+          }}
+        </th>
+          <th>Active</th>
           <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <ng-template pTemplate="body"
+                   let-rowNode
+                   let-rowData="rowData"
+                   let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
+          <td *ngFor="let col of columns; let i = index">
+            <p-treeTableToggler
+              [rowNode]="rowNode"
+              *ngIf="i == 0"
+            ></p-treeTableToggler>
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            <p-inputSwitch
+              (onChange)="toggleActivation(rowData)"
+              [(ngModel)]="rowData['active']"
+            ></p-inputSwitch>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
@@ -208,7 +221,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-    </p-table>
+    </p-treeTable>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator

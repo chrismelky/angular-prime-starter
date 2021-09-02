@@ -19,7 +19,7 @@ body {
 }
 .sidenav-item {
   padding: 0px;
-  margin-top: 64px;
+  margin-top: 32px;
   background-color: transparent;
   .p-panelmenu {
     width: 100%;
@@ -47,7 +47,7 @@ body {
     }
 
     .p-panelmenu-content {
-      background-color: #19314a;
+      background-color: #132d49;
       color: $navText;
       padding-left: 0.75rem;
       .p-panelmenu-icon	{
@@ -86,12 +86,11 @@ body {
     .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-link:hover,
     .p-panelmenu-panel .p-panelmenu-header:not(.p-highlight) .p-panelmenu-header-link:hover,
     .p-panelmenu-panel .p-panelmenu-header:not(.p-highlight) .p-panelmenu-header-link:focus {
-      background-color: #19314a;
+      background-color: #132d49;
     }
     .p-panelmenu-panel:first-child .p-panelmenu-header > a  {
       background-color: transparent;
       color: $navText;
-      border-top: 1px solid rgba(255, 255, 255, 0.1)
     }
     .p-panelmenu-panel:last-child .p-panelmenu-content{
       border-radius: 0;
@@ -140,7 +139,7 @@ body {
     }
   }
   .location {
-    height: 80px;
+    height: 96px;
     padding-left: 1.5em;
     // box-shadow: 0 -1px 0 $navBorder inset;
     background-color: #132d49;

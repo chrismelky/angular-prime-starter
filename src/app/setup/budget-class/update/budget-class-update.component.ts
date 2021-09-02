@@ -34,7 +34,7 @@ export class BudgetClassUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     code: [null, []],
-    parent_id: [null, [Validators.required]],
+    parent_id: [null, []],
   });
 
   constructor(

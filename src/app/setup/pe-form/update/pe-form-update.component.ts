@@ -15,6 +15,9 @@ import { CustomResponse } from "../../../utils/custom-response";
 import { PeForm } from "../pe-form.model";
 import { PeFormService } from "../pe-form.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {BudgetClass} from "../../budget-class/budget-class.model";
+import {BudgetClassService} from "../../budget-class/budget-class.service";
+import {SelectItemGroup, TreeNode} from "primeng/api";
 
 @Component({
   selector: "app-pe-form-update",
@@ -24,6 +27,8 @@ export class PeFormUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  selectedCities4?: any[];
+  budgetClasses?: SelectItemGroup[];
 
   /**
    * Declare form
@@ -42,11 +47,16 @@ export class PeFormUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
+    private budgetClassService: BudgetClassService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+
+
+     this.budgetClassService.getParentChild().subscribe(
+        (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data));
   }
 
   /**

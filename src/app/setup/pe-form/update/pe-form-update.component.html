@@ -53,6 +53,17 @@
       </div>
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
+<!--        <h5>Sub budget Class</h5>-->
+        <p-multiSelect id="sub" [options]="budgetClasses!" [(ngModel)]="selectedCities4" [group]="true"  defaultLabel="Sub budget Class" scrollHeight="250px" display="chip">
+          <ng-template let-group pTemplate="group">
+            <div class="p-d-flex p-ai-center">
+              <span>{{group.label}}</span>
+            </div>
+          </ng-template>
+        </p-multiSelect>
+      </div>
+
+      <!-- div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input
             id="budget_classes"
@@ -71,7 +82,7 @@
           "
         >
         </span>
-      </div>
+      </div -->
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">

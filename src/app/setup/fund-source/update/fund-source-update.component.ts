@@ -60,7 +60,7 @@ export class FundSourceUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.gfsCodeService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id",'code',"name"] })
       .subscribe(
         (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
       );

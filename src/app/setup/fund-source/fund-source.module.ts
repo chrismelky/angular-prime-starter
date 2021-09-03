@@ -12,10 +12,12 @@ import { FundSourceRoutingModule } from "./fund-source-routing.module";
 import { SharedModule } from "../../shared/shared.module";
 import { FundSourceComponent } from "./fund-source.component";
 import { FundSourceUpdateComponent } from "./update/fund-source-update.component";
+import {DynamicDialogModule} from "primeng/dynamicdialog";
+import {FundSourceGfsCodeList} from "./fund-source-gfs-code-list";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, FundSourceRoutingModule],
-  declarations: [FundSourceComponent, FundSourceUpdateComponent],
+  imports: [SharedModule, CommonModule, FundSourceRoutingModule,DynamicDialogModule],
+  declarations: [FundSourceComponent, FundSourceUpdateComponent,FundSourceGfsCodeList],
   entryComponents: [FundSourceUpdateComponent],
 })
 export class FundSourceModule {}

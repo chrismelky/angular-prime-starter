@@ -7,8 +7,8 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {combineLatest, Observable} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -20,37 +20,37 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
+import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
+import { ReferenceType } from "src/app/setup/reference-type/reference-type.model";
+import { ReferenceTypeService } from "src/app/setup/reference-type/reference-type.service";
 
-import { ReferenceType } from "./reference-type.model";
-import { ReferenceTypeService } from "./reference-type.service";
-import { ReferenceTypeUpdateComponent } from "./update/reference-type-update.component";
+import { NationalReference } from "./national-reference.model";
+import { NationalReferenceService } from "./national-reference.service";
+import { NationalReferenceUpdateComponent } from "./update/national-reference-update.component";
+import {finalize} from "rxjs/operators";
+import {TreeTable} from "primeng/treetable";
 
 @Component({
-  selector: "app-reference-type",
-  templateUrl: "./reference-type.component.html",
+  selector: "app-national-reference",
+  templateUrl: "./national-reference.component.html",
 })
-export class ReferenceTypeComponent implements OnInit {
+export class NationalReferenceComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('table') table!: TreeTable;
+  nationalReferences?: TreeNode[] = [];
   referenceTypes?: ReferenceType[] = [];
-  sectors?: Sector[] = [];
+  parents?: NationalReference[] = [];
+  linkLevels?: PlanrepEnum[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "code",
+      header: "Code",
       sort: true,
     },
     {
-      field: "multi_select",
-      header: "Multi Select",
-      sort: false,
-    },
-    {
-      field: "link_level",
-      header: "Link Level",
+      field: "description",
+      header: "Description",
       sort: true,
     },
   ]; //Table display columns
@@ -64,26 +64,36 @@ export class ReferenceTypeComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
 
+  //Mandatory filter
+  reference_type_id!: number;
+  link_level!: string;
 
   constructor(
+    protected nationalReferenceService: NationalReferenceService,
     protected referenceTypeService: ReferenceTypeService,
-    protected sectorService: SectorService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    protected enumService: EnumService
   ) {}
 
   ngOnInit(): void {
-    this.sectorService
+    this.referenceTypeService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
+        (resp: CustomResponse<ReferenceType[]>) =>
+          (this.referenceTypes = resp.data)
       );
+    this.nationalReferenceService
+      .query({ columns: ["id", "description"] })
+      .subscribe(
+        (resp: CustomResponse<NationalReference[]>) => (this.parents = resp.data)
+      );
+    this.linkLevels = this.enumService.get("linkLevels");
     this.handleNavigation();
-    this.loadPage();
   }
 
   /**
@@ -95,15 +105,17 @@ export class ReferenceTypeComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceTypeService
+    this.nationalReferenceService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        reference_type_id: this.reference_type_id,
+        parent_id : null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceType[]>) => {
+        (res: CustomResponse<NationalReference[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -208,16 +220,18 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReferenceType
-   * @param referenceType ; If undefined initize new model to create else edit existing model
+   * Creating or updating NationalReference
+   * @param nationalReference ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(referenceType?: ReferenceType): void {
-    const data: ReferenceType = referenceType ?? {
-      ...new ReferenceType(),
+  createOrUpdate(nationalReference?: NationalReference): void {
+    const data: NationalReference = nationalReference ?? {
+      ...new NationalReference(),
+      reference_type_id: this.reference_type_id,
+      link_level: this.link_level,
     };
-    const ref = this.dialogService.open(ReferenceTypeUpdateComponent, {
+    const ref = this.dialogService.open(NationalReferenceUpdateComponent, {
       data,
-      header: "Create/Update ReferenceType",
+      header: "Create/Update NationalReference",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -227,15 +241,15 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceType
-   * @param referenceType
+   * Delete NationalReference
+   * @param nationalReference
    */
-  delete(referenceType: ReferenceType): void {
+  delete(nationalReference: NationalReference): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReferenceType?",
+      message: "Are you sure that you want to delete this NationalReference?",
       accept: () => {
-        this.referenceTypeService
-          .delete(referenceType.id!)
+        this.nationalReferenceService
+          .delete(nationalReference.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -251,14 +265,14 @@ export class ReferenceTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceType[]> | null,
+    resp: CustomResponse<NationalReference[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-type"], {
+      this.router.navigate(["/national-reference"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -267,7 +281,13 @@ export class ReferenceTypeComponent implements OnInit {
         },
       });
     }
-    this.referenceTypes = resp?.data ?? [];
+    this.nationalReferences =(resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
   }
 
   /**
@@ -276,6 +296,95 @@ export class ReferenceTypeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Type");
+    this.toastService.error("Error loading National Reference");
+  }
+
+  /**
+   * toggleActivation event
+   * @param row Data = constist of row Data
+   */
+  toggleActivation(row:any){
+    var nationalReference = this.createFromForm(row);
+    this.subscribeToSaveResponse(
+      this.nationalReferenceService.update(nationalReference)
+    );
+    this.handleNavigation();
+  }
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<NationalReference>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+  }
+
+  /**
+   * Return form values as object of type NationalReference
+   * @returns NationalReference
+   */
+  protected createFromForm(row: any): NationalReference {
+    return {
+      ...new NationalReference(),
+      id: row.id,
+      code:row.code,
+      description: row.description,
+      active: row.active,
+      reference_type_id: row.reference_type_id,
+      parent_id: row.parent_id,
+      link_level: row.link_level,
+    };
+  }
+
+  /**
+   * When cas content expanded load children
+   * @param event = constist of node data
+   */
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.nationalReferenceService
+      .query({
+        parent_id: node.data.id,
+        sort: ['code:asc'],
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+          node.children = (resp?.data ?? []).map((c) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.nationalReferences = [...this.nationalReferences!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
   }
 }

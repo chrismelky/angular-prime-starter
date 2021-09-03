@@ -12,6 +12,9 @@ import {finalize} from "rxjs/operators";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 
 import {CustomResponse} from "../../../utils/custom-response";
+import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
+import {AdminHierarchyLevel} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
+import {AdminHierarchyLevelService} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
 import {FacilityType} from "../facility-type.model";
 import {FacilityTypeService} from "../facility-type.service";
 import {ToastService} from "src/app/shared/toast.service";
@@ -25,6 +28,9 @@ export class FacilityTypeUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
+  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
+  lgaLevels?: PlanrepEnum[] = [];
+
   /**
    * Declare form
    */
@@ -32,18 +38,29 @@ export class FacilityTypeUpdateComponent implements OnInit {
     id: [null],
     code: ['', [Validators.required]],
     name: ['', [Validators.required]],
+    lga_level: ['LLG', [Validators.required]],
+    admin_hierarchy_level_id: [null, [Validators.required]],
   });
 
   constructor(
     protected facilityTypeService: FacilityTypeService,
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected enumService: EnumService
   ) {
   }
 
   ngOnInit(): void {
+    this.adminHierarchyLevelService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
+          (this.adminHierarchyLevels = resp.data)
+      );
+    this.lgaLevels = this.enumService.get("lgaLevels");
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -52,10 +69,10 @@ export class FacilityTypeUpdateComponent implements OnInit {
    * @returns
    */
   save(): void {
-    /*if (this.editForm.invalid) {
+    if (this.editForm.invalid) {
       this.formError = true;
       return;
-    }*/
+    }
     this.isSaving = true;
     const facilityType = this.createFromForm();
     if (facilityType.id !== undefined) {
@@ -108,6 +125,8 @@ export class FacilityTypeUpdateComponent implements OnInit {
       id: facilityType.id,
       code: facilityType.code,
       name: facilityType.name,
+      lga_level: facilityType.lga_level,
+      admin_hierarchy_level_id: facilityType.admin_hierarchy_level_id,
     });
   }
 
@@ -121,6 +140,8 @@ export class FacilityTypeUpdateComponent implements OnInit {
       id: this.editForm.get(["id"])!.value,
       code: this.editForm.get(["code"])!.value,
       name: this.editForm.get(["name"])!.value,
+      lga_level: this.editForm.get(["lga_level"])!.value,
+      admin_hierarchy_level_id: this.editForm.get(["admin_hierarchy_level_id"])!.value,
     };
   }
 }

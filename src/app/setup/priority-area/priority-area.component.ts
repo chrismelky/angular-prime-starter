@@ -20,38 +20,30 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
 
-import { ReferenceType } from "./reference-type.model";
-import { ReferenceTypeService } from "./reference-type.service";
-import { ReferenceTypeUpdateComponent } from "./update/reference-type-update.component";
+import { PriorityArea } from "./priority-area.model";
+import { PriorityAreaService } from "./priority-area.service";
+import { PriorityAreaUpdateComponent } from "./update/priority-area-update.component";
 
 @Component({
-  selector: "app-reference-type",
-  templateUrl: "./reference-type.component.html",
+  selector: "app-priority-area",
+  templateUrl: "./priority-area.component.html",
 })
-export class ReferenceTypeComponent implements OnInit {
+export class PriorityAreaComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  referenceTypes?: ReferenceType[] = [];
-  sectors?: Sector[] = [];
+  priorityAreas?: PriorityArea[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "description",
+      header: "Description",
       sort: true,
     },
     {
-      field: "multi_select",
-      header: "Multi Select",
+      field: "number",
+      header: "Number",
       sort: false,
-    },
-    {
-      field: "link_level",
-      header: "Link Level",
-      sort: true,
     },
   ]; //Table display columns
 
@@ -64,10 +56,10 @@ export class ReferenceTypeComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
 
+  //Mandatory filter
 
   constructor(
-    protected referenceTypeService: ReferenceTypeService,
-    protected sectorService: SectorService,
+    protected priorityAreaService: PriorityAreaService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -77,13 +69,7 @@ export class ReferenceTypeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sectorService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
-      );
     this.handleNavigation();
-    this.loadPage();
   }
 
   /**
@@ -95,7 +81,7 @@ export class ReferenceTypeComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceTypeService
+    this.priorityAreaService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -103,7 +89,7 @@ export class ReferenceTypeComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceType[]>) => {
+        (res: CustomResponse<PriorityArea[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -134,20 +120,8 @@ export class ReferenceTypeComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -208,16 +182,16 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReferenceType
-   * @param referenceType ; If undefined initize new model to create else edit existing model
+   * Creating or updating PriorityArea
+   * @param priorityArea ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(referenceType?: ReferenceType): void {
-    const data: ReferenceType = referenceType ?? {
-      ...new ReferenceType(),
+  createOrUpdate(priorityArea?: PriorityArea): void {
+    const data: PriorityArea = priorityArea ?? {
+      ...new PriorityArea(),
     };
-    const ref = this.dialogService.open(ReferenceTypeUpdateComponent, {
+    const ref = this.dialogService.open(PriorityAreaUpdateComponent, {
       data,
-      header: "Create/Update ReferenceType",
+      header: "Create/Update PriorityArea",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -227,19 +201,17 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceType
-   * @param referenceType
+   * Delete PriorityArea
+   * @param priorityArea
    */
-  delete(referenceType: ReferenceType): void {
+  delete(priorityArea: PriorityArea): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReferenceType?",
+      message: "Are you sure that you want to delete this PriorityArea?",
       accept: () => {
-        this.referenceTypeService
-          .delete(referenceType.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
+        this.priorityAreaService.delete(priorityArea.id!).subscribe((resp) => {
+          this.loadPage(this.page);
+          this.toastService.info(resp.message);
+        });
       },
     });
   }
@@ -251,14 +223,14 @@ export class ReferenceTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceType[]> | null,
+    resp: CustomResponse<PriorityArea[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-type"], {
+      this.router.navigate(["/priority-area"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -267,7 +239,7 @@ export class ReferenceTypeComponent implements OnInit {
         },
       });
     }
-    this.referenceTypes = resp?.data ?? [];
+    this.priorityAreas = resp?.data ?? [];
   }
 
   /**
@@ -276,6 +248,6 @@ export class ReferenceTypeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Type");
+    this.toastService.error("Error loading Priority Area");
   }
 }

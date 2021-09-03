@@ -11,37 +11,37 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { FacilityType } from "./facility-type.model";
+import { PriorityArea } from "./priority-area.model";
 
 @Injectable({ providedIn: "root" })
-export class FacilityTypeService {
-  public resourceUrl = "api/facility_types";
+export class PriorityAreaService {
+  public resourceUrl = "api/priority_areas";
 
   constructor(protected http: HttpClient) {}
 
-  create(facilityType: FacilityType): Observable<CustomResponse<FacilityType>> {
-    return this.http.post<CustomResponse<FacilityType>>(
+  create(priorityArea: PriorityArea): Observable<CustomResponse<PriorityArea>> {
+    return this.http.post<CustomResponse<PriorityArea>>(
       this.resourceUrl,
-      facilityType
+      priorityArea
     );
   }
 
-  update(facilityType: FacilityType): Observable<CustomResponse<FacilityType>> {
-    return this.http.put<CustomResponse<FacilityType>>(
-      `${this.resourceUrl}/${facilityType.id}`,
-      facilityType
+  update(priorityArea: PriorityArea): Observable<CustomResponse<PriorityArea>> {
+    return this.http.put<CustomResponse<PriorityArea>>(
+      `${this.resourceUrl}/${priorityArea.id}`,
+      priorityArea
     );
   }
 
-  find(id: number): Observable<CustomResponse<FacilityType>> {
-    return this.http.get<CustomResponse<FacilityType>>(
+  find(id: number): Observable<CustomResponse<PriorityArea>> {
+    return this.http.get<CustomResponse<PriorityArea>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<FacilityType[]>> {
+  query(req?: any): Observable<CustomResponse<PriorityArea[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<FacilityType[]>>(this.resourceUrl, {
+    return this.http.get<CustomResponse<PriorityArea[]>>(this.resourceUrl, {
       params: options,
     });
   }

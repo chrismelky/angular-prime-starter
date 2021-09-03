@@ -5,52 +5,48 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, Inject, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { Sector } from "src/app/setup/sector/sector.model";
-import { SectorService } from "src/app/setup/sector/sector.service";
+} from "../../../config/pagination.constants";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {FacilityType} from "src/app/setup/facility-type/facility-type.model";
+import {FacilityTypeService} from "src/app/setup/facility-type/facility-type.service";
+import {Section} from "src/app/setup/section/section.model";
+import {SectionService} from "src/app/setup/section/section.service";
 
-import { ReferenceType } from "./reference-type.model";
-import { ReferenceTypeService } from "./reference-type.service";
-import { ReferenceTypeUpdateComponent } from "./update/reference-type-update.component";
+import {FacilityTypeSection} from "./facility-type-section.model";
+import {FacilityTypeSectionService} from "./facility-type-section.service";
+import {FacilityTypeSectionUpdateComponent} from "./update/facility-type-section-update.component";
+import {MAT_DIALOG_DATA} from "@angular/material/dialog";
+import {CreateComponent} from "./create/create.component";
 
 @Component({
-  selector: "app-reference-type",
-  templateUrl: "./reference-type.component.html",
+  selector: "app-facility-type-section",
+  templateUrl: "./facility-type-section.component.html",
 })
-export class ReferenceTypeComponent implements OnInit {
+export class FacilityTypeSectionComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  referenceTypes?: ReferenceType[] = [];
-  sectors?: Sector[] = [];
+  facilityTypeSections?: FacilityTypeSection[] = [];
+
+  facilityTypes?: FacilityType[] = [];
+  sections?: Section[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
-    {
-      field: "multi_select",
-      header: "Multi Select",
-      sort: false,
-    },
-    {
-      field: "link_level",
-      header: "Link Level",
+      field: "section_id",
+      header: "Section ",
       sort: true,
     },
   ]; //Table display columns
@@ -63,47 +59,60 @@ export class ReferenceTypeComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  facilityType: FacilityType | undefined;
 
+  //Mandatory filter
 
   constructor(
-    protected referenceTypeService: ReferenceTypeService,
-    protected sectorService: SectorService,
+    protected facilityTypeSectionService: FacilityTypeSectionService,
+    protected facilityTypeService: FacilityTypeService,
+    protected sectionService: SectionService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
+    public dialogRef: DynamicDialogRef,
+    public dialogConfig: DynamicDialogConfig,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+    this.facilityType = this.dialogConfig.data.facilityType;
+  }
 
   ngOnInit(): void {
-    this.sectorService
-      .query({ columns: ["id", "name"] })
+    this.facilityTypeService
+      .query({columns: ["id", "name"]})
       .subscribe(
-        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
+        (resp: CustomResponse<FacilityType[]>) =>
+          (this.facilityTypes = resp.data)
+      );
+    this.sectionService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
     this.handleNavigation();
-    this.loadPage();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceTypeService
+    this.facilityTypeSectionService
       .query({
+        facility_type_id: this.facilityType?.id,
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceType[]>) => {
+        (res: CustomResponse<FacilityTypeSection[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -134,20 +143,8 @@ export class ReferenceTypeComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -208,16 +205,32 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReferenceType
-   * @param referenceType ; If undefined initize new model to create else edit existing model
+   * Creating or updating FacilityTypeSection
+   * @param facilityTypeSection ; If undefined initialize new model to create else edit existing model
    */
-  createOrUpdate(referenceType?: ReferenceType): void {
-    const data: ReferenceType = referenceType ?? {
-      ...new ReferenceType(),
+  update(facilityTypeSection?: FacilityTypeSection): void {
+    const data: FacilityTypeSection = facilityTypeSection ?? {
+      ...new FacilityTypeSection(),
+      facility_type: this.facilityType
     };
-    const ref = this.dialogService.open(ReferenceTypeUpdateComponent, {
+    const ref = this.dialogService.open(FacilityTypeSectionUpdateComponent, {
       data,
-      header: "Create/Update ReferenceType",
+      header: "Update Planning Unit",
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  create(): void {
+    const data = {
+      facility_type: this.facilityType
+    };
+    const ref = this.dialogService.open(CreateComponent, {
+      data,
+      header: "Add Planning Unit",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -227,15 +240,15 @@ export class ReferenceTypeComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceType
-   * @param referenceType
+   * Delete FacilityTypeSection
+   * @param facilityTypeSection
    */
-  delete(referenceType: ReferenceType): void {
+  delete(facilityTypeSection: FacilityTypeSection): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReferenceType?",
+      message: "Are you sure that you want to delete this FacilityTypeSection?",
       accept: () => {
-        this.referenceTypeService
-          .delete(referenceType.id!)
+        this.facilityTypeSectionService
+          .delete(facilityTypeSection.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -251,14 +264,14 @@ export class ReferenceTypeComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceType[]> | null,
+    resp: CustomResponse<FacilityTypeSection[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-type"], {
+      this.router.navigate(["/facility-type-section"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -267,7 +280,7 @@ export class ReferenceTypeComponent implements OnInit {
         },
       });
     }
-    this.referenceTypes = resp?.data ?? [];
+    this.facilityTypeSections = resp?.data ?? [];
   }
 
   /**
@@ -276,6 +289,6 @@ export class ReferenceTypeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Type");
+    this.toastService.error("Error loading Facility Type Section");
   }
 }

@@ -525,6 +525,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: "priority-area",
+        loadChildren: () =>
+          import("../setup/priority-area/priority-area.module").then(
+            (m) => m.PriorityAreaModule
+          ),
+      },
+      {
         path: "category-option-combination",
         loadChildren: () =>
           import(
@@ -536,6 +543,13 @@ const routes: Routes = [
         loadChildren: () =>
           import("../setup/data-value/data-value.module").then(
             (m) => m.DataValueModule
+          ),
+      },
+      {
+        path: "national-reference",
+        loadChildren: () =>
+          import("../setup/national-reference/national-reference.module").then(
+            (m) => m.NationalReferenceModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

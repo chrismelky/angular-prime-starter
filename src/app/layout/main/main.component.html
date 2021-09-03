@@ -5,8 +5,14 @@
     [opened]="isGtMd"
     class="mat-elevation-z2"
   >
-    <mat-toolbar class="mat-elevation-z0">
-      <div fxLayout="row" fxLayoutGap="0.1rem" class="logo">
+    <mat-toolbar class="mat-elevation-z0" style="padding: 0px">
+      <div
+        fxFlex
+        fxLayout="row"
+        fxLayoutGap="0.1rem"
+        class="logo"
+        fxLayoutAlign="center"
+      >
         <span class="logo-text">PlanRep</span>
       </div>
     </mat-toolbar>
@@ -18,13 +24,13 @@
     >
       <img src="../../../assets/images/coat.png" />
       <div
-        class="location"
+        class="location-text"
         fxLayout="column"
         fxLayoutGap="0px"
         fxLayoutAlign="center center"
       >
         <span class="admin">{{ user?.admin_hierarchy?.name }}</span>
-        <span class="section">{{ user?.section?.name }}</span>
+        <span class="section">({{ user?.section?.name }})</span>
       </div>
     </div>
 

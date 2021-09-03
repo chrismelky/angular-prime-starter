@@ -15,6 +15,9 @@ import { CustomResponse } from "../../../utils/custom-response";
 import { PeForm } from "../pe-form.model";
 import { PeFormService } from "../pe-form.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {BudgetClass} from "../../budget-class/budget-class.model";
+import {BudgetClassService} from "../../budget-class/budget-class.service";
+import {SelectItemGroup, TreeNode} from "primeng/api";
 
 @Component({
   selector: "app-pe-form-update",
@@ -24,6 +27,42 @@ export class PeFormUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  selectedCities4?: any[];
+
+  budgetClasses?: SelectItemGroup[];
+
+  /*
+  budgetClasses = [
+    {
+      label: 'Germany', value: 'de',
+      items: [
+        {label: 'Berlin', value: 'Berlin'},
+        {label: 'Frankfurt', value: 'Frankfurt'},
+        {label: 'Hamburg', value: 'Hamburg'},
+        {label: 'Munich', value: 'Munich'}
+      ]
+    },
+    {
+      label: 'USA', value: 'us',
+      items: [
+        {label: 'Chicago', value: 'Chicago'},
+        {name: 'Los Angeles', value: 'Los Angeles'},
+        {name: 'New York', value: 'New York'},
+        {name: 'San Francisco', value: 'San Francisco'}
+      ]
+    },
+    {
+      label: 'Japan', value: 'jp',
+      items: [
+        {name: 'Kyoto', value: 'Kyoto'},
+        {name: 'Osaka', value: 'Osaka'},
+        {name: 'Tokyo', value: 'Tokyo'},
+        {name: 'Yokohama', value: 'Yokohama'}
+      ]
+    }
+  ];
+  */
+
 
   /**
    * Declare form
@@ -42,11 +81,28 @@ export class PeFormUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
+    private budgetClassService: BudgetClassService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+
+    // this.budgetClassService
+    //   .query({
+    //     sort: ['id','asc'],
+    //     parent_id:null,})
+    //   .subscribe(
+    //     (resp: CustomResponse<BudgetClass[]>) => (console.log(resp.data))
+    //   );
+
+     this.budgetClassService.getParentChild().subscribe(
+        (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data));
+    //     //(resp: CustomResponse<BudgetClass[]>) => (console.log(resp.data))
+    //   );
+
+
+
   }
 
   /**

@@ -28,41 +28,7 @@ export class PeFormUpdateComponent implements OnInit {
   formError = false;
   errors = [];
   selectedCities4?: any[];
-
   budgetClasses?: SelectItemGroup[];
-
-  /*
-  budgetClasses = [
-    {
-      label: 'Germany', value: 'de',
-      items: [
-        {label: 'Berlin', value: 'Berlin'},
-        {label: 'Frankfurt', value: 'Frankfurt'},
-        {label: 'Hamburg', value: 'Hamburg'},
-        {label: 'Munich', value: 'Munich'}
-      ]
-    },
-    {
-      label: 'USA', value: 'us',
-      items: [
-        {label: 'Chicago', value: 'Chicago'},
-        {name: 'Los Angeles', value: 'Los Angeles'},
-        {name: 'New York', value: 'New York'},
-        {name: 'San Francisco', value: 'San Francisco'}
-      ]
-    },
-    {
-      label: 'Japan', value: 'jp',
-      items: [
-        {name: 'Kyoto', value: 'Kyoto'},
-        {name: 'Osaka', value: 'Osaka'},
-        {name: 'Tokyo', value: 'Tokyo'},
-        {name: 'Yokohama', value: 'Yokohama'}
-      ]
-    }
-  ];
-  */
-
 
   /**
    * Declare form
@@ -88,21 +54,9 @@ export class PeFormUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
 
-    // this.budgetClassService
-    //   .query({
-    //     sort: ['id','asc'],
-    //     parent_id:null,})
-    //   .subscribe(
-    //     (resp: CustomResponse<BudgetClass[]>) => (console.log(resp.data))
-    //   );
 
      this.budgetClassService.getParentChild().subscribe(
         (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data));
-    //     //(resp: CustomResponse<BudgetClass[]>) => (console.log(resp.data))
-    //   );
-
-
-
   }
 
   /**

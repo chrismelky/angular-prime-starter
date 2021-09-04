@@ -17,6 +17,8 @@ import { CasAssessmentSubCriteriaOptionService } from "src/app/setup/cas-assessm
 import { CasAssessmentSubCriteriaPossibleScore } from "../cas-assessment-sub-criteria-possible_score.model";
 import { CasAssessmentSubCriteriaPossibleScoreService } from "../cas-assessment-sub-criteria-possible_score.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {CasAssessmentSubCriteriaService} from "../../cas-assessment-sub-criteria/cas-assessment-sub-criteria.service";
+import {CasAssessmentSubCriteria} from "../../cas-assessment-sub-criteria/cas-assessment-sub-criteria.model";
 
 @Component({
   selector: "app-cas-assessment-sub-criteria-possible_score-update",
@@ -38,6 +40,7 @@ export class CasAssessmentSubCriteriaPossibleScoreUpdateComponent
   editForm = this.fb.group({
     id: [null, []],
     value: [null, [Validators.required]],
+    description: [null, [Validators.required]],
     cas_assessment_sub_criteria_option_id: [null, [Validators.required]],
   });
 
@@ -125,6 +128,7 @@ export class CasAssessmentSubCriteriaPossibleScoreUpdateComponent
     this.editForm.patchValue({
       id: casAssessmentSubCriteriaPossibleScore.id,
       value: casAssessmentSubCriteriaPossibleScore.value,
+      description: casAssessmentSubCriteriaPossibleScore.description,
       cas_assessment_sub_criteria_option_id:
         casAssessmentSubCriteriaPossibleScore.cas_assessment_sub_criteria_option_id,
     });
@@ -139,6 +143,7 @@ export class CasAssessmentSubCriteriaPossibleScoreUpdateComponent
       ...new CasAssessmentSubCriteriaPossibleScore(),
       id: this.editForm.get(["id"])!.value,
       value: this.editForm.get(["value"])!.value,
+      description: this.editForm.get(["description"])!.value,
       cas_assessment_sub_criteria_option_id: this.editForm.get([
         "cas_assessment_sub_criteria_option_id",
       ])!.value,

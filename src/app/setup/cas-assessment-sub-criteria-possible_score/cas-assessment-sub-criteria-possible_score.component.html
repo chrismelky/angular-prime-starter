@@ -37,7 +37,7 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_criteria_id"
+                id="cas_assessment_criteria_option_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
@@ -45,9 +45,9 @@
                 class="p-inputtext-sm"
                 [options]="casAssessmentCriteria!"
                 (onChange)="fetchSubCriteria($event)"
-                [(ngModel)]="cas_assessment_criteria_id"
+                [(ngModel)]="cas_assessment_criteria_option_id"
               ></p-dropdown>
-              <label for="cas_assessment_criteria_id"
+              <label for="cas_assessment_criteria_option_id"
               >Cas Assessment Criteria
               </label>
             </span>
@@ -56,7 +56,7 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_sub_criteria_id"
+                id="cas_assessment_sub_criteria_option_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
@@ -64,9 +64,9 @@
                 class="p-inputtext-sm"
                 [options]="casAssessmentSubCriteria!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="cas_assessment_sub_criteria_id"
+                [(ngModel)]="cas_assessment_sub_criteria_option_id"
               ></p-dropdown>
-              <label for="cas_assessment_sub_criteria_id"
+              <label for="cas_assessment_sub_criteria_option_id"
                 >Cas Assessment Sub Criteria
               </label>
             </span>
@@ -165,7 +165,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!cas_assessment_sub_criteria_id"
+            [disabled]="!cas_assessment_sub_criteria_option_id"
             (click)="createOrUpdate()"
             label="Add Cas Assessment Sub Criteria Possible Score"
           ></button>

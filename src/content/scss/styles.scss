@@ -19,23 +19,35 @@ body {
 }
 .sidenav-item {
   padding: 0px;
-  margin-top: 64px;
+  margin-top: 32px;
   background-color: transparent;
   .p-panelmenu {
     width: 100%;
     background-color: transparent;
 
-    .p-menuitem-text {
+    .p-menuitem-icon {
+      font-size: 17px;
+      font-weight: 500;
+      color: $navIcon;
+    }
+    .pi {
+      font-weight: 500;
+    }
+    .pi-chevron-right {
       font-size: 13px;
+    }
+    .p-menuitem-text {
+      font-size: 14px;
       // line-height: 20px;
       font-weight: 500;
+      overflow-x: hidden;
     }
     .p-menuitem-text:hover {
       color: #669df6;
     }
 
     .p-panelmenu-content {
-      background-color: #19314a;
+      background-color: #132d49;
       color: $navText;
       padding-left: 0.75rem;
       .p-panelmenu-icon	{
@@ -57,7 +69,7 @@ body {
         .p-menuitem-link-active {
           .p-menuitem-icon,
           .p-menuitem-text {
-            color: #669df6;
+            color: #f3a71f;
           }
         }
       }
@@ -74,12 +86,11 @@ body {
     .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-link:hover,
     .p-panelmenu-panel .p-panelmenu-header:not(.p-highlight) .p-panelmenu-header-link:hover,
     .p-panelmenu-panel .p-panelmenu-header:not(.p-highlight) .p-panelmenu-header-link:focus {
-      background-color: #19314a;
+      background-color: #132d49;
     }
     .p-panelmenu-panel:first-child .p-panelmenu-header > a  {
       background-color: transparent;
       color: $navText;
-      border-top: 1px solid rgba(255, 255, 255, 0.1)
     }
     .p-panelmenu-panel:last-child .p-panelmenu-content{
       border-radius: 0;
@@ -111,7 +122,7 @@ body {
   border-right: none !important;
   .mat-toolbar {
     background-color: $navBg;
-    box-shadow: 0 -1px 0 $navBorder inset;
+    // box-shadow: 0 -1px 0 $navBorder inset;
 
     .logo {
       line-height: 32px;
@@ -123,15 +134,14 @@ body {
       font-size: 1.7rem;
       font-family: cursive;
       color: $logoWhite;
-      // margin: 0 auto;
       margin-left: -0.75rem;
 
     }
   }
   .location {
-    height: 80px;
+    height: 96px;
     padding-left: 1.5em;
-    box-shadow: 0 -1px 0 $navBorder inset;
+    // box-shadow: 0 -1px 0 $navBorder inset;
     background-color: #132d49;
     img {
       transition: all 0.2s ease-in-out;
@@ -144,7 +154,7 @@ body {
     }
     span {
       font-size: 1rem;
-      color: rgba(255,255,255,0.7);
+      color: $logoWhite;
     }
   }
   app-menu-item.main > .menu-list-item {

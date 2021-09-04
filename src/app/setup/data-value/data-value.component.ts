@@ -5,65 +5,67 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { DataElement } from "src/app/setup/data-element/data-element.model";
-import { DataElementService } from "src/app/setup/data-element/data-element.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { Facility } from "src/app/setup/facility/facility.model";
-import { FacilityService } from "src/app/setup/facility/facility.service";
-import { CategoryOptionCombination } from "src/app/setup/category-option-combination/category-option-combination.model";
-import { CategoryOptionCombinationService } from "src/app/setup/category-option-combination/category-option-combination.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { DataElement } from 'src/app/setup/data-element/data-element.model';
+import { DataElementService } from 'src/app/setup/data-element/data-element.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { Facility } from 'src/app/setup/facility/facility.model';
+import { FacilityService } from 'src/app/setup/facility/facility.service';
+import { CategoryOptionCombination } from 'src/app/setup/category-option-combination/category-option-combination.model';
+import { CategoryOptionCombinationService } from 'src/app/setup/category-option-combination/category-option-combination.service';
 
-import { DataValue } from "./data-value.model";
-import { DataValueService } from "./data-value.service";
-import { DataValueUpdateComponent } from "./update/data-value-update.component";
+import { DataValue } from './data-value.model';
+import { DataValueService } from './data-value.service';
+import { DataValueUpdateComponent } from './update/data-value-update.component';
+import { UserService } from '../user/user.service';
+import { User } from '../user/user.model';
 
 @Component({
-  selector: "app-data-value",
-  templateUrl: "./data-value.component.html",
+  selector: 'app-data-value',
+  templateUrl: './data-value.component.html',
 })
 export class DataValueComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   dataValues?: DataValue[] = [];
 
   dataElements?: DataElement[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
+  adminHierarchies: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
   facilities?: Facility[] = [];
   categoryOptionCombinations?: CategoryOptionCombination[] = [];
 
   cols = [
     {
-      field: "data_element_id",
-      header: "Data Element ",
+      field: 'data_element_id',
+      header: 'Data Element ',
       sort: true,
     },
     {
-      field: "category_option_combination_id",
-      header: "Category Option Combination ",
+      field: 'category_option_combination_id',
+      header: 'Category Option Combination ',
       sort: true,
     },
     {
-      field: "value",
-      header: "Value",
+      field: 'value',
+      header: 'Value',
       sort: true,
     },
   ]; //Table display columns
@@ -82,6 +84,8 @@ export class DataValueComponent implements OnInit {
   financial_year_id!: number;
   facility_id!: number;
 
+  currentUser?: User;
+
   constructor(
     protected dataValueService: DataValueService,
     protected dataElementService: DataElementService,
@@ -94,34 +98,35 @@ export class DataValueComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
-  ) {}
+    protected toastService: ToastService,
+    protected userService: UserService
+  ) {
+    this.currentUser = userService.getCurrentUser();
+    if (this.currentUser.admin_hierarchy) {
+      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
+      this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+    }
+  }
 
   ngOnInit(): void {
     this.dataElementService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<DataElement[]>) => (this.dataElements = resp.data)
       );
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
       );
     this.facilityService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
       );
     this.categoryOptionCombinationService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CategoryOptionCombination[]>) =>
           (this.categoryOptionCombinations = resp.data)
@@ -176,11 +181,11 @@ export class DataValueComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -255,8 +260,8 @@ export class DataValueComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -273,7 +278,7 @@ export class DataValueComponent implements OnInit {
     };
     const ref = this.dialogService.open(DataValueUpdateComponent, {
       data,
-      header: "Create/Update DataValue",
+      header: 'Create/Update DataValue',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -288,7 +293,7 @@ export class DataValueComponent implements OnInit {
    */
   delete(dataValue: DataValue): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this DataValue?",
+      message: 'Are you sure that you want to delete this DataValue?',
       accept: () => {
         this.dataValueService.delete(dataValue.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -312,12 +317,12 @@ export class DataValueComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/data-value"], {
+      this.router.navigate(['/data-value'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -330,6 +335,6 @@ export class DataValueComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Data Value");
+    this.toastService.error('Error loading Data Value');
   }
 }

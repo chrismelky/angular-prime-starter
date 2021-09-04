@@ -6,16 +6,19 @@ p-avatar {
   cursor: pointer
 }
 .location-text {
-  padding-left: .7rem;
+  padding-left: .5rem;
   span.admin {
     font-size: 15px;
     font-weight: 400;
     overflow-x: hidden;
+    font-family: cursive;
   }
   span.section {
     font-size: 12px;
     font-weight: 400;
     margin-top: -3px;
     overflow-x: hidden;
+    font-family: cursive;
+
   }
 }

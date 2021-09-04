@@ -545,6 +545,13 @@ const routes: Routes = [
             (m) => m.DataValueModule
           ),
       },
+      {
+        path: "national-reference",
+        loadChildren: () =>
+          import("../setup/national-reference/national-reference.module").then(
+            (m) => m.NationalReferenceModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

@@ -439,16 +439,6 @@ export class MainComponent implements OnInit {
               icon: 'pi pi-fw pi-link',
               routerLink: 'baseline-statistic',
             },
-            {
-              label: 'Cas Assessment Sub Criteria Possible Scores',
-              icon: 'pi pi-fw pi-link',
-              routerLink: 'cas-assessment-sub-criteria-possible_score',
-            },
-            {
-              label: 'Cas Assessment Sub Criteria Report Sets',
-              icon: 'pi pi-fw pi-link',
-              routerLink: 'cas-assessment-sub-criteria-report_set',
-            },
           ],
         },
         {
@@ -464,6 +454,57 @@ export class MainComponent implements OnInit {
               label: "National References",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "national-reference",
+            },
+          ]
+        },
+        {
+          label: "Assessment",
+          icon: "pi pi-fw pi-angle-right",
+          items: [
+            {
+              label: 'Cas Assessment Categories',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-category',
+            },
+            {
+              label: 'Cas Assessment Category Version',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-category-version',
+            },
+            {
+              label: 'Cas Assessment Category Version State',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-category-version-state',
+            },
+            {
+              label: 'Cas Assessment Round',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-round',
+            },
+            {
+              label: 'Cas Assessment State',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-state',
+            },
+            {
+              label: 'Cas Assessment Criteria Option',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-criteria-option',
+            },
+            {
+              label: 'Cas Assessment Sub Criteria Option',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-sub-criteria-option',
+            },
+            {
+              label: 'Cas Assessment Sub Criteria Possible Scores',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-sub-criteria-possible_score',
+            },
+            {
+              label: 'Cas Assessment Sub Criteria Report Sets',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'cas-assessment-sub-criteria-report_set',
             },
           ]
         },

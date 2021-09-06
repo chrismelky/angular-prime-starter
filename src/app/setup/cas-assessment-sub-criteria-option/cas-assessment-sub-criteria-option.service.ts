@@ -60,9 +60,9 @@ export class CasAssessmentSubCriteriaOptionService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  findById(id: {}): Observable<CustomResponse<CasAssessmentSubCriteria[]>> {
-    return this.http.post<CustomResponse<CasAssessmentSubCriteria[]>>(
-      `${this.baseUrl}`,id
+  findById(id: {}): Observable<CustomResponse<CasAssessmentSubCriteriaOption[]>> {
+    return this.http.get<CustomResponse<CasAssessmentSubCriteriaOption[]>>(
+      `${this.resourceUrl}`,id
     );
   }
 }

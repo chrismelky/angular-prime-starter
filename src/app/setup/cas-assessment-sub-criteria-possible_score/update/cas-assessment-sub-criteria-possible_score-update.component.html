@@ -9,6 +9,26 @@
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
+          <input id="description" type="text" pInputText formControlName="description" />
+          <label for="description">Description </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('description')!.invalid &&
+            (editForm.get('description')!.dirty ||
+              editForm.get('description')!.touched ||
+              formError)
+          "
+        >
+          <small class="p-error" *ngIf="editForm.get('description')?.errors?.required"
+          >Description is required.</small
+          >
+        </span>
+      </div>
+
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
           <p-inputNumber
             id="value"
             formControlName="value"
@@ -63,7 +83,7 @@
               editForm.get('cas_assessment_sub_criteria_option_id')?.errors
                 ?.required
             "
-            >Cas Assessment Sub Criteria Option is required.</small
+            >Cas Assessment Sub Criteria is required.</small
           >
         </span>
       </div>

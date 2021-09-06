@@ -47,7 +47,6 @@ export class CasAssessmentSubCriteriaPossibleScoreService {
   query(
     req?: any
   ): Observable<CustomResponse<CasAssessmentSubCriteriaPossibleScore[]>> {
-    console.log(req);
     const options = createRequestOption(req);
     return this.http.get<
       CustomResponse<CasAssessmentSubCriteriaPossibleScore[]>

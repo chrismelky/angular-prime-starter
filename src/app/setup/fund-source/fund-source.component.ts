@@ -318,14 +318,15 @@ export class FundSourceComponent implements OnInit {
   }
 
   show(row: any,action:any) {
-    var header = action=='GfsCode'?('Gfs Codes  for ' +  row.name + '(' + row.code + ')'):('Budget Classses for ' +  row.name + '(' + row.code + ')');
+    var header = action=='GfsCode'?('Gfs Codes  for ' +  row.name + '(' + row.code + ')'):('Budget Classes for ' +  row.name + '(' + row.code + ')')
+    var witdh =action=='GfsCode'?50:60;
     const ref = this.dialogService.open(FundSourceGfsCodeList, {
       data: {
         fund_source: row,
         action: action
       },
       header: header,
-      width: '50%'
+      width: witdh+'%'
     });
   }
 }

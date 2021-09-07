@@ -5,6 +5,7 @@ export class DataSet {
     public code?: string,
     public cas_plan_content_id?: number,
     public is_locked?: string,
-    public is_submitted?: string
+    public is_submitted?: string,
+    public facility_types?: string
   ) {}
 }

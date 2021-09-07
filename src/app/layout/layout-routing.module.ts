@@ -552,6 +552,13 @@ const routes: Routes = [
             (m) => m.NationalReferenceModule
           ),
       },
+      {
+        path: "fund-source-budget-class",
+        loadChildren: () =>
+          import(
+            "../setup/fund-source-budget-class/fund-source-budget-class.module"
+          ).then((m) => m.FundSourceBudgetClassModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

@@ -14,8 +14,11 @@ import { BudgetClassComponent } from "./budget-class.component";
 import { BudgetClassUpdateComponent } from "./update/budget-class-update.component";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, BudgetClassRoutingModule],
-  declarations: [BudgetClassComponent, BudgetClassUpdateComponent],
-  entryComponents: [BudgetClassUpdateComponent],
+    imports: [SharedModule, CommonModule, BudgetClassRoutingModule],
+    declarations: [BudgetClassComponent, BudgetClassUpdateComponent],
+    entryComponents: [BudgetClassUpdateComponent],
+    exports: [
+        BudgetClassUpdateComponent
+    ]
 })
 export class BudgetClassModule {}

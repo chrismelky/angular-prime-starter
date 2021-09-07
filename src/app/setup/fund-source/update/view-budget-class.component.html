@@ -1,0 +1,93 @@
+<button
+  type="text"
+  pButton
+  pRipple
+  pTooltip="Category Option"
+  tooltipPosition="bottom"
+  iconPos="left"
+  class="p-button-text p-button-plain p-button-primary"
+  (click)="bc.toggle($event)"
+>
+  <i class="pi pi-table"></i>&nbsp; Budget Classes
+</button>
+<p-overlayPanel
+  #bc
+  [dismissable]="false"
+  [showCloseIcon]="true"
+  appendTo="body"
+  (onShow)="loadBudgetClasses()"
+  (onHide)="onHide()"
+  [focusOnShow]="false"
+>
+  <ng-template pTemplate>
+    <div fxLayout="column" fxLayoutGap="10px" style="min-width: 400px;max-width:800px;max-height:800px">
+      <p-table
+        #table
+        [lazy]="true"
+        [resizableColumns]="true"
+        [responsive]="true"
+        [autoLayout]="true"
+        [value]="fundSourcesBudgetClasses!"
+      >
+        <ng-template pTemplate="caption">
+          <form
+            name="editForm"
+            role="form"
+            novalidate
+            (ngSubmit)="saveBudgetClass()"
+            [formGroup]="fundSourceBudgetClassForm"
+          >
+            <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="4px">
+              <div class="p-field" fxFlex>
+                <p-multiSelect formControlName="budget_Classes" optionValue="id"  [filter]="true" [itemSize]="34" [options]="budgetClasses!" [group]="true"  defaultLabel="Select Budget Classes" scrollHeight="200px" display="chip">
+                  <ng-template let-group pTemplate="group">
+                    <div class="p-d-flex p-ai-center">
+                      <span>{{group.label}}</span>
+                    </div>
+                  </ng-template>
+                </p-multiSelect>
+              </div>
+              <button
+                type="submit"
+                pButton
+                pRipple
+                icon="pi pi-plus"
+                class="p-button-raised p-icon-button"
+                [disabled]="fundSourceBudgetClassForm.get('budget_Classes')!.invalid"
+              ></button>
+            </div>
+          </form>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>SN</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-budgetClass let-i="rowIndex">
+          <tr>
+            <td>{{i+1}}</td>
+            <td>{{budgetClass.budget_class?.code}}</td>
+            <td>{{budgetClass.budget_class?.name}}</td>
+            <td>
+              <button
+                pButton
+                pTooltip="Delete"
+                tooltipPosition="bottom"
+                class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                icon="pi pi-trash
+              "
+                (click)="delete(budgetClass)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template [ngIf]="fundSourcesBudgetClasses?.length===0" pTemplate="emptymessage"> No data found </ng-template>
+      </p-table>
+    </div>
+  </ng-template>
+</p-overlayPanel>

@@ -20,36 +20,57 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { GfsCode } from "src/app/setup/gfs-code/gfs-code.model";
-import { GfsCodeService } from "src/app/setup/gfs-code/gfs-code.service";
-import { FundSourceCategory } from "src/app/setup/fund-source-category/fund-source-category.model";
-import { FundSourceCategoryService } from "src/app/setup/fund-source-category/fund-source-category.service";
+import { BudgetClass } from "src/app/setup/budget-class/budget-class.model";
+import { BudgetClassService } from "src/app/setup/budget-class/budget-class.service";
+import { FundSource } from "src/app/setup/fund-source/fund-source.model";
+import { FundSourceService } from "src/app/setup/fund-source/fund-source.service";
+import { FundType } from "src/app/setup/fund-type/fund-type.model";
+import { FundTypeService } from "src/app/setup/fund-type/fund-type.service";
+import { BankAccount } from "src/app/setup/bank-account/bank-account.model";
+import { BankAccountService } from "src/app/setup/bank-account/bank-account.service";
 
-import { FundSource } from "./fund-source.model";
-import { FundSourceService } from "./fund-source.service";
-import { FundSourceUpdateComponent } from "./update/fund-source-update.component";
+import { FundSourceBudgetClass } from "./fund-source-budget-class.model";
+import { FundSourceBudgetClassService } from "./fund-source-budget-class.service";
+import { FundSourceBudgetClassUpdateComponent } from "./update/fund-source-budget-class-update.component";
 
 @Component({
-  selector: "app-fund-source",
-  templateUrl: "./fund-source.component.html",
+  selector: "app-fund-source-budget-class",
+  templateUrl: "./fund-source-budget-class.component.html",
 })
-export class FundSourceComponent implements OnInit {
+export class FundSourceBudgetClassComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  fundSources?: FundSource[] = [];
+  fundSourceBudgetClasses?: FundSourceBudgetClass[] = [];
 
-  gfsCodes?: GfsCode[] = [];
-  fundSourceCategories?: FundSourceCategory[] = [];
+  budgetClasses?: BudgetClass[] = [];
+  fundSources?: FundSource[] = [];
+  fundTypes?: FundType[] = [];
+  bankAccounts?: BankAccount[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "ceiling_name",
+      header: "Ceiling Name",
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: "budget_class_id",
+      header: "Budget Class ",
+      sort: true,
+    },
+    {
+      field: "fund_source_id",
+      header: "Fund Source ",
+      sort: true,
+    },
+    {
+      field: "fund_type_id",
+      header: "Fund Type ",
+      sort: true,
+    },
+    {
+      field: "bank_account_id",
+      header: "Bank Account ",
       sort: true,
     },
   ]; //Table display columns
@@ -64,13 +85,13 @@ export class FundSourceComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  gfs_code_id!: number;
-  fund_source_category_id!: number;
 
   constructor(
+    protected fundSourceBudgetClassService: FundSourceBudgetClassService,
+    protected budgetClassService: BudgetClassService,
     protected fundSourceService: FundSourceService,
-    protected gfsCodeService: GfsCodeService,
-    protected fundSourceCategoryService: FundSourceCategoryService,
+    protected fundTypeService: FundTypeService,
+    protected bankAccountService: BankAccountService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -80,16 +101,26 @@ export class FundSourceComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.gfsCodeService
+    this.budgetClassService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
+        (resp: CustomResponse<BudgetClass[]>) =>
+          (this.budgetClasses = resp.data)
       );
-    this.fundSourceCategoryService
+    this.fundSourceService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<FundSourceCategory[]>) =>
-          (this.fundSourceCategories = resp.data)
+        (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
+      );
+    this.fundTypeService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<FundType[]>) => (this.fundTypes = resp.data)
+      );
+    this.bankAccountService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<BankAccount[]>) => (this.bankAccounts = resp.data)
       );
     this.handleNavigation();
   }
@@ -100,22 +131,18 @@ export class FundSourceComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.fund_source_category_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.fundSourceService
+    this.fundSourceBudgetClassService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        fund_source_category_id: this.fund_source_category_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<FundSource[]>) => {
+        (res: CustomResponse<FundSourceBudgetClass[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -146,20 +173,8 @@ export class FundSourceComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -220,18 +235,16 @@ export class FundSourceComponent implements OnInit {
   }
 
   /**
-   * Creating or updating FundSource
-   * @param fundSource ; If undefined initize new model to create else edit existing model
+   * Creating or updating FundSourceBudgetClass
+   * @param fundSourceBudgetClass ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(fundSource?: FundSource): void {
-    const data: FundSource = fundSource ?? {
-      ...new FundSource(),
-      gfs_code_id: this.gfs_code_id,
-      fund_source_category_id: this.fund_source_category_id,
+  createOrUpdate(fundSourceBudgetClass?: FundSourceBudgetClass): void {
+    const data: FundSourceBudgetClass = fundSourceBudgetClass ?? {
+      ...new FundSourceBudgetClass(),
     };
-    const ref = this.dialogService.open(FundSourceUpdateComponent, {
+    const ref = this.dialogService.open(FundSourceBudgetClassUpdateComponent, {
       data,
-      header: "Create/Update FundSource",
+      header: "Create/Update FundSourceBudgetClass",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -241,17 +254,20 @@ export class FundSourceComponent implements OnInit {
   }
 
   /**
-   * Delete FundSource
-   * @param fundSource
+   * Delete FundSourceBudgetClass
+   * @param fundSourceBudgetClass
    */
-  delete(fundSource: FundSource): void {
+  delete(fundSourceBudgetClass: FundSourceBudgetClass): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this FundSource?",
+      message:
+        "Are you sure that you want to delete this FundSourceBudgetClass?",
       accept: () => {
-        this.fundSourceService.delete(fundSource.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.fundSourceBudgetClassService
+          .delete(fundSourceBudgetClass.id!)
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }
@@ -263,14 +279,14 @@ export class FundSourceComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<FundSource[]> | null,
+    resp: CustomResponse<FundSourceBudgetClass[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/fund-source"], {
+      this.router.navigate(["/fund-source-budget-class"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -279,7 +295,7 @@ export class FundSourceComponent implements OnInit {
         },
       });
     }
-    this.fundSources = resp?.data ?? [];
+    this.fundSourceBudgetClasses = resp?.data ?? [];
   }
 
   /**
@@ -288,19 +304,6 @@ export class FundSourceComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Fund Source");
+    this.toastService.error("Error loading Fund Source Budget Class");
   }
-
-  // show(row: any,action:any) {
-  //   var header = action=='GfsCode'?('Gfs Codes  for ' +  row.name + '(' + row.code + ')'):('Budget Classes for ' +  row.name + '(' + row.code + ')')
-  //   var witdh =action=='GfsCode'?50:60;
-  //   const ref = this.dialogService.open(FundSourceGfsCodeList, {
-  //     data: {
-  //       fund_source: row,
-  //       action: action
-  //     },
-  //     header: header,
-  //     width: witdh+'%'
-  //   });
-  // }
 }

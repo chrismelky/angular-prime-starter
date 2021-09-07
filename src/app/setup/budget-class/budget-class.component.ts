@@ -319,7 +319,6 @@ export class BudgetClassComponent implements OnInit {
    */
   toggleActivation(row:any){
     var budgetClass = this.createFromForm(row);
-    console.log(budgetClass);
     this.subscribeToSaveResponse(
       this.budgetClassService.update(budgetClass)
     );

@@ -7,8 +7,8 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {combineLatest, Observable} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -25,6 +25,9 @@ import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
 import { GfsCodeCategory } from "./gfs-code-category.model";
 import { GfsCodeCategoryService } from "./gfs-code-category.service";
 import { GfsCodeCategoryUpdateComponent } from "./update/gfs-code-category-update.component";
+import {TreeTable} from "primeng/treetable";
+import {BudgetClass} from "../budget-class/budget-class.model";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: "app-gfs-code-category",
@@ -32,9 +35,8 @@ import { GfsCodeCategoryUpdateComponent } from "./update/gfs-code-category-updat
 })
 export class GfsCodeCategoryComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
-  gfsCodeCategories?: GfsCodeCategory[] = [];
-
+  @ViewChild('table') table!: TreeTable;
+  gfsCodeCategories?: TreeNode[] = [];
   parents?: GfsCodeCategory[] = [];
   types?: PlanrepEnum[] = [];
 
@@ -42,16 +44,6 @@ export class GfsCodeCategoryComponent implements OnInit {
     {
       field: "name",
       header: "Name",
-      sort: true,
-    },
-    {
-      field: "parent_id",
-      header: "Parent ",
-      sort: false,
-    },
-    {
-      field: "type",
-      header: "Type",
       sort: true,
     },
   ]; //Table display columns
@@ -102,6 +94,7 @@ export class GfsCodeCategoryComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        parent_id: null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -257,7 +250,14 @@ export class GfsCodeCategoryComponent implements OnInit {
         },
       });
     }
-    this.gfsCodeCategories = resp?.data ?? [];
+    this.gfsCodeCategories =(resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
+
   }
 
   /**
@@ -267,5 +267,95 @@ export class GfsCodeCategoryComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Gfs Code Category");
+  }
+
+  /**
+   * When cas content expanded load children
+   * @param event = constist of node data
+   */
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.gfsCodeCategoryService
+      .query({
+        parent_id: node.data.id,
+        sort: ['code:asc'],
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+          node.children = (resp?.data ?? []).map((c) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.gfsCodeCategories = [...this.gfsCodeCategories!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
+  }
+
+  /**
+   * toggleActivation event
+   * @param row Data = constist of row Data
+   */
+  toggleActivation(row:any){
+    var gfsCodeCategory = this.createFromForm(row);
+    this.subscribeToSaveResponse(
+      this.gfsCodeCategoryService.update(gfsCodeCategory)
+    );
+    this.handleNavigation();
+  }
+
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<BudgetClass>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {
+  }
+
+  protected onSaveFinalize(): void {
+  }
+
+
+  /**
+   * Return form values as object of type BudgetClass
+   * @returns BudgetClass
+   */
+  protected createFromForm(row: any): GfsCodeCategory {
+    return {
+      ...new GfsCodeCategory(),
+      id: row.id,
+      name:row.name,
+      parent_id: row.parent_id,
+      active:row.active,
+      type:row.type
+    };
   }
 }

@@ -57,16 +57,6 @@ export class GfsCodeComponent implements OnInit {
       header: "Aggregated Code",
       sort: true,
     },
-    {
-      field: "is_procurement",
-      header: "Is Procurement",
-      sort: false,
-    },
-    {
-      field: "is_protected",
-      header: "Is Protected",
-      sort: false,
-    },
   ]; //Table display columns
 
   isLoading = false;
@@ -115,7 +105,7 @@ export class GfsCodeComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.account_type_id || !this.category_id) {
+    if (!this.category_id) {
       return;
     }
     this.isLoading = true;
@@ -126,7 +116,6 @@ export class GfsCodeComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        account_type_id: this.account_type_id,
         category_id: this.category_id,
         ...this.helper.buildFilter(this.search),
       })

@@ -18,22 +18,6 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="account_type_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="accountTypes!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="account_type_id"
-              ></p-dropdown>
-              <label for="account_type_id">Account Type </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
                 id="category_id"
                 optionValue="id"
                 optionLabel="name"
@@ -144,6 +128,21 @@
                   ></i>
                 </span>
               </div>
+              <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="account_type_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [(ngModel)]="search['account_type_id']"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="accountTypes!"
+              ></p-dropdown>
+              <label for="category_id">Account Types </label>
+            </span>
+              </div>
             </div>
             <div
               fxLayout="row"
@@ -190,7 +189,7 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!account_type_id || !category_id"
+            [disabled]="!category_id"
             (click)="createOrUpdate()"
             label="Add Gfs Code"
           ></button>
@@ -205,6 +204,9 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
+          <th>Account Type</th>
+          <th>Is Procurement</th>
+          <th>Is Protected</th>
           <th></th>
         </tr>
       </ng-template>
@@ -212,6 +214,21 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            {{rowData['account_type']!.name}}
+          </td>
+          <td>
+            <p-inputSwitch
+              [disabled]="true"
+              [(ngModel)]="rowData['is_procurement']"
+            ></p-inputSwitch>
+          </td>
+          <td>
+            <p-inputSwitch
+              [disabled]="true"
+              [(ngModel)]="rowData['is_protected']"
+            ></p-inputSwitch>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

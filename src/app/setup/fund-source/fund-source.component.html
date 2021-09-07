@@ -18,22 +18,6 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="gfs_code_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="gfsCodes!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="gfs_code_id"
-              ></p-dropdown>
-              <label for="gfs_code_id">Gfs Code </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
                 id="fund_source_category_id"
                 optionValue="id"
                 optionLabel="name"
@@ -170,7 +154,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!gfs_code_id || !fund_source_category_id"
+            [disabled]="!fund_source_category_id"
             (click)="createOrUpdate()"
             label="Add Fund Source"
           ></button>
@@ -185,6 +169,11 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
+          <th>Is Conditional</th>
+          <th>Is Foreign</th>
+          <th>Is Treasurer</th>
+          <th>Can Project</th>
+          <th>is_active</th>
           <th></th>
         </tr>
       </ng-template>
@@ -194,8 +183,40 @@
             {{ rowData[col.field] }}
           </td>
           <td>
+            <p-inputSwitch
+            [disabled]="true"
+            [(ngModel)]="rowData['is_conditional']"
+          ></p-inputSwitch>
+          </td>
+          <td>
+            <p-inputSwitch
+              [disabled]="true"
+              [(ngModel)]="rowData['is_foreign']"
+            ></p-inputSwitch>
+          </td>
+          <td>
+            <p-inputSwitch
+              [disabled]="true"
+              [(ngModel)]="rowData['is_treasurer']"
+            ></p-inputSwitch>
+          </td>
+          <td>
+            <p-inputSwitch
+              [disabled]="true"
+              [(ngModel)]="rowData['can_project']"
+            ></p-inputSwitch>
+          </td>
+          <td>
+            <p-inputSwitch
+              [disabled]="true"
+              [(ngModel)]="rowData['is_active']"
+            ></p-inputSwitch>
+          </td>
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
+                <button type="button" (click)="show(rowData,'GfsCode')" pButton icon="pi pi-info-circle" label="Gfs Codes"></button>
+                <button type="button" (click)="show(rowData,'BudgetClass')" pButton icon="pi pi-info-circle" label="Budget Classes"></button>
                 <button
                   pButton
                   pTooltip="Edit"

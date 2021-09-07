@@ -12,9 +12,10 @@ import { GfsCodeRoutingModule } from "./gfs-code-routing.module";
 import { SharedModule } from "../../shared/shared.module";
 import { GfsCodeComponent } from "./gfs-code.component";
 import { GfsCodeUpdateComponent } from "./update/gfs-code-update.component";
+import {BadgeModule} from 'primeng/badge';
 
 @NgModule({
-  imports: [SharedModule, CommonModule, GfsCodeRoutingModule],
+  imports: [SharedModule, CommonModule, GfsCodeRoutingModule,BadgeModule],
   declarations: [GfsCodeComponent, GfsCodeUpdateComponent],
   entryComponents: [GfsCodeUpdateComponent],
 })

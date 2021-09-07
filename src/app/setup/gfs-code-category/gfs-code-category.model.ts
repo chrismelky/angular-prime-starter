@@ -3,6 +3,7 @@ export class GfsCodeCategory {
     public id?: number,
     public name?: string,
     public parent_id?: number,
-    public type?: string
+    public type?: string,
+    public active?: boolean
   ) {}
 }

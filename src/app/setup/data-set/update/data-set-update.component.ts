@@ -40,6 +40,7 @@ export class DataSetUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
     cas_plan_content_id: [null, [Validators.required]],
+    cas_plan_id: [null, [Validators.required]],
     is_locked: [false, []],
     is_submitted: [false, []],
     facility_types: [null, [Validators.required]],
@@ -56,19 +57,27 @@ export class DataSetUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casPlanContentService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
-      );
     this.facilityTypeService
       .query()
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data || [])
       );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const dataSet: DataSet = this.dialogConfig.data;
+    this.loadCasPlanContent(dataSet.cas_plan_id!);
+    this.updateForm(dataSet); //Initialize form with data from dialog
+  }
+
+  /**
+   * Load by cas plan id
+   */
+  loadCasPlanContent(casPlanId: number): void {
+    this.casPlanContentService
+      .query({ cas_plan_id: casPlanId, columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<CasPlanContent[]>) =>
+          (this.casPlanContents = resp.data)
+      );
   }
 
   /**
@@ -128,6 +137,7 @@ export class DataSetUpdateComponent implements OnInit {
       name: dataSet.name,
       code: dataSet.code,
       cas_plan_content_id: dataSet.cas_plan_content_id,
+      cas_plan_id: dataSet.cas_plan_id,
       is_locked: dataSet.is_locked,
       is_submitted: dataSet.is_submitted,
       facility_types:
@@ -148,6 +158,7 @@ export class DataSetUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       code: this.editForm.get(['code'])!.value,
       cas_plan_content_id: this.editForm.get(['cas_plan_content_id'])!.value,
+      cas_plan_id: this.editForm.get(['cas_plan_id'])!.value,
       is_locked: this.editForm.get(['is_locked'])!.value,
       is_submitted: this.editForm.get(['is_submitted'])!.value,
       facility_types:

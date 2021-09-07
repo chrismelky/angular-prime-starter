@@ -28,6 +28,8 @@ import { DataSetService } from './data-set.service';
 import { DataSetUpdateComponent } from './update/data-set-update.component';
 import { FacilityType } from '../facility-type/facility-type.model';
 import { FacilityTypeService } from '../facility-type/facility-type.service';
+import { CasPlan } from '../cas-plan/cas-plan.model';
+import { CasPlanService } from '../cas-plan/cas-plan.service';
 
 @Component({
   selector: 'app-data-set',
@@ -39,6 +41,7 @@ export class DataSetComponent implements OnInit {
   dataSets?: DataSet[] = [];
 
   casPlanContents?: CasPlanContent[] = [];
+  casPlans?: CasPlan[] = [];
   facilityTypes?: FacilityType[] = [];
 
   cols = [
@@ -75,10 +78,12 @@ export class DataSetComponent implements OnInit {
 
   //Mandatory filter
   cas_plan_content_id!: number;
+  cas_plan_id!: number;
 
   constructor(
     protected dataSetService: DataSetService,
     protected casPlanContentService: CasPlanContentService,
+    protected casPlanService: CasPlanService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -89,12 +94,14 @@ export class DataSetComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casPlanContentService
-      .query({ columns: ['id', 'name'] })
+    this.casPlanService
+      .query({
+        columns: ['id', 'name'],
+      })
       .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
+        (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
       );
+
     this.facilityTypeService
       .query()
       .subscribe(
@@ -105,12 +112,28 @@ export class DataSetComponent implements OnInit {
   }
 
   /**
+   * Load cas content by selected cas_plan
+   * @returns vois
+   */
+  loadCasContents(): void {
+    if (!this.cas_plan_id) {
+      return;
+    }
+    this.casPlanContentService
+      .query({ cas_plan_id: this.cas_plan_id, columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<CasPlanContent[]>) =>
+          (this.casPlanContents = resp.data)
+      );
+  }
+
+  /**
    * Load data from api
    * @param page = page number
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_plan_content_id) {
+    if (!this.cas_plan_content_id || !this.cas_plan_id) {
       return;
     }
     this.isLoading = true;
@@ -237,6 +260,7 @@ export class DataSetComponent implements OnInit {
     const data: DataSet = dataSet ?? {
       ...new DataSet(),
       cas_plan_content_id: this.cas_plan_content_id,
+      cas_plan_id: this.cas_plan_id,
     };
     const ref = this.dialogService.open(DataSetUpdateComponent, {
       data,

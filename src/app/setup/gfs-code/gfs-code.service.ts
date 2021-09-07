@@ -46,6 +46,14 @@ export class GfsCodeService {
     });
   }
 
+  queryRev(req?: any): Observable<CustomResponse<GfsCode[]>> {
+    const options = createRequestOption(req);
+    const url = '/api/gfs_codes/revenue';
+    return this.http.get<CustomResponse<GfsCode[]>>(url, {
+       params: options,
+    });
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

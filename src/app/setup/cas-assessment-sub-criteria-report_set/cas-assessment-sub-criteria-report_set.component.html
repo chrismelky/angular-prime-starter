@@ -15,10 +15,26 @@
           fxFlex
           fxLayoutAlign="start center"
         >
+<!--          <div class="p-field" fxFlex>-->
+<!--            <span class="p-float-label">-->
+<!--              <p-dropdown-->
+<!--                id="cas_assessment_category_id"-->
+<!--                optionValue="id"-->
+<!--                optionLabel="name"-->
+<!--                [autoDisplayFirst]="false"-->
+<!--                [filter]="true"-->
+<!--                class="p-inputtext-sm"-->
+<!--                [options]="casAssessmentCategory!"-->
+<!--                (onChange)="filterChanged()"-->
+<!--                [(ngModel)]="cas_assessment_category_id"-->
+<!--              ></p-dropdown>-->
+<!--              <label for="cas_assessment_category_id">Cas Assessment Category </label>-->
+<!--            </span>-->
+<!--          </div>-->
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_plan_content_id"
+                id="cas_assessment_criteria_option_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
@@ -28,7 +44,7 @@
                 (onChange)="filterChanged()"
                 [(ngModel)]="cas_plan_content_id"
               ></p-dropdown>
-              <label for="cas_plan_content_id">Cas Plan Content </label>
+              <label for="cas_assessment_criteria_option_id">Cas Assessment Criteria </label>
             </span>
           </div>
           <div class="p-field" fxFlex>
@@ -168,7 +184,7 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td style="flex: 0 0 2rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

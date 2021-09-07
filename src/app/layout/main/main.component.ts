@@ -39,9 +39,7 @@ export class MainComponent implements OnInit {
     }
   }
 
-  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
-    // console.log(this.user);
   }
 
   userMenus: MenuItem[] = [

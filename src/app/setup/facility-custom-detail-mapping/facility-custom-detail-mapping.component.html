@@ -18,19 +18,17 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="admin_hierarchy_level_id"
+                id="facility_type_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="adminHierarchyLevels!"
+                [options]="facilityTypes!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_level_id"
+                [(ngModel)]="facility_type_id"
               ></p-dropdown>
-              <label for="admin_hierarchy_level_id"
-                >Admin Hierarchy Level
-              </label>
+              <label for="facility_type_id">Facility Type </label>
             </span>
           </div>
         </div>
@@ -81,50 +79,18 @@
               fxLayoutAlign="start center"
             >
               <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="code"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['code']"
-                  />
-                  <label for="code">Code </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['code'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['name']"
-                  />
-                  <label for="name">Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <p-dropdown
-                    id="lga_level"
+                    id="ownership"
                     optionValue="value"
                     optionLabel="display"
                     [autoDisplayFirst]="false"
                     [filter]="true"
                     class="p-inputtext-sm"
-                    [options]="lgaLevels!"
-                    [(ngModel)]="search['lga_level']"
+                    [options]="ownerships!"
+                    [(ngModel)]="search['ownership']"
                   ></p-dropdown>
-                  <label for="lga_level">Lga Level </label>
+                  <label for="ownership">Ownership </label>
                 </span>
               </div>
             </div>
@@ -160,58 +126,45 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="facilityTypes!"
+      [value]="facilityCustomDetailMappings!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Facility Types</span>
+          <span class="card-header-text">Facility Custom Detail Mappings</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!admin_hierarchy_level_id"
+            [disabled]="!facility_type_id"
             (click)="createOrUpdate()"
-            label="Add Facility Type"
+            label="Add Facility Custom Detail Mapping"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="facilityTypes?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+        <tr *ngIf="facilityCustomDetailMappings?.length">
+          <th [pSortableColumn]="'facility_custom_detail_id'">
+            Custom Detail <p-sortIcon [field]="'facility_custom_detail_id'"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'planningUnits'">
-            Planning Units <p-sortIcon [field]="'planningUnits'"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
+          <td>
+            {{ rowData.detail?.name }}
+          </td>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
           <td>
-            <mat-chip-list aria-label="Fish selection">
-              <mat-chip *ngFor="let unit of rowData.sections">{{unit.name}}</mat-chip>
-            </mat-chip-list>
-          </td>
-          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
-                <button
-                  pButton
-                  pTooltip="Planning Units"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-list
-              "
-                  (click)="sections(rowData)"
-                ></button>
                 <button
                   pButton
                   pTooltip="Edit"
@@ -244,7 +197,7 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="facilityTypes?.length! > 0"
+        [alwaysShow]="facilityCustomDetailMappings?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -259,6 +212,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Facility Type"
+  header="Confirmation Delete Facility Custom Detail Mapping"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

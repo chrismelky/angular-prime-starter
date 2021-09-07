@@ -34,6 +34,11 @@ export class GfsCodeService {
     return this.http.get<CustomResponse<GfsCode>>(`${this.resourceUrl}/${id}`);
   }
 
+  getGfsCode(gfsCode: string): Observable<CustomResponse<GfsCode[]>> {
+    let url = '/api/gfs_codes/gfs_code_by_aggregated_code'
+    return this.http.get<CustomResponse<GfsCode[]>>(`${url}/${gfsCode}`);
+  }
+
   query(req?: any): Observable<CustomResponse<GfsCode[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<GfsCode[]>>(this.resourceUrl, {

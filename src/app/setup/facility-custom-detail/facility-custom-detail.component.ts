@@ -20,27 +20,19 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { GfsCode } from "src/app/setup/gfs-code/gfs-code.model";
-import { GfsCodeService } from "src/app/setup/gfs-code/gfs-code.service";
-import { FundSourceCategory } from "src/app/setup/fund-source-category/fund-source-category.model";
-import { FundSourceCategoryService } from "src/app/setup/fund-source-category/fund-source-category.service";
 
-import { FundSource } from "./fund-source.model";
-import { FundSourceService } from "./fund-source.service";
-import { FundSourceUpdateComponent } from "./update/fund-source-update.component";
-import {FundSourceGfsCodeList} from "./fund-source-gfs-code-list";
+import { FacilityCustomDetail } from "./facility-custom-detail.model";
+import { FacilityCustomDetailService } from "./facility-custom-detail.service";
+import { FacilityCustomDetailUpdateComponent } from "./update/facility-custom-detail-update.component";
 
 @Component({
-  selector: "app-fund-source",
-  templateUrl: "./fund-source.component.html",
+  selector: "app-facility-custom-detail",
+  templateUrl: "./facility-custom-detail.component.html",
 })
-export class FundSourceComponent implements OnInit {
+export class FacilityCustomDetailComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  fundSources?: FundSource[] = [];
-
-  gfsCodes?: GfsCode[] = [];
-  fundSourceCategories?: FundSourceCategory[] = [];
+  facilityCustomDetails?: FacilityCustomDetail[] = [];
 
   cols = [
     {
@@ -53,31 +45,11 @@ export class FundSourceComponent implements OnInit {
       header: "Code",
       sort: true,
     },
-    // {
-    //   field: "is_conditional",
-    //   header: "Is Conditional",
-    //   sort: false,
-    // },
-    // {
-    //   field: "is_foreign",
-    //   header: "Is Foreign",
-    //   sort: false,
-    // },
-    // {
-    //   field: "is_treasurer",
-    //   header: "Is Treasurer",
-    //   sort: false,
-    // },
-    // {
-    //   field: "can_project",
-    //   header: "Can Project",
-    //   sort: false,
-    // },
-    // {
-    //   field: "is_active",
-    //   header: "Is Active",
-    //   sort: false,
-    // },
+    {
+      field: "value_type",
+      header: "Value Type",
+      sort: true,
+    },
   ]; //Table display columns
 
   isLoading = false;
@@ -90,13 +62,9 @@ export class FundSourceComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  gfs_code_id!: number;
-  fund_source_category_id!: number;
 
   constructor(
-    protected fundSourceService: FundSourceService,
-    protected gfsCodeService: GfsCodeService,
-    protected fundSourceCategoryService: FundSourceCategoryService,
+    protected facilityCustomDetailService: FacilityCustomDetailService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -106,17 +74,6 @@ export class FundSourceComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.gfsCodeService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
-      );
-    this.fundSourceCategoryService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FundSourceCategory[]>) =>
-          (this.fundSourceCategories = resp.data)
-      );
     this.handleNavigation();
   }
 
@@ -126,22 +83,18 @@ export class FundSourceComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.fund_source_category_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.fundSourceService
+    this.facilityCustomDetailService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        fund_source_category_id: this.fund_source_category_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<FundSource[]>) => {
+        (res: CustomResponse<FacilityCustomDetail[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -172,20 +125,8 @@ export class FundSourceComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -246,18 +187,16 @@ export class FundSourceComponent implements OnInit {
   }
 
   /**
-   * Creating or updating FundSource
-   * @param fundSource ; If undefined initize new model to create else edit existing model
+   * Creating or updating FacilityCustomDetail
+   * @param facilityCustomDetail ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(fundSource?: FundSource): void {
-    const data: FundSource = fundSource ?? {
-      ...new FundSource(),
-      gfs_code_id: this.gfs_code_id,
-      fund_source_category_id: this.fund_source_category_id,
+  createOrUpdate(facilityCustomDetail?: FacilityCustomDetail): void {
+    const data: FacilityCustomDetail = facilityCustomDetail ?? {
+      ...new FacilityCustomDetail(),
     };
-    const ref = this.dialogService.open(FundSourceUpdateComponent, {
+    const ref = this.dialogService.open(FacilityCustomDetailUpdateComponent, {
       data,
-      header: "Create/Update FundSource",
+      header: "Create/Update FacilityCustomDetail",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -267,17 +206,20 @@ export class FundSourceComponent implements OnInit {
   }
 
   /**
-   * Delete FundSource
-   * @param fundSource
+   * Delete FacilityCustomDetail
+   * @param facilityCustomDetail
    */
-  delete(fundSource: FundSource): void {
+  delete(facilityCustomDetail: FacilityCustomDetail): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this FundSource?",
+      message:
+        "Are you sure that you want to delete this FacilityCustomDetail?",
       accept: () => {
-        this.fundSourceService.delete(fundSource.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.facilityCustomDetailService
+          .delete(facilityCustomDetail.id!)
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }
@@ -289,14 +231,14 @@ export class FundSourceComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<FundSource[]> | null,
+    resp: CustomResponse<FacilityCustomDetail[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/fund-source"], {
+      this.router.navigate(["/facility-custom-detail"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -305,7 +247,7 @@ export class FundSourceComponent implements OnInit {
         },
       });
     }
-    this.fundSources = resp?.data ?? [];
+    this.facilityCustomDetails = resp?.data ?? [];
   }
 
   /**
@@ -314,19 +256,6 @@ export class FundSourceComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Fund Source");
-  }
-
-  show(row: any,action:any) {
-    var header = action=='GfsCode'?('Gfs Codes  for ' +  row.name + '(' + row.code + ')'):('Budget Classes for ' +  row.name + '(' + row.code + ')')
-    var witdh =action=='GfsCode'?50:60;
-    const ref = this.dialogService.open(FundSourceGfsCodeList, {
-      data: {
-        fund_source: row,
-        action: action
-      },
-      header: header,
-      width: witdh+'%'
-    });
+    this.toastService.error("Error loading Facility Custom Detail");
   }
 }

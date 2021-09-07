@@ -9,8 +9,8 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
+import { createRequestOption } from "../../../utils/request-util";
+import { CustomResponse } from "../../../utils/custom-response";
 import { FacilityCustomDetailValue } from "./facility-custom-detail-value.model";
 
 @Injectable({ providedIn: "root" })

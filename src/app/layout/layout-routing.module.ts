@@ -566,13 +566,6 @@ const routes: Routes = [
             "../setup/facility-custom-detail-mapping/facility-custom-detail-mapping.module"
           ).then((m) => m.FacilityCustomDetailMappingModule),
       },
-      {
-        path: "facility-custom-detail-value",
-        loadChildren: () =>
-          import(
-            "../setup/facility-custom-detail-value/facility-custom-detail-value.module"
-          ).then((m) => m.FacilityCustomDetailValueModule),
-      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

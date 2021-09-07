@@ -157,7 +157,7 @@
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
           <td>
-            {{ rowData.detail?.name }}
+            [{{ rowData.detail?.code }}] {{ rowData.detail?.name }}
           </td>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}

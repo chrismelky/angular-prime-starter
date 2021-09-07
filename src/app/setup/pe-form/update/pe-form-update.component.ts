@@ -15,9 +15,9 @@ import { CustomResponse } from "../../../utils/custom-response";
 import { PeForm } from "../pe-form.model";
 import { PeFormService } from "../pe-form.service";
 import { ToastService } from "src/app/shared/toast.service";
-import {BudgetClass} from "../../budget-class/budget-class.model";
 import {BudgetClassService} from "../../budget-class/budget-class.service";
-import {SelectItemGroup, TreeNode} from "primeng/api";
+import {SelectItemGroup} from "primeng/api";
+import {FundSourceService} from "../../fund-source/fund-source.service";
 
 @Component({
   selector: "app-pe-form-update",
@@ -27,8 +27,8 @@ export class PeFormUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-  selectedCities4?: any[];
-  budgetClasses?: SelectItemGroup[];
+  fundSources?: any[] = [];
+  budgetClasses?: SelectItemGroup[] =[];
 
   /**
    * Declare form
@@ -48,15 +48,19 @@ export class PeFormUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private budgetClassService: BudgetClassService,
+    private fundSourceService: FundSourceService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
 
-
      this.budgetClassService.getParentChild().subscribe(
         (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data));
+
+     this.fundSourceService.getPeFundSource().subscribe(
+       (resp: CustomResponse<any[]>) => {
+         this.fundSources = resp.data });
   }
 
   /**
@@ -111,6 +115,10 @@ export class PeFormUpdateComponent implements OnInit {
    * @param peForm
    */
   protected updateForm(peForm: PeForm): void {
+    //let budget_classes_ids = peForm.budget_classes?.map((budget_class: { id: any; })=>budget_class);
+   // let fund_sources_id = peForm.fund_sources?.map((fund_source: { id: any; })=>fund_source);
+    // console.log("EEEEE")
+    // console.log(fund_sources_id)
     this.editForm.patchValue({
       id: peForm.id,
       name: peForm.name,

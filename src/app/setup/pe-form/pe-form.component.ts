@@ -24,6 +24,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { PeForm } from "./pe-form.model";
 import { PeFormService } from "./pe-form.service";
 import { PeFormUpdateComponent } from "./update/pe-form-update.component";
+import {PeViewDetailsComponent} from "./update/pe-view-details.component";
 
 @Component({
   selector: "app-pe-form",
@@ -45,16 +46,16 @@ export class PeFormComponent implements OnInit {
       header: "Description",
       sort: true,
     },
-    {
-      field: "budget_classes",
-      header: "Budget Classes",
-      sort: true,
-    },
-    {
-      field: "fund_sources",
-      header: "Fund Sources",
-      sort: true,
-    },
+    // {
+    //   field: "budget_classes",
+    //   header: "Budget Classes",
+    //   sort: true,
+    // },
+    // {
+    //   field: "fund_sources",
+    //   header: "Fund Sources",
+    //   sort: true,
+    // },
     {
       field: "is_active",
       header: "Is Active",
@@ -265,4 +266,45 @@ export class PeFormComponent implements OnInit {
     this.page = 1;
     this.toastService.error("Error loading Pe Form");
   }
+
+  onBudgetClassView(sbc:any){
+    if(sbc.budget_classes?.length > 0) {
+      const info = {
+        "detail": sbc,
+        "Type": "sbc"
+      }
+      const ref = this.dialogService.open(PeViewDetailsComponent, {
+        data: info,
+        header: "Sub budget classes",
+      });
+      ref.onClose.subscribe((result) => {
+        if (result) {
+          this.loadPage(this.page);
+        }
+      });
+    } else {
+      this.toastService.error("No sub budget class assigned on "+sbc.name);
+    }
+  }
+
+  onFundSourceView(fs:any) {
+       if(fs.fund_sources?.length > 0) {
+      const info = {
+        "detail": fs,
+        "Type": "fs"
+      }
+      const ref = this.dialogService.open(PeViewDetailsComponent, {
+        data: info,
+        header: "Fund sources",
+      });
+      ref.onClose.subscribe((result) => {
+        if (result) {
+          this.loadPage(this.page);
+        }
+      });
+  } else {
+         this.toastService.error("No fund source assigned on "+fs.name);
+       }
+  }
+
 }

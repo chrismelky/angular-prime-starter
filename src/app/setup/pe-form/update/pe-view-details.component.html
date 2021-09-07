@@ -1,0 +1,36 @@
+<div *ngIf="data.Type =='sbc'; else elseBlock">
+    <p-table [value]="data.detail?.budget_classes" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Control code</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-sbc>
+        <tr>
+          <td>{{sbc.code}}</td>
+          <td>{{sbc.label}}</td>
+          <td>{{sbc.control_code}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+  </div>
+
+  <ng-template #elseBlock>
+    <p-table [value]="data.detail?.fund_sources" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-sbc>
+        <tr>
+          <td>{{sbc.code}}</td>
+          <td>{{sbc.name}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-template>

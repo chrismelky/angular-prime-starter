@@ -179,12 +179,11 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="facilityTypes?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'planningUnits'">
+            Planning Units <p-sortIcon [field]="'planningUnits'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -193,6 +192,11 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            <mat-chip-list aria-label="Fish selection">
+              <mat-chip *ngFor="let unit of rowData.sections">{{unit.name}}</mat-chip>
+            </mat-chip-list>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

@@ -32,22 +32,6 @@
               ></i>
             </span>
           </div>
-          <div class="p-field">
-            <span class="p-float-label">
-              <p-dropdown
-                id="parent_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                (onChange)="onSearch()"
-                [showClear]="true"
-                [filter]="true"
-                [options]="parents!"
-                [(ngModel)]="search['parent_id']"
-              ></p-dropdown>
-              <label for="parent_id">Parent </label>
-            </span>
-          </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -90,16 +74,17 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-table
+    <p-treeTable
       #table
       [lazy]="true"
       [resizableColumns]="true"
-      [responsive]="true"
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
+      [scrollable]="true"
       [value]="gfsCodeCategories!"
       (onLazyLoad)="onSortChange($event)"
+      (onNodeExpand)="onNodeExpand($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
@@ -117,28 +102,40 @@
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="gfsCodeCategories?.length">
+        <tr #header *ngIf="gfsCodeCategories?.length">
           <th
             *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
           >
             {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            }}
           </th>
+          <th>Active</th>
           <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <ng-template pTemplate="body"
+                   let-rowNode
+                   let-rowData="rowData"
+                   let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
+          <td *ngFor="let col of columns; let i = index">
+            <p-treeTableToggler
+              [rowNode]="rowNode"
+              *ngIf="i == 0"
+            ></p-treeTableToggler>
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            <p-inputSwitch
+              (onChange)="toggleActivation(rowData)"
+              [(ngModel)]="rowData['active']"
+            ></p-inputSwitch>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -150,7 +147,6 @@
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -178,7 +174,7 @@
           (onPageChange)="pageChanged($event)"
         ></p-paginator>
       </ng-template>
-    </p-table>
+    </p-treeTable>
   </p-card>
 </div>
 

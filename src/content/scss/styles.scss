@@ -117,13 +117,12 @@ body {
 }
 
 .mat-drawer {
-  width: 240px;
+  width: 350px;
   background-color: $navBg;
   border-right: none !important;
   .mat-toolbar {
     background-color: $navBg;
     // box-shadow: 0 -1px 0 $navBorder inset;
-
     .logo {
       line-height: 32px;
       height: 32px;

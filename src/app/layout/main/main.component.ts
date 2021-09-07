@@ -70,7 +70,7 @@ export class MainComponent implements OnInit {
           routerLink: 'advertisement',
         },
         {
-          label: 'Financial Year',
+          label: 'Financial Year Management',
           icon: 'pi pi-fw pi-angle-down',
           items: [
             {

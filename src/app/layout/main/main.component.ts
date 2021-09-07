@@ -39,10 +39,7 @@ export class MainComponent implements OnInit {
     }
   }
 
-  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
-  ngOnInit(): void {
-    // console.log(this.user);
-  }
+  ngOnInit(): void {}
 
   userMenus: MenuItem[] = [
     { label: "Change password", icon: "pi pi-fw pi-lock" },
@@ -196,6 +193,16 @@ export class MainComponent implements OnInit {
               label: "Facility Types",
               icon: "pi pi-fw pi-link",
               routerLink: "facility-type",
+            },
+            {
+              label: "Facility Custom Detail Mappings",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "facility-custom-detail-mapping",
+            },
+            {
+              label: "Facility Custom Details",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "facility-custom-detail",
             },
           ],
         },
@@ -518,8 +525,8 @@ export class MainComponent implements OnInit {
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
 
     {
-      label: "Planning",
-      icon: "pi pi-pw pi-list",
+      label: 'Planning',
+      icon: 'pi pi-pw pi-list',
       items: [
         {
           label: "Comprehensive Plans",

@@ -17,6 +17,8 @@ import { CasPlanContentService } from 'src/app/setup/cas-plan-content/cas-plan-c
 import { DataSet } from '../data-set.model';
 import { DataSetService } from '../data-set.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { FacilityType } from '../../facility-type/facility-type.model';
+import { FacilityTypeService } from '../../facility-type/facility-type.service';
 
 @Component({
   selector: 'app-data-set-update',
@@ -28,6 +30,7 @@ export class DataSetUpdateComponent implements OnInit {
   errors = [];
 
   casPlanContents?: CasPlanContent[] = [];
+  facilityTypes?: FacilityType[] = [];
 
   /**
    * Declare form
@@ -37,8 +40,10 @@ export class DataSetUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
     cas_plan_content_id: [null, [Validators.required]],
+    cas_plan_id: [null, [Validators.required]],
     is_locked: [false, []],
     is_submitted: [false, []],
+    facility_types: [null, [Validators.required]],
   });
 
   constructor(
@@ -47,17 +52,32 @@ export class DataSetUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected facilityTypeService: FacilityTypeService
   ) {}
 
   ngOnInit(): void {
+    this.facilityTypeService
+      .query()
+      .subscribe(
+        (resp: CustomResponse<FacilityType[]>) =>
+          (this.facilityTypes = resp.data || [])
+      );
+    const dataSet: DataSet = this.dialogConfig.data;
+    this.loadCasPlanContent(dataSet.cas_plan_id!);
+    this.updateForm(dataSet); //Initialize form with data from dialog
+  }
+
+  /**
+   * Load by cas plan id
+   */
+  loadCasPlanContent(casPlanId: number): void {
     this.casPlanContentService
-      .query({ columns: ['id', 'name'] })
+      .query({ cas_plan_id: casPlanId, columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasPlanContent[]>) =>
           (this.casPlanContents = resp.data)
       );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
@@ -117,8 +137,13 @@ export class DataSetUpdateComponent implements OnInit {
       name: dataSet.name,
       code: dataSet.code,
       cas_plan_content_id: dataSet.cas_plan_content_id,
+      cas_plan_id: dataSet.cas_plan_id,
       is_locked: dataSet.is_locked,
       is_submitted: dataSet.is_submitted,
+      facility_types:
+        dataSet.facility_types !== undefined
+          ? JSON.parse(dataSet.facility_types!)
+          : dataSet.facility_types,
     });
   }
 
@@ -133,8 +158,13 @@ export class DataSetUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       code: this.editForm.get(['code'])!.value,
       cas_plan_content_id: this.editForm.get(['cas_plan_content_id'])!.value,
+      cas_plan_id: this.editForm.get(['cas_plan_id'])!.value,
       is_locked: this.editForm.get(['is_locked'])!.value,
       is_submitted: this.editForm.get(['is_submitted'])!.value,
+      facility_types:
+        this.editForm.get(['facility_types'])!.value !== undefined
+          ? JSON.stringify(this.editForm.get(['facility_types'])!.value)
+          : undefined,
     };
   }
 }

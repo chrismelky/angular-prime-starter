@@ -5,22 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Component, Inject, OnInit } from "@angular/core";
+import { FormBuilder, Validators } from "@angular/forms";
+import { Observable } from "rxjs";
+import { finalize } from "rxjs/operators";
+import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
-import { CustomResponse } from '../../../utils/custom-response';
-import { CasAssessmentCategoryVersion } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model';
-import { CasAssessmentCategoryVersionService } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service';
-import { CasAssessmentCriteriaOption } from '../cas-assessment-criteria-option.model';
-import { CasAssessmentCriteriaOptionService } from '../cas-assessment-criteria-option.service';
-import { ToastService } from 'src/app/shared/toast.service';
+import { CustomResponse } from "../../../utils/custom-response";
+import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
+import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
+import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
+import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
+import { CasAssessmentCriteriaOption } from "../cas-assessment-criteria-option.model";
+import { CasAssessmentCriteriaOptionService } from "../cas-assessment-criteria-option.service";
+import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: 'app-cas-assessment-criteria-option-update',
-  templateUrl: './cas-assessment-criteria-option-update.component.html',
+  selector: "app-cas-assessment-criteria-option-update",
+  templateUrl: "./cas-assessment-criteria-option-update.component.html",
 })
 export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
   isSaving = false;
@@ -28,20 +30,23 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
   errors = [];
 
   casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
+  casPlanContents?: CasPlanContent[] = [];
 
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required, Validators.maxLength(200)]],
-    number: [null, [Validators.required, Validators.min(0)]],
+    name: [null, [Validators.required]],
+    number: [null, [Validators.required]],
     cas_assessment_category_version_id: [null, [Validators.required]],
+    cas_plan_content_id: [null, [Validators.required]],
   });
 
   constructor(
     protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
+    protected casPlanContentService: CasPlanContentService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -50,16 +55,22 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.casAssessmentCategoryVersionService
-      .query({ columns: ['id', 'cas_assessment_category_id'] })
+      .query({ columns: ["id", "cas_assessment_category_id"] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)
+      );
+    this.casPlanContentService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CasPlanContent[]>) =>
+          (this.casPlanContents = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create CasAssessmentCriteriaOption Update if exist else set form has error and return
+   * When form is valid Create CasAssessmentCriteriaOption or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -126,6 +137,7 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
       number: casAssessmentCriteriaOption.number,
       cas_assessment_category_version_id:
         casAssessmentCriteriaOption.cas_assessment_category_version_id,
+      cas_plan_content_id: casAssessmentCriteriaOption.cas_plan_content_id,
     });
   }
 
@@ -136,12 +148,13 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
   protected createFromForm(): CasAssessmentCriteriaOption {
     return {
       ...new CasAssessmentCriteriaOption(),
-      id: this.editForm.get(['id'])!.value,
-      name: this.editForm.get(['name'])!.value,
-      number: this.editForm.get(['number'])!.value,
+      id: this.editForm.get(["id"])!.value,
+      name: this.editForm.get(["name"])!.value,
+      number: this.editForm.get(["number"])!.value,
       cas_assessment_category_version_id: this.editForm.get([
-        'cas_assessment_category_version_id',
+        "cas_assessment_category_version_id",
       ])!.value,
+      cas_plan_content_id: this.editForm.get(["cas_plan_content_id"])!.value,
     };
   }
 }

@@ -34,6 +34,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
   gfsCodes?: GfsCode[] = [];
   peForms?: PeForm[] = [];
   units?: PlanrepEnum[] = [];
+  valueTypes?: PlanrepEnum[] = [];
 
   /**
    * Declare form
@@ -74,7 +75,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
         (resp: CustomResponse<PeDefinition[]>) => (this.parents = resp.data)
       );
     this.gfsCodeService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "name","code"] })
       .subscribe(
         (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
       );
@@ -84,6 +85,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
         (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
       );
     this.units = this.enumService.get("units");
+    this.valueTypes = this.enumService.get("valueTypes");
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 

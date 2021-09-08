@@ -7,11 +7,10 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {combineLatest, Observable} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
 
 import { CustomResponse } from "../../utils/custom-response";
 import {
@@ -22,10 +21,12 @@ import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { PeForm } from "src/app/setup/pe-form/pe-form.model";
 import { PeFormService } from "src/app/setup/pe-form/pe-form.service";
-
 import { PeSubForm } from "./pe-sub-form.model";
 import { PeSubFormService } from "./pe-sub-form.service";
 import { PeSubFormUpdateComponent } from "./update/pe-sub-form-update.component";
+import {TreeTable} from "primeng/treetable";
+import {NationalReference} from "../national-reference/national-reference.model";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: "app-pe-sub-form",
@@ -33,9 +34,9 @@ import { PeSubFormUpdateComponent } from "./update/pe-sub-form-update.component"
 })
 export class PeSubFormComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild("table") table!: TreeTable;
   peSubForms?: PeSubForm[] = [];
-
+  peSubFormsNode?: TreeNode[] = [];
   peForms?: PeForm[] = [];
 
   cols = [
@@ -43,11 +44,6 @@ export class PeSubFormComponent implements OnInit {
     {
       field: "name",
       header: "Name",
-      sort: true,
-    },
-    {
-      field: "parent_id",
-      header: "Parent ",
       sort: true,
     },
     {
@@ -100,9 +96,9 @@ export class PeSubFormComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.pe_form_id) {
-      return;
-    }
+    // if (!this.pe_form_id) {
+    //   return;
+    // }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -111,7 +107,8 @@ export class PeSubFormComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        pe_form_id: this.pe_form_id,
+        // pe_form_id: this.pe_form_id,
+        parent_id: null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -146,6 +143,7 @@ export class PeSubFormComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.filterChanged();
     });
   }
 
@@ -239,6 +237,28 @@ export class PeSubFormComponent implements OnInit {
     });
   }
 
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<NationalReference>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+  }
+
   /**
    * Delete PeSubForm
    * @param peSubForm
@@ -278,7 +298,14 @@ export class PeSubFormComponent implements OnInit {
         },
       });
     }
-    this.peSubForms = resp?.data ?? [];
+
+    this.peSubFormsNode = (resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
   }
 
   /**
@@ -289,4 +316,34 @@ export class PeSubFormComponent implements OnInit {
     this.page = 1;
     this.toastService.error("Error loading Pe Sub Form");
   }
+
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.peSubFormService
+      .query({
+        parent_id: node.data.id,
+        sort: ['id:asc'],
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+             node.children = (resp?.data ?? []).map((c) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.peSubFormsNode = [...this.peSubFormsNode!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
+  }
+
 }

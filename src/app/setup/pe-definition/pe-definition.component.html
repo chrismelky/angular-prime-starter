@@ -201,21 +201,22 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-table
-      #table
-      [lazy]="true"
-      [resizableColumns]="true"
-      [responsive]="true"
-      [autoLayout]="true"
-      [loading]="isLoading"
-      [columns]="cols"
-      [value]="peDefinitions!"
-      (onLazyLoad)="onSortChange($event)"
-      [customSort]="true"
+    <p-treeTable
+        #table
+        [lazy]="true"
+        [resizableColumns]="true"
+        [autoLayout]="true"
+        [loading]="isLoading"
+        [columns]="cols"
+        [value]="peDefinitionsNodeTree!"
+        [scrollable]="true"
+        (onLazyLoad)="onSortChange($event)"
+        (onNodeExpand)="onNodeExpand($event)"
+        [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Pe Definitions</span>
+          <span class="card-header-text">Personal Emoluments Columns</span>
           <button
             pButton
             pRipple
@@ -228,33 +229,27 @@
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="peDefinitions?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+        <tr *ngIf="peDefinitionsNodeTree?.length">
+          <th *ngFor="let col of columns">
+            {{ col.header}}
           </th>
-          <th [pSortableColumn]="'gfs_code_id'">
-            Gfs Code <p-sortIcon [field]="'gfs_code_id'"></p-sortIcon>
-          </th>
-          <th></th>
+          <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <ng-template
+        pTemplate="body"
+        let-rowNode
+        let-rowData="rowData"
+        let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
+          <td *ngFor="let col of columns; let i = index">
+            <p-treeTableToggler
+              [rowNode]="rowNode"
+              *ngIf="i == 0"
+            ></p-treeTableToggler>
             {{ rowData[col.field] }}
           </td>
-          <td>
-            {{
-              rowData.gfs_code
-                ? "[" + rowData.gfs_code?.code + "] " + rowData.gfs_code?.name
-                : ""
-            }}
-          </td>
-          <td>
+          <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
@@ -290,7 +285,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="peDefinitions?.length! > 0"
+          [alwaysShow]="peDefinitionsNodeTree?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -299,7 +294,7 @@
           (onPageChange)="pageChanged($event)"
         ></p-paginator>
       </ng-template>
-    </p-table>
+    </p-treeTable>
   </p-card>
 </div>
 

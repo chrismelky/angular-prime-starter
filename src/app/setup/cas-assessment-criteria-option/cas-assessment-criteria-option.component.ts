@@ -22,6 +22,8 @@ import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
 import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
+import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
+import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
 
 import { CasAssessmentCriteriaOption } from "./cas-assessment-criteria-option.model";
 import { CasAssessmentCriteriaOptionService } from "./cas-assessment-criteria-option.service";
@@ -37,6 +39,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   casAssessmentCriteriaOptions?: CasAssessmentCriteriaOption[] = [];
 
   casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
+  casPlanContents?: CasPlanContent[] = [];
 
   cols = [
     {
@@ -62,10 +65,12 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
 
   //Mandatory filter
   cas_assessment_category_version_id!: number;
+  cas_plan_content_id!: number;
 
   constructor(
     protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
+    protected casPlanContentService: CasPlanContentService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -81,6 +86,12 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)
       );
+    this.casPlanContentService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CasPlanContent[]>) =>
+          (this.casPlanContents = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -90,7 +101,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_assessment_category_version_id) {
+    if (!this.cas_assessment_category_version_id || !this.cas_plan_content_id) {
       return;
     }
     this.isLoading = true;
@@ -103,6 +114,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
         sort: this.sort(),
         cas_assessment_category_version_id:
           this.cas_assessment_category_version_id,
+        cas_plan_content_id: this.cas_plan_content_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -221,6 +233,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
       ...new CasAssessmentCriteriaOption(),
       cas_assessment_category_version_id:
         this.cas_assessment_category_version_id,
+      cas_plan_content_id: this.cas_plan_content_id,
     };
     const ref = this.dialogService.open(
       CasAssessmentCriteriaOptionUpdateComponent,

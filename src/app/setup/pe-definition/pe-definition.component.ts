@@ -7,8 +7,8 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {combineLatest, Observable} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -29,6 +29,9 @@ import { PeFormService } from "src/app/setup/pe-form/pe-form.service";
 import { PeDefinition } from "./pe-definition.model";
 import { PeDefinitionService } from "./pe-definition.service";
 import { PeDefinitionUpdateComponent } from "./update/pe-definition-update.component";
+import {NationalReference} from "../national-reference/national-reference.model";
+import {finalize} from "rxjs/operators";
+import {TreeTable} from "primeng/treetable";
 
 @Component({
   selector: "app-pe-definition",
@@ -36,23 +39,20 @@ import { PeDefinitionUpdateComponent } from "./update/pe-definition-update.compo
 })
 export class PeDefinitionComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild("table") table!: TreeTable;
   peDefinitions?: PeDefinition[] = [];
+  peDefinitionsNodeTree?: TreeNode[] = [];
 
   parents?: PeDefinition[] = [];
   gfsCodes?: GfsCode[] = [];
   peForms?: PeForm[] = [];
   units?: PlanrepEnum[] = [];
+  valueTypes?: PlanrepEnum[] = [];
 
   cols = [
     {
       field: "field_name",
       header: "Field Name",
-      sort: true,
-    },
-    {
-      field: "parent_id",
-      header: "Parent ",
       sort: true,
     },
     {
@@ -101,7 +101,7 @@ export class PeDefinitionComponent implements OnInit {
 
   ngOnInit(): void {
     this.peDefinitionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "field_name"] })
       .subscribe(
         (resp: CustomResponse<PeDefinition[]>) => (this.parents = resp.data)
       );
@@ -116,6 +116,7 @@ export class PeDefinitionComponent implements OnInit {
         (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
       );
     this.units = this.enumService.get("units");
+    this.valueTypes = this.enumService.get("valueTypes");
     this.handleNavigation();
   }
 
@@ -255,6 +256,7 @@ export class PeDefinitionComponent implements OnInit {
     };
     const ref = this.dialogService.open(PeDefinitionUpdateComponent, {
       data,
+      width:"800px",
       header: "Create/Update PeDefinition",
     });
     ref.onClose.subscribe((result) => {
@@ -303,7 +305,13 @@ export class PeDefinitionComponent implements OnInit {
         },
       });
     }
-    this.peDefinitions = resp?.data ?? [];
+    this.peDefinitionsNodeTree = (resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
   }
 
   /**
@@ -314,4 +322,55 @@ export class PeDefinitionComponent implements OnInit {
     this.page = 1;
     this.toastService.error("Error loading Pe Definition");
   }
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<NationalReference>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+  }
+
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.peDefinitionService
+      .query({
+        parent_id: node.data.id,
+        sort: ['id:asc'],
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+          node.children = (resp?.data ?? []).map((c) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.peDefinitionsNodeTree = [...this.peDefinitionsNodeTree!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
+  }
+
 }

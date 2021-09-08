@@ -93,6 +93,35 @@
           >
         </span>
       </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-multiSelect
+            [options]="facilityTypes!"
+            formControlName="facility_types"
+            optionLabel="name"
+            dataKey="id"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+          >
+          </p-multiSelect>
+          <label for="facility_types">Facility Types</label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('facility_types')!.invalid &&
+            (editForm.get('facility_types')!.dirty ||
+              editForm.get('facility_types')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('facility_types')?.errors?.required"
+            >Facility types is required.</small
+          >
+        </span>
+      </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

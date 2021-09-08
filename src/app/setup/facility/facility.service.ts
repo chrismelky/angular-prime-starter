@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { Facility } from "./facility.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Facility } from './facility.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class FacilityService {
-  public resourceUrl = "api/facilities";
+  public resourceUrl = 'api/facilities';
 
   constructor(protected http: HttpClient) {}
 
@@ -39,6 +39,21 @@ export class FacilityService {
     return this.http.get<CustomResponse<Facility[]>>(this.resourceUrl, {
       params: options,
     });
+  }
+
+  search(
+    facilityTypeId: number,
+    parent: string,
+    parentId: number,
+    req?: any
+  ): Observable<CustomResponse<Facility[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<Facility[]>>(
+      `${this.resourceUrl}/search/${facilityTypeId}/${parent}/${parentId}`,
+      {
+        params: options,
+      }
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

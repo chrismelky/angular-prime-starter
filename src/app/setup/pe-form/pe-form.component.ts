@@ -46,16 +46,6 @@ export class PeFormComponent implements OnInit {
       header: "Description",
       sort: true,
     },
-    // {
-    //   field: "budget_classes",
-    //   header: "Budget Classes",
-    //   sort: true,
-    // },
-    // {
-    //   field: "fund_sources",
-    //   header: "Fund Sources",
-    //   sort: true,
-    // },
     {
       field: "is_active",
       header: "Is Active",

@@ -18,6 +18,23 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
+                id="cas_plan_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casPlans!"
+                (onChange)="loadCasContents()"
+                [(ngModel)]="cas_plan_id"
+              ></p-dropdown>
+              <label for="cas_plan_id">Cas Plan</label>
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
                 id="cas_plan_content_id"
                 optionValue="id"
                 optionLabel="name"
@@ -158,7 +175,7 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!cas_plan_content_id"
+            [disabled]="!cas_plan_content_id || !cas_plan_id"
             (click)="createOrUpdate()"
             label="Add Data Set"
           ></button>

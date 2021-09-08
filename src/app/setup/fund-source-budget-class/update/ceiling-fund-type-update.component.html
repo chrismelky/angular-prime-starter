@@ -1,0 +1,63 @@
+<button
+  type="text"
+  pButton
+  pRipple
+  pTooltip="Add Fund Type"
+  tooltipPosition="bottom"
+  iconPos="left"
+  class="p-button-text p-button-plain p-button-primary"
+  (click)="ft.toggle($event)"
+>
+  {{ceiling?.fund_type?.name}} &nbsp; <i *ngIf="ceiling?.fund_type?.name" class="pi pi-pencil"></i><i *ngIf="!ceiling?.fund_type?.name" class="pi pi-plus"></i>
+</button>
+<p-overlayPanel
+  #ft
+  [dismissable]="false"
+  [showCloseIcon]="true"
+  appendTo="body"
+  [focusOnShow]="false"
+  (onShow)="loadFundTypes()"
+>
+  <ng-template pTemplate>
+    <div fxLayout="column" fxLayoutGap="10px" style="min-width: 200px">
+      <p-table  responsiveLayout="scroll" [paginator]="false" [rows]="10" [responsive]="true">
+        <ng-template pTemplate="caption">
+          <form
+            name="editForm"
+            role="form"
+            novalidate
+            (ngSubmit)="saveFundType()"
+            [formGroup]="fundTypeForm"
+          >
+            <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="4px">
+              <div class="p-field" fxFlex>
+              <span class="p-float-label">
+          <p-dropdown
+            id="fund_type_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="fundTypes!"
+            formControlName="fund_type_id"
+          ></p-dropdown>
+          <label for="fund_type_id">Fund Type </label>
+        </span>
+              </div>
+              <button
+                type="submit"
+                pButton
+                pRipple
+                icon="pi pi-plus"
+                class="p-button-raised p-icon-button"
+                [disabled]="fundTypeForm.get('fund_type_id')!.invalid"
+              ></button>
+            </div>
+          </form>
+        </ng-template>
+      </p-table>
+    </div>
+  </ng-template>
+</p-overlayPanel>

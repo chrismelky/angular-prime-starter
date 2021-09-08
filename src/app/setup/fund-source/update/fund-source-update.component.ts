@@ -19,6 +19,8 @@ import { FundSourceCategoryService } from "src/app/setup/fund-source-category/fu
 import { FundSource } from "../fund-source.model";
 import { FundSourceService } from "../fund-source.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {Sector} from "../../sector/sector.model";
+import {SectorService} from "../../sector/sector.service";
 
 @Component({
   selector: "app-fund-source-update",
@@ -27,6 +29,7 @@ import { ToastService } from "src/app/shared/toast.service";
 export class FundSourceUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
+  sectors?: Sector[] = [];
   errors = [];
 
   gfsCodes?: GfsCode[] = [];
@@ -45,7 +48,7 @@ export class FundSourceUpdateComponent implements OnInit {
     is_foreign: [false, []],
     is_treasurer: [false, []],
     can_project: [false, []],
-    is_active: [false, []],
+    is_active: [true, []],
   });
 
   constructor(
@@ -60,7 +63,7 @@ export class FundSourceUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.gfsCodeService
-      .query({ columns: ["id",'code',"name"] })
+      .queryRev({ columns: ["id",'code',"name"] })
       .subscribe(
         (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
       );

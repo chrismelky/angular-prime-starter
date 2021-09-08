@@ -18,6 +18,22 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
+                id="cas_plan_content_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casPlanContents!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="cas_plan_content_id"
+              ></p-dropdown>
+              <label for="cas_plan_content_id">Cas Plan Content </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
                 id="cas_assessment_category_version_id"
                 optionValue="id"
                 optionLabel="cas_assessment_category.name"
@@ -42,7 +58,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -60,7 +75,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -107,7 +121,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -133,6 +146,8 @@
       [loading]="isLoading"
       [columns]="cols"
       [value]="casAssessmentCriteriaOptions!"
+      [scrollable]="true"
+      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -141,11 +156,11 @@
           <span class="card-header-text">Cas Assessment Criteria Options</span>
           <button
             pButton
-            pRipple
-            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!cas_assessment_category_version_id"
+            [disabled]="
+              !cas_assessment_category_version_id || !cas_plan_content_id
+            "
             (click)="createOrUpdate()"
             label="Add Cas Assessment Criteria Option"
           ></button>
@@ -160,7 +175,7 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th></th>
+          <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -168,12 +183,11 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>
+          <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -185,7 +199,6 @@
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -201,19 +214,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="footer">
+        <p-paginator
+          #paginator
+          [alwaysShow]="casAssessmentCriteriaOptions?.length! > 0"
+          [rows]="per_page"
+          dropdownAppendTo="body"
+          [showCurrentPageReport]="true"
+          [totalRecords]="totalItems"
+          [rowsPerPageOptions]="perPageOptions"
+          (onPageChange)="pageChanged($event)"
+        ></p-paginator>
+      </ng-template>
     </p-table>
-    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
-      <p-paginator
-        #paginator
-        [alwaysShow]="casAssessmentCriteriaOptions?.length! > 0"
-        [rows]="per_page"
-        dropdownAppendTo="body"
-        [showCurrentPageReport]="true"
-        [totalRecords]="totalItems"
-        [rowsPerPageOptions]="perPageOptions"
-        (onPageChange)="pageChanged($event)"
-      ></p-paginator>
-    </div>
   </p-card>
 </div>
 

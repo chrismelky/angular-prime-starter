@@ -553,6 +553,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: "fund-source-budget-class",
+        loadChildren: () =>
+          import(
+            "../setup/fund-source-budget-class/fund-source-budget-class.module"
+          ).then((m) => m.FundSourceBudgetClassModule),
+      },
+      {
         path: "facility-custom-detail",
         loadChildren: () =>
           import(

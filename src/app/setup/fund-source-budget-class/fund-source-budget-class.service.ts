@@ -11,41 +11,41 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { CasAssessmentCriteria } from "./cas-assessment-criteria.model";
+import { FundSourceBudgetClass } from "./fund-source-budget-class.model";
 
 @Injectable({ providedIn: "root" })
-export class CasAssessmentCriteriaService {
-  public resourceUrl = "api/cas_criterias";
+export class FundSourceBudgetClassService {
+  public resourceUrl = "api/fund_source_budget_classes";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    casAssessmentCriteria: CasAssessmentCriteria
-  ): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.post<CustomResponse<CasAssessmentCriteria>>(
+    fundSourceBudgetClass: FundSourceBudgetClass
+  ): Observable<CustomResponse<FundSourceBudgetClass>> {
+    return this.http.post<CustomResponse<FundSourceBudgetClass>>(
       this.resourceUrl,
-      casAssessmentCriteria
+      fundSourceBudgetClass
     );
   }
 
   update(
-    casAssessmentCriteria: CasAssessmentCriteria
-  ): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.put<CustomResponse<CasAssessmentCriteria>>(
-      `${this.resourceUrl}/${casAssessmentCriteria.id}`,
-      casAssessmentCriteria
+    fundSourceBudgetClass: FundSourceBudgetClass
+  ): Observable<CustomResponse<FundSourceBudgetClass>> {
+    return this.http.put<CustomResponse<FundSourceBudgetClass>>(
+      `${this.resourceUrl}/${fundSourceBudgetClass.id}`,
+      fundSourceBudgetClass
     );
   }
 
-  find(id: number): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.get<CustomResponse<CasAssessmentCriteria>>(
+  find(id: number): Observable<CustomResponse<FundSourceBudgetClass>> {
+    return this.http.get<CustomResponse<FundSourceBudgetClass>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<CasAssessmentCriteria[]>> {
+  query(req?: any): Observable<CustomResponse<FundSourceBudgetClass[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<CasAssessmentCriteria[]>>(
+    return this.http.get<CustomResponse<FundSourceBudgetClass[]>>(
       this.resourceUrl,
       { params: options }
     );

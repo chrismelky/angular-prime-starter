@@ -132,6 +132,11 @@ export class MainComponent implements OnInit {
               icon: "pi pi-fw pi-link",
               routerLink: "bank-account",
             },
+            {
+              label: "Ceilings",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "fund-source-budget-class",
+            },
           ],
         },
         {
@@ -517,11 +522,12 @@ export class MainComponent implements OnInit {
         },
       ],
     },
+
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
 
     {
-      label: "Planning",
-      icon: "pi pi-pw pi-list",
+      label: 'Planning',
+      icon: 'pi pi-pw pi-list',
       items: [
         {
           label: "Comprehensive Plans",

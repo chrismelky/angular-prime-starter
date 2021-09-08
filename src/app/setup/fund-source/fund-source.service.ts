@@ -45,6 +45,26 @@ export class FundSourceService {
       params: options,
     });
   }
+  queryCeilingSector(req?: any): Observable<CustomResponse<any[]>> {
+    const options = createRequestOption(req);
+    const url ='api/ceiling_sectors';
+    return this.http.get<CustomResponse<any[]>>(url, {
+      params: options,
+    });
+  }
+
+  createCeilingSector(payload: any): Observable<CustomResponse<FundSource>> {
+    const url ='api/ceiling_sectors';
+    return this.http.post<CustomResponse<any>>(
+      url,
+      payload
+    );
+  }
+
+  deleteCeilingSector(id: number): Observable<CustomResponse<null>> {
+    const url ='api/ceiling_sectors';
+    return this.http.delete<CustomResponse<null>>(`${url}/${id}`);
+  }
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);

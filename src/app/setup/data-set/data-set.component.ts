@@ -5,58 +5,64 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
-import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { CasPlanContent } from 'src/app/setup/cas-plan-content/cas-plan-content.model';
+import { CasPlanContentService } from 'src/app/setup/cas-plan-content/cas-plan-content.service';
 
-import { DataSet } from "./data-set.model";
-import { DataSetService } from "./data-set.service";
-import { DataSetUpdateComponent } from "./update/data-set-update.component";
+import { DataSet } from './data-set.model';
+import { DataSetService } from './data-set.service';
+import { DataSetUpdateComponent } from './update/data-set-update.component';
+import { FacilityType } from '../facility-type/facility-type.model';
+import { FacilityTypeService } from '../facility-type/facility-type.service';
+import { CasPlan } from '../cas-plan/cas-plan.model';
+import { CasPlanService } from '../cas-plan/cas-plan.service';
 
 @Component({
-  selector: "app-data-set",
-  templateUrl: "./data-set.component.html",
+  selector: 'app-data-set',
+  templateUrl: './data-set.component.html',
 })
 export class DataSetComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   dataSets?: DataSet[] = [];
 
   casPlanContents?: CasPlanContent[] = [];
+  casPlans?: CasPlan[] = [];
+  facilityTypes?: FacilityType[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: true,
     },
     {
-      field: "is_locked",
-      header: "Is Locked",
+      field: 'is_locked',
+      header: 'Is Locked',
       sort: false,
     },
     {
-      field: "is_submitted",
-      header: "Is Submitted",
+      field: 'is_submitted',
+      header: 'Is Submitted',
       sort: false,
     },
   ]; //Table display columns
@@ -72,26 +78,53 @@ export class DataSetComponent implements OnInit {
 
   //Mandatory filter
   cas_plan_content_id!: number;
+  cas_plan_id!: number;
 
   constructor(
     protected dataSetService: DataSetService,
     protected casPlanContentService: CasPlanContentService,
+    protected casPlanService: CasPlanService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    protected facilityTypeService: FacilityTypeService
   ) {}
 
   ngOnInit(): void {
+    this.casPlanService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe(
+        (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
+      );
+
+    this.facilityTypeService
+      .query()
+      .subscribe(
+        (resp: CustomResponse<FacilityType[]>) =>
+          (this.facilityTypes = resp.data || [])
+      );
+    this.handleNavigation();
+  }
+
+  /**
+   * Load cas content by selected cas_plan
+   * @returns vois
+   */
+  loadCasContents(): void {
+    if (!this.cas_plan_id) {
+      return;
+    }
     this.casPlanContentService
-      .query({ columns: ["id", "name"] })
+      .query({ cas_plan_id: this.cas_plan_id, columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasPlanContent[]>) =>
           (this.casPlanContents = resp.data)
       );
-    this.handleNavigation();
   }
 
   /**
@@ -100,7 +133,7 @@ export class DataSetComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_plan_content_id) {
+    if (!this.cas_plan_content_id || !this.cas_plan_id) {
       return;
     }
     this.isLoading = true;
@@ -135,11 +168,11 @@ export class DataSetComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -214,8 +247,8 @@ export class DataSetComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -227,10 +260,11 @@ export class DataSetComponent implements OnInit {
     const data: DataSet = dataSet ?? {
       ...new DataSet(),
       cas_plan_content_id: this.cas_plan_content_id,
+      cas_plan_id: this.cas_plan_id,
     };
     const ref = this.dialogService.open(DataSetUpdateComponent, {
       data,
-      header: "Create/Update DataSet",
+      header: 'Create/Update DataSet',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -245,7 +279,7 @@ export class DataSetComponent implements OnInit {
    */
   delete(dataSet: DataSet): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this DataSet?",
+      message: 'Are you sure that you want to delete this DataSet?',
       accept: () => {
         this.dataSetService.delete(dataSet.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -269,12 +303,12 @@ export class DataSetComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/data-set"], {
+      this.router.navigate(['/data-set'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -287,6 +321,6 @@ export class DataSetComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Data Set");
+    this.toastService.error('Error loading Data Set');
   }
 }

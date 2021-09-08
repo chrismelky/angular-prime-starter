@@ -49,4 +49,8 @@ export class FundSourceService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  getPeFundSource():Observable<CustomResponse<any>>{
+    return this.http.get<CustomResponse<any[]>>(`${this.resourceUrl}/get_pe_fund_source`);
+  }
 }

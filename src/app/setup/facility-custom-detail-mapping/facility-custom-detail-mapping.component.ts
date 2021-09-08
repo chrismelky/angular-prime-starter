@@ -20,46 +20,34 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
+import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
+import { FacilityCustomDetail } from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
+import { FacilityCustomDetailService } from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
+import { FacilityType } from "src/app/setup/facility-type/facility-type.model";
+import { FacilityTypeService } from "src/app/setup/facility-type/facility-type.service";
 
-import { PeForm } from "./pe-form.model";
-import { PeFormService } from "./pe-form.service";
-import { PeFormUpdateComponent } from "./update/pe-form-update.component";
-import {PeViewDetailsComponent} from "./update/pe-view-details.component";
+import { FacilityCustomDetailMapping } from "./facility-custom-detail-mapping.model";
+import { FacilityCustomDetailMappingService } from "./facility-custom-detail-mapping.service";
+import { FacilityCustomDetailMappingUpdateComponent } from "./update/facility-custom-detail-mapping-update.component";
 
 @Component({
-  selector: "app-pe-form",
-  templateUrl: "./pe-form.component.html",
+  selector: "app-facility-custom-detail-mapping",
+  templateUrl: "./facility-custom-detail-mapping.component.html",
 })
-export class PeFormComponent implements OnInit {
+export class FacilityCustomDetailMappingComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  peForms?: PeForm[] = [];
+  facilityCustomDetailMappings?: FacilityCustomDetailMapping[] = [];
+
+  facilityCustomDetails?: FacilityCustomDetail[] = [];
+  facilityTypes?: FacilityType[] = [];
+  ownerships?: PlanrepEnum[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "ownership",
+      header: "Ownership",
       sort: true,
-    },
-    {
-      field: "description",
-      header: "Description",
-      sort: true,
-    },
-    // {
-    //   field: "budget_classes",
-    //   header: "Budget Classes",
-    //   sort: true,
-    // },
-    // {
-    //   field: "fund_sources",
-    //   header: "Fund Sources",
-    //   sort: true,
-    // },
-    {
-      field: "is_active",
-      header: "Is Active",
-      sort: false,
     },
   ]; //Table display columns
 
@@ -73,18 +61,35 @@ export class PeFormComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  facility_type_id!: number;
 
   constructor(
-    protected peFormService: PeFormService,
+    protected facilityCustomDetailMappingService: FacilityCustomDetailMappingService,
+    protected facilityCustomDetailService: FacilityCustomDetailService,
+    protected facilityTypeService: FacilityTypeService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    protected enumService: EnumService
   ) {}
 
   ngOnInit(): void {
+    this.facilityCustomDetailService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<FacilityCustomDetail[]>) =>
+          (this.facilityCustomDetails = resp.data)
+      );
+    this.facilityTypeService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<FacilityType[]>) =>
+          (this.facilityTypes = resp.data)
+      );
+    this.ownerships = this.enumService.get("ownerships");
     this.handleNavigation();
   }
 
@@ -94,18 +99,22 @@ export class PeFormComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.facility_type_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.peFormService
+    this.facilityCustomDetailMappingService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        facility_type_id: this.facility_type_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<PeForm[]>) => {
+        (res: CustomResponse<FacilityCustomDetailMapping[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -136,8 +145,20 @@ export class PeFormComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -198,17 +219,23 @@ export class PeFormComponent implements OnInit {
   }
 
   /**
-   * Creating or updating PeForm
-   * @param peForm ; If undefined initize new model to create else edit existing model
+   * Creating or updating FacilityCustomDetailMapping
+   * @param facilityCustomDetailMapping ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(peForm?: PeForm): void {
-    const data: PeForm = peForm ?? {
-      ...new PeForm(),
+  createOrUpdate(
+    facilityCustomDetailMapping?: FacilityCustomDetailMapping
+  ): void {
+    const data: FacilityCustomDetailMapping = facilityCustomDetailMapping ?? {
+      ...new FacilityCustomDetailMapping(),
+      facility_type_id: this.facility_type_id,
     };
-    const ref = this.dialogService.open(PeFormUpdateComponent, {
-      data,
-      header: "Create/Update PeForm",
-    });
+    const ref = this.dialogService.open(
+      FacilityCustomDetailMappingUpdateComponent,
+      {
+        data,
+        header: "Create/Update FacilityCustomDetailMapping",
+      }
+    );
     ref.onClose.subscribe((result) => {
       if (result) {
         this.loadPage(this.page);
@@ -217,17 +244,20 @@ export class PeFormComponent implements OnInit {
   }
 
   /**
-   * Delete PeForm
-   * @param peForm
+   * Delete FacilityCustomDetailMapping
+   * @param facilityCustomDetailMapping
    */
-  delete(peForm: PeForm): void {
+  delete(facilityCustomDetailMapping: FacilityCustomDetailMapping): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this PeForm?",
+      message:
+        "Are you sure that you want to delete this FacilityCustomDetailMapping?",
       accept: () => {
-        this.peFormService.delete(peForm.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.facilityCustomDetailMappingService
+          .delete(facilityCustomDetailMapping.id!)
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }
@@ -239,14 +269,14 @@ export class PeFormComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<PeForm[]> | null,
+    resp: CustomResponse<FacilityCustomDetailMapping[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/pe-form"], {
+      this.router.navigate(["/facility-custom-detail-mapping"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -255,7 +285,7 @@ export class PeFormComponent implements OnInit {
         },
       });
     }
-    this.peForms = resp?.data ?? [];
+    this.facilityCustomDetailMappings = resp?.data ?? [];
   }
 
   /**
@@ -264,47 +294,6 @@ export class PeFormComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Pe Form");
+    this.toastService.error("Error loading Facility Custom Detail Mapping");
   }
-
-  onBudgetClassView(sbc:any){
-    if(sbc.budget_classes?.length > 0) {
-      const info = {
-        "detail": sbc,
-        "Type": "sbc"
-      }
-      const ref = this.dialogService.open(PeViewDetailsComponent, {
-        data: info,
-        header: "Sub budget classes",
-      });
-      ref.onClose.subscribe((result) => {
-        if (result) {
-          this.loadPage(this.page);
-        }
-      });
-    } else {
-      this.toastService.error("No sub budget class assigned on "+sbc.name);
-    }
-  }
-
-  onFundSourceView(fs:any) {
-       if(fs.fund_sources?.length > 0) {
-      const info = {
-        "detail": fs,
-        "Type": "fs"
-      }
-      const ref = this.dialogService.open(PeViewDetailsComponent, {
-        data: info,
-        header: "Fund sources",
-      });
-      ref.onClose.subscribe((result) => {
-        if (result) {
-          this.loadPage(this.page);
-        }
-      });
-  } else {
-         this.toastService.error("No fund source assigned on "+fs.name);
-       }
-  }
-
 }

@@ -5,37 +5,35 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {combineLatest} from 'rxjs';
 import {
   ConfirmationService,
-  LazyLoadEvent,
-  MenuItem,
-  TreeNode,
+  LazyLoadEvent
 } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Paginator} from 'primeng/paginator';
+import {Table} from 'primeng/table';
 
-import { CustomResponse } from '../../utils/custom-response';
+import {CustomResponse} from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
-import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import {HelperService} from 'src/app/utils/helper.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {EnumService, PlanrepEnum} from 'src/app/shared/enum.service';
+import {FacilityType} from 'src/app/setup/facility-type/facility-type.model';
+import {FacilityTypeService} from 'src/app/setup/facility-type/facility-type.service';
+import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 
-import { Facility } from './facility.model';
-import { FacilityService } from './facility.service';
-import { FacilityUpdateComponent } from './update/facility-update.component';
-import { User } from '../user/user.model';
-import { UserService } from '../user/user.service';
+import {Facility} from './facility.model';
+import {FacilityService} from './facility.service';
+import {FacilityUpdateComponent} from './update/facility-update.component';
+import {UserService} from '../user/user.service';
+import {FacilityCustomDetailValueComponent} from "./facility-custom-detail-value/facility-custom-detail-value.component";
 
 @Component({
   selector: 'app-facility',
@@ -108,11 +106,12 @@ export class FacilityComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected userService: UserService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.facilityTypeService
-      .query({ columns: ['id', 'name', 'code'] })
+      .query({columns: ['id', 'name', 'code']})
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
@@ -328,5 +327,19 @@ export class FacilityComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Facility');
+  }
+
+  customDetail(row: Facility): void {
+    const data = {
+      facility: row,
+    };
+    const ref = this.dialogService.open(FacilityCustomDetailValueComponent, {
+      data,
+      width:'60%',
+      header: "Custom Details",
+    });
+    ref.onClose.subscribe((result) => {
+      this.loadPage(this.page);
+    });
   }
 }

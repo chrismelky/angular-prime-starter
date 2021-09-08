@@ -12,10 +12,11 @@ import { PeFormRoutingModule } from "./pe-form-routing.module";
 import { SharedModule } from "../../shared/shared.module";
 import { PeFormComponent } from "./pe-form.component";
 import { PeFormUpdateComponent } from "./update/pe-form-update.component";
+import {PeViewDetailsComponent} from "./update/pe-view-details.component";
 
 @NgModule({
   imports: [SharedModule, CommonModule, PeFormRoutingModule],
-  declarations: [PeFormComponent, PeFormUpdateComponent],
-  entryComponents: [PeFormUpdateComponent],
+  declarations: [PeFormComponent, PeFormUpdateComponent,PeViewDetailsComponent],
+  entryComponents: [PeFormUpdateComponent,PeViewDetailsComponent],
 })
 export class PeFormModule {}

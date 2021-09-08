@@ -133,15 +133,7 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Fund Source Budget Classes</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]=""
-            (click)="createOrUpdate()"
-            label="Add Fund Source Budget Class"
-          ></button>
+          <span class="card-header-text">Ceilings</span>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
@@ -153,6 +145,12 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
+          <th>Budget Class</th>
+          <th>Fund Source</th>
+          <th>GFS Code</th>
+          <th>Fund Type</th>
+          <th>Bank Account </th>
+          <th>Active</th>
           <th></th>
         </tr>
       </ng-template>
@@ -161,33 +159,29 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
+          <td>{{rowData?.budget_class?.name}} ({{rowData?.budget_class?.code}})</td>
+          <td>{{rowData?.fund_source?.name}} ({{rowData?.fund_source?.code}})</td>
+          <td></td>
           <td>
-            <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" fxLayoutGap="2px">
-                <button
-                  pButton
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pTooltip="Delete"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-trash
-              "
-                  (click)="delete(rowData)"
-                ></button>
-              </div>
-            </div>
+            <app-ceiling-fund-type-update
+              [ceiling]="rowData"
+            ></app-ceiling-fund-type-update>
+          </td>
+          <td>
+            <app-ceiling-bank-account-update
+              [ceiling]="rowData"
+            ></app-ceiling-bank-account-update>
+          </td>
+          <td>
+            <p-inputSwitch
+              [(ngModel)]="rowData['is_active']"
+              (onChange)="toggleActivation(rowData)"
+            ></p-inputSwitch>
+          </td>
+          <td>
+            <app-ceinings-sector
+              [ceiling_id]="rowData.id"
+            ></app-ceinings-sector>
           </td>
         </tr>
       </ng-template>

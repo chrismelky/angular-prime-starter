@@ -1,9 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {GfsCodeService} from "../../gfs-code/gfs-code.service";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {HelperService} from "../../../utils/helper.service";
-import {Router} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
+import {CustomResponse} from "../../../utils/custom-response";
+import {GfsCode} from "../../gfs-code/gfs-code.model";
 
 @Component({
   selector: 'app-view-gfs-code',
@@ -11,21 +9,24 @@ import {ConfirmationService} from "primeng/api";
   styleUrls: ['./view-gfs-code.component.scss']
 })
 export class ViewGfsCodeComponent implements OnInit {
-  @Input() aggregated_code?:string;
+  @Input() fund_source?:any;
   gfsCodes: any[] | undefined=[];
+  aggregatedCode : string='';
   constructor(
     private gfsCodeService: GfsCodeService,
   ) { }
 
   ngOnInit(): void {
-
   }
 
   loadGfsCode(): void {
-    this.gfsCodeService.getGfsCode(this.aggregated_code!).subscribe((resp) => {
-      this.gfsCodes= resp.data;
-      console.log(this.gfsCodes)
-    });
+    this.aggregatedCode = this.fund_source.gfs_code.code;
+    this.gfsCodeService
+      .query({aggregated_code:this.aggregatedCode,page:1})
+      .subscribe(
+        (res: CustomResponse<GfsCode[]>) => {
+          this.gfsCodes = res?.data ?? [];
+        });
   }
 
   onHide(): void {

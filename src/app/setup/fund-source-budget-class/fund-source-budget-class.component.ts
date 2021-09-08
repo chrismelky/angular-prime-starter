@@ -7,7 +7,7 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
@@ -32,6 +32,7 @@ import { BankAccountService } from "src/app/setup/bank-account/bank-account.serv
 import { FundSourceBudgetClass } from "./fund-source-budget-class.model";
 import { FundSourceBudgetClassService } from "./fund-source-budget-class.service";
 import { FundSourceBudgetClassUpdateComponent } from "./update/fund-source-budget-class-update.component";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: "app-fund-source-budget-class",
@@ -51,26 +52,6 @@ export class FundSourceBudgetClassComponent implements OnInit {
     {
       field: "ceiling_name",
       header: "Ceiling Name",
-      sort: true,
-    },
-    {
-      field: "budget_class_id",
-      header: "Budget Class ",
-      sort: true,
-    },
-    {
-      field: "fund_source_id",
-      header: "Fund Source ",
-      sort: true,
-    },
-    {
-      field: "fund_type_id",
-      header: "Fund Type ",
-      sort: true,
-    },
-    {
-      field: "bank_account_id",
-      header: "Bank Account ",
       sort: true,
     },
   ]; //Table display columns
@@ -305,5 +286,61 @@ export class FundSourceBudgetClassComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Fund Source Budget Class");
+  }
+
+  /**
+   * this activate deactivate ceilings
+   */
+  toggleActivation(row :any): void{
+    const fundSourceBudgetClass = this.createFromForm(row);
+    this.subscribeToSaveResponse(
+      this.fundSourceBudgetClassService.update(fundSourceBudgetClass)
+    );
+  }
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<FundSourceBudgetClass>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+  }
+
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+    this.loadPage();
+  }
+
+  /**
+   * Return form values as object of type FundSourceBudgetClass
+   * @returns FundSourceBudgetClass
+   */
+  protected createFromForm(row:any): FundSourceBudgetClass {
+    return {
+      ...new FundSourceBudgetClass(),
+      id: row.id,
+      ceiling_name:row.ceiling_name,
+      budget_class_id: row.budget_class_id,
+      fund_source_id:row.fund_source_id,
+      fund_type_id:row.fund_type_id,
+      bank_account_id:row.bank_account_id,
+      is_active:row.is_active
+    };
   }
 }

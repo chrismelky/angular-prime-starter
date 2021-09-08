@@ -20,7 +20,7 @@
   [focusOnShow]="false"
 >
   <ng-template pTemplate>
-    <div fxLayout="column" fxLayoutGap="10px" style="min-width: 400px;max-width:800px;max-height:800px">
+    <div fxLayout="column" fxLayoutGap="10px" style="min-width: 400px;max-width:1200px;max-height:800px">
       <p-table
         #table
         [lazy]="true"
@@ -55,6 +55,23 @@
                 class="p-button-raised p-icon-button"
                 [disabled]="fundSourceBudgetClassForm.get('budget_Classes')!.invalid"
               ></button>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="4px">
+              <div class="p-field" fxFlex>
+                <h5>Sectors</h5>
+                <p-multiSelect
+                  [options]="sectors!"
+                  defaultLabel="Select Sectors"
+                  optionLabel="name"
+                  id="sectors"
+                  optionValue="id"
+                  [virtualScroll]="true"
+                  [filter]="true"
+                  [itemSize]="34"
+                  formControlName="sectors"
+                  display="chip">
+                </p-multiSelect>
+              </div>
             </div>
           </form>
         </ng-template>

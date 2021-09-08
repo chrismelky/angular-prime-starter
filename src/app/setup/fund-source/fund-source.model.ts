@@ -9,6 +9,7 @@ export class FundSource {
     public is_foreign?: string,
     public is_treasurer?: string,
     public can_project?: string,
-    public is_active?: string
+    public is_active?: string,
+    public sectors?: any
   ) {}
 }

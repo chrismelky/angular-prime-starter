@@ -12,10 +12,13 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { CasAssessmentCriteriaOption } from "./cas-assessment-criteria-option.model";
+import {CasAssessmentCriteria} from "../cas-assessment-criteria/cas-assessment-criteria.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentCriteriaOptionService {
   public resourceUrl = "api/cas_criteria_options";
+  public baseUrl = "api/get_criteria_by_category";
+  public url = "api/get_criteria_by_cas_plan_content";
 
   constructor(protected http: HttpClient) {}
 
@@ -53,5 +56,18 @@ export class CasAssessmentCriteriaOptionService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+
+  findById(id: {}): Observable<CustomResponse<CasAssessmentCriteriaOption[]>> {
+    return this.http.post<CustomResponse<CasAssessmentCriteriaOption[]>>(
+      `${this.baseUrl}`,id
+    );
+  }
+
+  findByCasContentId(id: { }): Observable<CustomResponse<CasAssessmentCriteriaOption[]>> {
+    return this.http.post<CustomResponse<CasAssessmentCriteriaOption[]>>(
+      `${this.url}`,id
+    );
   }
 }

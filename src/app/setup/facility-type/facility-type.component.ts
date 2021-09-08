@@ -292,16 +292,7 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   sections(row?: FacilityType): void {
-    const data = {
-      facilityType: row,
-    };
-    const ref = this.dialogService.open(FacilityTypeSectionComponent, {
-      data,
-      width:'60%',
-      header: "Planning Units",
-    });
-    ref.onClose.subscribe((result) => {
-      this.loadPage(this.page);
-    });
+
+
   }
 }

@@ -140,7 +140,9 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th></th>
+        <th>Sub budget Class</th>
+        <th>Fund Source</th>
+        <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -148,6 +150,9 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
+          <td><button (click)="onBudgetClassView(rowData)" pButton pRipple type="button" label={{rowData.budget_classes?.length?rowData.budget_classes?.length:0}} class="p-button-outlined p-button-rounded"></button></td>
+          <td><button (click)="onFundSourceView(rowData)" pButton pRipple type="button" label={{rowData.fund_sources?.length?rowData.fund_sources?.length:0}} class="p-button-outlined p-button-rounded p-button-info"></button></td>
+
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

@@ -12,20 +12,18 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { PeSelectOption } from "../pe-select-option.model";
-import { PeSelectOptionService } from "../pe-select-option.service";
+import { FacilityCustomDetail } from "../facility-custom-detail.model";
+import { FacilityCustomDetailService } from "../facility-custom-detail.service";
 import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: "app-pe-select-option-update",
-  templateUrl: "./pe-select-option-update.component.html",
+  selector: "app-facility-custom-detail-update",
+  templateUrl: "./facility-custom-detail-update.component.html",
 })
-export class PeSelectOptionUpdateComponent implements OnInit {
+export class FacilityCustomDetailUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-
-  parents?: PeSelectOption[] = [];
 
   /**
    * Declare form
@@ -33,14 +31,12 @@ export class PeSelectOptionUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    code: [null, []],
-    parent_id: [null, []],
-    is_active: [false, []],
+    code: [null, [Validators.required]],
+    value_type: [null, [Validators.required]],
   });
 
   constructor(
-    protected peSelectOptionService: PeSelectOptionService,
-    protected parentService: PeSelectOptionService,
+    protected facilityCustomDetailService: FacilityCustomDetailService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -48,16 +44,11 @@ export class PeSelectOptionUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.parentService
-      .query({ columns: ["id", "name"], parent_id: null })
-      .subscribe(
-        (resp: CustomResponse<PeSelectOption[]>) => (this.parents = resp.data)
-      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create PeSelectOption or Update Facility type if exist else set form has error and return
+   * When form is valid Create FacilityCustomDetail or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -66,20 +57,20 @@ export class PeSelectOptionUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const peSelectOption = this.createFromForm();
-    if (peSelectOption.id !== undefined) {
+    const facilityCustomDetail = this.createFromForm();
+    if (facilityCustomDetail.id !== undefined) {
       this.subscribeToSaveResponse(
-        this.peSelectOptionService.update(peSelectOption)
+        this.facilityCustomDetailService.update(facilityCustomDetail)
       );
     } else {
       this.subscribeToSaveResponse(
-        this.peSelectOptionService.create(peSelectOption)
+        this.facilityCustomDetailService.create(facilityCustomDetail)
       );
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<PeSelectOption>>
+    result: Observable<CustomResponse<FacilityCustomDetail>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -109,30 +100,28 @@ export class PeSelectOptionUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param peSelectOption
+   * @param facilityCustomDetail
    */
-  protected updateForm(peSelectOption: PeSelectOption): void {
+  protected updateForm(facilityCustomDetail: FacilityCustomDetail): void {
     this.editForm.patchValue({
-      id: peSelectOption.id,
-      name: peSelectOption.name,
-      code: peSelectOption.code,
-      parent_id: peSelectOption.parent_id,
-      is_active: peSelectOption.is_active,
+      id: facilityCustomDetail.id,
+      name: facilityCustomDetail.name,
+      code: facilityCustomDetail.code,
+      value_type: facilityCustomDetail.value_type,
     });
   }
 
   /**
-   * Return form values as object of type PeSelectOption
-   * @returns PeSelectOption
+   * Return form values as object of type FacilityCustomDetail
+   * @returns FacilityCustomDetail
    */
-  protected createFromForm(): PeSelectOption {
+  protected createFromForm(): FacilityCustomDetail {
     return {
-      ...new PeSelectOption(),
+      ...new FacilityCustomDetail(),
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
       code: this.editForm.get(["code"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      value_type: this.editForm.get(["value_type"])!.value,
     };
   }
 }

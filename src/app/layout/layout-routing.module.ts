@@ -552,6 +552,20 @@ const routes: Routes = [
             (m) => m.NationalReferenceModule
           ),
       },
+      {
+        path: "facility-custom-detail",
+        loadChildren: () =>
+          import(
+            "../setup/facility-custom-detail/facility-custom-detail.module"
+          ).then((m) => m.FacilityCustomDetailModule),
+      },
+      {
+        path: "facility-custom-detail-mapping",
+        loadChildren: () =>
+          import(
+            "../setup/facility-custom-detail-mapping/facility-custom-detail-mapping.module"
+          ).then((m) => m.FacilityCustomDetailMappingModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

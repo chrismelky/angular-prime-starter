@@ -39,44 +39,38 @@
               formError)
           "
         >
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
+            >Code is required.</small
+          >
         </span>
       </div>
 
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
-          id="is_active"
-          name="is_active"
-          formControlName="is_active"
-        ></p-inputSwitch>
-        <label for="is_active">  Is Active </label>
-      </div>
-
-      <div class="p-field" fxFlex>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
-            id="parent_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            [showClear]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="parents!"
-            formControlName="parent_id"
-          ></p-dropdown>
-          <label for="parent_id">Parent </label>
+          <input
+            id="value_type"
+            type="text"
+            pInputText
+            formControlName="value_type"
+          />
+          <label for="value_type">Value Type </label>
         </span>
         <span
           *ngIf="
-            editForm.get('parent_id')!.invalid &&
-            (editForm.get('parent_id')!.dirty ||
-              editForm.get('parent_id')!.touched ||
+            editForm.get('value_type')!.invalid &&
+            (editForm.get('value_type')!.dirty ||
+              editForm.get('value_type')!.touched ||
               formError)
           "
         >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('value_type')?.errors?.required"
+            >Value Type is required.</small
+          >
         </span>
       </div>
+
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

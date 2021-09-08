@@ -36,6 +36,13 @@ import { DataValueService } from './data-value.service';
 import { DataValueUpdateComponent } from './update/data-value-update.component';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.model';
+import { CasPlanService } from '../cas-plan/cas-plan.service';
+import { CasPlan } from '../cas-plan/cas-plan.model';
+import { DataSetService } from '../data-set/data-set.service';
+import { DataSet } from '../data-set/data-set.model';
+import { FacilityType } from '../facility-type/facility-type.model';
+import { CategoryCombinationService } from '../category-combination/category-combination.service';
+import { CategoryCombination } from '../category-combination/category-combination.model';
 
 @Component({
   selector: 'app-data-value',
@@ -50,7 +57,13 @@ export class DataValueComponent implements OnInit {
   adminHierarchies: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
   facilities?: Facility[] = [];
+  facilityTypes?: FacilityType[] = [];
   categoryOptionCombinations?: CategoryOptionCombination[] = [];
+  categoryCombinations?: CategoryCombination[] = [];
+  casPlans?: CasPlan[] = [];
+  dataSets?: DataSet[] = [];
+  dataValuesArray: any = {};
+  parentAdminName!: string;
 
   cols = [
     {
@@ -82,8 +95,11 @@ export class DataValueComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
+  facility_type_id!: number;
   facility_id!: number;
-
+  cas_plan_id!: number;
+  period_id!: number;
+  dataSet!: DataSet;
   currentUser?: User;
 
   constructor(
@@ -93,38 +109,41 @@ export class DataValueComponent implements OnInit {
     protected financialYearService: FinancialYearService,
     protected facilityService: FacilityService,
     protected categoryOptionCombinationService: CategoryOptionCombinationService,
+    protected casPlanService: CasPlanService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected userService: UserService
+    protected userService: UserService,
+    protected dataSetService: DataSetService,
+    protected categoryCombinationService: CategoryCombinationService
   ) {
     this.currentUser = userService.getCurrentUser();
     if (this.currentUser.admin_hierarchy) {
       this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
       this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+      this.parentAdminName = `p${this.currentUser.admin_hierarchy.admin_hierarchy_position}`;
     }
   }
 
   ngOnInit(): void {
-    this.dataElementService
-      .query({ columns: ['id', 'name'] })
+    this.casPlanService
+      .query({
+        columns: ['id', 'name'],
+      })
       .subscribe(
-        (resp: CustomResponse<DataElement[]>) => (this.dataElements = resp.data)
+        (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
       );
+
     this.financialYearService
       .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
       );
-    this.facilityService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
+
     this.categoryOptionCombinationService
       .query({ columns: ['id', 'name'] })
       .subscribe(
@@ -132,6 +151,165 @@ export class DataValueComponent implements OnInit {
           (this.categoryOptionCombinations = resp.data)
       );
     this.handleNavigation();
+  }
+
+  /**
+   * Load data set by cas plan
+   */
+  loadDataSets(): void {
+    this.dataSetService
+      .query({
+        cas_plan_id: this.cas_plan_id,
+        columns: ['id', 'name', 'facility_types'],
+      })
+      .subscribe(
+        (resp: CustomResponse<DataSet[]>) => (this.dataSets = resp.data)
+      );
+  }
+
+  /**
+   * Load facility types from dataset facility_type json property, see @DataSet model
+   */
+  onDataSetChange(): void {
+    this.loadDataElements();
+    console.log(this.dataSet);
+    this.facilityTypes =
+      this.dataSet && this.dataSet.facility_types
+        ? JSON.parse(this.dataSet.facility_types)
+        : [];
+  }
+
+  /**
+   * Load data elements by data set
+   */
+  loadDataElements(): void {
+    if (!this.dataSet) {
+      return;
+    }
+    this.dataElementService
+      .query({
+        data_set_id: this.dataSet.id,
+        columns: [
+          'id',
+          'name',
+          'category_combination_id',
+          'option_set_id',
+          'is_required',
+          'value_type',
+        ],
+      })
+      .subscribe((resp: CustomResponse<DataElement[]>) => {
+        this.dataElements = resp.data;
+        this.loadCategoryCombinations();
+      });
+  }
+
+  /**
+   * Load Category Combinations used by loaded data set
+   * This is used to group data elements with a common category combination
+   * into same sub form
+   */
+  loadCategoryCombinations(): void {
+    const ids: number[] = [];
+    this.dataElements?.forEach((de) => {
+      if (ids.indexOf(de.category_combination_id!) === -1) {
+        ids.push(de.category_combination_id!);
+      }
+    });
+    this.categoryCombinationService.getByIds({ ids }).subscribe((resp) => {
+      this.categoryCombinations = resp.data;
+      console.log(this.categoryCombinations);
+      this.prepareDataValuesArray();
+    });
+  }
+
+  loadDataValues(): void {
+    this.dataValueService
+      .query({
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        financial_year_id: this.financial_year_id,
+        facility_id: this.facility_id,
+        period_id: this.period_id,
+      })
+      .subscribe((resp) => {
+        this.dataValues = resp.data;
+      });
+  }
+
+  prepareDataValuesArray(): void {
+    this.dataElements?.forEach((de) => {
+      this.dataValuesArray[de.id!] = {};
+      this.categoryCombinations?.forEach((co) => {
+        co.category_option_combinations?.forEach((coc) => {
+          const existing = this.dataValues?.find((dv) => {
+            return (
+              dv.data_element_id === de.id &&
+              dv.category_option_combination_id === coc.id
+            );
+          });
+          this.dataValuesArray[de.id!][coc.id!] = {
+            id: existing ? existing.id : undefined,
+            value: existing ? existing.value : undefined,
+            oldValue: existing ? existing.value : undefined,
+            isSaving: false,
+            data_element_id: de.id,
+            category_option_combination_id: coc.id,
+          };
+        });
+      });
+    });
+    console.log(this.dataValuesArray);
+  }
+
+  saveValue(dataValue: any): void {
+    dataValue = {
+      ...dataValue,
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
+      facility_type_id: this.facility_type_id,
+      period_id: this.period_id,
+    };
+    if (
+      dataValue.value !== dataValue.oldValue &&
+      dataValue.value !== undefined
+    ) {
+      dataValue.isSaving = true;
+      if (dataValue.id !== undefined) {
+        this.dataValueService.update(dataValue).subscribe();
+      } else {
+        this.dataValueService.create(dataValue).subscribe();
+      }
+    }
+  }
+
+  filterByCategoryCombo(id: number): DataElement[] {
+    return this.dataElements?.filter(
+      (de) => de.category_combination_id === id
+    )!;
+  }
+
+  /**
+   * Load Facilities by parent admin hierarchy and facility Type
+   */
+  loadFacilities(): void {
+    this.facilityService
+      .search(
+        this.facility_type_id,
+        this.parentAdminName,
+        this.admin_hierarchy_id
+      )
+      .subscribe(
+        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
+      );
+  }
+
+  /**
+   * When filtering facility
+   */
+  onFacilityFilter($event: any): void {}
+
+  counter(i: number) {
+    return new Array(i + 1);
   }
 
   /**

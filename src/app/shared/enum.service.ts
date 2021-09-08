@@ -241,6 +241,12 @@ export class EnumService {
       { display: "Lower Local Government", value: "LLG" },
       { display: "Higher Local Government", value: "HLG" },
     ],
+    budgetTypes: [
+      { display: "CURRENT", value: "CURRENT" },
+      { display: "APPROVED", value: "APPROVED" },
+      { display: "CARRYOVER", value: "CARRYOVER" },
+      { display: "SUPPLEMENTARY", value: "SUPPLEMENTARY" },
+    ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };
 

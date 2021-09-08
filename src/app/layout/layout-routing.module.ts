@@ -573,6 +573,13 @@ const routes: Routes = [
             "../setup/facility-custom-detail-mapping/facility-custom-detail-mapping.module"
           ).then((m) => m.FacilityCustomDetailMappingModule),
       },
+      {
+        path: "admin-hierarchy-ceiling",
+        loadChildren: () =>
+          import(
+            "../setup/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module"
+          ).then((m) => m.AdminHierarchyCeilingModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

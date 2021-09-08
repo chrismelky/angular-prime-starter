@@ -35,17 +35,25 @@
           <div class="p-field">
             <span class="p-float-label">
               <p-dropdown
+                placeholder="Select BudgetClass"
+                [group]="true"
                 id="budget_class_id"
                 optionValue="id"
-                optionLabel="name"
+                optionLabel="label"
                 [autoDisplayFirst]="false"
                 (onChange)="onSearch()"
                 [showClear]="true"
                 [filter]="true"
                 [options]="budgetClasses!"
                 [(ngModel)]="search['budget_class_id']"
-              ></p-dropdown>
-              <label for="budget_class_id">Budget Class </label>
+              >
+                  <ng-template let-group pTemplate="group">
+                      <div class="p-d-flex p-ai-center">
+                        <i  class="pi pi-table"></i>
+                          <span>{{group.label}}</span>
+                      </div>
+                  </ng-template>
+              </p-dropdown>
             </span>
           </div>
           <div class="p-field">
@@ -80,22 +88,22 @@
               <label for="fund_type_id">Fund Type </label>
             </span>
           </div>
-          <div class="p-field">
-            <span class="p-float-label">
-              <p-dropdown
-                id="bank_account_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                (onChange)="onSearch()"
-                [showClear]="true"
-                [filter]="true"
-                [options]="bankAccounts!"
-                [(ngModel)]="search['bank_account_id']"
-              ></p-dropdown>
-              <label for="bank_account_id">Bank Account </label>
-            </span>
-          </div>
+<!--          <div class="p-field">-->
+<!--            <span class="p-float-label">-->
+<!--              <p-dropdown-->
+<!--                id="bank_account_id"-->
+<!--                optionValue="id"-->
+<!--                optionLabel="name"-->
+<!--                [autoDisplayFirst]="false"-->
+<!--                (onChange)="onSearch()"-->
+<!--                [showClear]="true"-->
+<!--                [filter]="true"-->
+<!--                [options]="bankAccounts!"-->
+<!--                [(ngModel)]="search['bank_account_id']"-->
+<!--              ></p-dropdown>-->
+<!--              <label for="bank_account_id">Bank Account </label>-->
+<!--            </span>-->
+<!--          </div>-->
         </div>
         <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
           <button
@@ -138,16 +146,17 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="fundSourceBudgetClasses?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
+<!--          <th-->
+<!--            *ngFor="let col of columns"-->
+<!--            [pSortableColumn]="col.sort ? col.field : null"-->
+<!--          >-->
+<!--            {{ col.header-->
+<!--            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>-->
+<!--          </th>-->
           <th>Budget Class</th>
           <th>Fund Source</th>
           <th>GFS Code</th>
+          <th>Date Created</th>
           <th>Fund Type</th>
           <th>Bank Account </th>
           <th>Active</th>
@@ -156,12 +165,15 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+<!--          <td *ngFor="let col of columns">-->
+<!--            {{ rowData[col.field] }}-->
+<!--          </td>-->
+          <td>{{rowData?.budget_class?.name}}</td>
+          <td>{{rowData?.fund_source?.name}} </td>
+          <td>
+            [{{rowData?.fund_source?.gfs_code?.code}}] {{rowData?.fund_source?.gfs_code?.name}}
           </td>
-          <td>{{rowData?.budget_class?.name}} ({{rowData?.budget_class?.code}})</td>
-          <td>{{rowData?.fund_source?.name}} ({{rowData?.fund_source?.code}})</td>
-          <td></td>
+          <td>{{rowData?.created_at |date:'mediumDate'}}</td>
           <td>
             <app-ceiling-fund-type-update
               [ceiling]="rowData"
@@ -182,6 +194,17 @@
             <app-ceinings-sector
               [ceiling_id]="rowData.id"
             ></app-ceinings-sector>
+            <button
+              pButton
+              pTooltip="Delete"
+              tooltipPosition="bottom"
+              class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+              icon="pi pi-trash
+              "
+              (click)="delete(rowData)"
+            ></button>
           </td>
         </tr>
       </ng-template>

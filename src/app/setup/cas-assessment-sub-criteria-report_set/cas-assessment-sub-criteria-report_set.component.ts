@@ -51,11 +51,6 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
       header: "Name",
       sort: false,
     },
-    {
-      field: "report_path",
-      header: "Report Path",
-      sort: false,
-    },
   ]; //Table display columns
 
   isLoading = false;
@@ -92,6 +87,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
         (resp: CustomResponse<CasPlanContent[]>) =>
           (this.casPlanContents = resp.data)
       );
+
     this.casAssessmentSubCriteriaOptionService
       .query({ columns: ["id", "name"] })
       .subscribe(
@@ -317,21 +313,22 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
     );
   }
   /**
-   * fetch cas assessment criteria based on selected cas assessment category
+   * fetch cas assessment criteria based on selected cas plan content
    */
   fetchCriteria(item: any) {
-    if (item) {
-      this.casAssessmentCriteriaOptionService.findByCasContentId({cas_plan_content_id: item.value})
-        .subscribe((resp: CustomResponse<CasAssessmentCriteriaOption[]>)=>
-          (this.casAssessmentCriteriaOptions = resp.data));
-    }
+    this.casAssessmentCriteriaOptionService
+      .query({cas_plan_content_id: item.value})
+      .subscribe(
+        (resp: CustomResponse<CasAssessmentCriteriaOption[]>) =>
+          (this.casAssessmentCriteriaOptions = resp.data)
+      );
   }
   /**
    * fetch cas assessment Sub criteria based on selected cas assessment criteria
    */
   fetchSubCriteria(item: any) {
     if (item) {
-      this.casAssessmentSubCriteriaOptionService.findById({cas_assessment_criteria_option_id: item.value})
+      this.casAssessmentSubCriteriaOptionService.query({cas_assessment_criteria_option_id: item.value})
         .subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>)=>
           (this.casAssessmentSubCriteriaOptions = resp.data));
     }

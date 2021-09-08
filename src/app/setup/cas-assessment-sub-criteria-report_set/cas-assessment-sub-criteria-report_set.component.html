@@ -178,6 +178,9 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
+          <th [pSortableColumn]="'cas_plan_content_id'">
+            Cas Plan Content <p-sortIcon  [field]="'cas_plan_content_id'"></p-sortIcon>
+          </th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
@@ -186,6 +189,7 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
+          <td>{{rowData.cas_plan_content.name}}</td>
           <td style="flex: 0 0 2rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

@@ -7,6 +7,7 @@ export class DataSet {
     public cas_plan_id?: number,
     public is_locked?: string,
     public is_submitted?: string,
-    public facility_types?: string
+    public facility_types?: string,
+    public periods?: string
   ) {}
 }

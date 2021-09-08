@@ -19,6 +19,8 @@ import { DataSetService } from '../data-set.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { FacilityType } from '../../facility-type/facility-type.model';
 import { FacilityTypeService } from '../../facility-type/facility-type.service';
+import { Period } from '../../period/period.model';
+import { PeriodService } from '../../period/period.service';
 
 @Component({
   selector: 'app-data-set-update',
@@ -31,6 +33,7 @@ export class DataSetUpdateComponent implements OnInit {
 
   casPlanContents?: CasPlanContent[] = [];
   facilityTypes?: FacilityType[] = [];
+  periods?: Period[] = [];
 
   /**
    * Declare form
@@ -44,6 +47,7 @@ export class DataSetUpdateComponent implements OnInit {
     is_locked: [false, []],
     is_submitted: [false, []],
     facility_types: [null, [Validators.required]],
+    periods: [null, [Validators.required]],
   });
 
   constructor(
@@ -53,7 +57,8 @@ export class DataSetUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected facilityTypeService: FacilityTypeService
+    protected facilityTypeService: FacilityTypeService,
+    protected periodService: PeriodService
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +68,11 @@ export class DataSetUpdateComponent implements OnInit {
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data || [])
       );
+    this.periodService
+      .query({
+        columns: ['id', 'name', 'period_group'],
+      })
+      .subscribe((resp) => (this.periods = resp.data));
     const dataSet: DataSet = this.dialogConfig.data;
     this.loadCasPlanContent(dataSet.cas_plan_id!);
     this.updateForm(dataSet); //Initialize form with data from dialog
@@ -144,6 +154,10 @@ export class DataSetUpdateComponent implements OnInit {
         dataSet.facility_types !== undefined
           ? JSON.parse(dataSet.facility_types!)
           : dataSet.facility_types,
+      periods:
+        dataSet.periods !== undefined
+          ? JSON.parse(dataSet.periods!)
+          : dataSet.periods,
     });
   }
 
@@ -164,6 +178,10 @@ export class DataSetUpdateComponent implements OnInit {
       facility_types:
         this.editForm.get(['facility_types'])!.value !== undefined
           ? JSON.stringify(this.editForm.get(['facility_types'])!.value)
+          : undefined,
+      periods:
+        this.editForm.get(['periods'])!.value !== undefined
+          ? JSON.stringify(this.editForm.get(['periods'])!.value)
           : undefined,
     };
   }

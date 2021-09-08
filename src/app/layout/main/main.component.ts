@@ -200,11 +200,6 @@ export class MainComponent implements OnInit {
               routerLink: "facility-custom-detail-mapping",
             },
             {
-              label: "Facility Custom Detail Values",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "facility-custom-detail-value",
-            },
-            {
               label: "Facility Custom Details",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "facility-custom-detail",

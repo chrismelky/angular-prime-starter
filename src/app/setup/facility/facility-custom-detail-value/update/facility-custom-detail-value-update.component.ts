@@ -11,7 +11,7 @@ import { Observable } from "rxjs";
 import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
-import { CustomResponse } from "../../../utils/custom-response";
+import { CustomResponse } from "../../../../utils/custom-response";
 import { FacilityCustomDetail } from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
 import { FacilityCustomDetailService } from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
 import { FacilityCustomDetailValue } from "../facility-custom-detail-value.model";

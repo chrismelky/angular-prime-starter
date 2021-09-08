@@ -5,27 +5,28 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { FacilityCustomDetail } from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
-import { FacilityCustomDetailService } from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
+} from "../../../config/pagination.constants";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {FacilityCustomDetail} from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
+import {FacilityCustomDetailService} from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
 
-import { FacilityCustomDetailValue } from "./facility-custom-detail-value.model";
-import { FacilityCustomDetailValueService } from "./facility-custom-detail-value.service";
-import { FacilityCustomDetailValueUpdateComponent } from "./update/facility-custom-detail-value-update.component";
+import {FacilityCustomDetailValue} from "./facility-custom-detail-value.model";
+import {FacilityCustomDetailValueService} from "./facility-custom-detail-value.service";
+import {FacilityCustomDetailValueUpdateComponent} from "./update/facility-custom-detail-value-update.component";
+import {Facility} from "../facility.model";
 
 @Component({
   selector: "app-facility-custom-detail-value",
@@ -39,11 +40,6 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   facilityCustomDetails?: FacilityCustomDetail[] = [];
 
   cols = [
-    {
-      field: "facility_custom_detail_id",
-      header: "Facility Custom Detail ",
-      sort: true,
-    },
     {
       field: "value",
       header: "Value",
@@ -59,6 +55,9 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  facility: Facility | undefined;
+  facilityTypeId: number | undefined;
+  ownership: string | undefined;
 
   //Mandatory filter
 
@@ -67,15 +66,21 @@ export class FacilityCustomDetailValueComponent implements OnInit {
     protected facilityCustomDetailService: FacilityCustomDetailService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
+    public dialogRef: DynamicDialogRef,
+    public dialogConfig: DynamicDialogConfig,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+    this.facility = this.dialogConfig.data.facility;
+    this.facilityTypeId = this.facility?.facility_type?.id
+    this.ownership = this.facility?.ownership;
+  }
 
   ngOnInit(): void {
     this.facilityCustomDetailService
-      .query({ columns: ["id", "name"] })
+      .filterByTypeAndOwnership(this.facilityTypeId, this.ownership)
       .subscribe(
         (resp: CustomResponse<FacilityCustomDetail[]>) =>
           (this.facilityCustomDetails = resp.data)

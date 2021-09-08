@@ -100,18 +100,20 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="facilityCustomDetailValues?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th [pSortableColumn]="'facility_custom_detail_id'">
+            Custom Detail <p-sortIcon [field]="'facility_custom_detail_id'"></p-sortIcon>
+          </th>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
+          <td>
+            [{{ rowData.detail?.code }}] {{ rowData.detail?.name }}
+          </td>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>

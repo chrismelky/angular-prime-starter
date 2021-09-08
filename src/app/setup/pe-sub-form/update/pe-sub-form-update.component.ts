@@ -38,7 +38,7 @@ export class PeSubFormUpdateComponent implements OnInit {
     parent_id: [null, []],
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
-    pe_form_id: [null, [Validators.required]],
+    pe_form_id: [null, []],
     is_lowest: [false, []],
     sort_order: [null, []],
     is_multiple: [false, []],

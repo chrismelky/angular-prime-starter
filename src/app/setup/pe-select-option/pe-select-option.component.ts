@@ -8,7 +8,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -25,6 +25,7 @@ import { ToastService } from "src/app/shared/toast.service";
 import { PeSelectOption } from "./pe-select-option.model";
 import { PeSelectOptionService } from "./pe-select-option.service";
 import { PeSelectOptionUpdateComponent } from "./update/pe-select-option-update.component";
+import {TreeTable} from "primeng/treetable";
 
 @Component({
   selector: "app-pe-select-option",
@@ -32,8 +33,9 @@ import { PeSelectOptionUpdateComponent } from "./update/pe-select-option-update.
 })
 export class PeSelectOptionComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild("table") table!: TreeTable;
   peSelectOptions?: PeSelectOption[] = [];
+  peSelectOptionsNodeTree?: TreeNode[] = [];
 
   parents?: PeSelectOption[] = [];
 
@@ -48,11 +50,6 @@ export class PeSelectOptionComponent implements OnInit {
       header: "Code",
       sort: true,
     },
-    // {
-    //   field: "parent_id",
-    //   header: "Parent ",
-    //   sort: true,
-    // },
     {
       field: "is_active",
       header: "Is Active",
@@ -104,6 +101,7 @@ export class PeSelectOptionComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        parent_id: null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -259,7 +257,14 @@ export class PeSelectOptionComponent implements OnInit {
         },
       });
     }
-    this.peSelectOptions = resp?.data ?? [];
+   // this.peSelectOptions = resp?.data ?? [];
+    this.peSelectOptionsNodeTree = (resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
   }
 
   /**
@@ -270,4 +275,43 @@ export class PeSelectOptionComponent implements OnInit {
     this.page = 1;
     this.toastService.error("Error loading Pe Select Option");
   }
+
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+  }
+
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.peSelectOptionService
+      .query({
+        parent_id: node.data.id,
+        sort: ['id:asc'],
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+          node.children = (resp?.data ?? []).map((c) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.peSelectOptionsNodeTree = [...this.peSelectOptionsNodeTree!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
+  }
+
 }

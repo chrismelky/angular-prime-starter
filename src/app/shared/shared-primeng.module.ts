@@ -29,6 +29,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { TreeTableModule } from 'primeng/treetable';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { PickListModule } from 'primeng/picklist';
+import { DividerModule } from 'primeng/divider';
 
 @NgModule({
   declarations: [],
@@ -62,6 +63,7 @@ import { PickListModule } from 'primeng/picklist';
     TreeTableModule,
     ConfirmPopupModule,
     PickListModule,
+    DividerModule,
   ],
 })
 export class SharedPrimengModule {}

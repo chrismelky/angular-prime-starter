@@ -11,7 +11,7 @@
       </div>
     </ng-template>
     <div fxLayout="row">
-      <div fxLayout="column" fxLayoutGap="8px" fxFlex fxLayoutAlign="start">
+      <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -25,7 +25,7 @@
               (onChange)="loadDataSets()"
               [(ngModel)]="cas_plan_id"
             ></p-dropdown>
-            <label for="cas_plan_id">Cas Plan </label>
+            <label for="cas_plan_id">Comprehensive Plan </label>
           </span>
         </div>
         <div class="p-field" fxFlex>
@@ -45,7 +45,7 @@
         </div>
       </div>
       <p-divider layout="vertical"></p-divider>
-      <div fxLayout="column" fxLayoutGap="8px" fxFlex fxLayoutAlign="start">
+      <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -80,7 +80,7 @@
         </div>
       </div>
       <p-divider layout="vertical"></p-divider>
-      <div fxLayout="column" fxLayoutGap="8px" fxFlex fxLayoutAlign="start">
+      <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -123,6 +123,7 @@
       <div
         fxLayout="column"
         fxLayoutGap="10px"
+        style="overflow-x: scroll; padding: 10px 0"
         *ngFor="let catComb of categoryCombinations"
       >
         <span>By {{ catComb.name }}</span>
@@ -146,6 +147,27 @@
               </td>
               <td *ngFor="let coc of catComb.category_option_combinations">
                 <input
+                  *ngIf="de.value_type === 'TEXT' && !de.option_set_id"
+                  autocomplete="off"
+                  id="{{ de.id! }}-{{ coc.id! }}"
+                  (blur)="saveValue(dataValuesArray[de.id!][coc.id!])"
+                  type="text"
+                  pInputText
+                  [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                />
+                <p-dropdown
+                  *ngIf="de.value_type === 'TEXT' && de.option_set_id"
+                  id="{{ de.id! }}-{{ coc.id! }}"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  optionValue="name"
+                  optionLabel="name"
+                  class="p-inputtext-sm"
+                  appendTo="body"
+                  [options]="de.option_set?.options!"
+                  [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                ></p-dropdown>
+                <input
                   *ngIf="de.value_type === 'TEXT'"
                   autocomplete="off"
                   id="{{ de.id! }}-{{ coc.id! }}"
@@ -155,7 +177,16 @@
                   [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                 />
                 <p-inputNumber
+                  mode="decimal"
                   *ngIf="de.value_type === 'NUMBER'"
+                  autocomplete="off"
+                  id="{{ de.id! }}-{{ coc.id! }}"
+                  (onBlur)="saveValue(dataValuesArray[de.id!][coc.id!])"
+                  type="text"
+                  [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                ></p-inputNumber>
+                <p-inputNumber
+                  *ngIf="de.value_type === 'POSITIVE_INTEGER'"
                   autocomplete="off"
                   id="{{ de.id! }}-{{ coc.id! }}"
                   (onBlur)="saveValue(dataValuesArray[de.id!][coc.id!])"

@@ -75,12 +75,12 @@ export class DataValueComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
-  financial_year_id!: number;
-  facility_type_id!: number;
-  facility_id!: number;
-  cas_plan_id!: number;
-  period_id!: number;
+  admin_hierarchy_id?: number;
+  financial_year_id?: number;
+  facility_type_id?: number;
+  facility_id?: number;
+  cas_plan_id?: number;
+  period_id?: number;
   dataSet!: DataSet;
   currentUser?: User;
 
@@ -153,6 +153,8 @@ export class DataValueComponent implements OnInit {
    */
   onDataSetChange(): void {
     this.loadDataElements();
+    this.facility_id = undefined;
+    this.prepareDataValuesArray();
     this.facilityTypes =
       this.dataSet && this.dataSet.facility_types
         ? JSON.parse(this.dataSet.facility_types)
@@ -161,6 +163,10 @@ export class DataValueComponent implements OnInit {
       this.dataSet && this.dataSet.periods
         ? JSON.parse(this.dataSet.periods)
         : [];
+  }
+
+  private resetForm(): void {
+    this.prepareDataValuesArray();
   }
 
   /**
@@ -181,6 +187,7 @@ export class DataValueComponent implements OnInit {
           'is_required',
           'value_type',
         ],
+        with: ['optionSet', 'optionSet.options'],
       })
       .subscribe((resp: CustomResponse<DataElement[]>) => {
         this.dataElements = resp.data;
@@ -286,9 +293,9 @@ export class DataValueComponent implements OnInit {
   loadFacilities(): void {
     this.facilityService
       .search(
-        this.facility_type_id,
+        this.facility_type_id!,
         this.parentAdminName,
-        this.admin_hierarchy_id
+        this.admin_hierarchy_id!
       )
       .subscribe(
         (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)

@@ -34,6 +34,8 @@ import { AdminHierarchyCeiling } from "./admin-hierarchy-ceiling.model";
 import { AdminHierarchyCeilingService } from "./admin-hierarchy-ceiling.service";
 import { AdminHierarchyCeilingUpdateComponent } from "./update/admin-hierarchy-ceiling-update.component";
 import {InitiateCeilingComponent} from "./update/initiate-ceiling.component";
+import {SectionLevelService} from "../section-level/section-level.service";
+import {SectionLevel} from "../section-level/section-level.model";
 
 @Component({
   selector: "app-admin-hierarchy-ceiling",
@@ -49,6 +51,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   financialYears?: FinancialYear[] = [];
   parents?: AdminHierarchyCeiling[] = [];
   sections?: Section[] = [];
+  planingLevels?: SectionLevel[] = [];
   budgetTypes?: PlanrepEnum[] = [];
 
   cols = [
@@ -107,6 +110,9 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   admin_hierarchy_id!: number;
   financial_year_id!: number;
   budget_type!: string;
+  position: number=1;
+  section_id!:number;
+  admin_hierarchy_position!:number;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -121,7 +127,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected enumService: EnumService
+    protected enumService: EnumService,
+    protected sectionLevelService: SectionLevelService,
   ) {}
 
   ngOnInit(): void {
@@ -129,6 +136,11 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<FundSourceBudgetClass[]>) => (this.ceilings = resp.data)
+      );
+    this.sectionLevelService
+      .query({ columns: ["id", "name","position"] })
+      .subscribe(
+        (resp: CustomResponse<SectionLevel[]>) => (this.planingLevels = resp.data)
       );
     this.adminHierarchyService
       .query({ columns: ["id", "name"] })
@@ -147,13 +159,16 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<AdminHierarchyCeiling[]>) => (this.parents = resp.data)
       );
+    this.budgetTypes = this.enumService.get("budgetTypes");
+    this.handleNavigation();
+  }
+
+  selectionLevelChange(){
     this.sectionService
-      .query({ columns: ["id", "name"] })
+      .query({ position :this.position})
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
-    this.budgetTypes = this.enumService.get("budgetTypes");
-    this.handleNavigation();
   }
 
   /**
@@ -165,7 +180,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
-      !this.budget_type
+      !this.budget_type ||
+      !this.position
     ) {
       return;
     }
@@ -180,6 +196,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         admin_hierarchy_id: this.admin_hierarchy_id,
         financial_year_id: this.financial_year_id,
         budget_type: this.budget_type,
+        position:this.position,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -367,8 +384,9 @@ export class AdminHierarchyCeilingComponent implements OnInit {
    *
    * @param event adminhierarchyId or Ids
    */
-  onAdminHierarchySelection(event: number): void {
-    this.admin_hierarchy_id = event;
+  onAdminHierarchySelection(event: any): void {
+    this.admin_hierarchy_id = event.id;
+    this.admin_hierarchy_position =event.admin_hierarchy_position;
   }
 
   /**

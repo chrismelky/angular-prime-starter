@@ -344,6 +344,8 @@ i.clear {
   padding-left: 24px;
   height: 48px;
 }
+
+
 .p-datatable .p-datatable-tbody > tr > td:first-of-type ,
 .p-treetable .p-treetable-tbody > tr > td:first-of-type
 {
@@ -353,6 +355,19 @@ i.clear {
 .p-treetable .p-treetable-tbody > tr > td:last-of-type, .p-treetable .p-treetable-thead > tr > th:last-of-type
 {
   padding-right: 24px;
+}
+.p-datavalue-table
+{
+  border-spacing: 0px;
+  border-collapse:collapse;
+  .p-datatable-tbody > tr > td, .p-datatable-tbody > tr > td:last-of-type {
+    padding: 0;
+    height: auto;
+    .p-inputtext {
+      border-radius: 2px;
+    }
+  }
+
 }
 .mat-card-header {
   padding:4px 24px 4px 0px;
@@ -395,5 +410,9 @@ i.clear {
 
 input.isSaving {
   background-color: seagreen;
+}
+
+p-divider.title .p-divider.p-divider-horizontal {
+ margin: 0;
 }
 

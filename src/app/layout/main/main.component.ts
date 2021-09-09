@@ -556,6 +556,18 @@ export class MainComponent implements OnInit {
         /**====Planrep execution Menu Generator Hook: Dont Delete====*/
       ],
     },
+    {
+      label: "Assessment",
+      icon: "pi pi-pw pi-play",
+      items: [
+        {
+          label: "Assessor Assignments",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "assessor-assignment",
+        },
+        /**====Planrep Assessment Menu Generator Hook: Dont Delete====*/
+      ],
+    },
   ];
 
   logout(): void {

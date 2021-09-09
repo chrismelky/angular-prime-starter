@@ -20,8 +20,8 @@ import { AdminHierarchyLevel } from "src/app/setup/admin-hierarchy-level/admin-h
 import { AdminHierarchyLevelService } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
 import { CasAssessmentRound } from "src/app/setup/cas-assessment-round/cas-assessment-round.model";
 import { CasAssessmentRoundService } from "src/app/setup/cas-assessment-round/cas-assessment-round.service";
-import { Period } from "src/app/setup/period/period.model";
-import { PeriodService } from "src/app/setup/period/period.service";
+// import { Period } from "src/app/setup/period/period.model";
+// import { PeriodService } from "src/app/setup/period/period.service";
 import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
 import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
 import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
@@ -43,7 +43,7 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
   adminHierarchies?: AdminHierarchy[] = [];
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
   casAssessmentRounds?: CasAssessmentRound[] = [];
-  periods?: Period[] = [];
+  // periods?: Period[] = [];
   casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
   financialYears?: FinancialYear[] = [];
 
@@ -68,7 +68,7 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService,
     protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected casAssessmentRoundService: CasAssessmentRoundService,
-    protected periodService: PeriodService,
+    // protected periodService: PeriodService,
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
     protected financialYearService: FinancialYearService,
     public dialogRef: DynamicDialogRef,
@@ -99,11 +99,11 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
         (resp: CustomResponse<CasAssessmentRound[]>) =>
           (this.casAssessmentRounds = resp.data)
       );
-    this.periodService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
-      );
+    // this.periodService
+    //   .query({ columns: ["id", "name"] })
+    //   .subscribe(
+    //     (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
+    //   );
     this.casAssessmentCategoryVersionService
       .query({ columns: ["id", "name"] })
       .subscribe(

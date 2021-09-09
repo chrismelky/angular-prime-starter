@@ -28,7 +28,6 @@ import { FundSourceCategoryService } from "src/app/setup/fund-source-category/fu
 import { FundSource } from "./fund-source.model";
 import { FundSourceService } from "./fund-source.service";
 import { FundSourceUpdateComponent } from "./update/fund-source-update.component";
-import {FundSourceGfsCodeList} from "./fund-source-gfs-code-list";
 
 @Component({
   selector: "app-fund-source",
@@ -53,31 +52,6 @@ export class FundSourceComponent implements OnInit {
       header: "Code",
       sort: true,
     },
-    // {
-    //   field: "is_conditional",
-    //   header: "Is Conditional",
-    //   sort: false,
-    // },
-    // {
-    //   field: "is_foreign",
-    //   header: "Is Foreign",
-    //   sort: false,
-    // },
-    // {
-    //   field: "is_treasurer",
-    //   header: "Is Treasurer",
-    //   sort: false,
-    // },
-    // {
-    //   field: "can_project",
-    //   header: "Can Project",
-    //   sort: false,
-    // },
-    // {
-    //   field: "is_active",
-    //   header: "Is Active",
-    //   sort: false,
-    // },
   ]; //Table display columns
 
   isLoading = false;
@@ -317,16 +291,16 @@ export class FundSourceComponent implements OnInit {
     this.toastService.error("Error loading Fund Source");
   }
 
-  show(row: any,action:any) {
-    var header = action=='GfsCode'?('Gfs Codes  for ' +  row.name + '(' + row.code + ')'):('Budget Classes for ' +  row.name + '(' + row.code + ')')
-    var witdh =action=='GfsCode'?50:60;
-    const ref = this.dialogService.open(FundSourceGfsCodeList, {
-      data: {
-        fund_source: row,
-        action: action
-      },
-      header: header,
-      width: witdh+'%'
-    });
-  }
+  // show(row: any,action:any) {
+  //   var header = action=='GfsCode'?('Gfs Codes  for ' +  row.name + '(' + row.code + ')'):('Budget Classes for ' +  row.name + '(' + row.code + ')')
+  //   var witdh =action=='GfsCode'?50:60;
+  //   const ref = this.dialogService.open(FundSourceGfsCodeList, {
+  //     data: {
+  //       fund_source: row,
+  //       action: action
+  //     },
+  //     header: header,
+  //     width: witdh+'%'
+  //   });
+  // }
 }

@@ -215,8 +215,8 @@
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
-                <button type="button" (click)="show(rowData,'GfsCode')" pButton icon="pi pi-info-circle" label="Gfs Codes"></button>
-                <button type="button" (click)="show(rowData,'BudgetClass')" pButton icon="pi pi-info-circle" label="Budget Classes"></button>
+                <app-view-gfs-code [fund_source]="rowData"></app-view-gfs-code>
+                <app-view-budget-class [fund_source]="rowData"></app-view-budget-class>
                 <button
                   pButton
                   pTooltip="Edit"

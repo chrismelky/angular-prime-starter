@@ -1,0 +1,168 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="ceiling_name"
+            type="text"
+            pInputText
+            formControlName="ceiling_name"
+          />
+          <label for="ceiling_name">Ceiling Name </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('ceiling_name')!.invalid &&
+            (editForm.get('ceiling_name')!.dirty ||
+              editForm.get('ceiling_name')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('ceiling_name')?.errors?.required"
+            >Ceiling Name is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="budget_class_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="budgetClasses!"
+            formControlName="budget_class_id"
+          ></p-dropdown>
+          <label for="budget_class_id">Budget Class </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('budget_class_id')!.invalid &&
+            (editForm.get('budget_class_id')!.dirty ||
+              editForm.get('budget_class_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('budget_class_id')?.errors?.required"
+            >Budget Class is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="fund_source_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="fundSources!"
+            formControlName="fund_source_id"
+          ></p-dropdown>
+          <label for="fund_source_id">Fund Source </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('fund_source_id')!.invalid &&
+            (editForm.get('fund_source_id')!.dirty ||
+              editForm.get('fund_source_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('fund_source_id')?.errors?.required"
+            >Fund Source is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="fund_type_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="fundTypes!"
+            formControlName="fund_type_id"
+          ></p-dropdown>
+          <label for="fund_type_id">Fund Type </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('fund_type_id')!.invalid &&
+            (editForm.get('fund_type_id')!.dirty ||
+              editForm.get('fund_type_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('fund_type_id')?.errors?.required"
+            >Fund Type is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="bank_account_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="bankAccounts!"
+            formControlName="bank_account_id"
+          ></p-dropdown>
+          <label for="bank_account_id">Bank Account </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('bank_account_id')!.invalid &&
+            (editForm.get('bank_account_id')!.dirty ||
+              editForm.get('bank_account_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('bank_account_id')?.errors?.required"
+            >Bank Account is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

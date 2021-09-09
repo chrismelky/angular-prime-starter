@@ -16,6 +16,7 @@ import { CasAssessmentCriteriaOption } from "./cas-assessment-criteria-option.mo
 @Injectable({ providedIn: "root" })
 export class CasAssessmentCriteriaOptionService {
   public resourceUrl = "api/cas_criteria_options";
+  public baseUrl = "api/get_criteria_by_category";
 
   constructor(protected http: HttpClient) {}
 
@@ -53,5 +54,11 @@ export class CasAssessmentCriteriaOptionService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  findById(param: { categoryId: any }): Observable<CustomResponse<CasAssessmentCriteriaOption[]>> {
+    return this.http.post<CustomResponse<CasAssessmentCriteriaOption[]>>(
+      this.baseUrl,param
+    )
   }
 }

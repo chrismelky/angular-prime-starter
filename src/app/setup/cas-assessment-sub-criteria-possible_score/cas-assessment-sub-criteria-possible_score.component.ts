@@ -27,11 +27,9 @@ import { CasAssessmentSubCriteriaPossibleScoreService } from "./cas-assessment-s
 import { CasAssessmentSubCriteriaPossibleScoreUpdateComponent } from "./update/cas-assessment-sub-criteria-possible_score-update.component";
 import {CasAssessmentCategoryService} from "../cas-assessment-category/cas-assessment-category.service";
 import {CasAssessmentCategory} from "../cas-assessment-category/cas-assessment-category.model";
-import {CasAssessmentCriteriaService} from "../cas-assessment-criteria/cas-assessment-criteria.service";
-import {CasAssessmentCriteria} from "../cas-assessment-criteria/cas-assessment-criteria.model";
-import {CasAssessmentSubCriteria} from "../cas-assessment-sub-criteria/cas-assessment-sub-criteria.model";
 import {CasAssessmentCriteriaOption} from "../cas-assessment-criteria-option/cas-assessment-criteria-option.model";
 import {CasAssessmentSubCriteriaOption} from "../cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
+import {CasAssessmentCriteriaOptionService} from "../cas-assessment-criteria-option/cas-assessment-criteria-option.service";
 
 @Component({
   selector: "app-cas-assessment-sub-criteria-possible_score",
@@ -77,7 +75,7 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
   constructor(
     protected casAssessmentSubCriteriaPossibleScoreService: CasAssessmentSubCriteriaPossibleScoreService,
     protected casAssessmentSubCriteriaOptionService: CasAssessmentSubCriteriaOptionService,
-    protected casAssessmentCriteriaService: CasAssessmentCriteriaService,
+    protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
     protected casAssessmentCategoryService: CasAssessmentCategoryService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -168,7 +166,7 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
    */
   fetchCriteria(item: any) {
     if (item) {
-      this.casAssessmentCriteriaService.findById({categoryId: item.value})
+      this.casAssessmentCriteriaOptionService.findById({categoryId: item.value})
         .subscribe((resp: CustomResponse<CasAssessmentCriteriaOption[]>)=>
           (this.casAssessmentCriteria = resp.data));
     }
@@ -178,7 +176,7 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
    */
   fetchSubCriteria(item: any) {
     if (item) {
-      this.casAssessmentSubCriteriaOptionService.findById({cas_assessment_criteria_option_id: item.value})
+      this.casAssessmentSubCriteriaOptionService.query({cas_assessment_criteria_option_id: item.value})
         .subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>)=>
           (this.casAssessmentSubCriteria = resp.data));
     }

@@ -246,6 +246,12 @@ export class EnumService {
       { display: 'Month', value: 'Month' },
       { display: 'Annual', value: 'Annual' },
     ],
+    budgetTypes: [
+      { display: "CURRENT", value: "CURRENT" },
+      { display: "APPROVED", value: "APPROVED" },
+      { display: "CARRYOVER", value: "CARRYOVER" },
+      { display: "SUPPLEMENTARY", value: "SUPPLEMENTARY" },
+    ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };
 

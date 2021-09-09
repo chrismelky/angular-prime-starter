@@ -1,0 +1,208 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="active"
+          name="active"
+          formControlName="active"
+        ></p-inputSwitch>
+        <label for="active">Active </label>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="user_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="users!"
+            formControlName="user_id"
+          ></p-dropdown>
+          <label for="user_id">User </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('user_id')!.invalid &&
+            (editForm.get('user_id')!.dirty ||
+              editForm.get('user_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="admin_hierarchy_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="adminHierarchies!"
+            formControlName="admin_hierarchy_id"
+          ></p-dropdown>
+          <label for="admin_hierarchy_id">Admin Hierarchy </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('admin_hierarchy_id')!.invalid &&
+            (editForm.get('admin_hierarchy_id')!.dirty ||
+              editForm.get('admin_hierarchy_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="admin_hierarchy_level_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="adminHierarchyLevels!"
+            formControlName="admin_hierarchy_level_id"
+          ></p-dropdown>
+          <label for="admin_hierarchy_level_id">Admin Hierarchy Level </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('admin_hierarchy_level_id')!.invalid &&
+            (editForm.get('admin_hierarchy_level_id')!.dirty ||
+              editForm.get('admin_hierarchy_level_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="cas_assessment_round_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="casAssessmentRounds!"
+            formControlName="cas_assessment_round_id"
+          ></p-dropdown>
+          <label for="cas_assessment_round_id">Cas Assessment Round </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('cas_assessment_round_id')!.invalid &&
+            (editForm.get('cas_assessment_round_id')!.dirty ||
+              editForm.get('cas_assessment_round_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="period_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="periods!"
+            formControlName="period_id"
+          ></p-dropdown>
+          <label for="period_id">Period </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('period_id')!.invalid &&
+            (editForm.get('period_id')!.dirty ||
+              editForm.get('period_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="cas_assessment_category_version_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="casAssessmentCategoryVersions!"
+            formControlName="cas_assessment_category_version_id"
+          ></p-dropdown>
+          <label for="cas_assessment_category_version_id"
+            >Cas Assessment Category Version
+          </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('cas_assessment_category_version_id')!.invalid &&
+            (editForm.get('cas_assessment_category_version_id')!.dirty ||
+              editForm.get('cas_assessment_category_version_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="financial_year_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="financialYears!"
+            formControlName="financial_year_id"
+          ></p-dropdown>
+          <label for="financial_year_id">Financial Year </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('financial_year_id')!.invalid &&
+            (editForm.get('financial_year_id')!.dirty ||
+              editForm.get('financial_year_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

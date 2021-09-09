@@ -15,20 +15,55 @@
           fxFlex
           fxLayoutAlign="start center"
         >
+          <app-admin-hierarchy-tree
+            (onSelect)="onAdminHierarchySelection($event)"
+          ></app-admin-hierarchy-tree>
+<!--          <div class="p-field" fxFlex>-->
+<!--            <span class="p-float-label">-->
+<!--              <p-dropdown-->
+<!--                id="admin_hierarchy_id"-->
+<!--                optionValue="id"-->
+<!--                optionLabel="name"-->
+<!--                [autoDisplayFirst]="false"-->
+<!--                [filter]="true"-->
+<!--                class="p-inputtext-sm"-->
+<!--                [options]="adminHierarchies!"-->
+<!--                (onChange)="filterChanged()"-->
+<!--                [(ngModel)]="admin_hierarchy_id"-->
+<!--              ></p-dropdown>-->
+<!--              <label for="admin_hierarchy_id">Admin Hierarchy </label>-->
+<!--            </span>-->
+<!--          </div>-->
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="fund_source_category_id"
+                id="financial_year_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="fundSourceCategories!"
+                [options]="financialYears!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="fund_source_category_id"
+                [(ngModel)]="financial_year_id"
               ></p-dropdown>
-              <label for="fund_source_category_id">Fund Source Category </label>
+              <label for="financial_year_id">Financial Year </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="budget_type"
+                optionValue="value"
+                optionLabel="display"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="budgetTypes!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="budget_type"
+              ></p-dropdown>
+              <label for="budget_type">Budget Type </label>
             </span>
           </div>
         </div>
@@ -78,38 +113,6 @@
               fxFlex
               fxLayoutAlign="start center"
             >
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['name']"
-                  />
-                  <label for="name">Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="code"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['code']"
-                  />
-                  <label for="code">Code </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['code'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
             </div>
             <div
               fxLayout="row"
@@ -143,25 +146,49 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="fundSources!"
+      [value]="adminHierarchyCeilings!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Fund Sources</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!fund_source_category_id"
-            (click)="createOrUpdate()"
-            label="Add Fund Source"
-          ></button>
+          <span class="card-header-text">Ceiling Amounts</span>
+          <div class="card-header-text">
+            <button
+              pButton
+              icon="pi pi-lock"
+              class="p-button-raised"
+              [disabled]="
+              !admin_hierarchy_id || !financial_year_id || !budget_type
+            "
+              (click)="lock(0)"
+              label="Lock All Levels"
+            ></button> &nbsp;
+            <button
+              pButton
+              icon="pi pi-lock-open"
+              class="p-button-raised"
+              [disabled]="
+              !admin_hierarchy_id || !financial_year_id || !budget_type
+            "
+              (click)="lock(1)"
+              label="Unlock All Levels "
+            ></button> &nbsp;
+            <button
+              pButton
+              icon="pi pi-wallet"
+              class="p-button-raised"
+              [disabled]="
+              !admin_hierarchy_id || !financial_year_id || !budget_type
+            "
+              (click)="initiateCeiling()"
+              label="Initiate Ceiling"
+            ></button>
+          </div>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="fundSources?.length">
+        <tr *ngIf="adminHierarchyCeilings?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -169,11 +196,6 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th>Is Conditional</th>
-          <th>Is Foreign</th>
-          <th>Is Treasurer</th>
-          <th>Can Project</th>
-          <th>is_active</th>
           <th></th>
         </tr>
       </ng-template>
@@ -183,40 +205,8 @@
             {{ rowData[col.field] }}
           </td>
           <td>
-            <p-inputSwitch
-            [disabled]="true"
-            [(ngModel)]="rowData['is_conditional']"
-          ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['is_foreign']"
-            ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['is_treasurer']"
-            ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['can_project']"
-            ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['is_active']"
-            ></p-inputSwitch>
-          </td>
-          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
-                <app-view-gfs-code [fund_source]="rowData"></app-view-gfs-code>
-                <app-view-budget-class [fund_source]="rowData"></app-view-budget-class>
                 <button
                   pButton
                   pTooltip="Edit"
@@ -249,7 +239,7 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="fundSources?.length! > 0"
+        [alwaysShow]="adminHierarchyCeilings?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -264,6 +254,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Fund Source"
+  header="Confirmation Delete Admin Hierarchy Ceiling"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

@@ -553,6 +553,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: "fund-source-budget-class",
+        loadChildren: () =>
+          import(
+            "../setup/fund-source-budget-class/fund-source-budget-class.module"
+          ).then((m) => m.FundSourceBudgetClassModule),
+      },
+      {
         path: "facility-custom-detail",
         loadChildren: () =>
           import(
@@ -571,7 +578,13 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../setup/assessor-assignment/assessor-assignment.module"
-          ).then((m) => m.AssessorAssignmentModule),
+            ).then((m) => m.AssessorAssignmentModule),
+      },{
+        path: "admin-hierarchy-ceiling",
+        loadChildren: () =>
+          import(
+            "../setup/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module"
+          ).then((m) => m.AdminHierarchyCeilingModule),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

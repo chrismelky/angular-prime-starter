@@ -249,7 +249,10 @@ export class EnumService {
 
     peInPutValues: [
       { display: "Number", value: "NUMBER" },
-      { display: "Integer, Zero or Positive", value: "INTEGER_ZERO_OR_POSITIVE" },
+      {
+        display: "Integer, Zero or Positive",
+        value: "INTEGER_ZERO_OR_POSITIVE",
+      },
       { display: "Currency", value: "CURRENCY" },
       { display: "select", value: "SELECT" },
       { display: "Financial Year", value: "FY" },

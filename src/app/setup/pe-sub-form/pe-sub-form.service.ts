@@ -49,4 +49,9 @@ export class PeSubFormService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  getParentChildren():Observable<CustomResponse<any>>{
+    return this.http.get<CustomResponse<any[]>>(`${this.resourceUrl}/get_parent_children`);
+  }
+
 }

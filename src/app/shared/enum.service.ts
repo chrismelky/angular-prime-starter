@@ -252,6 +252,24 @@ export class EnumService {
       { display: "CARRYOVER", value: "CARRYOVER" },
       { display: "SUPPLEMENTARY", value: "SUPPLEMENTARY" },
     ],
+
+    peOutPutValues: [
+      { display: "Number", value: "NUMBER" },
+      { display: "Currency", value: "CURRENCY" },
+    ],
+
+    peInPutValues: [
+      { display: "Number", value: "NUMBER" },
+      {
+        display: "Integer, Zero or Positive",
+        value: "INTEGER_ZERO_OR_POSITIVE",
+      },
+      { display: "Currency", value: "CURRENCY" },
+      { display: "select", value: "SELECT" },
+      { display: "Financial Year", value: "FY" },
+      { display: "Formula", value: "FORMULA" },
+      { display: "TEXT", value: "TEXT" },
+    ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };
 

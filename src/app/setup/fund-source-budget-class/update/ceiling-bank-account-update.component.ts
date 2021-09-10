@@ -83,7 +83,7 @@ export class CeilingBankAccountUpdateComponent implements OnInit {
     return {
       ...new FundSourceBudgetClass(),
       id: ceiling.id,
-      ceiling_name:  ceiling.id,
+      ceiling_name:  ceiling.ceiling_name,
       budget_class_id:  ceiling.budget_class_id,
       fund_source_id: ceiling.fund_source_id,
       bank_account_id: bank_account_id,

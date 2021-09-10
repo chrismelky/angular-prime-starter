@@ -122,6 +122,35 @@
           >
         </span>
       </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-multiSelect
+            [options]="periods!"
+            formControlName="periods"
+            optionLabel="name"
+            dataKey="id"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+          >
+          </p-multiSelect>
+          <label for="periods">Periods</label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('periods')!.invalid &&
+            (editForm.get('periods')!.dirty ||
+              editForm.get('periods')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('periods')?.errors?.required"
+            >Period is required.</small
+          >
+        </span>
+      </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

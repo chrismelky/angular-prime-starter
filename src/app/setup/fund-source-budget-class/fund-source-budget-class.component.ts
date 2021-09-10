@@ -8,7 +8,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import {combineLatest, Observable} from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MenuItem, SelectItemGroup} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -20,7 +20,6 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { BudgetClass } from "src/app/setup/budget-class/budget-class.model";
 import { BudgetClassService } from "src/app/setup/budget-class/budget-class.service";
 import { FundSource } from "src/app/setup/fund-source/fund-source.model";
 import { FundSourceService } from "src/app/setup/fund-source/fund-source.service";
@@ -43,7 +42,7 @@ export class FundSourceBudgetClassComponent implements OnInit {
   @ViewChild("table") table!: Table;
   fundSourceBudgetClasses?: FundSourceBudgetClass[] = [];
 
-  budgetClasses?: BudgetClass[] = [];
+  budgetClasses?: SelectItemGroup[];
   fundSources?: FundSource[] = [];
   fundTypes?: FundType[] = [];
   bankAccounts?: BankAccount[] = [];
@@ -82,12 +81,14 @@ export class FundSourceBudgetClassComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.budgetClassService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<BudgetClass[]>) =>
-          (this.budgetClasses = resp.data)
-      );
+    // this.budgetClassService
+    //   .query({ columns: ["id", "name"] })
+    //   .subscribe(
+    //     (resp: CustomResponse<BudgetClass[]>) =>
+    //       (this.budgetClasses = resp.data)
+    //   );
+    this.budgetClassService.getParentChild().subscribe(
+      (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data));
     this.fundSourceService
       .query({ columns: ["id", "name"] })
       .subscribe(
@@ -116,7 +117,7 @@ export class FundSourceBudgetClassComponent implements OnInit {
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.fundSourceBudgetClassService
-      .query({
+      .queryCeilingsChild({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),

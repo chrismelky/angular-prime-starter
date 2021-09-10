@@ -40,7 +40,7 @@ export class ViewBudgetClassComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.fund_source)
+
   }
 
   onHide(): void {

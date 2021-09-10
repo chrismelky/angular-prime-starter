@@ -60,6 +60,15 @@ export class FundSourceBudgetClassService {
     );
   }
 
+  queryProjectionCeiling(req?: any): Observable<CustomResponse<FundSourceBudgetClass[]>> {
+    const options = createRequestOption(req);
+    const url = "api/projection_ceilings";
+    return this.http.get<CustomResponse<FundSourceBudgetClass[]>>(
+      url,
+      { params: options }
+    );
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

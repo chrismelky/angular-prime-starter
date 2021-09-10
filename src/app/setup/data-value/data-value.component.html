@@ -4,7 +4,7 @@
     <ng-template pTemplate="header">
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
         <i class="pi pi-filter"></i>
-        <!-- <span class="card-header-text">Filter</span> -->
+        <span class="card-header-text">Filter</span>
         <p-divider class="title">
           <span>{{ currentUser?.admin_hierarchy?.name }}</span>
         </p-divider>
@@ -116,6 +116,7 @@
       </div>
     </div>
   </p-card>
+  <router-outlet></router-outlet>
 
   <!-- Table Panel -->
   <p-card>
@@ -126,7 +127,9 @@
         style="overflow-x: scroll; padding: 10px 0"
         *ngFor="let catComb of categoryCombinations"
       >
-        <span>By {{ catComb.name }}</span>
+        <!-- <p-divider *ngIf="catComb.name !== 'None'"> -->
+        <span *ngIf="catComb.name !== 'None'">By {{ catComb.name }}</span>
+        <!-- </p-divider> -->
         <table
           cellspacing="0"
           class="p-datatable p-datavalue-table p-datatable-gridlines"
@@ -162,20 +165,12 @@
                   [filter]="true"
                   optionValue="name"
                   optionLabel="name"
+                  (onChange)="saveValue(dataValuesArray[de.id!][coc.id!])"
                   class="p-inputtext-sm"
                   appendTo="body"
                   [options]="de.option_set?.options!"
                   [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                 ></p-dropdown>
-                <input
-                  *ngIf="de.value_type === 'TEXT'"
-                  autocomplete="off"
-                  id="{{ de.id! }}-{{ coc.id! }}"
-                  (blur)="saveValue(dataValuesArray[de.id!][coc.id!])"
-                  type="text"
-                  pInputText
-                  [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                />
                 <p-inputNumber
                   mode="decimal"
                   *ngIf="de.value_type === 'NUMBER'"
@@ -193,6 +188,18 @@
                   type="text"
                   [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                 ></p-inputNumber>
+                <p-fileUpload
+                  *ngIf="de.value_type === 'FILE'"
+                  name="myfile[]"
+                  [customUpload]="true"
+                  (uploadHandler)="
+                    fileUploader($event, dataValuesArray[de.id!][coc.id!])
+                  "
+                >
+                  <ng-template let-file pTemplate="content">
+                    <a>{{ dataValuesArray[de.id!][coc.id!].value }}</a>
+                  </ng-template>
+                </p-fileUpload>
               </td>
             </tr>
           </tbody>

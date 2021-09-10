@@ -246,7 +246,6 @@ export class DataValueComponent implements OnInit {
               dv.category_option_combination_id === coc.id
             );
           });
-          console.log(existing);
           this.dataValuesArray[de.id!][coc.id!] = {
             id: existing ? existing.id : undefined,
             value: existing ? existing.value : undefined,
@@ -261,6 +260,14 @@ export class DataValueComponent implements OnInit {
   }
 
   saveValue(dataValue: any): void {
+    if (
+      !this.admin_hierarchy_id ||
+      !this.financial_year_id ||
+      !this.period_id ||
+      !this.facility_id
+    ) {
+      return;
+    }
     dataValue = {
       ...dataValue,
       admin_hierarchy_id: this.admin_hierarchy_id,
@@ -279,6 +286,32 @@ export class DataValueComponent implements OnInit {
         this.dataValueService.create(dataValue).subscribe();
       }
     }
+  }
+
+  fileUploader($event: any, dataValue: DataValue): void {
+    if (
+      !this.admin_hierarchy_id ||
+      !this.financial_year_id ||
+      !this.period_id ||
+      !this.facility_id
+    ) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('admin_hierarchy_id', this.admin_hierarchy_id!.toString());
+    formData.append('financial_year_id', this.financial_year_id!.toString());
+    formData.append('period_id', this.period_id!.toString());
+    formData.append('facility_id', this.facility_id!.toString());
+    formData.append('data_element_id', dataValue.data_element_id!.toString());
+    formData.append(
+      'category_option_combination_id',
+      dataValue.category_option_combination_id!.toString()
+    );
+    formData.append('file', $event.files[0]);
+
+    this.dataValueService.upload(formData).subscribe((resp) => {
+      console.log(resp);
+    });
   }
 
   filterByCategoryCombo(id: number): DataElement[] {

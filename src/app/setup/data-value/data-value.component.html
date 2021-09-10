@@ -132,38 +132,38 @@
           style="width: 100%"
         >
           <thead class="p-datatable-thead">
-            <tr>
-              <th></th>
-              <th *ngFor="let coc of catComb.category_option_combinations">
-                {{ coc.name }}
-              </th>
-            </tr>
+          <tr>
+            <th></th>
+            <th *ngFor="let coc of catComb.category_option_combinations">
+              {{ coc.name }}
+            </th>
+          </tr>
           </thead>
           <tbody class="p-datatable-tbody">
-            <tr *ngFor="let de of filterByCategoryCombo(catComb.id!)">
-              <td>
-                {{ de.name }}
-              </td>
-              <td *ngFor="let coc of catComb.category_option_combinations">
-                <input
-                  *ngIf="de.value_type === 'TEXT'"
-                  autocomplete="off"
-                  id="{{ de.id! }}-{{ coc.id! }}"
-                  (blur)="saveValue(dataValuesArray[de.id!][coc.id!])"
-                  type="text"
-                  pInputText
-                  [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                />
-                <p-inputNumber
-                  *ngIf="de.value_type === 'NUMBER'"
-                  autocomplete="off"
-                  id="{{ de.id! }}-{{ coc.id! }}"
-                  (onBlur)="saveValue(dataValuesArray[de.id!][coc.id!])"
-                  type="text"
-                  [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                ></p-inputNumber>
-              </td>
-            </tr>
+          <tr *ngFor="let de of filterByCategoryCombo(catComb.id!)">
+            <td>
+              {{ de.name }}
+            </td>
+            <td *ngFor="let coc of catComb.category_option_combinations">
+              <input
+                *ngIf="de.value_type === 'TEXT'"
+                autocomplete="off"
+                id="{{ de.id! }}-{{ coc.id! }}"
+                (blur)="saveValue(dataValuesArray[de.id!][coc.id!])"
+                type="text"
+                pInputText
+                [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+              />
+              <p-inputNumber
+                *ngIf="de.value_type === 'NUMBER'"
+                autocomplete="off"
+                id="{{ de.id! }}-{{ coc.id! }}"
+                (onBlur)="saveValue(dataValuesArray[de.id!][coc.id!])"
+                type="text"
+                [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+              ></p-inputNumber>
+            </td>
+          </tr>
           </tbody>
         </table>
       </div>

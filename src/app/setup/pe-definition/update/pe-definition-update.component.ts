@@ -20,6 +20,8 @@ import { PeFormService } from "src/app/setup/pe-form/pe-form.service";
 import { PeDefinition } from "../pe-definition.model";
 import { PeDefinitionService } from "../pe-definition.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {PeSelectOption} from "../../pe-select-option/pe-select-option.model";
+import {PeSelectOptionService} from "../../pe-select-option/pe-select-option.service";
 
 @Component({
   selector: "app-pe-definition-update",
@@ -35,6 +37,9 @@ export class PeDefinitionUpdateComponent implements OnInit {
   peForms?: PeForm[] = [];
   units?: PlanrepEnum[] = [];
   valueTypes?: PlanrepEnum[] = [];
+  peOutPutValues?: PlanrepEnum[] = [];
+  peInPutValues?: PlanrepEnum[] = [];
+  peSelectOption?: PeSelectOption[] = [];
 
   /**
    * Declare form
@@ -63,6 +68,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
     protected peFormService: PeFormService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
+    protected peSelectOptionService: PeSelectOptionService,
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected enumService: EnumService
@@ -84,8 +90,17 @@ export class PeDefinitionUpdateComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
       );
+
+    this.peSelectOptionService
+      .query({ columns: ["id", "name"], parent_id: null })
+      .subscribe(
+        (resp: CustomResponse<PeSelectOption[]>) => (this.peSelectOption = resp.data)
+      );
+
     this.units = this.enumService.get("units");
     this.valueTypes = this.enumService.get("valueTypes");
+    this.peOutPutValues = this.enumService.get("peOutPutValues");
+    this.peInPutValues = this.enumService.get("peInPutValues");
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 

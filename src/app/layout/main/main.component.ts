@@ -562,6 +562,16 @@ export class MainComponent implements OnInit {
           icon: 'pi pi-fw pi-link',
           routerLink: 'admin-hierarchy-ceiling',
         },
+        {
+          label: 'Personal Emolument Budget Submission Items',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'pe-item',
+        },
+        {
+          label: 'Ceiling Amounts',
+          icon: 'pi pi-fw pi-link',
+          routerLink: 'admin-hierarchy-ceiling',
+        },
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],
     },

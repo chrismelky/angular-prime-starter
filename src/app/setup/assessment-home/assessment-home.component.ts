@@ -289,6 +289,6 @@ export class AssessmentHomeComponent implements OnInit {
    *
    */
   assess(rowData: any) {
-    this.router.navigate(['received-assessment'],{ state: rowData });
+    this.router.navigate(['cas-assessment-criteria'],{ state: rowData });
   }
 }

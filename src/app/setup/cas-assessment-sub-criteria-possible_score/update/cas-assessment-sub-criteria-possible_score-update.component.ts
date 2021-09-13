@@ -17,8 +17,6 @@ import { CasAssessmentSubCriteriaOptionService } from "src/app/setup/cas-assessm
 import { CasAssessmentSubCriteriaPossibleScore } from "../cas-assessment-sub-criteria-possible_score.model";
 import { CasAssessmentSubCriteriaPossibleScoreService } from "../cas-assessment-sub-criteria-possible_score.service";
 import { ToastService } from "src/app/shared/toast.service";
-import {CasAssessmentSubCriteriaService} from "../../cas-assessment-sub-criteria/cas-assessment-sub-criteria.service";
-import {CasAssessmentSubCriteria} from "../../cas-assessment-sub-criteria/cas-assessment-sub-criteria.model";
 
 @Component({
   selector: "app-cas-assessment-sub-criteria-possible_score-update",

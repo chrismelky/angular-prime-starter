@@ -236,20 +236,6 @@ const routes: Routes = [
           ).then((m) => m.CasAssessmentStateModule),
       },
       {
-        path: "cas-assessment-criteria",
-        loadChildren: () =>
-          import(
-            "../setup/cas-assessment-criteria/cas-assessment-criteria.module"
-          ).then((m) => m.CasAssessmentCriteriaModule),
-      },
-      {
-        path: "cas-assessment-sub-criteria",
-        loadChildren: () =>
-          import(
-            "../setup/cas-assessment-sub-criteria/cas-assessment-sub-criteria.module"
-          ).then((m) => m.CasAssessmentSubCriteriaModule),
-      },
-      {
         path: "cas-assessment-sub-criteria-option",
         loadChildren: () =>
           import(

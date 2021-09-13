@@ -6,17 +6,28 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { DataValueComponent } from "./data-value.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { DataValueComponent } from './data-value.component';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: DataValueComponent,
     data: {
-      defaultSort: "id:asc",
+      defaultSort: 'id:asc',
     },
+    children: [
+      {
+        path: ':id',
+        component: DataValueComponent,
+        // outlet: 'dataValue',
+        data: {
+          defaultSort: 'id:asc',
+        },
+        //canActivate: [UserRouteAccessService],
+      },
+    ],
     //canActivate: [UserRouteAccessService],
   },
 ];

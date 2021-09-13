@@ -83,6 +83,7 @@ body {
           .p-menuitem-icon,
           .p-menuitem-text {
             color: #f3a71f;
+            line-height: 18px;
           }
         }
       }
@@ -422,7 +423,9 @@ i.clear {
 
     .p-inputtext {
       border-radius: 2px;
+      width: auto;
     }
+
   }
 
 }

@@ -574,9 +574,9 @@ const routes: Routes = [
           ).then((m) => m.FacilityCustomDetailMappingModule),
       },
       {
-        path: "pe-item",
+        path: 'pe-item',
         loadChildren: () =>
-          import("../budgeting/pe-item/pe-item.module").then(
+          import('../budgeting/pe-item/pe-item.module').then(
             (m) => m.PeItemModule
           ),
       },
@@ -598,6 +598,13 @@ const routes: Routes = [
           import(
             '../setup/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module'
           ).then((m) => m.AdminHierarchyCeilingModule),
+      },
+      {
+        path: 'option-set-value',
+        loadChildren: () =>
+          import('../setup/option-set-value/option-set-value.module').then(
+            (m) => m.OptionSetValueModule
+          ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

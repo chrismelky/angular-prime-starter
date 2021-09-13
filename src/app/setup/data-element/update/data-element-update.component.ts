@@ -5,27 +5,27 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
-import {DataSet} from "src/app/setup/data-set/data-set.model";
-import {DataSetService} from "src/app/setup/data-set/data-set.service";
-import {CategoryCombination} from "src/app/setup/category-combination/category-combination.model";
-import {CategoryCombinationService} from "src/app/setup/category-combination/category-combination.service";
-import {OptionSet} from "src/app/setup/option-set/option-set.model";
-import {OptionSetService} from "src/app/setup/option-set/option-set.service";
-import {DataElement} from "../data-element.model";
-import {DataElementService} from "../data-element.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { DataSet } from 'src/app/setup/data-set/data-set.model';
+import { DataSetService } from 'src/app/setup/data-set/data-set.service';
+import { CategoryCombination } from 'src/app/setup/category-combination/category-combination.model';
+import { CategoryCombinationService } from 'src/app/setup/category-combination/category-combination.service';
+import { OptionSet } from 'src/app/setup/option-set/option-set.model';
+import { OptionSetService } from 'src/app/setup/option-set/option-set.service';
+import { DataElement } from '../data-element.model';
+import { DataElementService } from '../data-element.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-data-element-update",
-  templateUrl: "./data-element-update.component.html",
+  selector: 'app-data-element-update',
+  templateUrl: './data-element-update.component.html',
 })
 export class DataElementUpdateComponent implements OnInit {
   isSaving = false;
@@ -48,7 +48,7 @@ export class DataElementUpdateComponent implements OnInit {
     question_number: [null, []],
     data_set_id: [null, [Validators.required]],
     category_combination_id: [null, [Validators.required]],
-    option_set_id: [null, [Validators.required]],
+    option_set_id: [null, []],
     sort_order: [null, []],
     value_type: [null, [Validators.required]],
     is_required: [false, []],
@@ -64,27 +64,26 @@ export class DataElementUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected enumService: EnumService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.dataSetService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<DataSet[]>) => (this.dataSets = resp.data)
       );
     this.categoryCombinationService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CategoryCombination[]>) =>
           (this.categoryCombinations = resp.data)
       );
     this.optionSetService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<OptionSet[]>) => (this.optionSets = resp.data)
       );
-    this.valueTypes = this.enumService.get("valueTypes");
+    this.valueTypes = this.enumService.get('valueTypes');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -129,8 +128,7 @@ export class DataElementUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -163,18 +161,18 @@ export class DataElementUpdateComponent implements OnInit {
   protected createFromForm(): DataElement {
     return {
       ...new DataElement(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      display_name: this.editForm.get(["display_name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      question_number: this.editForm.get(["question_number"])!.value,
-      data_set_id: this.editForm.get(["data_set_id"])!.value,
-      category_combination_id: this.editForm.get(["category_combination_id"])!
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      display_name: this.editForm.get(['display_name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      question_number: this.editForm.get(['question_number'])!.value,
+      data_set_id: this.editForm.get(['data_set_id'])!.value,
+      category_combination_id: this.editForm.get(['category_combination_id'])!
         .value,
-      option_set_id: this.editForm.get(["option_set_id"])!.value,
-      sort_order: this.editForm.get(["sort_order"])!.value,
-      value_type: this.editForm.get(["value_type"])!.value,
-      is_required: this.editForm.get(["is_required"])!.value,
+      option_set_id: this.editForm.get(['option_set_id'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
+      value_type: this.editForm.get(['value_type'])!.value,
+      is_required: this.editForm.get(['is_required'])!.value,
     };
   }
 }

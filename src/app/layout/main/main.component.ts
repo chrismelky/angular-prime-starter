@@ -138,9 +138,9 @@ export class MainComponent implements OnInit {
               routerLink: 'bank-account',
             },
             {
-              label: "Ceilings",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "fund-source-budget-class",
+              label: 'Ceilings',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'fund-source-budget-class',
             },
           ],
         },
@@ -277,11 +277,6 @@ export class MainComponent implements OnInit {
               routerLink: 'reference-document_type',
             },
             {
-              label: 'Strategic Plans',
-              icon: 'pi pi-fw pi-link',
-              routerLink: 'strategic-plan',
-            },
-            {
               label: 'Guidelines',
               icon: 'pi pi-fw pi-link',
               routerLink: 'reference-document',
@@ -404,7 +399,7 @@ export class MainComponent implements OnInit {
         },
         {
           label: 'Comprehensive Plans',
-          icon: 'pi pi-fw pi-link',
+          icon: 'pi pi-fw pi-angle-down',
           items: [
             {
               label: 'Cas Plans',
@@ -531,9 +526,14 @@ export class MainComponent implements OnInit {
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
 
     {
-      label: "Planning",
-      icon: "pi pi-pw pi-list",
+      label: 'Planning',
+      icon: 'pi pi-pw pi-list',
       items: [
+        {
+          label: 'Strategic Plans',
+          icon: 'pi pi-fw pi-link',
+          routerLink: 'strategic-plan',
+        },
         {
           label: 'Comprehensive Plans',
           icon: 'pi pi-fw pi-angle-down',
@@ -558,14 +558,14 @@ export class MainComponent implements OnInit {
       icon: 'pi pi-pw pi-money-bill',
       items: [
         {
-          label: "Personal Emolument Budget Submission Items",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "pe-item",
+          label: 'Ceiling Amounts',
+          icon: 'pi pi-fw pi-link',
+          routerLink: 'admin-hierarchy-ceiling',
         },
         {
-          label: "Ceiling Amounts",
-          icon: "pi pi-fw pi-link",
-          routerLink: "admin-hierarchy-ceiling",
+          label: 'PE Budget Submission Items',
+          icon: 'pi pi-fw pi-link',
+          routerLink: 'pe-item',
         },
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],
@@ -578,13 +578,13 @@ export class MainComponent implements OnInit {
       ],
     },
     {
-      label: "Assessment",
-      icon: "pi pi-pw pi-play",
+      label: 'Assessment',
+      icon: 'pi pi-pw pi-play',
       items: [
         {
-          label: "Assessor Assignments",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "assessor-assignment",
+          label: 'Assessor Assignments',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'assessor-assignment',
         },
         /**====Planrep Assessment Menu Generator Hook: Dont Delete====*/
       ],

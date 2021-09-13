@@ -5,29 +5,32 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {Section} from "src/app/setup/section/section.model";
+import {SectionService} from "src/app/setup/section/section.service";
+import {AdminHierarchy} from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import {AdminHierarchyService} from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
 
-import { User } from "./user.model";
-import { UserService } from "./user.service";
-import { UserUpdateComponent } from "./update/user-update.component";
+import {User} from "./user.model";
+import {UserService} from "./user.service";
+import {UserUpdateComponent} from "./update/user-update.component";
+import {FormControl, Validators} from "@angular/forms";
+import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
+import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
 
 @Component({
   selector: "app-user",
@@ -40,6 +43,7 @@ export class UserComponent implements OnInit {
 
   sections?: Section[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
+  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
 
   cols = [
     {
@@ -109,28 +113,33 @@ export class UserComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
+  adminHierarchy!: AdminHierarchy;
+  admin_hierarchy_position!: number;
+  adminHierarchyControl = new FormControl(null, [Validators.required]);
+  adminHierarchyLevelControl = new FormControl(null, [Validators.required]);
 
   constructor(
     protected userService: UserService,
     protected sectionService: SectionService,
     protected adminHierarchyService: AdminHierarchyService,
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.sectionService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
     this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
@@ -141,21 +150,22 @@ export class UserComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_id) {
+    if (!this.adminHierarchy.id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.userService
-      .query({
+      .filterByAdminHierarchyIdAndPosition({
         page: pageToLoad,
-        per_page: this.per_page,
+        perPage: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
+        adminHierarchyId: this.adminHierarchy.id,
+        position: this.admin_hierarchy_position,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -270,7 +280,7 @@ export class UserComponent implements OnInit {
   createOrUpdate(user?: User): void {
     const data: User = user ?? {
       ...new User(),
-      admin_hierarchy_id: this.admin_hierarchy_id,
+      admin_hierarchy_id: this.adminHierarchy.id,
     };
     const ref = this.dialogService.open(UserUpdateComponent, {
       data,
@@ -332,5 +342,19 @@ export class UserComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading User");
+  }
+
+  onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
+    this.adminHierarchy = adminHierarchy;
+    this.loadLowerLevel(this.adminHierarchy.admin_hierarchy_position);
+  }
+
+  loadLowerLevel(position: number | undefined) {
+    this.adminHierarchyLevelService
+      .lowerLevels(position)
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
+          (this.adminHierarchyLevels = resp.data)
+      );
   }
 }

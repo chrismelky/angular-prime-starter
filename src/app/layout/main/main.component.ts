@@ -138,9 +138,9 @@ export class MainComponent implements OnInit {
               routerLink: "bank-account",
             },
             {
-              label: "Ceilings",
-              icon: "pi pi-fw pi-arrow-right",
-              routerLink: "fund-source-budget-class",
+              label: 'Ceilings',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'fund-source-budget-class',
             },
           ],
         },
@@ -402,9 +402,12 @@ export class MainComponent implements OnInit {
             },
           ],
         },
-        {
-          label: "Comprehensive Plans",
-          icon: "pi pi-fw pi-link",
+{
+  label: "Comprehensive Plans",
+    icon:"pi pi-fw pi-link",
+},{
+          label: 'Comprehensive Plans',
+          icon: 'pi pi-fw pi-angle-down',
           items: [
             {
               label: "Cas Plans",
@@ -533,9 +536,18 @@ export class MainComponent implements OnInit {
       label: "Planning",
       icon: "pi pi-pw pi-list",
       items: [
+      {
+        label:"Comprehensive Plans",
+        icon:"pi pi-fw pi-angle-down",
+    },
+      {
+          label: 'Strategic Plans',
+          icon: 'pi pi-fw pi-link',
+          routerLink: 'strategic-plan',
+        },
         {
-          label: "Comprehensive Plans",
-          icon: "pi pi-fw pi-angle-down",
+          label: 'Comprehensive Plans',
+          icon: 'pi pi-fw pi-angle-down',
           items: [
             {
               label: "Baseline Data",
@@ -557,9 +569,14 @@ export class MainComponent implements OnInit {
       icon: "pi pi-pw pi-money-bill",
       items: [
         {
-          label: "Ceiling Amounts",
-          icon: "pi pi-fw pi-link",
-          routerLink: "admin-hierarchy-ceiling",
+          label: 'Ceiling Amounts',
+          icon: 'pi pi-fw pi-link',
+          routerLink: 'admin-hierarchy-ceiling',
+        },
+        {
+          label: 'PE Budget Submission Items',
+          icon: 'pi pi-fw pi-link',
+          routerLink: 'pe-item',
         },
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],
@@ -572,8 +589,8 @@ export class MainComponent implements OnInit {
       ],
     },
     {
-      label: "Assessment",
-      icon: "pi pi-pw pi-play",
+      label: 'Assessment',
+      icon: 'pi pi-pw pi-play',
       items: [
         {
           label: "Comprehensive Assessment",

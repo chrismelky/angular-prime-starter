@@ -11,7 +11,6 @@ import {combineLatest, Observable} from "rxjs";
 import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
 
 import { CustomResponse } from "../../utils/custom-response";
 import {
@@ -32,6 +31,7 @@ import { PeDefinitionUpdateComponent } from "./update/pe-definition-update.compo
 import {NationalReference} from "../national-reference/national-reference.model";
 import {finalize} from "rxjs/operators";
 import {TreeTable} from "primeng/treetable";
+import {PeSelectOption} from "../pe-select-option/pe-select-option.model";
 
 @Component({
   selector: "app-pe-definition",
@@ -48,6 +48,7 @@ export class PeDefinitionComponent implements OnInit {
   peForms?: PeForm[] = [];
   units?: PlanrepEnum[] = [];
   valueTypes?: PlanrepEnum[] = [];
+  peSelectOption?: PeSelectOption[] = [];
 
   cols = [
     {
@@ -115,6 +116,7 @@ export class PeDefinitionComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
       );
+
     this.units = this.enumService.get("units");
     this.valueTypes = this.enumService.get("valueTypes");
     this.handleNavigation();

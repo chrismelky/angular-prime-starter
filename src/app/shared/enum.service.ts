@@ -65,6 +65,7 @@ export class EnumService {
       },
     ],
     valueTypes: [
+<<<<<<< HEAD
       { display: "Number", value: "NUMBER" },
       { display: "Username", value: "USERNAME" },
       { display: "Positive Integer", value: "POSITIVE_INTEGER" },
@@ -117,6 +118,24 @@ export class EnumService {
       { display: "Long Text", value: "LONG_TEXT" },
       { display: "Percent", value: "PERCENT" },
       { display: "Integer", value: "INTEGER" },
+=======
+      { display: 'Number', value: 'NUMBER' },
+      { display: 'Username', value: 'USERNAME' },
+      { display: 'Positive Integer', value: 'POSITIVE_INTEGER' },
+      { display: 'Negative Integer', value: 'NEGATIVE_INTEGER' },
+      { display: 'Coordinate', value: 'COORDNATE' },
+      { display: 'File', value: 'FILE' },
+      { display: 'URL', value: 'URL' },
+      { display: 'Boolean', value: 'BOOLEAN' },
+      { display: 'Text', value: 'TEXT' },
+      { display: 'Email', value: 'EMAIL' },
+      { display: 'Date', value: 'DATE' },
+      { display: 'Time', value: 'TIME' },
+      { display: 'Phone Number', value: 'PHONE_NUMBER' },
+      { display: 'Long Text', value: 'LONG_TEXT' },
+      { display: 'Percent', value: 'PERCENT' },
+      { display: 'Integer', value: 'INTEGER' },
+>>>>>>> 6948e153f35d64b2752f5395e8eadc911ddc6fd5
       {
         display: "Integer, Zero or Positive",
         value: "INTEGER_ZERO_OR_POSITIVE",
@@ -247,10 +266,28 @@ export class EnumService {
       { display: "Annual", value: "Annual" },
     ],
     budgetTypes: [
-      { display: "CURRENT", value: "CURRENT" },
-      { display: "APPROVED", value: "APPROVED" },
-      { display: "CARRYOVER", value: "CARRYOVER" },
-      { display: "SUPPLEMENTARY", value: "SUPPLEMENTARY" },
+      { display: 'CURRENT', value: 'CURRENT' },
+      { display: 'APPROVED', value: 'APPROVED' },
+      { display: 'CARRYOVER', value: 'CARRYOVER' },
+      { display: 'SUPPLEMENTARY', value: 'SUPPLEMENTARY' },
+    ],
+
+    peOutPutValues: [
+      { display: "Number", value: "NUMBER" },
+      { display: "Currency", value: "CURRENCY" },
+    ],
+
+    peInPutValues: [
+      { display: "Number", value: "NUMBER" },
+      {
+        display: "Integer, Zero or Positive",
+        value: "INTEGER_ZERO_OR_POSITIVE",
+      },
+      { display: "Currency", value: "CURRENCY" },
+      { display: "select", value: "SELECT" },
+      { display: "Financial Year", value: "FY" },
+      { display: "Formula", value: "FORMULA" },
+      { display: "TEXT", value: "TEXT" },
     ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };

@@ -18,26 +18,27 @@ import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { User } from "src/app/setup/user/user.model";
-import { UserService } from "src/app/setup/user/user.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { AdminHierarchyLevel } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
-import { AdminHierarchyLevelService } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
-import { CasAssessmentRound } from "src/app/setup/cas-assessment-round/cas-assessment-round.model";
-import { CasAssessmentRoundService } from "src/app/setup/cas-assessment-round/cas-assessment-round.service";
-import { Period } from "src/app/setup/period/period.model";
-import { PeriodService } from "src/app/setup/period/period.service";
-import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
-import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+
 
 import { AssessorAssignment } from "./assessor-assignment.model";
 import { AssessorAssignmentService } from "./assessor-assignment.service";
 import { AssessorAssignmentUpdateComponent } from "./update/assessor-assignment-update.component";
+import {CasAssessmentCategoryVersion} from "../cas-assessment-category-version/cas-assessment-category-version.model";
+import {User} from "../user/user.model";
+import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import {AdminHierarchy} from "../admin-hierarchy/admin-hierarchy.model";
+import {ToastService} from "../../shared/toast.service";
+import {UserService} from "../user/user.service";
+import {HelperService} from "../../utils/helper.service";
+import {Period} from "../period/period.model";
+import {PeriodService} from "../period/period.service";
+import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
+import {CasAssessmentCategoryVersionService} from "../cas-assessment-category-version/cas-assessment-category-version.service";
+import {CasAssessmentRound} from "../cas-assessment-round/cas-assessment-round.model";
+import {FinancialYear} from "../financial-year/financial-year.model";
+import {CasAssessmentRoundService} from "../cas-assessment-round/cas-assessment-round.service";
+import {FinancialYearService} from "../financial-year/financial-year.service";
+import {AdminHierarchyService} from "../admin-hierarchy/admin-hierarchy.service";
 
 @Component({
   selector: "app-assessor-assignment",

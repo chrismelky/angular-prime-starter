@@ -7,6 +7,7 @@ export class StrategicPlan {
     public name?: string,
     public description?: string,
     public is_active?: string,
-    public url?: string
+    public url?: string,
+    public file?: File
   ) {}
 }

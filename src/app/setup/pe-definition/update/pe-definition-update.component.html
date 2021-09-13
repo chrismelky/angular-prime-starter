@@ -122,7 +122,7 @@
               [showClear]="true"
               class="p-inputtext-sm"
               appendTo="body"
-              [options]="valueTypes!"
+              [options]="peInPutValues!"
               formControlName="type"
             ></p-dropdown>
            <label for="inputType">Input type </label>
@@ -142,31 +142,34 @@
         </div>
 
         <div class="p-field p-col-12 p-md-4" fxFlex>
-            <span class="p-float-label">
-            <input
+          <span class="p-float-label">
+            <p-dropdown
               id="select_option"
-              type="text"
-              pInputText
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              [showClear]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="peSelectOption!"
               formControlName="select_option"
-            />
-            <label for="select_option">Select Option </label>
-          </span>
-            <span
-              *ngIf="
-              editForm.get('select_option')!.invalid &&
-              (editForm.get('select_option')!.dirty ||
-                editForm.get('select_option')!.touched ||
+            ></p-dropdown>
+           <label for="select_option">Options </label>
+        </span>
+          <span
+            *ngIf="
+            editForm.get('select_option')!.invalid &&
+            (editForm.get('select_option')!.dirty ||
+              editForm.get('select_option')!.touched ||
                 formError)
             "
-            >
-            <small
-              class="p-error"
-              *ngIf="editForm.get('select_option')?.errors?.required"
-            >Select Option is required.</small
+          >
+            <small class="p-error" *ngIf="editForm.get('select_option')?.errors?.required"
+            >Option is required.</small
             >
           </span>
         </div>
-
 
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
@@ -179,7 +182,7 @@
               [showClear]="true"
               class="p-inputtext-sm"
               appendTo="body"
-              [options]="valueTypes!"
+              [options]="peOutPutValues!"
               formControlName="output_type"
             ></p-dropdown>
            <label for="output_type">Output Type </label>

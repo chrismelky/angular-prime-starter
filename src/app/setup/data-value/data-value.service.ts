@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { DataValue } from "./data-value.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { DataValue } from './data-value.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class DataValueService {
-  public resourceUrl = "api/data_values";
+  public resourceUrl = 'api/data_values';
 
   constructor(protected http: HttpClient) {}
 
@@ -23,6 +23,13 @@ export class DataValueService {
     return this.http.post<CustomResponse<DataValue>>(
       this.resourceUrl,
       dataValue
+    );
+  }
+
+  upload(formDate: FormData): Observable<CustomResponse<DataValue>> {
+    return this.http.post<CustomResponse<DataValue>>(
+      `${this.resourceUrl}/upload`,
+      formDate
     );
   }
 

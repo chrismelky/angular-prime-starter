@@ -18,19 +18,17 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_criteria_id"
+                id="financial_year_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="casAssessmentCriteria!"
+                [options]="financialYears!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="cas_assessment_criteria_id"
+                [(ngModel)]="financial_year_id"
               ></p-dropdown>
-              <label for="cas_assessment_criteria_id"
-                >Cas Assessment Criteria
-              </label>
+              <label for="financial_year_id">Financial Year </label>
             </span>
           </div>
         </div>
@@ -42,7 +40,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -60,7 +57,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -81,24 +77,7 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            >
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['name']"
-                  />
-                  <label for="name">Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-            </div>
+            ></div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -107,7 +86,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -132,93 +110,59 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="casAssessmentSubCriteria!"
+      [value]="assessmentHomes!"
+      [scrollable]="true"
+      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Cas Assessment Sub Criteria</span>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!cas_assessment_criteria_id"
-            (click)="createOrUpdate()"
-            label="Add Cas Assessment Sub Criteria"
-          ></button>
+          <span class="card-header-text">Comprehensive Assessments</span>
         </div>
       </ng-template>
-      <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="casAssessmentSubCriteria?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
+      <ng-template pTemplate="header">
+        <tr *ngIf="assessmentHomes?.length">
           <th></th>
+          <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
-          </td>
+          <td>{{rowData.cas_assessment_category.name}}</td>
           <td>
-            <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" fxLayoutGap="2px">
-                <button
-                  pButton
-                  pRipple
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pRipple
-                  pTooltip="Delete"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-trash
-              "
-                  (click)="delete(rowData)"
-                ></button>
-              </div>
-            </div>
+            <button pButton type="button" class="p-button-plain p-button-info p-button-icon" label="Received Assessments"
+                 style="margin-left: auto" (click)="receivedAssessment(rowData)"
+            ></button>
+            <button pButton type="button" class="p-button-plain p-button-success p-button-icon" label="My Assessments"
+                    (click)="myAssessment(rowData)" style="margin-left: 16px"
+            ></button>
+            <button pButton type="button" class="p-button-plain p-button-warning p-button-icon" label="Assess"
+                    (click)="assess(rowData)" style="margin-left: 16px"
+            ></button>
           </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="footer">
+        <p-paginator
+          #paginator
+          [alwaysShow]="assessmentHomes?.length! > 0"
+          [rows]="per_page"
+          dropdownAppendTo="body"
+          [showCurrentPageReport]="true"
+          [totalRecords]="totalItems"
+          [rowsPerPageOptions]="perPageOptions"
+          (onPageChange)="pageChanged($event)"
+        ></p-paginator>
+      </ng-template>
     </p-table>
-    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
-      <p-paginator
-        #paginator
-        [alwaysShow]="casAssessmentSubCriteria?.length! > 0"
-        [rows]="per_page"
-        dropdownAppendTo="body"
-        [showCurrentPageReport]="true"
-        [totalRecords]="totalItems"
-        [rowsPerPageOptions]="perPageOptions"
-        (onPageChange)="pageChanged($event)"
-      ></p-paginator>
-    </div>
   </p-card>
 </div>
 
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Cas Assessment Sub Criteria"
+  header="Confirmation Delete Assessment Home"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

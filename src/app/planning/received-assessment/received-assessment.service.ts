@@ -11,41 +11,41 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { CasAssessmentCriteria } from "./cas-assessment-criteria.model";
+import { ReceivedAssessment } from "./received-assessment.model";
 
 @Injectable({ providedIn: "root" })
-export class CasAssessmentCriteriaService {
-  public resourceUrl = "api/cas_criterias";
+export class ReceivedAssessmentService {
+  public resourceUrl = "api/received_assessments";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    casAssessmentCriteria: CasAssessmentCriteria
-  ): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.post<CustomResponse<CasAssessmentCriteria>>(
+    receivedAssessment: ReceivedAssessment
+  ): Observable<CustomResponse<ReceivedAssessment>> {
+    return this.http.post<CustomResponse<ReceivedAssessment>>(
       this.resourceUrl,
-      casAssessmentCriteria
+      receivedAssessment
     );
   }
 
   update(
-    casAssessmentCriteria: CasAssessmentCriteria
-  ): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.put<CustomResponse<CasAssessmentCriteria>>(
-      `${this.resourceUrl}/${casAssessmentCriteria.id}`,
-      casAssessmentCriteria
+    receivedAssessment: ReceivedAssessment
+  ): Observable<CustomResponse<ReceivedAssessment>> {
+    return this.http.put<CustomResponse<ReceivedAssessment>>(
+      `${this.resourceUrl}/${receivedAssessment.id}`,
+      receivedAssessment
     );
   }
 
-  find(id: number): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.get<CustomResponse<CasAssessmentCriteria>>(
+  find(id: number): Observable<CustomResponse<ReceivedAssessment>> {
+    return this.http.get<CustomResponse<ReceivedAssessment>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<CasAssessmentCriteria[]>> {
+  query(req?: any): Observable<CustomResponse<ReceivedAssessment[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<CasAssessmentCriteria[]>>(
+    return this.http.get<CustomResponse<ReceivedAssessment[]>>(
       this.resourceUrl,
       { params: options }
     );

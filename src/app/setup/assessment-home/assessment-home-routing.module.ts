@@ -8,12 +8,12 @@
 
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { CasAssessmentCriteriaComponent } from "./cas-assessment-criteria.component";
+import { AssessmentHomeComponent } from "./assessment-home.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: CasAssessmentCriteriaComponent,
+    component: AssessmentHomeComponent,
     data: {
       defaultSort: "id:asc",
     },
@@ -25,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class CasAssessmentCriteriaRoutingModule {}
+export class AssessmentHomeRoutingModule {}

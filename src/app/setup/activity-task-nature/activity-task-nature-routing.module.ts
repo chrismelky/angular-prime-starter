@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { ActivityTaskNatureComponent } from "./activity-task-nature.component";
+import {NgModule} from "@angular/core";
+import {RouterModule, Routes} from "@angular/router";
+import {ActivityTaskNatureComponent} from "./activity-task-nature.component";
 
 const routes: Routes = [
   {
@@ -25,4 +25,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ActivityTaskNatureRoutingModule {}
+export class ActivityTaskNatureRoutingModule {
+}

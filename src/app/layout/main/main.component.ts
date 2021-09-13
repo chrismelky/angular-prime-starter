@@ -277,11 +277,6 @@ export class MainComponent implements OnInit {
               routerLink: 'reference-document_type',
             },
             {
-              label: 'Strategic Plans',
-              icon: 'pi pi-fw pi-link',
-              routerLink: 'strategic-plan',
-            },
-            {
               label: 'Guidelines',
               icon: 'pi pi-fw pi-link',
               routerLink: 'reference-document',
@@ -535,6 +530,11 @@ export class MainComponent implements OnInit {
       icon: 'pi pi-pw pi-list',
       items: [
         {
+          label: 'Strategic Plans',
+          icon: 'pi pi-fw pi-link',
+          routerLink: 'strategic-plan',
+        },
+        {
           label: 'Comprehensive Plans',
           icon: 'pi pi-fw pi-angle-down',
           items: [
@@ -563,14 +563,9 @@ export class MainComponent implements OnInit {
           routerLink: 'admin-hierarchy-ceiling',
         },
         {
-          label: 'Personal Emolument Budget Submission Items',
-          icon: 'pi pi-fw pi-arrow-right',
-          routerLink: 'pe-item',
-        },
-        {
-          label: 'Ceiling Amounts',
+          label: 'PE Budget Submission Items',
           icon: 'pi pi-fw pi-link',
-          routerLink: 'admin-hierarchy-ceiling',
+          routerLink: 'pe-item',
         },
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],

@@ -1,18 +1,18 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppComponent } from './app.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { CommonModule } from '@angular/common';
-import { NgxWebstorageModule } from 'ngx-webstorage';
-import { MessageService } from 'primeng/api';
-import { MessageModule } from 'primeng/message';
-import { ErrorHandlerInterceptor } from './interceptors/error-handler.interceptor';
-import { AuthExpiredInterceptor } from './interceptors/auth-expired.interceptor';
-import { RippleModule } from 'primeng/ripple';
+import {AppRoutingModule} from './app-routing.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {AppComponent} from './app.component';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import {AuthInterceptor} from './interceptors/auth.interceptor';
+import {CommonModule} from '@angular/common';
+import {NgxWebstorageModule} from 'ngx-webstorage';
+import {MessageService} from 'primeng/api';
+import {MessageModule} from 'primeng/message';
+import {ErrorHandlerInterceptor} from './interceptors/error-handler.interceptor';
+import {AuthExpiredInterceptor} from './interceptors/auth-expired.interceptor';
+import {RippleModule} from 'primeng/ripple';
 
 @NgModule({
   declarations: [AppComponent],
@@ -50,4 +50,5 @@ import { RippleModule } from 'primeng/ripple';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+}

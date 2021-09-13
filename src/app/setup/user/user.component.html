@@ -140,12 +140,11 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="users?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'section_id'">
+            Allocation <p-sortIcon [field]="'section_id'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -154,6 +153,9 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            {{ rowData.section?.name }}
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

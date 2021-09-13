@@ -81,11 +81,11 @@ export class UserComponent implements OnInit {
       header: "Mobile Number",
       sort: false,
     },
-    {
+    /*{
       field: "section_id",
       header: "Section ",
       sort: false,
-    },
+    },*/
     {
       field: "facilities",
       header: "Facilities",
@@ -284,6 +284,7 @@ export class UserComponent implements OnInit {
     };
     const ref = this.dialogService.open(UserUpdateComponent, {
       data,
+      width: '50%',
       header: "Create/Update User",
     });
     ref.onClose.subscribe((result) => {

@@ -31,6 +31,9 @@ import {UserUpdateComponent} from "./update/user-update.component";
 import {FormControl, Validators} from "@angular/forms";
 import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
 import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import {Role} from "../role/role.model";
+import {RolePermissionComponent} from "../role/role-permission/role-permission.component";
+import {UserRoleComponent} from "./user-role/user-role.component";
 
 @Component({
   selector: "app-user",
@@ -365,5 +368,20 @@ export class UserComponent implements OnInit {
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
+  }
+
+  roles(rowData: User): void {
+    const data = {
+      user: rowData
+    }
+    const ref = this.dialogService.open(UserRoleComponent, {
+      data,
+      width: '60%',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

@@ -623,13 +623,6 @@ const routes: Routes = [
             (m) => m.PermissionModule
           ),
       },
-      {
-        path: "role-permission",
-        loadChildren: () =>
-          import("../setup/role/role-permission/role-permission.module").then(
-            (m) => m.RolePermissionModule
-          ),
-      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

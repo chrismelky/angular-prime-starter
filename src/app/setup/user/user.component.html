@@ -162,6 +162,17 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pTooltip="Roles"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-table
+              "
+                  (click)="roles(rowData)"
+                ></button>
+                <button
+                  pButton
                   pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"

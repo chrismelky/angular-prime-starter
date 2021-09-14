@@ -177,8 +177,8 @@
       [resizableColumns]="true"
       [responsive]="true"
       [autoLayout]="true"
+      editMode="row"
       [loading]="isLoading"
-      [columns]="cols"
       [value]="adminHierarchyCeilings!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
@@ -196,7 +196,7 @@
             "
               (click)="lock(0)"
               label="Lock All Levels"
-              *ngIf="position===1 && admin_hierarchy_position===3"
+              *ngIf="position===1 && admin_hierarchy_position===3 && adminHierarchyCeilings!.length >0"
             ></button> &nbsp;
             <button
               pButton
@@ -207,7 +207,29 @@
             "
               (click)="lock(1)"
               label="Unlock All Levels "
-              *ngIf="position===1 && admin_hierarchy_position===3"
+              *ngIf="position===1 && admin_hierarchy_position===3 && adminHierarchyCeilings!.length >0"
+            ></button> &nbsp;
+            <button
+              pButton
+              icon="pi pi-download"
+              class="p-button-raised"
+              [disabled]="
+              !admin_hierarchy_id || !financial_year_id || !budget_type
+            "
+              (click)="lock(0)"
+              label="Downolad Teplete"
+              *ngIf="position===1 && admin_hierarchy_position===3 && adminHierarchyCeilings!.length >0"
+            ></button>&nbsp;
+            <button
+              pButton
+              icon="pi pi-upload"
+              class="p-button-raised"
+              [disabled]="
+              !admin_hierarchy_id || !financial_year_id || !budget_type
+            "
+              (click)="lock(0)"
+              label="Upload Ceiling"
+              *ngIf="position===1 && admin_hierarchy_position===3 && adminHierarchyCeilings!.length >0"
             ></button> &nbsp;
             <button
               pButton
@@ -220,49 +242,60 @@
               label="Initiate Ceiling"
               *ngIf="position===1 && admin_hierarchy_position===3"
             ></button>
+            <p-splitButton  *ngIf="position===1 && admin_hierarchy_position===3" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
+              !admin_hierarchy_id || !financial_year_id || !budget_type
+            " styleClass="p-button-raised"></p-splitButton>
           </div>
         </div>
       </ng-template>
-      <ng-template pTemplate="header" let-columns>
+      <ng-template pTemplate="header" >
         <tr *ngIf="adminHierarchyCeilings?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th></th>
+          <th style="width: 3em">SN</th>
+          <th>Revenue Source</th>
+          <th>Fund Source</th>
+          <th>Budget Class</th>
+          <th>Bank Account</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Lock/Unlock</th>
+          <th>Action</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+      <ng-template pTemplate="body" let-rowData let-ri="rowIndex">
+        <tr [pEditableRow]="rowData">
+          <td>{{ri+1}}</td>
+          <td>[{{rowData?.ceiling.fund_source.gfs_code.code}}] {{rowData?.ceiling.fund_source.gfs_code.name}}</td>
+          <td>{{rowData?.ceiling.fund_source.name}}</td>
+          <td>{{rowData?.ceiling.budget_class.name}}</td>
+          <td>{{rowData?.ceiling.bank_account.name}}</td>
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="rowData.amount" required>
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{rowData?.amount | currency: 'USD'}}
+              </ng-template>
+            </p-cellEditor>
           </td>
+          <td>
+            <p-badge severity="success" *ngIf="rowData?.is_locked===false" value="unlocked"></p-badge>
+            <p-badge severity="danger" *ngIf="rowData?.is_locked===true" value="Locked"></p-badge>
+          </td>
+          <td></td>
+          <td></td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
-                <button
-                  pButton
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
+                <button  pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+                <button  pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(rowData, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
                 <button
                   pButton
                   pTooltip="Delete"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-trash
-              "
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  icon="pi pi-trash"
                   (click)="delete(rowData)"
                 ></button>
               </div>
@@ -270,7 +303,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage"> No Ceiling At this Level </ng-template>
     </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator

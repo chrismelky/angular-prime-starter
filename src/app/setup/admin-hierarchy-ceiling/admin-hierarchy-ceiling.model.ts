@@ -4,13 +4,13 @@ export class AdminHierarchyCeiling {
     public ceiling_id?: number,
     public admin_hierarchy_id?: number,
     public financial_year_id?: number,
-    public parent_id?: number,
+    public parent_id?: any,
     public section_id?: number,
-    public active?: string,
-    public is_locked?: string,
-    public is_approved?: string,
+    public active?: boolean,
+    public is_locked?: boolean,
+    public is_approved?: boolean,
     public budget_type?: string,
-    public amount?: string,
-    public deleted?: string
+    public amount?: number,
+    public deleted?: boolean
   ) {}
 }

@@ -36,7 +36,7 @@ export class ReceivedAssessmentComponent implements OnInit {
   @ViewChild("table") table!: Table;
   receivedAssessments?: ReceivedAssessment[] = [];
 
-  financialYears?: FinancialYear[] = [];
+  financialYears? : FinancialYear[] = [];
 
   cols = []; //Table display columns
 
@@ -62,17 +62,18 @@ export class ReceivedAssessmentComponent implements OnInit {
     protected helper: HelperService,
     protected toastService: ToastService
   ) {
-    console.log(this.router.getCurrentNavigation()?.extras.state)
-    // this.receivedData = this.router.getCurrentNavigation()?.extras.state?.financial_year.id;
+     this.financial_year_id = this.router.getCurrentNavigation()?.extras.state?.financial_year.id;
   }
 
   ngOnInit(): void {
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
+    // this.financialYearService
+    //   .find(this.financial_year_id)
+    //   .subscribe(
+    //     (resp: CustomResponse<FinancialYear>) =>
+    //     {
+    //       (this.financialYears = resp.data)
+    //     }
+    //   );
     this.handleNavigation();
   }
 

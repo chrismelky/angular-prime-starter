@@ -9,84 +9,93 @@ import {Component, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {combineLatest} from "rxjs";
 import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
+import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {Paginator} from "primeng/paginator";
 import {Table} from "primeng/table";
 
-import {CustomResponse} from "../../utils/custom-response";
+import {CustomResponse} from "../../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
+} from "../../../config/pagination.constants";
 import {HelperService} from "src/app/utils/helper.service";
 import {ToastService} from "src/app/shared/toast.service";
+import {Role} from "src/app/setup/role/role.model";
+import {RoleService} from "src/app/setup/role/role.service";
+import {Permission} from "src/app/setup/permission/permission.model";
+import {PermissionService} from "src/app/setup/permission/permission.service";
 
-import {Role} from "./role.model";
-import {RoleService} from "./role.service";
-import {RoleUpdateComponent} from "./update/role-update.component";
-import {RolePermissionComponent} from "./role-permission/role-permission.component";
+import {RolePermission} from "./role-permission.model";
+import {RolePermissionService} from "./role-permission.service";
+import {RolePermissionUpdateComponent} from "./update/role-permission-update.component";
+import {CreateComponent} from "./create/create.component";
 
 @Component({
-  selector: "app-role",
-  templateUrl: "./role.component.html",
+  selector: "app-role-permission",
+  templateUrl: "./role-permission.component.html",
 })
-export class RoleComponent implements OnInit {
+export class RolePermissionComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  roles?: Role[] = [];
+  rolePermissions?: RolePermission[] = [];
+  permissions?: Permission[] = [];
 
-  cols = [
-    {
-      field: "name",
-      header: "Name",
-      sort: false,
-    },
-  ]; //Table display columns
+  cols = []; //Table display columns
 
   isLoading = false;
-  page?: number = 1;
-  per_page!: number;
+  page: number = 1;
+  perPage: number = 15;
   totalItems = 0;
   perPageOptions = PER_PAGE_OPTIONS;
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  role: Role | undefined;
 
   //Mandatory filter
 
   constructor(
-    protected roleService: RoleService,
+    protected rolePermissionService: RolePermissionService,
+    protected permissionService: PermissionService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
+    public dialogRef: DynamicDialogRef,
+    public dialogConfig: DynamicDialogConfig,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
   ) {
+    this.role = this.dialogConfig.data.role;
   }
 
   ngOnInit(): void {
+    this.permissionService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<Permission[]>) => (this.permissions = resp.data)
+      );
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
-    this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.roleService
+    this.perPage = this.perPage ?? ITEMS_PER_PAGE;
+    this.rolePermissionService
       .query({
         page: pageToLoad,
-        per_page: this.per_page,
-        sort: this.sort(),
+        per_page: this.perPage,
+        role_id: this.role?.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<Role[]>) => {
+        (res: CustomResponse<RolePermission[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -98,27 +107,15 @@ export class RoleComponent implements OnInit {
   }
 
   /**
-   * Called initialy/onInit to
+   * Called initially/onInit to
    * Restore page, sort option from url query params if exist and load page
    */
   protected handleNavigation(): void {
-    combineLatest([
-      this.activatedRoute.data,
-      this.activatedRoute.queryParamMap,
-    ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
-      const predicate = sort[0];
-      const ascending = sort[1] === "asc";
-      this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
-      this.page = page !== null ? parseInt(page) : 1;
-      if (predicate !== this.predicate || ascending !== this.ascending) {
-        this.predicate = predicate;
-        this.ascending = ascending;
-      }
-      this.loadPage(this.page, true);
-    });
+    const page = this.page;
+    const perPage = this.perPage;
+    this.perPage = perPage !== null ? perPage : ITEMS_PER_PAGE;
+    this.page = page !== null ? page : 1;
+    this.loadPage(this.page, true);
   }
 
   /**
@@ -164,31 +161,33 @@ export class RoleComponent implements OnInit {
    */
   pageChanged(event: any): void {
     this.page = event.page + 1;
-    this.per_page = event.rows!;
+    this.perPage = event.rows!;
     this.loadPage();
   }
 
-  /**
-   * Impletement sorting Set/Reurn the sorting option for data
-   * @returns dfefault ot id sorting
-   */
-  protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
-    return [`${predicate}:${direction}`];
+  create(): void {
+    const data = {
+      role: this.role
+    };
+    const ref = this.dialogService.open(CreateComponent, {
+      data,
+      header: "Assign Permission",
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 
-  /**
-   * Creating or updating Role
-   * @param role ; If undefined initize new model to create else edit existing model
-   */
-  createOrUpdate(role?: Role): void {
-    const data: Role = role ?? {
-      ...new Role(),
+  edit(rolePermission?: RolePermission): void {
+    const data: RolePermission = rolePermission ?? {
+      ...new RolePermission(),
+      role: this.role,
     };
-    const ref = this.dialogService.open(RoleUpdateComponent, {
+    const ref = this.dialogService.open(RolePermissionUpdateComponent, {
       data,
-      header: "Create/Update Role",
+      header: "Update Permission Assignment",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -198,17 +197,19 @@ export class RoleComponent implements OnInit {
   }
 
   /**
-   * Delete Role
-   * @param role
+   * Delete RolePermission
+   * @param rolePermission
    */
-  delete(role: Role): void {
+  delete(rolePermission: RolePermission): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Role?",
+      message: "Are you sure that you want to delete this RolePermission?",
       accept: () => {
-        this.roleService.delete(role.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.rolePermissionService
+          .delete(rolePermission.id!)
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }
@@ -220,7 +221,7 @@ export class RoleComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<Role[]> | null,
+    resp: CustomResponse<RolePermission[]> | null,
     page: number,
     navigate: boolean
   ): void {
@@ -230,13 +231,13 @@ export class RoleComponent implements OnInit {
       this.router.navigate(["/role"], {
         queryParams: {
           page: this.page,
-          per_page: this.per_page,
+          per_page: this.perPage,
           sort:
             this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
         },
       });
     }
-    this.roles = resp?.data ?? [];
+    this.rolePermissions = resp?.data ?? [];
   }
 
   /**
@@ -245,21 +246,6 @@ export class RoleComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Role");
-  }
-
-  permissions(rowData: Role): void {
-    const data = {
-      role: rowData
-    }
-    const ref = this.dialogService.open(RolePermissionComponent, {
-      data,
-      width: '60%',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
+    this.toastService.error("Error loading Role Permission");
   }
 }

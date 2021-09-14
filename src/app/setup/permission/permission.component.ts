@@ -5,40 +5,44 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
 
-import {Role} from "./role.model";
-import {RoleService} from "./role.service";
-import {RoleUpdateComponent} from "./update/role-update.component";
-import {RolePermissionComponent} from "./role-permission/role-permission.component";
+import { Permission } from "./permission.model";
+import { PermissionService } from "./permission.service";
+import { PermissionUpdateComponent } from "./update/permission-update.component";
 
 @Component({
-  selector: "app-role",
-  templateUrl: "./role.component.html",
+  selector: "app-permission",
+  templateUrl: "./permission.component.html",
 })
-export class RoleComponent implements OnInit {
+export class PermissionComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  roles?: Role[] = [];
+  permissions?: Permission[] = [];
 
   cols = [
     {
       field: "name",
       header: "Name",
+      sort: false,
+    },
+    {
+      field: "description",
+      header: "Description",
       sort: false,
     },
   ]; //Table display columns
@@ -55,15 +59,14 @@ export class RoleComponent implements OnInit {
   //Mandatory filter
 
   constructor(
-    protected roleService: RoleService,
+    protected permissionService: PermissionService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.handleNavigation();
@@ -78,7 +81,7 @@ export class RoleComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.roleService
+    this.permissionService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -86,7 +89,7 @@ export class RoleComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<Role[]>) => {
+        (res: CustomResponse<Permission[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -179,16 +182,16 @@ export class RoleComponent implements OnInit {
   }
 
   /**
-   * Creating or updating Role
-   * @param role ; If undefined initize new model to create else edit existing model
+   * Creating or updating Permission
+   * @param permission ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(role?: Role): void {
-    const data: Role = role ?? {
-      ...new Role(),
+  createOrUpdate(permission?: Permission): void {
+    const data: Permission = permission ?? {
+      ...new Permission(),
     };
-    const ref = this.dialogService.open(RoleUpdateComponent, {
+    const ref = this.dialogService.open(PermissionUpdateComponent, {
       data,
-      header: "Create/Update Role",
+      header: "Create/Update Permission",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -198,14 +201,14 @@ export class RoleComponent implements OnInit {
   }
 
   /**
-   * Delete Role
-   * @param role
+   * Delete Permission
+   * @param permission
    */
-  delete(role: Role): void {
+  delete(permission: Permission): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Role?",
+      message: "Are you sure that you want to delete this Permission?",
       accept: () => {
-        this.roleService.delete(role.id!).subscribe((resp) => {
+        this.permissionService.delete(permission.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -220,14 +223,14 @@ export class RoleComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<Role[]> | null,
+    resp: CustomResponse<Permission[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/role"], {
+      this.router.navigate(["/permission"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -236,7 +239,7 @@ export class RoleComponent implements OnInit {
         },
       });
     }
-    this.roles = resp?.data ?? [];
+    this.permissions = resp?.data ?? [];
   }
 
   /**
@@ -245,21 +248,6 @@ export class RoleComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Role");
-  }
-
-  permissions(rowData: Role): void {
-    const data = {
-      role: rowData
-    }
-    const ref = this.dialogService.open(RolePermissionComponent, {
-      data,
-      width: '60%',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
+    this.toastService.error("Error loading Permission");
   }
 }

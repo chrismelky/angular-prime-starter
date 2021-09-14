@@ -93,12 +93,12 @@ export class UserComponent implements OnInit {
     },
     {
       field: "is_facility_user",
-      header: "Is Facility User",
+      header: "Facility User",
       sort: false,
     },
     {
       field: "is_super_user",
-      header: "Is Super User",
+      header: "Super User",
       sort: false,
     },
   ]; //Table display columns
@@ -292,6 +292,14 @@ export class UserComponent implements OnInit {
         this.loadPage(this.page);
       }
     });
+  }
+
+  create(): void {
+    this.router.navigate(['/user/create']);
+  }
+
+  edit(id: number): void {
+    this.router.navigate(['/user/edit', id]);
   }
 
   /**

@@ -133,7 +133,7 @@
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]="!adminHierarchyControl"
-            (click)="createOrUpdate()"
+            (click)="create()"
             label="Add User"
           ></button>
         </div>
@@ -170,7 +170,7 @@
                   "
                   icon="pi pi-pencil
               "
-                  (click)="createOrUpdate(rowData)"
+                  (click)="edit(rowData.id)"
                 ></button>
                 <button
                   pButton

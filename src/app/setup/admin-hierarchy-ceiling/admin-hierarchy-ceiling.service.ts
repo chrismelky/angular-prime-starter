@@ -43,10 +43,19 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+
   query(req?: any): Observable<CustomResponse<AdminHierarchyCeiling[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<AdminHierarchyCeiling[]>>(
       this.resourceUrl,
+      { params: options }
+    );
+  }
+  queryCeilingWithChildren(req?: any): Observable<CustomResponse<AdminHierarchyCeiling[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/admin_ceilings_children'
+    return this.http.get<CustomResponse<AdminHierarchyCeiling[]>>(
+      url,
       { params: options }
     );
   }

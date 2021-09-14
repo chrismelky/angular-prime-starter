@@ -16,8 +16,6 @@ import { Section } from 'src/app/setup/section/section.model';
 import { SectionService } from 'src/app/setup/section/section.service';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-// import { Facility } from 'src/app/setup/facility/facility.model';
-// import { FacilityService } from 'src/app/setup/facility/facility.service';
 import { User } from '../user.model';
 import { UserService } from '../user.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -181,5 +179,9 @@ export class UserUpdateComponent implements OnInit {
       is_facility_user: this.editForm.get(['is_facility_user'])!.value,
       is_super_user: this.editForm.get(['is_super_user'])!.value,
     };
+  }
+
+  onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
+    this.editForm.get('admin_hierarchy_id')?.setValue(adminHierarchy.id);
   }
 }

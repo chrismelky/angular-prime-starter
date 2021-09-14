@@ -77,18 +77,9 @@
       </div>
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
-            id="admin_hierarchy_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="adminHierarchies!"
-            formControlName="admin_hierarchy_id"
-          ></p-dropdown>
-          <label for="admin_hierarchy_id">Admin Hierarchy </label>
+          <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
+                                    formControlName="admin_hierarchy_id"
+                                    (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
         </span>
         <span
           *ngIf="

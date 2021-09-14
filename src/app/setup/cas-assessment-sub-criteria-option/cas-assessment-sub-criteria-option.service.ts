@@ -12,8 +12,6 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { CasAssessmentSubCriteriaOption } from "./cas-assessment-sub-criteria-option.model";
-import {CasAssessmentCriteria} from "../cas-assessment-criteria/cas-assessment-criteria.model";
-import {CasAssessmentSubCriteria} from "../cas-assessment-sub-criteria/cas-assessment-sub-criteria.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentSubCriteriaOptionService {

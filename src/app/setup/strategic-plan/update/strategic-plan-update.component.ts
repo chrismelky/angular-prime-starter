@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators,FormGroup } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -19,8 +19,8 @@ import { FinancialYearService } from 'src/app/setup/financial-year/financial-yea
 import { StrategicPlan } from '../strategic-plan.model';
 import { StrategicPlanService } from '../strategic-plan.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import {UserService} from "../../user/user.service";
-import {User} from "../../user/user.model";
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/user.model';
 
 @Component({
   selector: 'app-strategic-plan-update',
@@ -30,10 +30,7 @@ export class StrategicPlanUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-   uploadedFiles= [];
-
-
-
+  uploadedFiles = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
   startFinancialYears?: FinancialYear[] = [];
@@ -52,6 +49,7 @@ export class StrategicPlanUpdateComponent implements OnInit {
     description: [null, []],
     is_active: [false, []],
     url: [null, []],
+    file: [null, []],
   });
 
   constructor(
@@ -62,7 +60,7 @@ export class StrategicPlanUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected userService:UserService
+    protected userService: UserService
   ) {
     this.currentUser = userService.getCurrentUser();
     if (this.currentUser.admin_hierarchy) {
@@ -73,7 +71,6 @@ export class StrategicPlanUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.financialYearService
       .query({ columns: ['id', 'name'] })
       .subscribe(
@@ -174,26 +171,22 @@ export class StrategicPlanUpdateComponent implements OnInit {
       description: this.editForm.get(['description'])!.value,
       is_active: this.editForm.get(['is_active'])!.value,
       url: this.editForm.get(['url'])!.value,
+      file: this.editForm.get(['file'])!.value,
     };
   }
 
-
   onSelect(event: any) {
     // @ts-ignore
-
-    this.uploadedFiles=[];
-    for(let file of event.files) {
-      const reader = new FileReader();
-      reader.onload = this.handleReaderLoaded.bind(this);
-      reader.readAsBinaryString(file);
-    }
+    if (event.files?.length)
+      this.editForm.patchValue({
+        file: event.files[0],
+      });
   }
 
-  handleReaderLoaded(e:any) {
-
-   // @ts-ignore
+  handleReaderLoaded(e: any) {
+    // @ts-ignore
     //this.uploadedFiles.push('data:application/pdf;base64,' + btoa(e.target.result));
     this.uploadedFiles.push(btoa(e.target.result));
-    this.editForm.get(["url"])?.setValue({file:this.uploadedFiles});
+    this.editForm.get(['url'])?.setValue({ file: this.uploadedFiles });
   }
 }

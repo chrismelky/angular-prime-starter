@@ -5,21 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import {Component, Inject, OnInit} from "@angular/core";
+import {FormBuilder, Validators} from "@angular/forms";
+import {Observable} from "rxjs";
+import {finalize} from "rxjs/operators";
+import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { FacilityType } from "src/app/setup/facility-type/facility-type.model";
-import { FacilityTypeService } from "src/app/setup/facility-type/facility-type.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { Facility } from "../facility.model";
-import { FacilityService } from "../facility.service";
-import { ToastService } from "src/app/shared/toast.service";
+import {CustomResponse} from "../../../utils/custom-response";
+import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
+import {FacilityType} from "src/app/setup/facility-type/facility-type.model";
+import {FacilityTypeService} from "src/app/setup/facility-type/facility-type.service";
+import {AdminHierarchy} from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import {AdminHierarchyService} from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import {Facility} from "../facility.model";
+import {FacilityService} from "../facility.service";
+import {ToastService} from "src/app/shared/toast.service";
 
 @Component({
   selector: "app-facility-update",
@@ -59,17 +59,18 @@ export class FacilityUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected enumService: EnumService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.facilityTypeService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
       );
     this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
@@ -121,7 +122,8 @@ export class FacilityUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -160,5 +162,9 @@ export class FacilityUpdateComponent implements OnInit {
       physical_state: this.editForm.get(["physical_state"])!.value,
       star_rating: this.editForm.get(["star_rating"])!.value,
     };
+  }
+
+  onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
+    this.editForm.get('admin_hierarchy_id')?.setValue(adminHierarchy.id);
   }
 }

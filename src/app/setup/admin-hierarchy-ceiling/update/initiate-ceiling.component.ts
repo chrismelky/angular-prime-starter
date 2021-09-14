@@ -1,3 +1,9 @@
+import { Component, OnInit } from '@angular/core';
+import { FundSourceBudgetClassService } from '../../fund-source-budget-class/fund-source-budget-class.service';
+import { CustomResponse } from '../../../utils/custom-response';
+import { Section } from '../../section/section.model';
+import { FundSourceBudgetClass } from '../../fund-source-budget-class/fund-source-budget-class.model';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FundSourceBudgetClassService} from "../../fund-source-budget-class/fund-source-budget-class.service";
 import {FundSourceBudgetClass} from "../../fund-source-budget-class/fund-source-budget-class.model";
@@ -9,7 +15,7 @@ import {debounceTime, distinctUntilChanged, filter, map, subscribeOn} from 'rxjs
 @Component({
   selector: 'app-initiate-ceiling',
   templateUrl: './initiate-ceiling.component.html',
-  styleUrls: ['./initiate-ceiling.component.scss']
+  styleUrls: ['./initiate-ceiling.component.scss'],
 })
 export class InitiateCeilingComponent implements OnInit {
   @ViewChild('ceilingSearchInput') ceilingSearchInput!: ElementRef<any>;
@@ -44,14 +50,19 @@ export class InitiateCeilingComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.fundSourceBudgetClassService
+      .queryProjectionCeiling({ can_project: true, page: 1 })
+      .subscribe(
+        (resp: CustomResponse<Section[]>) => (this.ceilings = resp.data ?? [])
+      );
     //this.loadCeilings();
   }
-  initiate(raw: FundSourceBudgetClass): void{
+  initiate(raw: FundSourceBudgetClass): void {
     this.selectedSource.push(raw);
-    this.ceilings = this.ceilings!.filter(obj => obj !== raw);
-
+    this.ceilings = this.ceilings!.filter((obj) => obj !== raw);
   }
 
+  save(): void {}
   loadCeilings(searchKey:any=null){
     return this.fundSourceBudgetClassService
       .queryProjectionCeiling({can_project :true,page:1,searchKey:searchKey});
@@ -69,8 +80,7 @@ export class InitiateCeilingComponent implements OnInit {
     this.loadCeilings();
   }
 
-  close(): void{
+  close(): void {
     this.dialogRef.close(true);
   }
-
 }

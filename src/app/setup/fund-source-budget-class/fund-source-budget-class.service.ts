@@ -72,4 +72,11 @@ export class FundSourceBudgetClassService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  getFundSourceByBudgetClass(req?: any): Observable<any> {
+    const options = createRequestOption(req);
+    return this.http.get<any>(
+      `${this.resourceUrl}/fund_source_by_budget_class`,{ params: options }
+    );
+  }
 }

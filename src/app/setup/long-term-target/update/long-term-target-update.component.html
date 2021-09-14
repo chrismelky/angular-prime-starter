@@ -54,47 +54,11 @@
 
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
-            id="strategic_plan_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="strategicPlans!"
-            formControlName="strategic_plan_id"
-          ></p-dropdown>
-          <label for="strategic_plan_id">Strategic Plan </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('strategic_plan_id')!.invalid &&
-            (editForm.get('strategic_plan_id')!.dirty ||
-              editForm.get('strategic_plan_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('strategic_plan_id')?.errors?.required"
-            >Strategic Plan is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="objective_id"
-            optionValue="id"
-            optionLabel="description"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="objectives!"
+          <p-treeSelect
+            fxFlex
             formControlName="objective_id"
-          ></p-dropdown>
+            [options]="objectives!"
+          ></p-treeSelect>
           <label for="objective_id">Objective </label>
         </span>
         <span

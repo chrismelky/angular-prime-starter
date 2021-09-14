@@ -59,23 +59,10 @@ export class LongTermTargetUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.strategicPlanService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<StrategicPlan[]>) =>
-          (this.strategicPlans = resp.data)
-      );
-    this.objectiveService
-      .query({ columns: ['id', 'description'] })
-      .subscribe(
-        (resp: CustomResponse<Objective[]>) => (this.objectives = resp.data)
-      );
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const dialogData = this.dialogConfig.data;
+    this.sections = dialogData.sections;
+    this.objectives = dialogData.objectives;
+    this.updateForm(dialogData.target); //Initialize form with data from dialog
   }
 
   /**
@@ -83,12 +70,13 @@ export class LongTermTargetUpdateComponent implements OnInit {
    * @returns
    */
   save(): void {
+    const longTermTarget = this.createFromForm();
+    console.log(longTermTarget);
     if (this.editForm.invalid) {
       this.formError = true;
       return;
     }
     this.isSaving = true;
-    const longTermTarget = this.createFromForm();
     if (longTermTarget.id !== undefined) {
       this.subscribeToSaveResponse(
         this.longTermTargetService.update(longTermTarget)

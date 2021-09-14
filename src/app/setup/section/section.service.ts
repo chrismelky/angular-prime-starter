@@ -1,14 +1,14 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { Section } from "./section.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Section } from './section.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class SectionService {
-  public resourceUrl = "api/sections";
+  public resourceUrl = 'api/sections';
 
   constructor(protected http: HttpClient) {}
 
@@ -32,6 +32,24 @@ export class SectionService {
     return this.http.get<CustomResponse<Section[]>>(this.resourceUrl, {
       params: options,
     });
+  }
+
+  /**
+   * Retrieve section that can be mapped with target e,g Department
+   * ie. section by parent or section by current user section
+   * @param parent user section position as parent name e.g p1 for position 1 or p2 for position 2
+   * @param parentId user mappred section id
+   * @param userSectionId user mapped section id
+   * @returns
+   */
+  targetSections(
+    parent: string,
+    parentId: number,
+    userSectionId: number
+  ): Observable<CustomResponse<Section[]>> {
+    return this.http.get<CustomResponse<Section[]>>(
+      `${this.resourceUrl}/target-sections/${parent}/${parentId}/${userSectionId}`
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

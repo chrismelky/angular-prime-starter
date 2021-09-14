@@ -1,5 +1,5 @@
 <button
-  type="text"
+  type="button"
   pButton
   pRipple
   iconPos="left"
@@ -8,11 +8,11 @@
 >
   <i class="pi pi-sitemap"></i>&nbsp;
   {{
-    selectedValue
-      ? selectionMode === "single"
-        ? selectedValue?.data?.name
-        : "Admin Hierarchies Selected(" + selectedValue?.length + ")"
-      : "Select Admin hierarchy"
+  selectedValue
+    ? selectionMode === "single"
+    ? selectedValue?.data?.name
+    : "Admin Hierarchies Selected(" + selectedValue?.length + ")"
+    : "Select Admin hierarchy"
   }}
 </button>
 <p-overlayPanel #op [dismissable]="true" appendTo="body">

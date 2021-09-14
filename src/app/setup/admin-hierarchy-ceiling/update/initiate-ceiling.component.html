@@ -1,55 +1,49 @@
-<p-card   [style]="{width: '100%'}" styleClass="p-card-shadow">
-  <ng-template pTemplate="header">
-    <p-button *ngIf="selectedSource.length > 0" pTooltip="<h3>Selected Item(s)</h3>" tooltipPosition="bottom" label="Item(s) Selected" styleClass="" badge="{{selectedSource.length}}" badgeClass="p-mr-2"></p-button>
-  </ng-template>
-  <ng-template pTemplate="body">
-    <div class="card" *ngIf="ceilings!.length > 0">
-      <p-table #cl [value]="ceilings!" selectionMode="single"   dataKey="id" styleClass="p-datatable-customers" responsiveLayout="scroll"
-               [rows]="10" [paginator]="false" >
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Name</th>
-            <th>Fund Source</th>
-            <th>Budget Class</th>
-            <th>Initiate</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-rowData>
-          <tr>
-            <td>[{{rowData?.fund_source?.gfs_code.code}}] {{rowData?.fund_source?.gfs_code?.name}}</td>
-            <td>{{rowData?.fund_source?.name}}</td>
-            <td>{{rowData?.budget_class?.name}}</td>
-            <td>
-              <button
-                type="text"
-                pButton
-                pRipple
-                pTooltip="Add Bank Account"
-                tooltipPosition="bottom"
-                iconPos="left"
-                type="button"
-                class="p-button-outlined"
-                (click)="initiate(rowData)"
-              >
-                initiate &nbsp; &nbsp;<i class="pi pi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-      <ng-template pTemplate="footer">
-        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between end">
-          <p-button icon="pi pi-times"  styleClass="p-button-text"  label="Cancel"></p-button>
-          <p-button icon="pi pi-check" class="p-button-outlined" label="Save"></p-button>
-        </div>
-      </ng-template>
-    </div>
-  </ng-template>
-  <ng-template pTemplate="footer">
-    <div style='text-align: end;'>
-      <p-button (onClick)="close()" label="Cancel" icon="pi pi-times" styleClass="p-button-secondary"></p-button>
-      <p-button (onClick)="save()" style="margin-left: .5em"  label="Save" icon="pi pi-check"></p-button>
-    </div>
-  </ng-template>
-</p-card>
+<div class="dialog-content">
+  <p-table #cl [value]="ceilings!" selectionMode="single"   dataKey="id" styleClass="p-datatable-gridlines" responsiveLayout="scroll"
+           [rows]="10" [paginator]="false" >
+    <ng-template pTemplate="caption">
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(cl)"></button>
+        <span class="p-input-icon-left p-ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input #ceilingSearchInput pInputText type="text"  placeholder="Search keyword" />
+                </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Fund Source</th>
+        <th>Budget Class</th>
+        <th style="text-align: end">Initiate</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+      <tr>
+        <td>[{{rowData?.fund_source?.gfs_code.code}}] {{rowData?.fund_source?.gfs_code?.name}}</td>
+        <td>{{rowData?.fund_source?.name}}</td>
+        <td>{{rowData?.budget_class?.name}}</td>
+        <td style="text-align: end">
+          <button
+            type="text"
+            pButton
+            pRipple
+            pTooltip="Add Bank Account"
+            tooltipPosition="bottom"
+            iconPos="left"
+            type="button"
+            class="p-button-outlined"
+            (click)="initiate(rowData)"
+          >
+            initiate &nbsp; &nbsp;<i class="pi pi-pencil"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<div class="p-dialog-footer">
+  <p-button (onClick)="close()" label="Cancel" icon="pi pi-times" styleClass="p-button-secondary"></p-button>
+  &nbsp;<p-button (onClick)="save()"   label="Save" icon="pi pi-save"></p-button>
+</div>
 

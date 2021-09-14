@@ -7,8 +7,8 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {combineLatest, Observable} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -36,6 +36,7 @@ import { AdminHierarchyCeilingUpdateComponent } from "./update/admin-hierarchy-c
 import {InitiateCeilingComponent} from "./update/initiate-ceiling.component";
 import {SectionLevelService} from "../section-level/section-level.service";
 import {SectionLevel} from "../section-level/section-level.model";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: "app-admin-hierarchy-ceiling",
@@ -53,49 +54,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   sections?: Section[] = [];
   planingLevels?: SectionLevel[] = [];
   budgetTypes?: PlanrepEnum[] = [];
-
-  cols = [
-    {
-      field: "ceiling_id",
-      header: "Ceiling ",
-      sort: true,
-    },
-    {
-      field: "parent_id",
-      header: "Parent ",
-      sort: true,
-    },
-    {
-      field: "section_id",
-      header: "Section ",
-      sort: true,
-    },
-    {
-      field: "active",
-      header: "Active",
-      sort: false,
-    },
-    {
-      field: "is_locked",
-      header: "Is Locked",
-      sort: false,
-    },
-    {
-      field: "is_approved",
-      header: "Is Approved",
-      sort: false,
-    },
-    {
-      field: "amount",
-      header: "Amount",
-      sort: true,
-    },
-    {
-      field: "deleted",
-      header: "Deleted",
-      sort: false,
-    },
-  ]; //Table display columns
+  isSaving?:boolean = false;
+  clonedCeiling: { [s: string]: AdminHierarchyCeiling; } = {};
 
   isLoading = false;
   page?: number = 1;
@@ -105,13 +65,14 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  items: MenuItem[] | undefined;
 
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
   budget_type!: string;
   position: number=1;
-  section_id!:number;
+  section_id!:any;
   admin_hierarchy_position!:number;
 
   constructor(
@@ -129,6 +90,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected sectionLevelService: SectionLevelService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -161,14 +123,23 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       );
     this.budgetTypes = this.enumService.get("budgetTypes");
     this.handleNavigation();
+    this.items = [
+      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.initiateCeiling();}},
+      {label: 'Downolad Teplete', icon: 'pi pi-download', command: () => {this.initiateCeiling();}},
+      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.initiateCeiling();}},
+      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.initiateCeiling();}}
+    ];
   }
 
   selectionLevelChange(){
+    this.section_id=null;
+    this.section_id=this.position == 1?null:0;
     this.sectionService
       .query({ position :this.position})
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
+    this.loadPage();
   }
 
   /**
@@ -189,7 +160,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.adminHierarchyCeilingService
-      .query({
+      .queryCeilingWithChildren({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
@@ -197,6 +168,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         financial_year_id: this.financial_year_id,
         budget_type: this.budget_type,
         position:this.position,
+        section_id:this.section_id??null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -396,9 +368,16 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   initiateCeiling(): void {
     const ref = this.dialogService.open(InitiateCeilingComponent, {
       header: "Ceiling Dissemination",
+      width:"60%"
     });
     ref.onClose.subscribe((result) => {
       if (result) {
+        for (let item of result.ceiling) {
+          const adminHierarchyCeiling = this.createFromForm(item);
+          this.subscribeToSaveResponse(
+            this.adminHierarchyCeilingService.create(adminHierarchyCeiling)
+          );
+        }
         this.loadPage(this.page);
       }
     });
@@ -420,5 +399,78 @@ export class AdminHierarchyCeilingComponent implements OnInit {
 
       }
     });
+  }
+
+  /**
+   * Return form values as object of type AdminHierarchyCeiling
+   * @returns AdminHierarchyCeiling
+   */
+  protected createFromForm(ceiling:any): AdminHierarchyCeiling {
+    return {
+      ...new AdminHierarchyCeiling(),
+      ceiling_id:ceiling.id ,
+      admin_hierarchy_id:this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
+      parent_id: undefined,
+      section_id: undefined,
+      active: true,
+      is_locked: false,
+      is_approved:false,
+      budget_type:this.budget_type,
+      amount:0.00,
+    };
+  }
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<AdminHierarchyCeiling>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+    this.isSaving = false;
+  }
+
+  onRowEditInit(ceiling: AdminHierarchyCeiling) {
+    // @ts-ignore
+    this.clonedCeiling[ceiling.id] = {
+
+    };
+  }
+
+  onRowEditSave(ceiling: AdminHierarchyCeiling) {
+    // @ts-ignore
+    if (ceiling.amount > 0) {
+      // @ts-ignore
+      delete this.clonedCeiling[ceiling!.id];
+      this.messageService.add({severity:'success', summary: 'Success', detail:'Product is updated'});
+    }
+    else {
+      this.messageService.add({severity:'error', summary: 'Error', detail:'Invalid Price'});
+    }
+  }
+
+  onRowEditCancel(ceiling: AdminHierarchyCeiling, index: number) {
+    // @ts-ignore
+    this.ceilings[index] = this.clonedCeiling[ceiling.id];
+    // @ts-ignore
+    delete this.clonedCeiling[ceiling.id];
   }
 }

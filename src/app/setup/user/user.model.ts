@@ -1,5 +1,5 @@
-import { AdminHierarchy } from '../admin-hierarchy/admin-hierarchy.model';
-import { Section } from '../section/section.model';
+import {AdminHierarchy} from '../admin-hierarchy/admin-hierarchy.model';
+import {Section} from '../section/section.model';
 
 export class User {
   constructor(
@@ -17,6 +17,8 @@ export class User {
     public is_facility_user?: string,
     public is_super_user?: string,
     public admin_hierarchy?: AdminHierarchy,
-    public section?: Section
-  ) {}
+    public section?: Section,
+    public username?: string
+  ) {
+  }
 }

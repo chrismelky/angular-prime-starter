@@ -30,6 +30,7 @@ import { TreeTableModule } from 'primeng/treetable';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { PickListModule } from 'primeng/picklist';
 import { DividerModule } from 'primeng/divider';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @NgModule({
   declarations: [],
@@ -64,6 +65,7 @@ import { DividerModule } from 'primeng/divider';
     ConfirmPopupModule,
     PickListModule,
     DividerModule,
+    FileUploadModule,
   ],
 })
 export class SharedPrimengModule {}

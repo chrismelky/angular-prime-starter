@@ -75,12 +75,12 @@ export class DataValueComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
-  financial_year_id!: number;
-  facility_type_id!: number;
-  facility_id!: number;
-  cas_plan_id!: number;
-  period_id!: number;
+  admin_hierarchy_id?: number;
+  financial_year_id?: number;
+  facility_type_id?: number;
+  facility_id?: number;
+  cas_plan_id?: number;
+  period_id?: number;
   dataSet!: DataSet;
   currentUser?: User;
 
@@ -153,6 +153,8 @@ export class DataValueComponent implements OnInit {
    */
   onDataSetChange(): void {
     this.loadDataElements();
+    this.facility_id = undefined;
+    this.prepareDataValuesArray();
     this.facilityTypes =
       this.dataSet && this.dataSet.facility_types
         ? JSON.parse(this.dataSet.facility_types)
@@ -161,6 +163,10 @@ export class DataValueComponent implements OnInit {
       this.dataSet && this.dataSet.periods
         ? JSON.parse(this.dataSet.periods)
         : [];
+  }
+
+  private resetForm(): void {
+    this.prepareDataValuesArray();
   }
 
   /**
@@ -181,6 +187,7 @@ export class DataValueComponent implements OnInit {
           'is_required',
           'value_type',
         ],
+        with: ['optionSet', 'optionSet.options'],
       })
       .subscribe((resp: CustomResponse<DataElement[]>) => {
         this.dataElements = resp.data;
@@ -239,7 +246,6 @@ export class DataValueComponent implements OnInit {
               dv.category_option_combination_id === coc.id
             );
           });
-          console.log(existing);
           this.dataValuesArray[de.id!][coc.id!] = {
             id: existing ? existing.id : undefined,
             value: existing ? existing.value : undefined,
@@ -254,6 +260,14 @@ export class DataValueComponent implements OnInit {
   }
 
   saveValue(dataValue: any): void {
+    if (
+      !this.admin_hierarchy_id ||
+      !this.financial_year_id ||
+      !this.period_id ||
+      !this.facility_id
+    ) {
+      return;
+    }
     dataValue = {
       ...dataValue,
       admin_hierarchy_id: this.admin_hierarchy_id,
@@ -274,6 +288,32 @@ export class DataValueComponent implements OnInit {
     }
   }
 
+  fileUploader($event: any, dataValue: DataValue): void {
+    if (
+      !this.admin_hierarchy_id ||
+      !this.financial_year_id ||
+      !this.period_id ||
+      !this.facility_id
+    ) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('admin_hierarchy_id', this.admin_hierarchy_id!.toString());
+    formData.append('financial_year_id', this.financial_year_id!.toString());
+    formData.append('period_id', this.period_id!.toString());
+    formData.append('facility_id', this.facility_id!.toString());
+    formData.append('data_element_id', dataValue.data_element_id!.toString());
+    formData.append(
+      'category_option_combination_id',
+      dataValue.category_option_combination_id!.toString()
+    );
+    formData.append('file', $event.files[0]);
+
+    this.dataValueService.upload(formData).subscribe((resp) => {
+      console.log(resp);
+    });
+  }
+
   filterByCategoryCombo(id: number): DataElement[] {
     return this.dataElements?.filter(
       (de) => de.category_combination_id === id
@@ -286,9 +326,9 @@ export class DataValueComponent implements OnInit {
   loadFacilities(): void {
     this.facilityService
       .search(
-        this.facility_type_id,
+        this.facility_type_id!,
         this.parentAdminName,
-        this.admin_hierarchy_id
+        this.admin_hierarchy_id!
       )
       .subscribe(
         (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)

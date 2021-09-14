@@ -1,13 +1,8 @@
 <div class="dialog-content">
-  <form
-    name="editForm"
-    role="form"
-    novalidate
-    (ngSubmit)="save()"
-    [formGroup]="editForm"
-  >
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
     <div fxLayout="column" fxLayoutGap="1rem">
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input
             id="first_name"
@@ -17,23 +12,22 @@
           />
           <label for="first_name">First Name </label>
         </span>
-        <span
-          *ngIf="
+          <span
+            *ngIf="
             editForm.get('first_name')!.invalid &&
             (editForm.get('first_name')!.dirty ||
               editForm.get('first_name')!.touched ||
               formError)
           "
-        >
+          >
           <small
             class="p-error"
             *ngIf="editForm.get('first_name')?.errors?.required"
-            >First Name is required.</small
+          >First Name is required.</small
           >
         </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input
             id="last_name"
@@ -43,42 +37,42 @@
           />
           <label for="last_name">Last Name </label>
         </span>
-        <span
-          *ngIf="
+          <span
+            *ngIf="
             editForm.get('last_name')!.invalid &&
             (editForm.get('last_name')!.dirty ||
               editForm.get('last_name')!.touched ||
               formError)
           "
-        >
+          >
           <small
             class="p-error"
             *ngIf="editForm.get('last_name')?.errors?.required"
-            >Last Name is required.</small
+          >Last Name is required.</small
           >
         </span>
+        </div>
       </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input id="email" type="text" pInputText formControlName="email" />
           <label for="email">Email </label>
         </span>
-        <span
-          *ngIf="
+          <span
+            *ngIf="
             editForm.get('email')!.invalid &&
             (editForm.get('email')!.dirty ||
               editForm.get('email')!.touched ||
               formError)
           "
-        >
+          >
           <small class="p-error" *ngIf="editForm.get('email')?.errors?.required"
-            >Email is required.</small
+          >Email is required.</small
           >
         </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input
             id="cheque_number"
@@ -88,22 +82,22 @@
           />
           <label for="cheque_number">Cheque Number </label>
         </span>
-        <span
-          *ngIf="
+          <span
+            *ngIf="
             editForm.get('cheque_number')!.invalid &&
             (editForm.get('cheque_number')!.dirty ||
               editForm.get('cheque_number')!.touched ||
               formError)
           "
-        >
+          >
           <small
             class="p-error"
             *ngIf="editForm.get('cheque_number')?.errors?.required"
-            >Cheque Number is required.</small
+          >Cheque Number is required.</small
           >
         </span>
+        </div>
       </div>
-
       <div fxLayout="row" fxLayoutGap="2px">
         <p-inputSwitch
           id="activated"
@@ -112,24 +106,23 @@
         ></p-inputSwitch>
         <label for="activated">Activated </label>
       </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input id="title" type="text" pInputText formControlName="title" />
           <label for="title">Title </label>
         </span>
-        <span
-          *ngIf="
+          <span
+            *ngIf="
             editForm.get('title')!.invalid &&
             (editForm.get('title')!.dirty ||
               editForm.get('title')!.touched ||
               formError)
           "
-        >
+          >
         </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input
             id="mobile_number"
@@ -139,15 +132,16 @@
           />
           <label for="mobile_number">Mobile Number </label>
         </span>
-        <span
-          *ngIf="
+          <span
+            *ngIf="
             editForm.get('mobile_number')!.invalid &&
             (editForm.get('mobile_number')!.dirty ||
               editForm.get('mobile_number')!.touched ||
               formError)
           "
-        >
+          >
         </span>
+        </div>
       </div>
 
       <div fxLayout="row" fxLayoutGap="2px">
@@ -158,7 +152,6 @@
         ></p-inputSwitch>
         <label for="is_facility_user">Is Facility User </label>
       </div>
-
       <div fxLayout="row" fxLayoutGap="2px">
         <p-inputSwitch
           id="is_super_user"
@@ -167,8 +160,8 @@
         ></p-inputSwitch>
         <label for="is_super_user">Is Super User </label>
       </div>
-
-      <div class="p-field" fxFlex>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
             id="section_id"
@@ -183,49 +176,43 @@
           ></p-dropdown>
           <label for="section_id">Section </label>
         </span>
-        <span
-          *ngIf="
+          <span
+            *ngIf="
             editForm.get('section_id')!.invalid &&
             (editForm.get('section_id')!.dirty ||
               editForm.get('section_id')!.touched ||
               formError)
           "
-        >
+          >
         </span>
-      </div>
-      <div class="p-field" fxFlex>
+        </div>
+        <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
-            id="admin_hierarchy_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="adminHierarchies!"
-            formControlName="admin_hierarchy_id"
-          ></p-dropdown>
-          <label for="admin_hierarchy_id">Admin Hierarchy </label>
+          <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
+                                    formControlName="admin_hierarchy_id"
+                                    (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
         </span>
-        <span
-          *ngIf="
+          <span
+            *ngIf="
             editForm.get('admin_hierarchy_id')!.invalid &&
             (editForm.get('admin_hierarchy_id')!.dirty ||
               editForm.get('admin_hierarchy_id')!.touched ||
               formError)
           "
-        >
+          >
           <small
             class="p-error"
             *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
-            >Admin Hierarchy is required.</small
+          >Admin Hierarchy is required.</small
           >
         </span>
+        </div>
       </div>
+
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-multiSelect
+            id="facilities"
             [options]="facilities!"
             formControlName="facilities"
             optionLabel="name"
@@ -253,6 +240,7 @@
           icon="pi pi-check"
           label="Save"
           pButton
+          [disabled]="editForm.invalid"
           pRipple
           type="submit"
         ></button>

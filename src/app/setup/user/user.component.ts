@@ -5,96 +5,100 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 
-import { User } from "./user.model";
-import { UserService } from "./user.service";
-import { UserUpdateComponent } from "./update/user-update.component";
+import { User } from './user.model';
+import { UserService } from './user.service';
+import { UserUpdateComponent } from './update/user-update.component';
+import { FormControl, Validators } from '@angular/forms';
+import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
+import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
 
 @Component({
-  selector: "app-user",
-  templateUrl: "./user.component.html",
+  selector: 'app-user',
+  templateUrl: './user.component.html',
 })
 export class UserComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   users?: User[] = [];
 
   sections?: Section[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
+  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
 
   cols = [
     {
-      field: "first_name",
-      header: "First Name",
+      field: 'first_name',
+      header: 'First Name',
       sort: false,
     },
     {
-      field: "last_name",
-      header: "Last Name",
+      field: 'last_name',
+      header: 'Last Name',
       sort: false,
     },
     {
-      field: "email",
-      header: "Email",
+      field: 'email',
+      header: 'Email',
       sort: false,
     },
     {
-      field: "cheque_number",
-      header: "Cheque Number",
+      field: 'cheque_number',
+      header: 'Cheque Number',
       sort: false,
     },
     {
-      field: "activated",
-      header: "Activated",
+      field: 'activated',
+      header: 'Activated',
       sort: false,
     },
     {
-      field: "title",
-      header: "Title",
+      field: 'title',
+      header: 'Title',
       sort: false,
     },
     {
-      field: "mobile_number",
-      header: "Mobile Number",
+      field: 'mobile_number',
+      header: 'Mobile Number',
       sort: false,
     },
-    {
+    /*{
       field: "section_id",
       header: "Section ",
       sort: false,
-    },
+    },*/
     {
-      field: "facilities",
-      header: "Facilities",
+      field: 'facilities',
+      header: 'Facilities',
       sort: false,
     },
     {
-      field: "is_facility_user",
-      header: "Is Facility User",
+      field: 'is_facility_user',
+      header: 'Is Facility User',
       sort: false,
     },
     {
-      field: "is_super_user",
-      header: "Is Super User",
+      field: 'is_super_user',
+      header: 'Is Super User',
       sort: false,
     },
   ]; //Table display columns
@@ -109,12 +113,16 @@ export class UserComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
+  adminHierarchy!: AdminHierarchy;
+  admin_hierarchy_position!: number;
+  adminHierarchyControl = new FormControl(null, [Validators.required]);
+  adminHierarchyLevelControl = new FormControl(null, [Validators.required]);
 
   constructor(
     protected userService: UserService,
     protected sectionService: SectionService,
     protected adminHierarchyService: AdminHierarchyService,
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -125,12 +133,12 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
     this.sectionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
     this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
@@ -141,21 +149,23 @@ export class UserComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_id) {
+    if (!this.adminHierarchy.id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.userService
-      .query({
+      .filterByAdminHierarchyIdAndPosition({
         page: pageToLoad,
-        per_page: this.per_page,
+        perPage: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
+        parent: `p${this.adminHierarchy.admin_hierarchy_position}`,
+        parentId: this.adminHierarchy.id,
+        position: this.admin_hierarchy_position,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -179,11 +189,11 @@ export class UserComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -258,8 +268,8 @@ export class UserComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -270,11 +280,12 @@ export class UserComponent implements OnInit {
   createOrUpdate(user?: User): void {
     const data: User = user ?? {
       ...new User(),
-      admin_hierarchy_id: this.admin_hierarchy_id,
+      admin_hierarchy_id: this.adminHierarchy.id,
     };
     const ref = this.dialogService.open(UserUpdateComponent, {
       data,
-      header: "Create/Update User",
+      width: '50%',
+      header: 'Create/Update User',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -289,7 +300,7 @@ export class UserComponent implements OnInit {
    */
   delete(user: User): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this User?",
+      message: 'Are you sure that you want to delete this User?',
       accept: () => {
         this.userService.delete(user.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -313,12 +324,12 @@ export class UserComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/user"], {
+      this.router.navigate(['/user'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -331,6 +342,20 @@ export class UserComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading User");
+    this.toastService.error('Error loading User');
+  }
+
+  onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
+    this.adminHierarchy = adminHierarchy;
+    this.loadLowerLevel(this.adminHierarchy.admin_hierarchy_position);
+  }
+
+  loadLowerLevel(position: number | undefined) {
+    this.adminHierarchyLevelService
+      .lowerLevels(position)
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
+          (this.adminHierarchyLevels = resp.data)
+      );
   }
 }

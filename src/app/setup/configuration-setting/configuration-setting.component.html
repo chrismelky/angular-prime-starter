@@ -1,13 +1,14 @@
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
-  <p-card class="filter">
-    <ng-template pTemplate="header">
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-        <i class="pi pi-filter"></i>
-        <span class="card-header-text">Filter</span>
-      </div>
-    </ng-template>
-    <div fxLayout="column" fxLayoutGap="4px">
+  <p-accordion>
+    <p-accordionTab [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'">
+      <ng-template pTemplate="header">
+        <span fxLayout="row" fxLayoutGap="0.5rem">
+          <i class="pi pi-filter"></i>
+          <span class="filter-text">Filter</span>
+        </span>
+      </ng-template>
+
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
           fxLayout="row wrap"
@@ -15,112 +16,107 @@
           fxFlex
           fxLayoutAlign="start center"
         >
+          <div class="p-field">
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="key"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="search['key']"
+              />
+              <label for="key">Key </label>
+              <i
+                class="pi pi-times clear"
+                (click)="search['key'] = undefined; onSearch()"
+              ></i>
+            </span>
+          </div>
+          <div class="p-field">
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="value"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="search['value']"
+              />
+              <label for="value">Value </label>
+              <i
+                class="pi pi-times clear"
+                (click)="search['value'] = undefined; onSearch()"
+              ></i>
+            </span>
+          </div>
+          <div class="p-field">
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="name"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="search['name']"
+              />
+              <label for="name">Name </label>
+              <i
+                class="pi pi-times clear"
+                (click)="search['name'] = undefined; onSearch()"
+              ></i>
+            </span>
+          </div>
+          <div class="p-field">
+            <span class="p-float-label p-input-icon-right">
+              <input
+                id="group_name"
+                type="text"
+                class="p-inputtext-sm"
+                pInputText
+                [(ngModel)]="search['group_name']"
+              />
+              <label for="group_name">Group Name </label>
+              <i
+                class="pi pi-times clear"
+                (click)="search['group_name'] = undefined; onSearch()"
+              ></i>
+            </span>
+          </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_criteria_id"
-                optionValue="id"
-                optionLabel="name"
+                id="value_type"
+                optionValue="value"
+                optionLabel="display"
+                (onChange)="onSearch()"
                 [autoDisplayFirst]="false"
                 [filter]="true"
+                [showClear]="true"
                 class="p-inputtext-sm"
-                [options]="casAssessmentCriteria!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="cas_assessment_criteria_id"
+                [options]="valueTypes!"
+                [(ngModel)]="search['value_type']"
               ></p-dropdown>
-              <label for="cas_assessment_criteria_id"
-                >Cas Assessment Criteria
-              </label>
+              <label for="value_type">Value Type </label>
             </span>
           </div>
         </div>
-        <div
-          fxLayout="row wrap"
-          fxFlex="140px"
-          fxLayoutGap="4px"
-          fxLayoutAlign="end center"
-        >
+        <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
           <button
             pButton
-            pRipple
-            type="button"
-            [pTooltip]="
-              advFilter.selected
-                ? 'Hide Advanced Search'
-                : 'Show Advanced Search'
-            "
-            tooltipPosition="bottom"
-            [icon]="
-              advFilter.selected
-                ? 'pi pi-angle-double-up'
-                : 'pi pi-angle-double-down'
-            "
-            class="p-button-rounded p-button-text p-button-plain"
-            (click)="advFilter.selected = !advFilter.selected"
+            class="p-button-text p-button-plain"
+            icon="pi pi-times"
+            label="Clear"
+            (click)="clearSearch()"
           ></button>
           <button
             pButton
-            pRipple
-            class="p-button-primary p-button-raised"
+            class="p-button-text p-button-plain"
             icon="pi pi-search"
             label="Search"
             (click)="onSearch()"
           ></button>
         </div>
       </div>
-      <p-accordion>
-        <p-accordionTab
-          class="p-shadow-0"
-          #advFilter
-          [selected]="advFilter.selected"
-          [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"
-        >
-          <div fxLayout="row wrap" fxLayoutGap="10px">
-            <div
-              fxLayout="row wrap"
-              fxLayoutGap="0.75rem"
-              fxFlex
-              fxLayoutAlign="start center"
-            >
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['name']"
-                  />
-                  <label for="name">Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-            </div>
-            <div
-              fxLayout="row"
-              fxLayoutGap="4px"
-              fxFlex="140px"
-              fxLayoutAlign="end"
-            >
-              <button
-                pButton
-                pRipple
-                pTooltip="Clear Advanced Search"
-                tooltipPosition="bottom"
-                class="p-button-text p-button-plain"
-                icon="pi pi-times"
-                label="Clear"
-                (click)="clearSearch()"
-              ></button>
-            </div>
-          </div>
-        </p-accordionTab>
-      </p-accordion>
-    </div>
-  </p-card>
+    </p-accordionTab>
+  </p-accordion>
 
   <!-- Table Panel -->
   <p-card>
@@ -132,26 +128,25 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="casAssessmentSubCriteria!"
+      [value]="configurationSettings!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Cas Assessment Sub Criteria</span>
+          <span class="card-header-text">Configuration Settings</span>
           <button
             pButton
-            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!cas_assessment_criteria_id"
+            [disabled]=""
             (click)="createOrUpdate()"
-            label="Add Cas Assessment Sub Criteria"
+            label="Add Configuration Setting"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="casAssessmentSubCriteria?.length">
+        <tr *ngIf="configurationSettings?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -172,7 +167,6 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -184,7 +178,6 @@
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -204,7 +197,7 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="casAssessmentSubCriteria?.length! > 0"
+        [alwaysShow]="configurationSettings?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -219,6 +212,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Cas Assessment Sub Criteria"
+  header="Confirmation Delete Configuration Setting"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

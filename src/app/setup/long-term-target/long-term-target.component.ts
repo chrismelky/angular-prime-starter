@@ -8,12 +8,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import {
-  ConfirmationService,
-  LazyLoadEvent,
-  MenuItem,
-  TreeNode,
-} from 'primeng/api';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
@@ -73,7 +68,7 @@ export class LongTermTargetComponent implements OnInit {
 
   //Mandatory filter
   strategicPlan!: StrategicPlan;
-  objective_id!: number;
+  objective!: Objective;
   section_id!: number;
   currentUser?: User;
 
@@ -93,24 +88,6 @@ export class LongTermTargetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.objectiveService.tree().subscribe(
-      (resp: CustomResponse<Objective[]>) =>
-        (this.objectives = resp.data?.map((obj) => {
-          return {
-            label: `[ ${obj.code} ] - ${obj.description}`,
-            data: obj.id,
-            selectable: false, //TODO make configurable
-            expanded: true,
-            children: obj.children?.map((obj2) => {
-              return {
-                label: `[ ${obj2.code} ] - ${obj2.description}`,
-                data: obj2.id,
-              };
-            }),
-          };
-        }))
-    );
-
     if (this.currentUser?.section) {
       const parent = `p${this.currentUser.section.position}`;
       const parentId = this.currentUser.section_id;
@@ -134,7 +111,7 @@ export class LongTermTargetComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.strategicPlan || !this.objective_id || !this.section_id) {
+    if (!this.strategicPlan || !this.objective) {
       return;
     }
     this.isLoading = true;
@@ -146,8 +123,7 @@ export class LongTermTargetComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         strategic_plan_id: this.strategicPlan.id,
-        objective_id: this.objective_id,
-        section_id: this.section_id,
+        objective_id: this.objective.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -197,6 +173,13 @@ export class LongTermTargetComponent implements OnInit {
     } else {
       this.loadPage(1);
     }
+  }
+
+  onObjectiveSeletion($event: any): void {
+    console.log($event);
+    this.objective = $event;
+    this.objectives = [this.objective];
+    this.filterChanged();
   }
 
   /**
@@ -264,7 +247,7 @@ export class LongTermTargetComponent implements OnInit {
     const target: LongTermTarget = longTermTarget ?? {
       ...new LongTermTarget(),
       strategic_plan_id: this.strategicPlan.id,
-      objective_id: this.objective_id,
+      objective_id: this.objective.id,
       section_id: this.section_id,
     };
     const ref = this.dialogService.open(LongTermTargetUpdateComponent, {

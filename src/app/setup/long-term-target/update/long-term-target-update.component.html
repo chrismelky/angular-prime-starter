@@ -54,11 +54,17 @@
 
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-treeSelect
-            fxFlex
-            formControlName="objective_id"
+          <p-dropdown
+            id="objective_id"
+            optionValue="id"
+            optionLabel="description"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
             [options]="objectives!"
-          ></p-treeSelect>
+            formControlName="objective_id"
+          ></p-dropdown>
           <label for="objective_id">Objective </label>
         </span>
         <span

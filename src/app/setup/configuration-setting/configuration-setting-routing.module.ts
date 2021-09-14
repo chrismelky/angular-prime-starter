@@ -8,12 +8,12 @@
 
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { CasAssessmentSubCriteriaComponent } from "./cas-assessment-sub-criteria.component";
+import { ConfigurationSettingComponent } from "./configuration-setting.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: CasAssessmentSubCriteriaComponent,
+    component: ConfigurationSettingComponent,
     data: {
       defaultSort: "id:asc",
     },
@@ -25,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class CasAssessmentSubCriteriaRoutingModule {}
+export class ConfigurationSettingRoutingModule {}

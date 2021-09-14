@@ -20,56 +20,26 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { CasAssessmentCriteria } from "src/app/setup/cas-assessment-criteria/cas-assessment-criteria.model";
-import { CasAssessmentCriteriaService } from "src/app/setup/cas-assessment-criteria/cas-assessment-criteria.service";
+import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
+import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
 
-import { CasAssessmentSubCriteria } from "./cas-assessment-sub-criteria.model";
-import { CasAssessmentSubCriteriaService } from "./cas-assessment-sub-criteria.service";
-import { CasAssessmentSubCriteriaUpdateComponent } from "./update/cas-assessment-sub-criteria-update.component";
+import { AssessmentHome } from "./assessment-home.model";
+import { AssessmentHomeService } from "./assessment-home.service";
+import { AssessmentHomeUpdateComponent } from "./update/assessment-home-update.component";
+import {CasAssessmentCategoryVersionService} from "../cas-assessment-category-version/cas-assessment-category-version.service";
 
 @Component({
-  selector: "app-cas-assessment-sub-criteria",
-  templateUrl: "./cas-assessment-sub-criteria.component.html",
+  selector: "app-assessment-home",
+  templateUrl: "./assessment-home.component.html",
 })
-export class CasAssessmentSubCriteriaComponent implements OnInit {
+export class AssessmentHomeComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  casAssessmentSubCriteria?: CasAssessmentSubCriteria[] = [];
+  assessmentHomes?: AssessmentHome[] = [];
 
-  casAssessmentCriteria?: CasAssessmentCriteria[] = [];
+  financialYears?: FinancialYear[] = [];
 
-  cols = [
-    {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
-    {
-      field: "serial_number",
-      header: "Serial Number",
-      sort: false,
-    },
-    {
-      field: "how_to_assess",
-      header: "How To Assess",
-      sort: false,
-    },
-    {
-      field: "how_to_score",
-      header: "How To Score",
-      sort: false,
-    },
-    {
-      field: "score_value",
-      header: "Score Value",
-      sort: false,
-    },
-    {
-      field: "is_free_score",
-      header: "Is Free Score",
-      sort: false,
-    },
-  ]; //Table display columns
+  cols = []; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -81,11 +51,11 @@ export class CasAssessmentSubCriteriaComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  cas_assessment_criteria_id!: number;
+  financial_year_id!: number;
 
   constructor(
-    protected casAssessmentSubCriteriaService: CasAssessmentSubCriteriaService,
-    protected casAssessmentCriteriaService: CasAssessmentCriteriaService,
+    protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
+    protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -95,11 +65,11 @@ export class CasAssessmentSubCriteriaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casAssessmentCriteriaService
+    this.financialYearService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<CasAssessmentCriteria[]>) =>
-          (this.casAssessmentCriteria = resp.data)
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.financialYears = resp.data)
       );
     this.handleNavigation();
   }
@@ -110,22 +80,22 @@ export class CasAssessmentSubCriteriaComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_assessment_criteria_id) {
+    if (!this.financial_year_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.casAssessmentSubCriteriaService
+    this.casAssessmentCategoryVersionService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_assessment_criteria_id: this.cas_assessment_criteria_id,
+        financial_year_id: this.financial_year_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<CasAssessmentSubCriteria[]>) => {
+        (res: CustomResponse<AssessmentHome[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -230,21 +200,18 @@ export class CasAssessmentSubCriteriaComponent implements OnInit {
   }
 
   /**
-   * Creating or updating CasAssessmentSubCriteria
-   * @param casAssessmentSubCriteria ; If undefined initize new model to create else edit existing model
+   * Creating or updating AssessmentHome
+   * @param assessmentHome ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(casAssessmentSubCriteria?: CasAssessmentSubCriteria): void {
-    const data: CasAssessmentSubCriteria = casAssessmentSubCriteria ?? {
-      ...new CasAssessmentSubCriteria(),
-      cas_assessment_criteria_id: this.cas_assessment_criteria_id,
+  createOrUpdate(assessmentHome?: AssessmentHome): void {
+    const data: AssessmentHome = assessmentHome ?? {
+      ...new AssessmentHome(),
+      financial_year_id: this.financial_year_id,
     };
-    const ref = this.dialogService.open(
-      CasAssessmentSubCriteriaUpdateComponent,
-      {
-        data,
-        header: "Create/Update CasAssessmentSubCriteria",
-      }
-    );
+    const ref = this.dialogService.open(AssessmentHomeUpdateComponent, {
+      data,
+      header: "Create/Update AssessmentHome",
+    });
     ref.onClose.subscribe((result) => {
       if (result) {
         this.loadPage(this.page);
@@ -253,22 +220,21 @@ export class CasAssessmentSubCriteriaComponent implements OnInit {
   }
 
   /**
-   * Delete CasAssessmentSubCriteria
-   * @param casAssessmentSubCriteria
+   * Delete AssessmentHome
+   * @param assessmentHome
    */
-  delete(casAssessmentSubCriteria: CasAssessmentSubCriteria): void {
-    this.confirmationService.confirm({
-      message:
-        "Are you sure that you want to delete this CasAssessmentSubCriteria?",
-      accept: () => {
-        this.casAssessmentSubCriteriaService
-          .delete(casAssessmentSubCriteria.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
-      },
-    });
+  delete(assessmentHome: AssessmentHome): void {
+    // this.confirmationService.confirm({
+    //   message: "Are you sure that you want to delete this AssessmentHome?",
+    //   accept: () => {
+    //     this.casAssessmentCategoryVersionService
+    //       .delete(assessmentHome.id!)
+    //       .subscribe((resp) => {
+    //         this.loadPage(this.page);
+    //         this.toastService.info(resp.message);
+    //       });
+    //   },
+    // });
   }
 
   /**
@@ -278,14 +244,14 @@ export class CasAssessmentSubCriteriaComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<CasAssessmentSubCriteria[]> | null,
+    resp: CustomResponse<AssessmentHome[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-assessment-sub-criteria"], {
+      this.router.navigate(["/assessment-home"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -294,7 +260,7 @@ export class CasAssessmentSubCriteriaComponent implements OnInit {
         },
       });
     }
-    this.casAssessmentSubCriteria = resp?.data ?? [];
+    this.assessmentHomes = resp?.data ?? [];
   }
 
   /**
@@ -303,6 +269,26 @@ export class CasAssessmentSubCriteriaComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Cas Assessment Sub Criteria");
+    this.toastService.error("Error loading Assessment Home");
+  }
+
+  /**
+   * Load received Assessments for assessment based on Assessor assignment
+   */
+  receivedAssessment(rowData: any) {
+    this.router.navigate(['received-assessment'],{ state: rowData });
+  }
+
+  /**
+   * Load assigned assessments
+   */
+  myAssessment(rowData: any) {
+    this.router.navigate(['my-assessment'],{ state: rowData });
+  }
+  /**
+   *
+   */
+  assess(rowData: any) {
+    this.router.navigate(['cas-assessment-criteria'],{ state: rowData });
   }
 }

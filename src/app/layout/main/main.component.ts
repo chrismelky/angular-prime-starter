@@ -62,6 +62,11 @@ export class MainComponent implements OnInit {
       separator: true,
       items: [
         {
+          label: 'Configuration Settings',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'configuration-setting',
+        },
+        {
           label: 'Advertisements',
           icon: 'pi pi-fw pi-link',
           routerLink: 'advertisement',
@@ -277,6 +282,11 @@ export class MainComponent implements OnInit {
               routerLink: 'reference-document_type',
             },
             {
+              label: 'Strategic Plans',
+              icon: 'pi pi-fw pi-link',
+              routerLink: 'strategic-plan',
+            },
+            {
               label: 'Guidelines',
               icon: 'pi pi-fw pi-link',
               routerLink: 'reference-document',
@@ -396,6 +406,10 @@ export class MainComponent implements OnInit {
               ],
             },
           ],
+        },
+        {
+          label: 'Comprehensive Plans',
+          icon: 'pi pi-fw pi-link',
         },
         {
           label: 'Comprehensive Plans',
@@ -522,13 +536,16 @@ export class MainComponent implements OnInit {
         },
       ],
     },
-
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
 
     {
       label: 'Planning',
       icon: 'pi pi-pw pi-list',
       items: [
+        {
+          label: 'Comprehensive Plans',
+          icon: 'pi pi-fw pi-angle-down',
+        },
         {
           label: 'Strategic Plans',
           icon: 'pi pi-fw pi-link',
@@ -582,9 +599,20 @@ export class MainComponent implements OnInit {
       icon: 'pi pi-pw pi-play',
       items: [
         {
+          label: 'Comprehensive Assessment',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'assessment-home',
+        },
+        {
           label: 'Assessor Assignments',
           icon: 'pi pi-fw pi-arrow-right',
           routerLink: 'assessor-assignment',
+        },
+        {
+          routerLink: 'my-assessment',
+        },
+        {
+          routerLink: 'received-assessment',
         },
         /**====Planrep Assessment Menu Generator Hook: Dont Delete====*/
       ],

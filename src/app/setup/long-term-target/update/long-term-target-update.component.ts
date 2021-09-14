@@ -31,7 +31,6 @@ export class LongTermTargetUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
-  strategicPlans?: StrategicPlan[] = [];
   objectives?: Objective[] = [];
   sections?: Section[] = [];
 
@@ -71,7 +70,8 @@ export class LongTermTargetUpdateComponent implements OnInit {
    */
   save(): void {
     const longTermTarget = this.createFromForm();
-    console.log(longTermTarget);
+    console.log(this.editForm.errors);
+    console.log(this.editForm.value);
     if (this.editForm.invalid) {
       this.formError = true;
       return;

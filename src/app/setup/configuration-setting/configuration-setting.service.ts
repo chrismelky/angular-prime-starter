@@ -11,41 +11,41 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { CasAssessmentCriteria } from "./cas-assessment-criteria.model";
+import { ConfigurationSetting } from "./configuration-setting.model";
 
 @Injectable({ providedIn: "root" })
-export class CasAssessmentCriteriaService {
-  public resourceUrl = "api/cas_criterias";
+export class ConfigurationSettingService {
+  public resourceUrl = "api/configuration_settings";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    casAssessmentCriteria: CasAssessmentCriteria
-  ): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.post<CustomResponse<CasAssessmentCriteria>>(
+    configurationSetting: ConfigurationSetting
+  ): Observable<CustomResponse<ConfigurationSetting>> {
+    return this.http.post<CustomResponse<ConfigurationSetting>>(
       this.resourceUrl,
-      casAssessmentCriteria
+      configurationSetting
     );
   }
 
   update(
-    casAssessmentCriteria: CasAssessmentCriteria
-  ): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.put<CustomResponse<CasAssessmentCriteria>>(
-      `${this.resourceUrl}/${casAssessmentCriteria.id}`,
-      casAssessmentCriteria
+    configurationSetting: ConfigurationSetting
+  ): Observable<CustomResponse<ConfigurationSetting>> {
+    return this.http.put<CustomResponse<ConfigurationSetting>>(
+      `${this.resourceUrl}/${configurationSetting.id}`,
+      configurationSetting
     );
   }
 
-  find(id: number): Observable<CustomResponse<CasAssessmentCriteria>> {
-    return this.http.get<CustomResponse<CasAssessmentCriteria>>(
+  find(id: number): Observable<CustomResponse<ConfigurationSetting>> {
+    return this.http.get<CustomResponse<ConfigurationSetting>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
-  query(req?: any): Observable<CustomResponse<CasAssessmentCriteria[]>> {
+  query(req?: any): Observable<CustomResponse<ConfigurationSetting[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<CasAssessmentCriteria[]>>(
+    return this.http.get<CustomResponse<ConfigurationSetting[]>>(
       this.resourceUrl,
       { params: options }
     );

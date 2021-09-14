@@ -1,3 +1,5 @@
+import { TreeNode } from 'primeng/api';
+
 export class LongTermTarget {
   constructor(
     public id?: number,

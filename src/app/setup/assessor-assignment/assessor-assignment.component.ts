@@ -130,7 +130,7 @@ export class AssessorAssignmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", 'first_name', 'last_name', 'username'] })
       .subscribe((resp: CustomResponse<User[]>) => (this.users = resp.data));
     this.adminHierarchyService
       .query({ columns: ["id", "name"] })
@@ -156,7 +156,7 @@ export class AssessorAssignmentComponent implements OnInit {
         (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
       );
     this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "cas_assessment_category_id"] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)

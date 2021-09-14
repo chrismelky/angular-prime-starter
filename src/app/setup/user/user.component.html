@@ -17,18 +17,25 @@
         >
           <div class="p-field" fxFlex>
             <span class="p-float-label">
+              <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
+                [formControl]="adminHierarchyControl"
+                (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
               <p-dropdown
-                id="admin_hierarchy_id"
-                optionValue="id"
+                id="levelId"
+                optionValue="position"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="adminHierarchies!"
+                [options]="adminHierarchyLevels!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_id"
+                [(ngModel)]="admin_hierarchy_position"
               ></p-dropdown>
-              <label for="admin_hierarchy_id">Admin Hierarchy </label>
+              <label for="levelId">Level</label>
             </span>
           </div>
         </div>
@@ -125,7 +132,7 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!admin_hierarchy_id"
+            [disabled]="!adminHierarchyControl"
             (click)="createOrUpdate()"
             label="Add User"
           ></button>
@@ -133,12 +140,11 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="users?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'section_id'">
+            Allocation <p-sortIcon [field]="'section_id'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -147,6 +153,9 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            {{ rowData.section?.name }}
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
@@ -181,19 +190,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="users?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="users?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 

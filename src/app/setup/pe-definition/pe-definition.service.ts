@@ -49,4 +49,12 @@ export class PeDefinitionService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  getParentChildrenByFormId(req?: any): Observable<any> {
+    const options = createRequestOption(req);
+    return this.http.get<any>(
+      `${this.resourceUrl}/parent_children_by_form_id`,{ params: options }
+    );
+  }
+
 }

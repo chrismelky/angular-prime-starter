@@ -621,7 +621,13 @@ const routes: Routes = [
         loadChildren: () =>
           import(
             "../planning/assessment-criteria/assessment-criteria.module"
-          ).then((m) => m.AssessmentCriteriaModule),
+            ).then((m) => m.AssessmentCriteriaModule),
+      },
+      { path: "permission",
+        loadChildren: () =>
+          import("../setup/permission/permission.module").then(
+            (m) => m.PermissionModule
+          ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

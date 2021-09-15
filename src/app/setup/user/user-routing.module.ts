@@ -6,9 +6,10 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { UserComponent } from "./user.component";
+import {NgModule} from "@angular/core";
+import {RouterModule, Routes} from "@angular/router";
+import {UserComponent} from "./user.component";
+import {UserUpdateComponent} from "./update/user-update.component";
 
 const routes: Routes = [
   {
@@ -17,7 +18,14 @@ const routes: Routes = [
     data: {
       defaultSort: "id:asc",
     },
-    //canActivate: [UserRouteAccessService],
+  },
+  {
+    path: "create",
+    component: UserUpdateComponent,
+  },
+  {
+    path: "edit/:id",
+    component: UserUpdateComponent,
   },
 ];
 
@@ -25,4 +33,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class UserRoutingModule {}
+export class UserRoutingModule {
+}

@@ -101,6 +101,11 @@ export class MainComponent implements OnInit {
               icon: "pi pi-fw pi-link",
               routerLink: "role",
             },
+            {
+              label: "Permissions",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "permission",
+            },
           ],
         },
         {
@@ -532,7 +537,6 @@ export class MainComponent implements OnInit {
       ],
     },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
-
     {
       label: "Planning",
       icon: "pi pi-pw pi-list",
@@ -540,6 +544,13 @@ export class MainComponent implements OnInit {
         {
           label: "Comprehensive Plans",
           icon: "pi pi-fw pi-angle-down",
+        },
+        {
+          label: "Strategic Plans",
+          icon: "pi pi-fw pi-link",
+          routerLink: "strategic-plan",
+        },
+        {
         },
         {
           label: "Strategic Plans",

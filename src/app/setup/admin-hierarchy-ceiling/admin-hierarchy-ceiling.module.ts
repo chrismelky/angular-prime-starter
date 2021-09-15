@@ -13,9 +13,11 @@ import { SharedModule } from "../../shared/shared.module";
 import { AdminHierarchyCeilingComponent } from "./admin-hierarchy-ceiling.component";
 import { AdminHierarchyCeilingUpdateComponent } from "./update/admin-hierarchy-ceiling-update.component";
 import { InitiateCeilingComponent } from './update/initiate-ceiling.component';
+import {BadgeModule} from "primeng/badge";
+import {SplitButtonModule} from "primeng/splitbutton";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, AdminHierarchyCeilingRoutingModule],
+    imports: [SharedModule, CommonModule, AdminHierarchyCeilingRoutingModule, BadgeModule, SplitButtonModule],
   declarations: [
     AdminHierarchyCeilingComponent,
     AdminHierarchyCeilingUpdateComponent,

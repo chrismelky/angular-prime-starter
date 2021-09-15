@@ -1,0 +1,53 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="permission_id"
+            optionValue="id"
+            optionLabel="description"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="permissions!"
+            formControlName="permission_id"
+          ></p-dropdown>
+          <label for="permission_id">Permission</label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('permission_id')!.invalid &&
+            (editForm.get('permission_id')!.dirty ||
+              editForm.get('permission_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('permission_id')?.errors?.required"
+            >Permission is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          [disabled]="editForm.invalid"
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

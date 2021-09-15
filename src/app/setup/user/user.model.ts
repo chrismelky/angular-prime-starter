@@ -1,5 +1,6 @@
 import {AdminHierarchy} from '../admin-hierarchy/admin-hierarchy.model';
 import {Section} from '../section/section.model';
+import {Role} from "../role/role.model";
 
 export class User {
   constructor(
@@ -18,7 +19,9 @@ export class User {
     public is_super_user?: string,
     public admin_hierarchy?: AdminHierarchy,
     public section?: Section,
-    public username?: string
+    public username?: string,
+    public active?: boolean,
+    public roles?: Role[],
   ) {
   }
 }

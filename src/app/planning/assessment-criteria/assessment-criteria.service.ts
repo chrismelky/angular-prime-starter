@@ -16,6 +16,7 @@ import { AssessmentCriteria } from "./assessment-criteria.model";
 @Injectable({ providedIn: "root" })
 export class AssessmentCriteriaService {
   public resourceUrl = "api/assessment_criteria";
+  public baseUrl = "api/assessor_hierarchies";
 
   constructor(protected http: HttpClient) {}
 
@@ -37,8 +38,8 @@ export class AssessmentCriteriaService {
     );
   }
 
-  find(id: number): Observable<CustomResponse<AssessmentCriteria>> {
-    return this.http.get<CustomResponse<AssessmentCriteria>>(
+  find(id: number): Observable<CustomResponse<AssessmentCriteria[]>> {
+    return this.http.get<CustomResponse<AssessmentCriteria[]>>(
       `${this.resourceUrl}/${id}`
     );
   }
@@ -53,5 +54,11 @@ export class AssessmentCriteriaService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  getDataByUser(): Observable<CustomResponse<any>> {
+    return this.http.get<CustomResponse<any>>(
+      this.baseUrl
+    );
   }
 }

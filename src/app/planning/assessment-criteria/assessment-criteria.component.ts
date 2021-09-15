@@ -8,7 +8,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -30,6 +30,9 @@ import { CasAssessmentRoundService } from "src/app/setup/cas-assessment-round/ca
 import { AssessmentCriteria } from "./assessment-criteria.model";
 import { AssessmentCriteriaService } from "./assessment-criteria.service";
 import { AssessmentCriteriaUpdateComponent } from "./update/assessment-criteria-update.component";
+import {CasAssessmentCriteriaOptionService} from "../../setup/cas-assessment-criteria-option/cas-assessment-criteria-option.service";
+import {CasAssessmentSubCriteriaOptionService} from "../../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service";
+import {CasAssessmentSubCriteriaOption} from "../../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
 
 @Component({
   selector: "app-assessment-criteria",
@@ -38,13 +41,24 @@ import { AssessmentCriteriaUpdateComponent } from "./update/assessment-criteria-
 export class AssessmentCriteriaComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  assessmentCriteria?: AssessmentCriteria[] = [];
+  assessmentCriterias?: TreeNode[] = [];
+  assessmentCriteriaData?: AssessmentCriteria[] = [];
+  assessmentCriteriaNodeTree?: TreeNode[] = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
   casAssessmentRounds?: CasAssessmentRound[] = [];
 
-  cols = []; //Table display columns
+  cols = [{
+    field: "name",
+    header: "Name",
+    sort: true,
+  },
+    {
+      field: "number",
+      header: "Number",
+      sort: true,
+    },]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -58,43 +72,43 @@ export class AssessmentCriteriaComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
-  financialYearId: number;
   cas_assessment_round_id!: number;
+  cas_assessment_category_version_id: number;
 
   constructor(
     protected assessmentCriteriaService: AssessmentCriteriaService,
+    protected casAssessmentSubCriteriaService: CasAssessmentSubCriteriaOptionService,
     protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
-    protected casAssessmentRoundService: CasAssessmentRoundService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
+    protected actRoute: ActivatedRoute,
     protected toastService: ToastService
   ) {
-     this.financialYearId = this.router.getCurrentNavigation()?.extras.state?.financial_year.id;
+    this.cas_assessment_category_version_id = this.actRoute.snapshot.params.id;
     }
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    // this.financialYearService
-    //   .find(this.financialYearId)
-    //   .subscribe(
-    //     (resp: CustomResponse<FinancialYear>) =>
-    //       (this.financialYears = resp.data)
-    //   );
-    this.casAssessmentRoundService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<CasAssessmentRound[]>) =>
-          (this.casAssessmentRounds = resp.data)
-      );
+    this.assessmentCriteriaService.find(this.cas_assessment_category_version_id)
+      .subscribe((resp:CustomResponse<AssessmentCriteria[]>) => {
+        this.assessmentCriterias =(resp?.data ?? []).map((c) => {
+          return {
+            data: c,
+            children: [],
+            leaf: false,
+          };
+        });
+      });
+
+    this.assessmentCriteriaService.getDataByUser()
+      .subscribe((resp) => {
+        this.adminHierarchies = resp.data.adminHierarchies;
+        this.financialYears = resp.data.financialYears;
+        this.casAssessmentRounds = resp.data.casRounds;
+      });
     this.handleNavigation();
   }
 
@@ -292,7 +306,13 @@ export class AssessmentCriteriaComponent implements OnInit {
         },
       });
     }
-    this.assessmentCriteria = resp?.data ?? [];
+    this.assessmentCriterias =(resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
   }
 
   /**
@@ -306,5 +326,36 @@ export class AssessmentCriteriaComponent implements OnInit {
 
   finishAndQuit() {
     this.router.navigate(["/assessment-home"])
+  }
+
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.casAssessmentSubCriteriaService
+      .query({
+        page: this.page,
+        per_page:this.per_page,
+        cas_assessment_criteria_option_id: node.data.id,
+        sort: ['id:asc'],
+      })
+      .subscribe(
+        (resp:CustomResponse<CasAssessmentSubCriteriaOption[]>) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+          node.children = (resp?.data ?? []).map((c:CasAssessmentSubCriteriaOption) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.assessmentCriteriaNodeTree = [...this.assessmentCriteriaNodeTree!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
   }
 }

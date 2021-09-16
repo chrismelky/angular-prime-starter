@@ -31,6 +31,9 @@ import { LongTermTargetService } from './long-term-target.service';
 import { LongTermTargetUpdateComponent } from './update/long-term-target-update.component';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.model';
+import { FinancialYear } from '../financial-year/financial-year.model';
+import { FinancialYearService } from '../financial-year/financial-year.service';
+import { FinancialYearTarget } from './financial-year-target.model';
 
 @Component({
   selector: 'app-long-term-target',
@@ -43,19 +46,6 @@ export class LongTermTargetComponent implements OnInit {
 
   objectives?: any[] = [];
   sections?: Section[] = [];
-
-  cols = [
-    {
-      field: 'description',
-      header: 'Description',
-      sort: true,
-    },
-    {
-      field: 'code',
-      header: 'Code',
-      sort: true,
-    },
-  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -71,6 +61,8 @@ export class LongTermTargetComponent implements OnInit {
   objective!: Objective;
   section_id!: number;
   currentUser?: User;
+  financialYears: FinancialYear[] = [];
+  currentFinancialYear?: FinancialYear;
 
   constructor(
     protected longTermTargetService: LongTermTargetService,
@@ -82,12 +74,17 @@ export class LongTermTargetComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected userService: UserService
+    protected userService: UserService,
+    protected financialYearService: FinancialYearService
   ) {
     this.currentUser = userService.getCurrentUser();
   }
 
   ngOnInit(): void {
+    this.financialYearService
+      .findByStatus(1)
+      .subscribe((resp) => (this.currentFinancialYear = resp.data));
+
     if (this.currentUser?.section) {
       const parent = `p${this.currentUser.section.position}`;
       const parentId = this.currentUser.section_id;
@@ -159,7 +156,23 @@ export class LongTermTargetComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadFinancialYears();
     });
+  }
+
+  /**
+   * Load financial years that belongs to strategic plan range
+   */
+  loadFinancialYears(): void {
+    this.financialYearService
+      .byRange(
+        this.strategicPlan.start_financial_year_id!,
+        this.strategicPlan.end_financial_year_id!
+      )
+      .subscribe((resp) => {
+        this.financialYears = resp.data!;
+        console.log(resp.data);
+      });
   }
 
   /**
@@ -173,6 +186,10 @@ export class LongTermTargetComponent implements OnInit {
     } else {
       this.loadPage(1);
     }
+  }
+
+  fyTargetSaved(result: FinancialYearTarget): void {
+    this.loadPage();
   }
 
   onObjectiveSeletion($event: any): void {

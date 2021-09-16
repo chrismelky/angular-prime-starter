@@ -83,6 +83,7 @@ export class DataValueComponent implements OnInit {
   period_id?: number;
   dataSet!: DataSet;
   currentUser?: User;
+  tableHeaders: any[] = [];
 
   constructor(
     protected dataValueService: DataValueService,
@@ -257,6 +258,27 @@ export class DataValueComponent implements OnInit {
         });
       });
     });
+  }
+
+  prepareHeaders(catCombo: CategoryCombination): any[] {
+    const tableHeaders: any[] = [];
+    catCombo.categories?.forEach((c) => {
+      const option = c.category_options?.map((o1) => o1);
+      let tr: any[] = [];
+      catCombo.category_option_combinations?.forEach((coc) => {
+        const optionIds2 = coc.category_options?.map((o2) => o2.id);
+        const column = option?.find((x) => optionIds2?.indexOf(x.id));
+        let existColumn = tr.find((y: any) => y?.idscolumn?.id);
+        if (existColumn) {
+          existColumn.colspan++;
+        } else {
+          tr.push({ id: column?.id, colspan: 1, name: column?.name });
+        }
+      });
+      tableHeaders.push(tr);
+    });
+    console.log(tableHeaders);
+    return tableHeaders;
   }
 
   saveValue(dataValue: any): void {

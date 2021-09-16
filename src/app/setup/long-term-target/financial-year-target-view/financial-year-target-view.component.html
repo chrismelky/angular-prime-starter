@@ -1,0 +1,58 @@
+<button
+  pButton
+  class="p-button p-button-plain p-button-sm p-button-text"
+  [icon]="
+    financialYearId === currentFinancialYear?.id &&
+    !longTermTarget?.financial_year_target
+      ? 'pi pi-plus'
+      : financialYearId === currentFinancialYear?.id
+      ? 'pi pi-check'
+      : 'pi pi-lock'
+  "
+  [label]="
+    financialYearId === currentFinancialYear?.id &&
+    !longTermTarget?.financial_year_target
+      ? 'add'
+      : 'view'
+  "
+  [ngClass]="{
+    'p-button-warning':
+      financialYearId === currentFinancialYear?.id &&
+      !longTermTarget?.financial_year_target
+  }"
+  (click)="op.toggle($event)"
+></button>
+<p-overlayPanel
+  #op
+  [focusOnShow]="false"
+  [dismissable]="true"
+  appendTo="body"
+  (onShow)="loadTarget()"
+>
+  <ng-template pTemplate>
+    <form
+      name="editForm"
+      role="form"
+      novalidate
+      (ngSubmit)="save()"
+      [formGroup]="editForm"
+    >
+      <div fxLayout="column" fxLayoutGap="10px" style="width: 400px">
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <textarea
+              id="description"
+              formControlName="description"
+              pInputTextarea
+              [autoResize]="true"
+            ></textarea>
+            <label for="description">Financial year target</label>
+          </span>
+        </div>
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+          <button pButton label="Save"></button>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</p-overlayPanel>

@@ -151,7 +151,6 @@
       [responsive]="true"
       [autoLayout]="true"
       [loading]="isLoading"
-      [columns]="cols"
       [value]="longTermTargets!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
@@ -172,20 +171,25 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="longTermTargets?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th pSortableColumn="description">
+            Target<p-sortIcon field="description"></p-sortIcon>
           </th>
-          <th></th>
+          <th *ngFor="let y of financialYears" class="fit">
+            {{ y.name }}
+          </th>
+          <th class="fit"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+          <td>[{{ rowData.code }}] {{ rowData.description }}</td>
+          <td *ngFor="let y of financialYears">
+            <app-financial-year-target-view
+              [longTermTarget]="rowData"
+              [financialYearId]="y.id"
+              [currentFinancialYear]="currentFinancialYear"
+              (onSave)="fyTargetSaved($event)"
+            ></app-financial-year-target-view>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

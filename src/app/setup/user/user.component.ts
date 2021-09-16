@@ -7,7 +7,7 @@
  */
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
 import {DialogService} from "primeng/dynamicdialog";
 import {Paginator} from "primeng/paginator";
@@ -31,6 +31,11 @@ import {UserUpdateComponent} from "./update/user-update.component";
 import {FormControl, Validators} from "@angular/forms";
 import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
 import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import {Role} from "../role/role.model";
+import {RolePermissionComponent} from "../role/role-permission/role-permission.component";
+import {UserRoleComponent} from "./user-role/user-role.component";
+import {MatCheckboxChange} from "@angular/material/checkbox";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: "app-user",
@@ -40,7 +45,7 @@ export class UserComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
   users?: User[] = [];
-
+  isSaving = false;
   sections?: Section[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
@@ -85,7 +90,7 @@ export class UserComponent implements OnInit {
       field: "section_id",
       header: "Section ",
       sort: false,
-    },*/
+    },
     {
       field: "facilities",
       header: "Facilities",
@@ -100,7 +105,7 @@ export class UserComponent implements OnInit {
       field: "is_super_user",
       header: "Super User",
       sort: false,
-    },
+    },*/
   ]; //Table display columns
 
   isLoading = false;
@@ -115,8 +120,6 @@ export class UserComponent implements OnInit {
   //Mandatory filter
   adminHierarchy!: AdminHierarchy;
   admin_hierarchy_position!: number;
-  adminHierarchyControl = new FormControl(null, [Validators.required]);
-  adminHierarchyLevelControl = new FormControl(null, [Validators.required]);
 
   constructor(
     protected userService: UserService,
@@ -365,5 +368,46 @@ export class UserComponent implements OnInit {
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
+  }
+
+  roles(rowData: User): void {
+    const data = {
+      user: rowData
+    }
+    const ref = this.dialogService.open(UserRoleComponent, {
+      data,
+      width: '60%',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  toggleActive(user: User, change: MatCheckboxChange): void {
+    this.isSaving = true;
+    user.active = change.checked;
+    this.subscribeToSaveResponse(this.userService.update(user));
+  }
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<User>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  protected onSaveError(error: any): void {
+  }
+
+  protected onSaveFinalize(): void {
+    this.isSaving = false;
   }
 }

@@ -551,6 +551,13 @@ export class MainComponent implements OnInit {
           routerLink: "strategic-plan",
         },
         {
+        },
+        {
+          label: "Strategic Plans",
+          icon: "pi pi-fw pi-link",
+          routerLink: "strategic-plan",
+        },
+        {
           label: "Comprehensive Plans",
           icon: "pi pi-fw pi-angle-down",
           items: [
@@ -612,6 +619,9 @@ export class MainComponent implements OnInit {
         },
         {
           routerLink: "received-assessment",
+        },
+        {
+          routerLink: "assessment-criteria",
         },
         /**====Planrep Assessment Menu Generator Hook: Dont Delete====*/
       ],

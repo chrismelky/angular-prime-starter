@@ -617,17 +617,16 @@ const routes: Routes = [
           ),
       },
       {
-        path: "permission",
+        path: "assessment-criteria",
+        loadChildren: () =>
+          import(
+            "../planning/assessment-criteria/assessment-criteria.module"
+            ).then((m) => m.AssessmentCriteriaModule),
+      },
+      { path: "permission",
         loadChildren: () =>
           import("../setup/permission/permission.module").then(
             (m) => m.PermissionModule
-          ),
-      },
-      {
-        path: "role-permission",
-        loadChildren: () =>
-          import("../setup/role/role-permission/role-permission.module").then(
-            (m) => m.RolePermissionModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

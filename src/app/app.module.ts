@@ -13,6 +13,7 @@ import {MessageModule} from 'primeng/message';
 import {ErrorHandlerInterceptor} from './interceptors/error-handler.interceptor';
 import {AuthExpiredInterceptor} from './interceptors/auth-expired.interceptor';
 import {RippleModule} from 'primeng/ripple';
+import {LoaderInterceptor} from "./shared/loader-interceptor";
 
 @NgModule({
   declarations: [AppComponent],
@@ -46,6 +47,11 @@ import {RippleModule} from 'primeng/ripple';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthExpiredInterceptor,
       multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor ,
+      multi: true
     },
   ],
   bootstrap: [AppComponent],

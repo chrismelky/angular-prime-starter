@@ -21,6 +21,8 @@ import {ToastService} from 'src/app/shared/toast.service';
 import {Facility} from "../../facility/facility.model";
 import {FacilityService} from "../../facility/facility.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {Role} from "../../role/role.model";
+import {RoleService} from "../../role/role.service";
 
 @Component({
   selector: 'app-user-update',
@@ -35,6 +37,7 @@ export class UserUpdateComponent implements OnInit {
 
   sections?: Section[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
+  roles?: Role[] = [];
   facilities?: any[] = [];
 
   /**
@@ -52,6 +55,7 @@ export class UserUpdateComponent implements OnInit {
     section_id: [null, []],
     admin_hierarchy_id: [null, [Validators.required]],
     facilities: [null, []],
+    roles: [null, []],
     is_facility_user: [false, []],
     is_super_user: [false, []],
   });
@@ -59,6 +63,7 @@ export class UserUpdateComponent implements OnInit {
   constructor(
     protected userService: UserService,
     protected sectionService: SectionService,
+    protected roleService: RoleService,
     protected adminHierarchyService: AdminHierarchyService,
     protected facilityService: FacilityService,
     protected fb: FormBuilder,
@@ -76,6 +81,11 @@ export class UserUpdateComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
+    this.roleService
+      .query({columns: ['id', 'name']})
+      .subscribe(
+        (resp: CustomResponse<Role[]>) => (this.roles = resp.data)
+      );
     this.adminHierarchyService
       .query({columns: ['id', 'name']})
       .subscribe(
@@ -87,7 +97,7 @@ export class UserUpdateComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
       );
-    if(this.id != null){
+    if (this.id != null) {
       this.userService
         .find(this.id)
         .subscribe(
@@ -109,7 +119,8 @@ export class UserUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const user = this.createFromForm();
-    if (user.id !== undefined) {
+    if (this.id !== undefined) {
+      user.id = this.id;
       this.subscribeToSaveResponse(this.userService.update(user));
     } else {
       this.subscribeToSaveResponse(this.userService.create(user));
@@ -125,7 +136,7 @@ export class UserUpdateComponent implements OnInit {
     );
   }
 
-  close(){
+  close() {
     this.router.navigate(['/user']);
   }
 
@@ -135,6 +146,7 @@ export class UserUpdateComponent implements OnInit {
    */
   protected onSaveSuccess(result: any): void {
     this.toastService.info(result.message);
+    this.close();
   }
 
   /**
@@ -166,6 +178,7 @@ export class UserUpdateComponent implements OnInit {
       mobile_number: user?.mobile_number,
       section_id: user?.section_id,
       admin_hierarchy_id: user?.admin_hierarchy_id,
+      roles: user?.roles,
       facilities:
         user?.facilities !== undefined
           ? JSON.parse(user.facilities!)
@@ -192,6 +205,7 @@ export class UserUpdateComponent implements OnInit {
       mobile_number: this.editForm.get(['mobile_number'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
       admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      roles: this.editForm.get(['roles'])!.value,
       facilities:
         this.editForm.get(['facilities'])!.value !== undefined
           ? JSON.stringify(this.editForm.get(['facilities'])!.value)
@@ -203,9 +217,5 @@ export class UserUpdateComponent implements OnInit {
 
   onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
     this.editForm.get('admin_hierarchy_id')?.setValue(adminHierarchy.id);
-  }
-
-  private loadUser(id: number) {
-    this.userService.find(id).subscribe()
   }
 }

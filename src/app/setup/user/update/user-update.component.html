@@ -6,7 +6,8 @@
         <span class="card-header-text">User Form</span>
       </div>
       <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
-        <button pButton type="button" label="Close" (click)="close()" icon="pi pi-times" class="p-button-plain"></button>
+        <button pButton type="button" label="Close" (click)="close()" icon="pi pi-times"
+                class="p-button-plain"></button>
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
@@ -63,11 +64,9 @@
           >
         </span>
             </div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="email" type="text" pInputText formControlName="email" />
+          <input id="email" type="text" pInputText formControlName="email"/>
           <label for="email">Email </label>
         </span>
               <span
@@ -84,10 +83,10 @@
         </span>
             </div>
             <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="username" type="text" pInputText formControlName="username" />
-          <label for="email">Username</label>
-        </span>
+            <span class="p-float-label">
+              <input id="username" type="text" pInputText formControlName="username"/>
+              <label for="email">Username</label>
+            </span>
               <span
                 *ngIf="
             editForm.get('username')!.invalid &&
@@ -128,19 +127,9 @@
           >
         </span>
             </div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="2px">
-            <p-inputSwitch
-              id="activated"
-              name="activated"
-              formControlName="activated"
-            ></p-inputSwitch>
-            <label for="activated">Activated </label>
-          </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="title" type="text" pInputText formControlName="title" />
+          <input id="title" type="text" pInputText formControlName="title"/>
           <label for="title">Title </label>
         </span>
               <span
@@ -173,54 +162,87 @@
               >
         </span>
             </div>
-          </div>
-
-          <div fxLayout="row" fxLayoutGap="2px">
-            <p-inputSwitch
-              id="is_facility_user"
-              name="is_facility_user"
-              formControlName="is_facility_user"
-            ></p-inputSwitch>
-            <label for="is_facility_user">Is Facility User </label>
-          </div>
-          <div fxLayout="row" fxLayoutGap="2px">
-            <p-inputSwitch
-              id="is_super_user"
-              name="is_super_user"
-              formControlName="is_super_user"
-            ></p-inputSwitch>
-            <label for="is_super_user">Is Super User </label>
+            <div class="p-field  p-col-12 p-md-4" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="section_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  appendTo="body"
+                  [options]="sections!"
+                  formControlName="section_id"
+                ></p-dropdown>
+                <label for="section_id">Section </label>
+              </span>
+              <span
+                *ngIf="
+                editForm.get('section_id')!.invalid &&
+                (editForm.get('section_id')!.dirty ||
+                  editForm.get('section_id')!.touched ||
+                  formError)
+          "
+              >
+        </span>
+            </div>
           </div>
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="section_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="sections!"
-            formControlName="section_id"
-          ></p-dropdown>
-          <label for="section_id">Section </label>
-        </span>
+            <span class="p-float-label">
+              <p-multiSelect
+                id="facilities"
+                [options]="facilities!"
+                formControlName="facilities"
+                optionLabel="name"
+                [filter]="true"
+                class="p-inputtext-sm"
+                appendTo="body"
+              >
+              </p-multiSelect>
+              <label for="facilities">Facilities </label>
+            </span>
               <span
                 *ngIf="
-            editForm.get('section_id')!.invalid &&
-            (editForm.get('section_id')!.dirty ||
-              editForm.get('section_id')!.touched ||
+            editForm.get('facilities')!.invalid &&
+            (editForm.get('facilities')!.dirty ||
+              editForm.get('facilities')!.touched ||
               formError)
           "
               >
         </span>
             </div>
             <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-multiSelect
+                id="roles"
+                [options]="roles!"
+                formControlName="roles"
+                optionLabel="name"
+                [dataKey]="'id'"
+                [filter]="true"
+                class="p-inputtext-sm"
+                appendTo="body"
+              >
+              </p-multiSelect>
+              <label for="roles">Roles</label>
+            </span>
+              <span
+                *ngIf="
+            editForm.get('facilities')!.invalid &&
+            (editForm.get('facilities')!.dirty ||
+              editForm.get('facilities')!.touched ||
+              formError)
+          "
+              >
+        </span>
+            </div>
+          </div>
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+            <div class="p-field" fxFlex>
         <span class="p-float-label">
           <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
-                                    formControlName="admin_hierarchy_id"
                                     (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
         </span>
               <span
@@ -239,30 +261,30 @@
         </span>
             </div>
           </div>
+          <div fxLayout="row" fxLayoutGap="2px">
+            <p-inputSwitch
+              id="activated"
+              name="activated"
+              formControlName="activated"
+            ></p-inputSwitch>
+            <label for="activated">Activated </label>
+          </div>
 
-          <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-multiSelect
-            id="facilities"
-            [options]="facilities!"
-            formControlName="facilities"
-            optionLabel="name"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-          >
-          </p-multiSelect>
-          <label for="facilities">Facilities </label>
-        </span>
-            <span
-              *ngIf="
-            editForm.get('facilities')!.invalid &&
-            (editForm.get('facilities')!.dirty ||
-              editForm.get('facilities')!.touched ||
-              formError)
-          "
-            >
-        </span>
+          <div fxLayout="row" fxLayoutGap="2px">
+            <p-inputSwitch
+              id="is_facility_user"
+              name="is_facility_user"
+              formControlName="is_facility_user"
+            ></p-inputSwitch>
+            <label for="is_facility_user">Facility User </label>
+          </div>
+          <div fxLayout="row" fxLayoutGap="2px">
+            <p-inputSwitch
+              id="is_super_user"
+              name="is_super_user"
+              formControlName="is_super_user"
+            ></p-inputSwitch>
+            <label for="is_super_user">Super User </label>
           </div>
           <div fxLayout="row" fxLayoutGap="0.75rem">
             <span fxFlex></span>

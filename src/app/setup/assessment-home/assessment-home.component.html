@@ -132,13 +132,13 @@
           <td>{{rowData.cas_assessment_category.name}}</td>
           <td>
             <button pButton type="button" class="p-button-plain p-button-info p-button-icon" label="Received Assessments"
-                 style="margin-left: auto" (click)="receivedAssessment(rowData)"
+                 style="margin-left: auto" [routerLink]="['/assessment-home',rowData.id,'received-assessments']"
             ></button>
             <button pButton type="button" class="p-button-plain p-button-success p-button-icon" label="My Assessments"
-                    (click)="myAssessment(rowData)" style="margin-left: 16px"
+                    [routerLink]="['/assessment-home',rowData.id,'my-assessments']" style="margin-left: 16px"
             ></button>
             <button pButton type="button" class="p-button-plain p-button-warning p-button-icon" label="Assess"
-                    (click)="assess(rowData)" style="margin-left: 16px"
+                    [routerLink]="['/assessment-home',rowData.id,'assessment-criteria']" style="margin-left: 16px"
             ></button>
           </td>
         </tr>

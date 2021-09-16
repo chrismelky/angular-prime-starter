@@ -18,8 +18,7 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
-                [formControl]="adminHierarchyControl"
-                (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
+                                        (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
             </span>
           </div>
           <div class="p-field" fxFlex>
@@ -132,7 +131,6 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!adminHierarchyControl"
             (click)="create()"
             label="Add User"
           ></button>
@@ -141,11 +139,14 @@
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="users?.length">
           <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            {{ col.header}}
+            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'section_id'">
-            Allocation <p-sortIcon [field]="'section_id'"></p-sortIcon>
+            Allocation
+            <p-sortIcon [field]="'section_id'"></p-sortIcon>
           </th>
+          <th>Status</th>
           <th></th>
         </tr>
       </ng-template>
@@ -158,8 +159,25 @@
             {{ rowData.section?.name }}
           </td>
           <td>
+            <mat-checkbox color="primary" (change)="toggleActive(rowData, $event)" [checked]="rowData.active">
+              <span *ngIf="rowData.active">Active</span>
+              <span *ngIf="!rowData.active">Deactivated</span>
+            </mat-checkbox>
+          </td>
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
+                <button
+                  pButton
+                  pTooltip="Roles"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-table
+              "
+                  (click)="roles(rowData)"
+                ></button>
                 <button
                   pButton
                   pRipple
@@ -189,7 +207,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found</ng-template>
     </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator

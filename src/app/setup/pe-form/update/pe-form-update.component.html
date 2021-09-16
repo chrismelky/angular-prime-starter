@@ -74,9 +74,12 @@
           [options]="budgetClasses!"
           [group]="true"
           [filter]="true"
+          [autoZIndex]="true"
+          [overlayVisible]="false"
+          [baseZIndex] = "2"
           optionLabel = "name"
           optionGroupChildren = "children"
-          [maxSelectedLabels]=3
+          [maxSelectedLabels]="3"
           [selectedItemsLabel]="'{0} items selected'"
           defaultLabel="Sub budget Class"
           scrollHeight="150px"

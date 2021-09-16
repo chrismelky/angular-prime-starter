@@ -560,16 +560,17 @@ const routes: Routes = [
           ).then((m) => m.FacilityCustomDetailMappingModule),
       },
       {
-        path: "period",},
+        path: "period",
+      },
       {
-        path: 'pe-item',
+        path: "pe-item",
         loadChildren: () =>
-          import('../budgeting/pe-item/pe-item.module').then(
+          import("../budgeting/pe-item/pe-item.module").then(
             (m) => m.PeItemModule
           ),
       },
       {
-        path: 'period',
+        path: "period",
         loadChildren: () =>
           import("../setup/period/period.module").then((m) => m.PeriodModule),
       },
@@ -607,12 +608,25 @@ const routes: Routes = [
           import(
             "../planning/received-assessment/received-assessment.module"
           ).then((m) => m.ReceivedAssessmentModule),
-      }, {
-
-        path: 'option-set-value',
+      },
+      {
+        path: "option-set-value",
         loadChildren: () =>
-          import('../setup/option-set-value/option-set-value.module').then(
+          import("../setup/option-set-value/option-set-value.module").then(
             (m) => m.OptionSetValueModule
+          ),
+      },
+      {
+        path: "assessment-criteria",
+        loadChildren: () =>
+          import(
+            "../planning/assessment-criteria/assessment-criteria.module"
+            ).then((m) => m.AssessmentCriteriaModule),
+      },
+      { path: "permission",
+        loadChildren: () =>
+          import("../setup/permission/permission.module").then(
+            (m) => m.PermissionModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

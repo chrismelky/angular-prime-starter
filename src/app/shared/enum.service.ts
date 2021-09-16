@@ -247,10 +247,10 @@ export class EnumService {
       { display: "Annual", value: "Annual" },
     ],
     budgetTypes: [
-      { display: 'CURRENT', value: 'CURRENT' },
-      { display: 'APPROVED', value: 'APPROVED' },
-      { display: 'CARRYOVER', value: 'CARRYOVER' },
-      { display: 'SUPPLEMENTARY', value: 'SUPPLEMENTARY' },
+      { display: "CURRENT", value: "CURRENT" },
+      { display: "APPROVED", value: "APPROVED" },
+      { display: "CARRYOVER", value: "CARRYOVER" },
+      { display: "SUPPLEMENTARY", value: "SUPPLEMENTARY" },
     ],
 
     peOutPutValues: [

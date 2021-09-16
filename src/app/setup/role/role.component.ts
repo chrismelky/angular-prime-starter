@@ -5,25 +5,26 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
 
-import { Role } from "./role.model";
-import { RoleService } from "./role.service";
-import { RoleUpdateComponent } from "./update/role-update.component";
+import {Role} from "./role.model";
+import {RoleService} from "./role.service";
+import {RoleUpdateComponent} from "./update/role-update.component";
+import {RolePermissionComponent} from "./role-permission/role-permission.component";
 
 @Component({
   selector: "app-role",
@@ -61,7 +62,8 @@ export class RoleComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.handleNavigation();
@@ -244,5 +246,20 @@ export class RoleComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Role");
+  }
+
+  permissions(rowData: Role): void {
+    const data = {
+      role: rowData
+    }
+    const ref = this.dialogService.open(RolePermissionComponent, {
+      data,
+      width: '60%',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

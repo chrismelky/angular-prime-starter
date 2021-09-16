@@ -39,6 +39,7 @@ export class MainComponent implements OnInit {
     }
   }
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {}
 
   userMenus: MenuItem[] = [
@@ -260,6 +261,11 @@ export class MainComponent implements OnInit {
               label: 'Planning Sequence',
               icon: 'pi pi-fw pi-link',
               routerLink: 'objective',
+            },
+            {
+              label: 'Performance Indicators',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'performance-indicator',
             },
             {
               label: 'Long Term Targets',
@@ -536,6 +542,7 @@ export class MainComponent implements OnInit {
         },
       ],
     },
+
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
 
     {

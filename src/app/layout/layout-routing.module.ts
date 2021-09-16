@@ -623,6 +623,13 @@ const routes: Routes = [
             "../setup/configuration-setting/configuration-setting.module"
           ).then((m) => m.ConfigurationSettingModule),
       },
+      {
+        path: "performance-indicator",
+        loadChildren: () =>
+          import(
+            "../setup/performance-indicator/performance-indicator.module"
+          ).then((m) => m.PerformanceIndicatorModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

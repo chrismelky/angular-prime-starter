@@ -8,9 +8,9 @@
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
-      <div fxLayout="row" fxLayoutGap="10px">
+      <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
-          fxLayout="row"
+          fxLayout="row wrap"
           fxLayoutGap="0.75rem"
           fxFlex
           fxLayoutAlign="start center"
@@ -18,57 +18,49 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_category_id"
+                id="admin_hierarchy_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="casAssessmentCategories!"
-                (onChange)="fetchCriteria($event)"
-                [(ngModel)]="cas_assessment_category_id"
+                [options]="adminHierarchies!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="admin_hierarchy_id"
               ></p-dropdown>
-              <label for="cas_assessment_category_id"
-              >Cas Assessment Category
-              </label>
+              <label for="admin_hierarchy_id">Admin Hierarchy </label>
             </span>
           </div>
-<!--          -->
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_criteria_option_id"
+                id="financial_year_id"
                 optionValue="id"
                 optionLabel="name"
-                [autoDisplayFirst]="false"
+                [autoDisplayFirst]="true"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="casAssessmentCriteria!"
-                (onChange)="fetchSubCriteria($event)"
-                [(ngModel)]="cas_assessment_criteria_option_id"
+                [options]="financialYears!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="financialYears"
               ></p-dropdown>
-              <label for="cas_assessment_criteria_option_id"
-              >Cas Assessment Criteria
-              </label>
+              <label for="financial_year_id"> </label>
             </span>
           </div>
-<!--          -->
-          <div class="p-field" fxFlex="30%">
+          <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_sub_criteria_option_id"
+                id="cas_assessment_round_id"
                 optionValue="id"
                 optionLabel="name"
-                [autoDisplayFirst]="false"
+                [autoDisplayFirst]="true"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="casAssessmentSubCriteria!"
+                [options]="casAssessmentRounds!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="cas_assessment_sub_criteria_option_id"
+                [(ngModel)]="casAssessmentRounds"
               ></p-dropdown>
-              <label for="cas_assessment_sub_criteria_option_id"
-                >Cas Assessment Sub Criteria
-              </label>
+              <label for="cas_assessment_round_id"> </label>
             </span>
           </div>
         </div>
@@ -139,82 +131,68 @@
       </p-accordion>
     </div>
   </p-card>
-
   <!-- Table Panel -->
   <p-card>
-    <p-table
+<!--    <p-treeTable [value]="assessmentCriterias!" [lazy]="true" (onNodeExpand)="onNodeExpand($event)" >-->
+<!--      <ng-template pTemplate="header">-->
+<!--        <tr>-->
+<!--          <th>Criteria</th>-->
+<!--          <th>Criteria Number</th>-->
+<!--          <th>COLUMN C</th>-->
+<!--          <th>COLUMN D</th>-->
+<!--        </tr>-->
+<!--      </ng-template>-->
+<!--      <ng-template pTemplate="body" let-rowNode let-rowData="rowData">-->
+<!--        <tr>-->
+<!--          <td>-->
+<!--            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>-->
+<!--            {{rowData?.name}}-->
+<!--          </td>-->
+<!--          <td>{{rowData?.number}}</td>-->
+<!--          <td></td>-->
+<!--          <td></td>-->
+<!--        </tr>-->
+<!--      </ng-template>-->
+<!--    </p-treeTable>-->
+
+    <p-treeTable
       #table
       [lazy]="true"
       [resizableColumns]="true"
-      [responsive]="true"
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="casAssessmentSubCriteriaPossibleScores!"
+      [value]="assessmentCriterias!"
       [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
+      (onNodeExpand)="onNodeExpand($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text"
-            >Cas Assessment Sub Criteria Possible Scores</span
-          >
+          <span class="card-header-text">Cas Assessment Criteria</span>
           <button
             pButton
-            icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!cas_assessment_sub_criteria_option_id"
-            (click)="createOrUpdate()"
-            label="Add Cas Assessment Sub Criteria Possible Score"
+            [disabled]=""
+            (click)="finishAndQuit()"
+            label="Finish and Quit"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="casAssessmentSubCriteriaPossibleScores?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th style="flex: 0 0 2rem"></th>
-        </tr>
+        <th *ngFor="let col of columns">
+          {{ col.header}}
+        </th>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <ng-template
+        pTemplate="body" let-rowNode
+        let-rowData="rowData"
+        let-columns="columns" >
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
-          </td>
-          <td style="flex: 0 0 2rem">
-            <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" fxLayoutGap="2px">
-                <button
-                  pButton
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pTooltip="Delete"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-trash
-              "
-                  (click)="delete(rowData)"
-                ></button>
-              </div>
-            </div>
+          <td *ngFor="let col of columns; let i = index">
+            <p-treeTableToggler *ngIf="i == 0" [rowNode]="rowNode"></p-treeTableToggler>
+            {{rowData[col?.field]}}
           </td>
         </tr>
       </ng-template>
@@ -222,7 +200,7 @@
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
-          [alwaysShow]="casAssessmentSubCriteriaPossibleScores?.length! > 0"
+          [alwaysShow]="assessmentCriterias?.length! > 0"
           [rows]="per_page"
           dropdownAppendTo="body"
           [showCurrentPageReport]="true"
@@ -231,13 +209,13 @@
           (onPageChange)="pageChanged($event)"
         ></p-paginator>
       </ng-template>
-    </p-table>
+    </p-treeTable>
   </p-card>
-</div>
 
+</div>
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Cas Assessment Sub Criteria Possible Score"
+  header="Confirmation Delete Assessment Criteria"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

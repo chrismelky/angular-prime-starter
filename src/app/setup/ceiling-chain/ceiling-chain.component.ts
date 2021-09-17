@@ -103,6 +103,7 @@ export class CeilingChainComponent implements OnInit {
           (this.sectionLevelPositions = resp.data)
       );
     this.handleNavigation();
+    this.loadPage();
   }
 
   /**
@@ -111,19 +112,14 @@ export class CeilingChainComponent implements OnInit {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_level_position || !this.section_level_position) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.ceilingChainService
-      .query({
+      .queryWithChild({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_level_position: this.admin_hierarchy_level_position,
-        section_level_position: this.section_level_position,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(

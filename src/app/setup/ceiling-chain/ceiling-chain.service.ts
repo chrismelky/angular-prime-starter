@@ -39,6 +39,14 @@ export class CeilingChainService {
     );
   }
 
+  queryWithChild(req?: any): Observable<CustomResponse<CeilingChain[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/ceiling_chain_with_children';
+    return this.http.get<CustomResponse<CeilingChain[]>>(url, {
+      params: options,
+    });
+  }
+
   query(req?: any): Observable<CustomResponse<CeilingChain[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<CeilingChain[]>>(this.resourceUrl, {

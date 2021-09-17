@@ -57,9 +57,12 @@ export class PeItemComponent implements OnInit {
   financialYears?: FinancialYear[] = [];
   peSubForms?: any[] = [];
   budgetClasses?: BudgetClass[] = [];
-   fundSources?: FundSource[] = [];
+  fundSources?: FundSource[] = [];
   sections?: Section[] = [];
   fetchedFundSources?:FundSource[] = []; // it hold the fund sources fetched from pe forms
+  round: any[] = [];
+  inputTexts: any[] = [];
+  peTableFields:any = [];
 
   cols = []; //Table display columns
 
@@ -73,7 +76,8 @@ export class PeItemComponent implements OnInit {
   search: any = {}; // items search objects
 
   /* dynamic table values */
-   peTableFields:any = [];
+
+
 
 
   //Mandatory filter
@@ -220,23 +224,20 @@ export class PeItemComponent implements OnInit {
     console.log("fund_source_id",this.fund_source_id);
     console.log("section_id",this.section_id);
     console.log("pe_form_id",this.pe_form_id);
-    if (
-      !this.admin_hierarchy_id ||
-      !this.financial_year_id ||
-      this.budget_class_id <= 0 ||
-      this.fund_source_id <= 0 ||
-      !this.pe_form_id ||
-      !this.section_id
-    ) {
+
+    if (!this.admin_hierarchy_id || !this.financial_year_id || this.budget_class_id <= 0 || this.fund_source_id <= 0 || !this.pe_form_id || !this.section_id) {
      return;
-    }
+     }
     this.peTableFields = [];
     this.peDefinitionService.getParentChildrenByFormId({"pe_form_id":this.pe_form_id}).subscribe(resp =>{
       let fetchedColumns = resp.data;
       this.peTableFields = resp.data
         console.log("fetchedColumns");
-        console.log(fetchedColumns);
+        console.log(fetchedColumns.textInputs);
 
+      if(this.round.length === 0){
+        this.addRow(0)
+      }
     })
 
 
@@ -412,4 +413,21 @@ export class PeItemComponent implements OnInit {
     this.page = 1;
     this.toastService.error("Error loading Pe Item");
   }
+
+  addRow(position:number){
+
+   if(this.peTableFields.textInputs?.length > 0){
+     this.inputTexts[position] = this.peTableFields.textInputs;
+     this.round.push(position);
+   }
+
+  }
+
+  deleteRow(position:number){
+    if(position > 1) {
+      this.round.pop();
+      ///delete Procedure
+    }
+  }
+
 }

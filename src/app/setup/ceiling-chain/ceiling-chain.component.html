@@ -15,42 +15,42 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="admin_hierarchy_level_position"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="adminHierarchyLevelPositions!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_level_position"
-              ></p-dropdown>
-              <label for="admin_hierarchy_level_position"
-                >Admin Hierarchy Level Position
-              </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="section_level_position"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="sectionLevelPositions!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="section_level_position"
-              ></p-dropdown>
-              <label for="section_level_position"
-                >Section Level Position
-              </label>
-            </span>
-          </div>
+<!--          <div class="p-field" fxFlex>-->
+<!--            <span class="p-float-label">-->
+<!--              <p-dropdown-->
+<!--                id="admin_hierarchy_level_position"-->
+<!--                optionValue="id"-->
+<!--                optionLabel="name"-->
+<!--                [autoDisplayFirst]="false"-->
+<!--                [filter]="true"-->
+<!--                class="p-inputtext-sm"-->
+<!--                [options]="adminHierarchyLevelPositions!"-->
+<!--                (onChange)="filterChanged()"-->
+<!--                [(ngModel)]="admin_hierarchy_level_position"-->
+<!--              ></p-dropdown>-->
+<!--              <label for="admin_hierarchy_level_position"-->
+<!--                >Admin Hierarchy Level Position-->
+<!--              </label>-->
+<!--            </span>-->
+<!--          </div>-->
+<!--          <div class="p-field" fxFlex>-->
+<!--            <span class="p-float-label">-->
+<!--              <p-dropdown-->
+<!--                id="section_level_position"-->
+<!--                optionValue="id"-->
+<!--                optionLabel="name"-->
+<!--                [autoDisplayFirst]="false"-->
+<!--                [filter]="true"-->
+<!--                class="p-inputtext-sm"-->
+<!--                [options]="sectionLevelPositions!"-->
+<!--                (onChange)="filterChanged()"-->
+<!--                [(ngModel)]="section_level_position"-->
+<!--              ></p-dropdown>-->
+<!--              <label for="section_level_position"-->
+<!--                >Section Level Position-->
+<!--              </label>-->
+<!--            </span>-->
+<!--          </div>-->
         </div>
         <div
           fxLayout="row wrap"
@@ -58,32 +58,32 @@
           fxLayoutGap="4px"
           fxLayoutAlign="end center"
         >
-          <button
-            pButton
-            pRipple
-            type="button"
-            [pTooltip]="
-              advFilter.selected
-                ? 'Hide Advanced Search'
-                : 'Show Advanced Search'
-            "
-            tooltipPosition="bottom"
-            [icon]="
-              advFilter.selected
-                ? 'pi pi-angle-double-up'
-                : 'pi pi-angle-double-down'
-            "
-            class="p-button-rounded p-button-text p-button-plain"
-            (click)="advFilter.selected = !advFilter.selected"
-          ></button>
-          <button
-            pButton
-            pRipple
-            class="p-button-primary p-button-raised"
-            icon="pi pi-search"
-            label="Search"
-            (click)="onSearch()"
-          ></button>
+<!--          <button-->
+<!--            pButton-->
+<!--            pRipple-->
+<!--            type="button"-->
+<!--            [pTooltip]="-->
+<!--              advFilter.selected-->
+<!--                ? 'Hide Advanced Search'-->
+<!--                : 'Show Advanced Search'-->
+<!--            "-->
+<!--            tooltipPosition="bottom"-->
+<!--            [icon]="-->
+<!--              advFilter.selected-->
+<!--                ? 'pi pi-angle-double-up'-->
+<!--                : 'pi pi-angle-double-down'-->
+<!--            "-->
+<!--            class="p-button-rounded p-button-text p-button-plain"-->
+<!--            (click)="advFilter.selected = !advFilter.selected"-->
+<!--          ></button>-->
+<!--          <button-->
+<!--            pButton-->
+<!--            pRipple-->
+<!--            class="p-button-primary p-button-raised"-->
+<!--            icon="pi pi-search"-->
+<!--            label="Search"-->
+<!--            (click)="onSearch()"-->
+<!--          ></button>-->
         </div>
       </div>
       <p-accordion>
@@ -145,9 +145,6 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !admin_hierarchy_level_position || !section_level_position
-            "
             (click)="createOrUpdate()"
             label="Add Ceiling Chain"
           ></button>
@@ -155,30 +152,21 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="ceilingChains?.length">
-          <th [pSortableColumn]="'for_admin_hierarchy_level_position'">
-            Level
-            <p-sortIcon
-              [field]="'for_admin_hierarchy_level_position'"
-            ></p-sortIcon>
-          </th>
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
+          <th>SN</th>
+          <th>Use at level</th>
+          <th>Admin hierarchy level</th>
+          <th>Ceiling Planning Unit Level</th>
+          <th>UNext admin level and section level</th>
           <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
         <tr>
-          <td>
-            {{ rowData.for_admin_hierarchy_level_position?.name }}
-          </td>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
-          </td>
+          <td>{{i+1}}</td>
+          <td>{{ rowData?.for_admin_hierarchy_level_position?.name }}</td>
+          <td>{{ rowData?.admin_hierarchy_level_position?.name }}</td>
+          <td>{{rowData?.section_level_position?.name}}</td>
+          <td>{{rowData?.section_level_position?.name}} - {{rowData?.next?.section_level_position?.name}}</td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

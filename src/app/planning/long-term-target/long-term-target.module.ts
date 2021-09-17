@@ -13,9 +13,15 @@ import { SharedModule } from '../../shared/shared.module';
 import { LongTermTargetComponent } from './long-term-target.component';
 import { LongTermTargetUpdateComponent } from './update/long-term-target-update.component';
 import { FinancialYearTargetViewComponent } from './financial-year-target-view/financial-year-target-view.component';
+import { TargetPerformanceIndicatorModule } from '../target-performance-indicator/target-performance-indicator.module';
 
 @NgModule({
-  imports: [SharedModule, CommonModule, LongTermTargetRoutingModule],
+  imports: [
+    SharedModule,
+    CommonModule,
+    LongTermTargetRoutingModule,
+    TargetPerformanceIndicatorModule,
+  ],
   declarations: [
     LongTermTargetComponent,
     LongTermTargetUpdateComponent,

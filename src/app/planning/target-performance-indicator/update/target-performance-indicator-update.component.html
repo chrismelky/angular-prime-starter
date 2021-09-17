@@ -1,0 +1,166 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="long_term_target_id"
+            optionValue="id"
+            optionLabel="description"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="longTermTargets!"
+            formControlName="long_term_target_id"
+          ></p-dropdown>
+          <label for="long_term_target_id">Long Term Target </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('long_term_target_id')!.invalid &&
+            (editForm.get('long_term_target_id')!.dirty ||
+              editForm.get('long_term_target_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="performance_indicator_id"
+            optionValue="id"
+            optionLabel="description"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="performanceIndicators!"
+            formControlName="performance_indicator_id"
+          ></p-dropdown>
+          <label for="performance_indicator_id">Performance Indicator </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('performance_indicator_id')!.invalid &&
+            (editForm.get('performance_indicator_id')!.dirty ||
+              editForm.get('performance_indicator_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('performance_indicator_id')?.errors?.required"
+            >Performance Indicator is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input
+              id="baseline_value"
+              type="text"
+              pInputText
+              formControlName="baseline_value"
+            />
+            <label for="baseline_value">Baseline Value </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('baseline_value')!.invalid &&
+              (editForm.get('baseline_value')!.dirty ||
+                editForm.get('baseline_value')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('baseline_value')?.errors?.required"
+              >Baseline Value is required.</small
+            >
+          </span>
+        </div>
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <input
+              id="actual_value"
+              type="text"
+              pInputText
+              formControlName="actual_value"
+            />
+            <label for="actual_value">Actual Value </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('actual_value')!.invalid &&
+              (editForm.get('actual_value')!.dirty ||
+                editForm.get('actual_value')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('actual_value')?.errors?.required"
+              >Actual Value is required.</small
+            >
+          </span>
+        </div>
+        <div
+          formArrayName="year_values"
+          fxLayout="row"
+          fxLayoutGap="10px"
+          fxLayoutAlign="start"
+        >
+          <div *ngFor="let c of yearValues.controls; let i = index">
+            <ng-container [formGroupName]="i">
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <input
+                    id="{{ i }}"
+                    type="text"
+                    pInputText
+                    formControlName="value"
+                  />
+                  <label for="{{ i }}">{{ c.get("name")?.value! }}</label>
+                </span>
+                <span
+                  *ngIf="
+                    c.get('value')!.invalid &&
+                    (c.get('value')!.dirty ||
+                      c.get('value')!.touched ||
+                      formError)
+                  "
+                >
+                  <small
+                    class="p-error"
+                    *ngIf="c.get('value')?.errors?.required"
+                    >{{ c.get("name")?.value! }} Value is required.</small
+                  >
+                </span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

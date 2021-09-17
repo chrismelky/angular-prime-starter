@@ -29,11 +29,13 @@ import { SectionService } from 'src/app/setup/section/section.service';
 import { LongTermTarget } from './long-term-target.model';
 import { LongTermTargetService } from './long-term-target.service';
 import { LongTermTargetUpdateComponent } from './update/long-term-target-update.component';
-import { UserService } from '../user/user.service';
-import { User } from '../user/user.model';
-import { FinancialYear } from '../financial-year/financial-year.model';
-import { FinancialYearService } from '../financial-year/financial-year.service';
+import { UserService } from '../../setup/user/user.service';
+import { User } from '../../setup/user/user.model';
+import { FinancialYear } from '../../setup/financial-year/financial-year.model';
+import { FinancialYearService } from '../../setup/financial-year/financial-year.service';
 import { FinancialYearTarget } from './financial-year-target.model';
+import { PerformanceIndicator } from '../../setup/performance-indicator/performance-indicator.model';
+import { PerformanceIndicatorService } from '../../setup/performance-indicator/performance-indicator.service';
 
 @Component({
   selector: 'app-long-term-target',
@@ -63,6 +65,7 @@ export class LongTermTargetComponent implements OnInit {
   currentUser?: User;
   financialYears: FinancialYear[] = [];
   currentFinancialYear?: FinancialYear;
+  indicators?: PerformanceIndicator[] = [];
 
   constructor(
     protected longTermTargetService: LongTermTargetService,
@@ -75,7 +78,8 @@ export class LongTermTargetComponent implements OnInit {
     protected helper: HelperService,
     protected toastService: ToastService,
     protected userService: UserService,
-    protected financialYearService: FinancialYearService
+    protected financialYearService: FinancialYearService,
+    protected indicatorService: PerformanceIndicatorService
   ) {
     this.currentUser = userService.getCurrentUser();
   }
@@ -84,6 +88,14 @@ export class LongTermTargetComponent implements OnInit {
     this.financialYearService
       .findByStatus(1)
       .subscribe((resp) => (this.currentFinancialYear = resp.data));
+
+    // this.indicatorService
+    //   .query({
+    //     objective_id: this.objective.id,
+    //   })
+    //   .subscribe((resp) => {
+    //     this.indicators = resp.data;
+    //   });
 
     if (this.currentUser?.section) {
       const parent = `p${this.currentUser.section.position}`;

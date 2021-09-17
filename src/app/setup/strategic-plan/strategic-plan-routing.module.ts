@@ -23,7 +23,7 @@ const routes: Routes = [
   {
     path: ':id/long-term-target',
     loadChildren: () =>
-      import('../../setup/long-term-target/long-term-target.module').then(
+      import('../../planning/long-term-target/long-term-target.module').then(
         (m) => m.LongTermTargetModule
       ),
   },

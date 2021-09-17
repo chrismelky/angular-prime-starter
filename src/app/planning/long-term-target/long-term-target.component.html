@@ -146,6 +146,7 @@
   <p-card>
     <p-table
       #table
+      dataKey="id"
       [lazy]="true"
       [resizableColumns]="true"
       [responsive]="true"
@@ -174,15 +175,31 @@
           <th pSortableColumn="description">
             Target<p-sortIcon field="description"></p-sortIcon>
           </th>
+          <th>KPI</th>
           <th *ngFor="let y of financialYears" class="fit">
             {{ y.name }}
           </th>
           <th class="fit"></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-expanded="expanded"
+      >
+        <tr [ngClass]="{ 'tr-expanded': expanded }">
           <td>[{{ rowData.code }}] {{ rowData.description }}</td>
+          <td>
+            <button
+              pButton
+              [pRowToggler]="rowData"
+              pTooltip="Key Performance Indicator"
+              class="p-button p-button-plain p-button-sm p-button-text"
+              label="Indicators"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            ></button>
+          </td>
           <td *ngFor="let y of financialYears">
             <app-financial-year-target-view
               [longTermTarget]="rowData"
@@ -220,6 +237,16 @@
                 ></button>
               </div>
             </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="rowexpansion" let-rowData>
+        <tr style="background-color: hsl(210, 9%, 96%)">
+          <td [attr.colspan]="3 + financialYears?.length!" style="padding: 0px">
+            <app-target-performance-indicator
+              [financialYears]="financialYears"
+              [longTermTarget]="rowData"
+            ></app-target-performance-indicator>
           </td>
         </tr>
       </ng-template>

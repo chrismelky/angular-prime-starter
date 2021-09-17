@@ -201,6 +201,11 @@ body {
 .fit {
   width: 1%
 }
+.fit-center {
+  width: 1%;
+  padding: 8px 8px !important;
+  text-align: center !important;
+}
 
 .filter-text {
   font-weight: 500;
@@ -364,6 +369,18 @@ i.clear {
   font-size: 0.75rem;
   padding: 0;
   padding-left: 24px;
+}
+
+.sub-table .p-datatable   {
+  .p-datatable-tbody tr, .p-datatable-thead tr > th, tr > td {
+    background-color: transparent;
+    font-size: 12px;
+    height: 36px !important;
+    .pi {
+      font-size: 12px;
+      line-height: 12px;
+    }
+   }
 }
 
 .p-tooltip {

@@ -11,7 +11,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { ToastService } from 'src/app/shared/toast.service';
-import { FinancialYear } from '../../financial-year/financial-year.model';
+import { FinancialYear } from '../../../setup/financial-year/financial-year.model';
 import { FinancialYearTarget } from '../financial-year-target.model';
 import { FinancialYearTargetService } from '../financial-year-target.service';
 import { LongTermTarget } from '../long-term-target.model';

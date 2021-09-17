@@ -22,7 +22,6 @@ export class FinancialYearTargetService {
   create(
     financialYearTarget: FinancialYearTarget
   ): Observable<CustomResponse<FinancialYearTarget>> {
-    console.log('Inside service');
     return this.http.post<CustomResponse<FinancialYearTarget>>(
       this.resourceUrl,
       financialYearTarget

@@ -17,8 +17,8 @@ import {
 import { EMPTY, Observable, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { CustomResponse } from 'src/app/utils/custom-response';
-import { StrategicPlan } from '../strategic-plan/strategic-plan.model';
-import { StrategicPlanService } from '../strategic-plan/strategic-plan.service';
+import { StrategicPlan } from '../../setup/strategic-plan/strategic-plan.model';
+import { StrategicPlanService } from '../../setup/strategic-plan/strategic-plan.service';
 import { LongTermTargetComponent } from './long-term-target.component';
 
 @Injectable({ providedIn: 'root' })

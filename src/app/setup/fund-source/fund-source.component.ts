@@ -92,6 +92,7 @@ export class FundSourceComponent implements OnInit {
           (this.fundSourceCategories = resp.data)
       );
     this.handleNavigation();
+    this.loadPage();
   }
 
   /**
@@ -100,9 +101,6 @@ export class FundSourceComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.fund_source_category_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -111,7 +109,6 @@ export class FundSourceComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        fund_source_category_id: this.fund_source_category_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(

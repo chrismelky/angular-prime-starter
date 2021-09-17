@@ -33,6 +33,7 @@ import { DividerModule } from 'primeng/divider';
 import { FileUploadModule } from 'primeng/fileupload';
 import { BlockUIModule } from 'primeng/blockui';
 import { PanelModule } from 'primeng/panel';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 @NgModule({
   declarations: [],
@@ -70,6 +71,7 @@ import { PanelModule } from 'primeng/panel';
     FileUploadModule,
     BlockUIModule,
     PanelModule,
+    ToggleButtonModule,
   ],
 })
 export class SharedPrimengModule {}

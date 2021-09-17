@@ -560,9 +560,6 @@ const routes: Routes = [
           ).then((m) => m.FacilityCustomDetailMappingModule),
       },
       {
-        path: 'period',
-      },
-      {
         path: 'pe-item',
         loadChildren: () =>
           import('../budgeting/pe-item/pe-item.module').then(
@@ -629,6 +626,25 @@ const routes: Routes = [
           import(
             '../setup/performance-indicator/performance-indicator.module'
           ).then((m) => m.PerformanceIndicatorModule),
+      },
+      {
+        path: 'assessment-criteria',
+        loadChildren: () =>
+          import(
+            '../planning/assessment-criteria/assessment-criteria.module'
+          ).then((m) => m.AssessmentCriteriaModule),
+      },
+      {
+        path: 'permission',
+        loadChildren: () =>
+          import('../setup/permission/permission.module').then(
+            (m) => m.PermissionModule
+          ),
+      },
+      {
+        path: 'group',
+        loadChildren: () =>
+          import('../setup/group/group.module').then((m) => m.GroupModule),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

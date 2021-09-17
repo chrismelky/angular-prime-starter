@@ -10,6 +10,7 @@ import {finalize} from "rxjs/operators";
 import {Sector} from "../../sector/sector.model";
 import {SectorService} from "../../sector/sector.service";
 import {FundSourceService} from "../fund-source.service";
+import {SelectItemGroup} from "primeng/api";
 
 @Component({
   selector: 'app-view-budget-class',
@@ -19,7 +20,8 @@ import {FundSourceService} from "../fund-source.service";
 export class ViewBudgetClassComponent implements OnInit {
   @Input() fund_source?:any;
   fundSourcesBudgetClasses?: any[] = [];
-  budgetClasses?: any[] = [];
+  budgetClasses?: SelectItemGroup[];
+
   budgetClassIds?: any[] = [];
   sectors?: Sector[] = [];
   selectedSectors?: any[] = [];

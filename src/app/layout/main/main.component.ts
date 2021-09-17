@@ -107,6 +107,16 @@ export class MainComponent implements OnInit {
               icon: 'pi pi-fw pi-link',
               routerLink: 'role',
             },
+            {
+              label: 'Groups',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'group',
+            },
+            {
+              label: 'Permissions',
+              icon: 'pi pi-fw pi-arrow-right',
+              routerLink: 'permission',
+            },
           ],
         },
         {
@@ -415,10 +425,6 @@ export class MainComponent implements OnInit {
         },
         {
           label: 'Comprehensive Plans',
-          icon: 'pi pi-fw pi-link',
-        },
-        {
-          label: 'Comprehensive Plans',
           icon: 'pi pi-fw pi-angle-down',
           items: [
             {
@@ -544,15 +550,10 @@ export class MainComponent implements OnInit {
     },
 
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
-
     {
       label: 'Planning',
       icon: 'pi pi-pw pi-list',
       items: [
-        {
-          label: 'Comprehensive Plans',
-          icon: 'pi pi-fw pi-angle-down',
-        },
         {
           label: 'Strategic Plans',
           icon: 'pi pi-fw pi-link',
@@ -620,6 +621,9 @@ export class MainComponent implements OnInit {
         },
         {
           routerLink: 'received-assessment',
+        },
+        {
+          routerLink: 'assessment-criteria',
         },
         /**====Planrep Assessment Menu Generator Hook: Dont Delete====*/
       ],

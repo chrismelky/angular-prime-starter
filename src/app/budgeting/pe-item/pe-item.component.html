@@ -28,7 +28,6 @@
                   [filter]="true"
                   class="p-inputtext-sm"
                   [options]="adminHierarchies!"
-                  (onChange)="filterChanged()"
                   [(ngModel)]="admin_hierarchy_id"
                 ></p-dropdown>
                 <label for="admin_hierarchy_id">Admin Hierarchy </label>
@@ -84,11 +83,11 @@
                   id="budget_class_id"
                   optionValue="id"
                   optionLabel="name"
-                  [autoDisplayFirst]="false"
+                  [autoDisplayFirst]=false
                   [filter]="true"
                   class="p-inputtext-sm"
                   [options]="budgetClasses!"
-                  (onChange)="filterChanged()"
+                  (onChange)="getFundSources($event)"
                   [(ngModel)]="budget_class_id"
                 ></p-dropdown>
                 <label for="budget_class_id">Budget Class </label>
@@ -123,178 +122,82 @@
                   (onChange)="filterChanged()"
                   [(ngModel)]="section_id"
                 ></p-dropdown>
-                <label for="section_id">Section </label>
+                <label for="section_id">Planning Unit </label>
               </span>
             </div>
           </div>
+         </div>
         </div>
-        </div>
-
-
-<!--        <div-->
-<!--          fxLayout="row wrap"-->
-<!--          fxFlex="140px"-->
-<!--          fxLayoutGap="4px"-->
-<!--          fxLayoutAlign="end center"-->
-<!--        >-->
-<!--          <button-->
-<!--            pButton-->
-<!--            type="button"-->
-<!--            [pTooltip]="-->
-<!--              advFilter.selected-->
-<!--                ? 'Hide Advanced Search'-->
-<!--                : 'Show Advanced Search'-->
-<!--            "-->
-<!--            tooltipPosition="bottom"-->
-<!--            [icon]="-->
-<!--              advFilter.selected-->
-<!--                ? 'pi pi-angle-double-up'-->
-<!--                : 'pi pi-angle-double-down'-->
-<!--            "-->
-<!--            class="p-button-rounded p-button-text p-button-plain"-->
-<!--            (click)="advFilter.selected = !advFilter.selected"-->
-<!--          ></button>-->
-<!--          <button-->
-<!--            pButton-->
-<!--            class="p-button-primary p-button-raised"-->
-<!--            icon="pi pi-search"-->
-<!--            label="Search"-->
-<!--            (click)="onSearch()"-->
-<!--          ></button>-->
-<!--        </div>-->
-      </div>
-<!--      <p-accordion>-->
-<!--        <p-accordionTab-->
-<!--          class="p-shadow-0"-->
-<!--          #advFilter-->
-<!--          [selected]="advFilter.selected"-->
-<!--          [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"-->
-<!--        >-->
-<!--          <div fxLayout="row wrap" fxLayoutGap="10px">-->
-<!--            <div-->
-<!--              fxLayout="row wrap"-->
-<!--              fxLayoutGap="0.75rem"-->
-<!--              fxFlex-->
-<!--              fxLayoutAlign="start center"-->
-<!--            ></div>-->
-<!--            <div-->
-<!--              fxLayout="row"-->
-<!--              fxLayoutGap="4px"-->
-<!--              fxFlex="140px"-->
-<!--              fxLayoutAlign="end"-->
-<!--            >-->
-<!--              <button-->
-<!--                pButton-->
-<!--                pTooltip="Clear Advanced Search"-->
-<!--                tooltipPosition="bottom"-->
-<!--                class="p-button-text p-button-plain"-->
-<!--                icon="pi pi-times"-->
-<!--                label="Clear"-->
-<!--                (click)="clearSearch()"-->
-<!--              ></button>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </p-accordionTab>-->
-<!--      </p-accordion>-->
+       </div>
     </div>
   </p-card>
 
-  <!-- Table Panel -->
-<!--  <p-card>-->
-<!--    <p-table-->
-<!--      #table-->
-<!--      [lazy]="true"-->
-<!--      [resizableColumns]="true"-->
-<!--      [responsive]="true"-->
-<!--      [autoLayout]="true"-->
-<!--      [loading]="isLoading"-->
-<!--      [columns]="cols"-->
-<!--      [value]="peItems!"-->
-<!--      (onLazyLoad)="onSortChange($event)"-->
-<!--      [customSort]="true"-->
-<!--    >-->
-<!--      <ng-template pTemplate="caption">-->
-<!--        <div fxLayout="row" fxLayoutAlign="space-between center">-->
-<!--          <span class="card-header-text">Pe Items</span>-->
-<!--          <button-->
-<!--            pButton-->
-<!--            icon="pi pi-plus"-->
-<!--            class="p-button-raised"-->
-<!--            [disabled]="-->
-<!--              !admin_hierarchy_id ||-->
-<!--              !financial_year_id ||-->
-<!--              !pe_sub_form_id ||-->
-<!--              !budget_class_id ||-->
-<!--              !fund_source_id ||-->
-<!--              !section_id-->
-<!--            "-->
-<!--            (click)="createOrUpdate()"-->
-<!--            label="Add Pe Item"-->
-<!--          ></button>-->
-<!--        </div>-->
-<!--      </ng-template>-->
-<!--      <ng-template pTemplate="header" let-columns>-->
-<!--        <tr *ngIf="peItems?.length">-->
-<!--          <th-->
-<!--            *ngFor="let col of columns"-->
-<!--            [pSortableColumn]="col.sort ? col.field : null"-->
-<!--          >-->
-<!--            {{ col.header-->
-<!--            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>-->
-<!--          </th>-->
-<!--          <th></th>-->
-<!--        </tr>-->
-<!--      </ng-template>-->
-<!--      <ng-template pTemplate="body" let-rowData let-columns="columns">-->
-<!--        <tr>-->
-<!--          <td *ngFor="let col of columns">-->
-<!--            {{ rowData[col.field] }}-->
-<!--          </td>-->
-<!--          <td>-->
-<!--            <div fxLayout="row" fxLayoutAlign="end">-->
-<!--              <div fxLayout="row" fxLayoutGap="2px">-->
-<!--                <button-->
-<!--                  pButton-->
-<!--                  pTooltip="Edit"-->
-<!--                  tooltipPosition="bottom"-->
-<!--                  class="-->
-<!--                    p-button-text p-button-plain p-button-rounded p-button-icon-->
-<!--                  "-->
-<!--                  icon="pi pi-pencil-->
-<!--              "-->
-<!--                  (click)="createOrUpdate(rowData)"-->
-<!--                ></button>-->
-<!--                <button-->
-<!--                  pButton-->
-<!--                  pTooltip="Delete"-->
-<!--                  tooltipPosition="bottom"-->
-<!--                  class="-->
-<!--                    p-button-text p-button-plain p-button-rounded p-button-icon-->
-<!--                  "-->
-<!--                  icon="pi pi-trash-->
-<!--              "-->
-<!--                  (click)="delete(rowData)"-->
-<!--                ></button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </td>-->
-<!--        </tr>-->
-<!--      </ng-template>-->
-<!--      <ng-template pTemplate="emptymessage"> No data found </ng-template>-->
-<!--    </p-table>-->
-<!--    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">-->
-<!--      <p-paginator-->
-<!--        #paginator-->
-<!--        [alwaysShow]="peItems?.length! > 0"-->
-<!--        [rows]="per_page"-->
-<!--        dropdownAppendTo="body"-->
-<!--        [showCurrentPageReport]="true"-->
-<!--        [totalRecords]="totalItems"-->
-<!--        [rowsPerPageOptions]="perPageOptions"-->
-<!--        (onPageChange)="pageChanged($event)"-->
-<!--      ></p-paginator>-->
-<!--    </div>-->
-<!--  </p-card>-->
+  <p-card>
+    <div fxLayout="row" fxLayoutAlign="start">
+      <span class="card-header-text">Personal Emolument Budget Submission Items<br /></span>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="end">
+      <span class="p-card-subheader">
+        Budget : 74849, Ceilling: 7383, Balance: 930
+      </span>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <table id="peTable" class="p-datatable" style="width: 100%" >
+        <tr class="p-datatable-header	">
+          <th rowspan="2">#</th>
+          <th *ngFor="let parent of peTableFields?.parentDefinitions" [attr.colspan]="parent.cols_span" [attr.rowspan]="parent.row_span">{{parent.field_name}}</th>
+        </tr>
+        <tr class="p-datatable-header	">
+          <th *ngFor="let child of peTableFields?.childrenDefinitions">{{child.field_name}}</th>
+        </tr>
+
+        <tr *ngFor="let i of round">
+          <td>{{i + 1}}</td>
+          <td *ngFor="let input of inputTexts[i]">
+            <div *ngIf="input.is_input && input.select_option === null">
+              <input type="text"  class="p-inputtext-sm"  pInputText >
+            </div>
+            <div *ngIf="!input.is_input && input.select_option === null">
+              <div class="p-inputtext-sm">
+                <span class="p-inputgroup-addon">62,721,234,567.00</span>
+              </div>
+            </div>
+            <div *ngIf="input.is_input && input.select_option !== null">
+              <p-dropdown [options]="input.select_option" [showClear]="true" [filter]="true" optionLabel="name" optionGroupLabel	="name" optionGroupChildren="children" placeholder="{{input.select_option[0]?.name}}" [group]="true">
+                <ng-template let-group pTemplate="group">
+                  <div class="p-d-flex p-ai-center">
+                    <span>{{group.name}}</span>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="round.length > 1">
+          <th>Total</th>
+          <th>ww</th>
+          <th>ww</th>
+          <th>ww</th>
+          <th>ww</th>
+          <th>ww</th>
+          <th>ww</th>
+          <th>ww</th>
+        </tr>
+
+      </table>
+    </div>
+  </p-card>
+
+  <p-card>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+      <button  (click)="addRow(round.length)" pButton pRipple type="button" label="Add Row" icon="pi pi-plus" class="p-button-raised p-button-text"></button>
+      <button (click)="deleteRow(round.length)" pButton pRipple type="button" label="Delete Row" icon="pi pi-trash" class="p-button-raised p-button-danger p-button-text"></button>
+      <button pButton pRipple type="button" label="Submit" icon="pi pi-check"></button>
+    </div>
+  </p-card>
+
 </div>
 
 <p-confirmDialog

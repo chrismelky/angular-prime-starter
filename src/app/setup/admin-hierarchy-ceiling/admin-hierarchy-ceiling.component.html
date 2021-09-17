@@ -51,22 +51,22 @@
               <label for="budget_type">Budget Type </label>
             </span>
           </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="position"
-                optionValue="position"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="planingLevels!"
-                (onChange)="selectionLevelChange()"
-                [(ngModel)]="position"
-              ></p-dropdown>
-              <label for="position">Planning Level </label>
-            </span>
-          </div>
+<!--          <div class="p-field" fxFlex>-->
+<!--            <span class="p-float-label">-->
+<!--              <p-dropdown-->
+<!--                id="position"-->
+<!--                optionValue="position"-->
+<!--                optionLabel="name"-->
+<!--                [autoDisplayFirst]="false"-->
+<!--                [filter]="true"-->
+<!--                class="p-inputtext-sm"-->
+<!--                [options]="planingLevels!"-->
+<!--                (onChange)="selectionLevelChange()"-->
+<!--                [(ngModel)]="position"-->
+<!--              ></p-dropdown>-->
+<!--              <label for="position">Planning Level </label>-->
+<!--            </span>-->
+<!--          </div>-->
         </div>
         <div
           fxLayout="row wrap"
@@ -100,38 +100,38 @@
           ></button>
         </div>
       </div>
-      <div fxLayout="row wrap" fxLayoutGap="10px">
-        <div
-          fxLayout="row wrap"
-          fxLayoutGap="0.75rem"
-          fxFlex
-          fxLayoutAlign="start center"
-        >
-          <div *ngIf="position!==1" class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="section_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="sections!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="section_id"
-              ></p-dropdown>
-              <label for="section_id">Planning Units </label>
-            </span>
-          </div>
-        </div>
-        <div
-          fxLayout="row wrap"
-          fxFlex="140px"
-          fxLayoutGap="4px"
-          fxLayoutAlign="end center"
-        >
-        </div>
-      </div>
+<!--      <div fxLayout="row wrap" fxLayoutGap="10px">-->
+<!--        <div-->
+<!--          fxLayout="row wrap"-->
+<!--          fxLayoutGap="0.75rem"-->
+<!--          fxFlex-->
+<!--          fxLayoutAlign="start center"-->
+<!--        >-->
+<!--          <div *ngIf="position!==1" class="p-field" fxFlex>-->
+<!--            <span class="p-float-label">-->
+<!--              <p-dropdown-->
+<!--                id="section_id"-->
+<!--                optionValue="id"-->
+<!--                optionLabel="name"-->
+<!--                [autoDisplayFirst]="false"-->
+<!--                [filter]="true"-->
+<!--                class="p-inputtext-sm"-->
+<!--                [options]="sections!"-->
+<!--                (onChange)="filterChanged()"-->
+<!--                [(ngModel)]="section_id"-->
+<!--              ></p-dropdown>-->
+<!--              <label for="section_id">Planning Units </label>-->
+<!--            </span>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div-->
+<!--          fxLayout="row wrap"-->
+<!--          fxFlex="140px"-->
+<!--          fxLayoutGap="4px"-->
+<!--          fxLayoutAlign="end center"-->
+<!--        >-->
+<!--        </div>-->
+<!--      </div>-->
       <p-accordion>
         <p-accordionTab
           class="p-shadow-0"
@@ -177,8 +177,9 @@
       [resizableColumns]="true"
       [responsive]="true"
       [autoLayout]="true"
+      dataKey="id"
+      editMode="row"
       [loading]="isLoading"
-      [columns]="cols"
       [value]="adminHierarchyCeilings!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
@@ -187,90 +188,84 @@
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Ceiling Amounts</span>
           <div class="card-header-text">
-            <button
-              pButton
-              icon="pi pi-lock"
-              class="p-button-raised"
-              [disabled]="
+            <p-splitButton  *ngIf="position===1 && admin_hierarchy_position===3" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
               !admin_hierarchy_id || !financial_year_id || !budget_type
-            "
-              (click)="lock(0)"
-              label="Lock All Levels"
-              *ngIf="position===1 && admin_hierarchy_position===3"
-            ></button> &nbsp;
-            <button
-              pButton
-              icon="pi pi-lock-open"
-              class="p-button-raised"
-              [disabled]="
-              !admin_hierarchy_id || !financial_year_id || !budget_type
-            "
-              (click)="lock(1)"
-              label="Unlock All Levels "
-              *ngIf="position===1 && admin_hierarchy_position===3"
-            ></button> &nbsp;
-            <button
-              pButton
-              icon="pi pi-wallet"
-              class="p-button-raised"
-              [disabled]="
-              !admin_hierarchy_id || !financial_year_id || !budget_type
-            "
-              (click)="initiateCeiling()"
-              label="Initiate Ceiling"
-              *ngIf="position===1 && admin_hierarchy_position===3"
-            ></button>
+            " styleClass="p-button-raised"></p-splitButton>
           </div>
         </div>
       </ng-template>
-      <ng-template pTemplate="header" let-columns>
+      <ng-template pTemplate="header" >
         <tr *ngIf="adminHierarchyCeilings?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th></th>
+          <th rowspan="2" style="width: 3em">SN</th>
+          <th rowspan="2" >Revenue Source</th>
+          <th rowspan="2" >Fund Source</th>
+          <th rowspan="2" >Budget Class</th>
+          <th rowspan="2" >Bank Account</th>
+          <th rowspan="2" >Amount</th>
+          <th rowspan="2" >Status</th>
+          <th colspan="2">Lock/Unlock</th>
+          <th rowspan="2"  style="width:8rem"></th>
+        </tr>
+        <tr>
+          <th>Lock/Unlock This Level</th>
+          <th>Lock/Unlock All Leves</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+      <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]="rowData">
+          <td>{{ri+1}}</td>
+          <td>[{{rowData?.ceiling.fund_source.gfs_code.code}}] {{rowData?.ceiling.fund_source.gfs_code.name}}</td>
+          <td>{{rowData?.ceiling.fund_source.name}}</td>
+          <td>{{rowData?.ceiling.budget_class.name}}</td>
+          <td>{{rowData?.ceiling.bank_account.name}}</td>
+          <td pEditableColumn>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="rowData.amount" required>
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{rowData?.amount | currency: 'TZS'}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td>
+            <p-badge severity="success" *ngIf="rowData?.is_locked===false" value="unlocked"></p-badge>
+            <p-badge severity="danger" *ngIf="rowData?.is_locked===true" value="Locked"></p-badge>
+          </td>
+          <td>
+            <p-inputSwitch
+              (onChange)="toggleActivation(rowData)"
+              [(ngModel)]="rowData['is_locked']"
+            ></p-inputSwitch>
+          </td>
+          <td>
+            <p-inputSwitch
+              (onChange)="toggleActivation(rowData)"
+              [(ngModel)]="rowData['is_locked']"
+            ></p-inputSwitch>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
+                <button pButton pRipple type="button" label="{{position===4?'Finalize':'Allocate'}}" class="p-button-outlined"></button>
                 <button
                   pButton
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
-                <button
-                  pButton
+                  *ngIf="!rowData['is_locked']"
                   pTooltip="Delete"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-trash
-              "
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  icon="pi pi-trash"
                   (click)="delete(rowData)"
                 ></button>
+                <button *ngIf="!editing && !rowData['is_locked']" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                <button *ngIf="editing"  pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(rowData, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
               </div>
             </div>
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage"> No Ceiling At this Level </ng-template>
     </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator

@@ -1,0 +1,91 @@
+<div class="content" fxLayout="column" fxLayoutGap="0.75rem">
+  <p-card>
+    <p-table
+      #table
+      [lazy]="true"
+      [resizableColumns]="true"
+      [responsive]="true"
+      [autoLayout]="true"
+      [loading]="isLoading"
+      [columns]="cols"
+      [value]="userGroups!"
+      (onLazyLoad)="onSortChange($event)"
+      [customSort]="true"
+    >
+      <ng-template pTemplate="caption">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text">User Groups</span>
+          <button
+            pButton
+            icon="pi pi-plus"
+            class="p-button-raised"
+            [disabled]=""
+            (click)="create()"
+            label="Add User Group"
+          ></button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr *ngIf="userGroups?.length">
+          <th>Group</th>
+          <th>Expire Date</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td>{{ rowData.group?.name}}</td>
+          <td>{{ rowData.expire_date|date:'mediumDate'}}</td>
+          <td>
+            <div fxLayout="row" fxLayoutAlign="end">
+              <div fxLayout="row" fxLayoutGap="2px">
+                <button
+                  pButton
+                  pTooltip="Edit"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-pencil
+              "
+                  (click)="edit(rowData)"
+                ></button>
+                <button
+                  pButton
+                  pTooltip="Delete"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-trash
+              "
+                  (click)="delete(rowData)"
+                ></button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found</ng-template>
+    </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="userGroups?.length! > 0"
+        [rows]="perPage"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
+  </p-card>
+</div>
+
+<p-confirmDialog
+  [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+  [style]="{ width: '50vw' }"
+  header="Confirmation Delete User Group"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>

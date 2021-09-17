@@ -102,6 +102,11 @@ export class MainComponent implements OnInit {
               routerLink: "role",
             },
             {
+              label: "Groups",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "group",
+            },
+            {
               label: "Permissions",
               icon: "pi pi-fw pi-arrow-right",
               routerLink: "permission",

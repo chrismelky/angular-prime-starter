@@ -36,6 +36,7 @@ import {RolePermissionComponent} from "../role/role-permission/role-permission.c
 import {UserRoleComponent} from "./user-role/user-role.component";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 import {finalize} from "rxjs/operators";
+import {UserGroupComponent} from "./user-group/user-group.component";
 
 @Component({
   selector: "app-user",
@@ -375,6 +376,21 @@ export class UserComponent implements OnInit {
       user: rowData
     }
     const ref = this.dialogService.open(UserRoleComponent, {
+      data,
+      width: '60%',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  groups(rowData: User): void {
+    const data = {
+      user: rowData
+    }
+    const ref = this.dialogService.open(UserGroupComponent, {
       data,
       width: '60%',
     });

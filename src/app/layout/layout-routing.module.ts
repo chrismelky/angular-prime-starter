@@ -623,6 +623,11 @@ const routes: Routes = [
             (m) => m.PermissionModule
           ),
       },
+      {
+        path: "group",
+        loadChildren: () =>
+          import("../setup/group/group.module").then((m) => m.GroupModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

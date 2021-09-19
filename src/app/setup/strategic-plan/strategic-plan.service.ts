@@ -5,34 +5,35 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { StrategicPlan } from "./strategic-plan.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { StrategicPlan } from './strategic-plan.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class StrategicPlanService {
-  public resourceUrl = "api/strategic_plans";
+  public resourceUrl = 'api/strategic_plans';
 
   constructor(protected http: HttpClient) {}
 
-  create(
-    strategicPlan: StrategicPlan
-  ): Observable<CustomResponse<StrategicPlan>> {
+  create(strategicPlan: FormData): Observable<CustomResponse<StrategicPlan>> {
     return this.http.post<CustomResponse<StrategicPlan>>(
       this.resourceUrl,
       strategicPlan
     );
   }
 
-  update(
-    strategicPlan: StrategicPlan
-  ): Observable<CustomResponse<StrategicPlan>> {
-    return this.http.put<CustomResponse<StrategicPlan>>(
-      `${this.resourceUrl}/${strategicPlan.id}`,
+  /**
+   * Post is use
+   * @param strategicPlan
+   * @returns
+   */
+  update(strategicPlan: FormData): Observable<CustomResponse<StrategicPlan>> {
+    return this.http.post<CustomResponse<StrategicPlan>>(
+      `${this.resourceUrl}/${strategicPlan.get('id')}`,
       strategicPlan
     );
   }
@@ -54,10 +55,13 @@ export class StrategicPlanService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  download(req?: any):Observable<CustomResponse<any>>{
+  download(req?: any): Observable<CustomResponse<any>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<any[]>>(`${this.resourceUrl}/download`, {
-      params: options,
-    });
+    return this.http.get<CustomResponse<any[]>>(
+      `${this.resourceUrl}/download`,
+      {
+        params: options,
+      }
+    );
   }
 }

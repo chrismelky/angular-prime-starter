@@ -1,9 +1,9 @@
-export class LongTermTarget {
+export class FinancialYearTarget {
   constructor(
     public id?: number,
     public description?: string,
-    public strategic_plan_id?: number,
-    public objective_id?: number,
+    public long_term_target_id?: number,
+    public financial_year_id?: number,
     public code?: string,
     public section_id?: number
   ) {}

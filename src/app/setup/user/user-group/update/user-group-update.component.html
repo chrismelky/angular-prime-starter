@@ -1,0 +1,74 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="group_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="groups!"
+            formControlName="group_id"
+          ></p-dropdown>
+          <label for="group_id">Group </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('group_id')!.invalid &&
+            (editForm.get('group_id')!.dirty ||
+              editForm.get('group_id')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-calendar
+            dataType="string"
+            id="expire_date"
+            appendTo="body"
+            dateFormat="MM dd, yy"
+            formControlName="expire_date"
+          ></p-calendar>
+          <label for="expire_date">Expire Date </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('expire_date')!.invalid &&
+            (editForm.get('expire_date')!.dirty ||
+              editForm.get('expire_date')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('expire_date')?.errors?.required"
+          >Expire Date is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          [disabled]="editForm.invalid"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

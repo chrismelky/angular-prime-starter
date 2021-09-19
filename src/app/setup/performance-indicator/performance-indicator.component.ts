@@ -5,55 +5,74 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { StrategicPlan } from "src/app/setup/strategic-plan/strategic-plan.model";
-import { StrategicPlanService } from "src/app/setup/strategic-plan/strategic-plan.service";
-import { Objective } from "src/app/setup/objective/objective.model";
-import { ObjectiveService } from "src/app/setup/objective/objective.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Objective } from 'src/app/setup/objective/objective.model';
+import { ObjectiveService } from 'src/app/setup/objective/objective.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
 
-import { LongTermTarget } from "./long-term-target.model";
-import { LongTermTargetService } from "./long-term-target.service";
-import { LongTermTargetUpdateComponent } from "./update/long-term-target-update.component";
+import { PerformanceIndicator } from './performance-indicator.model';
+import { PerformanceIndicatorService } from './performance-indicator.service';
+import { PerformanceIndicatorUpdateComponent } from './update/performance-indicator-update.component';
+import { User } from '../user/user.model';
+import { UserService } from '../user/user.service';
 
 @Component({
-  selector: "app-long-term-target",
-  templateUrl: "./long-term-target.component.html",
+  selector: 'app-performance-indicator',
+  templateUrl: './performance-indicator.component.html',
 })
-export class LongTermTargetComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
-  longTermTargets?: LongTermTarget[] = [];
+export class PerformanceIndicatorComponent implements OnInit {
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
+  performanceIndicators?: PerformanceIndicator[] = [];
 
-  strategicPlans?: StrategicPlan[] = [];
   objectives?: Objective[] = [];
   sections?: Section[] = [];
 
   cols = [
     {
-      field: "description",
-      header: "Description",
+      field: 'description',
+      header: 'Description',
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: 'number',
+      header: 'Number',
+      sort: false,
+    },
+    {
+      field: 'section_id',
+      header: 'Section ',
       sort: true,
+    },
+    {
+      field: 'is_qualitative',
+      header: 'Is Qualitative',
+      sort: false,
+    },
+    {
+      field: 'less_is_good',
+      header: 'Less Is Good',
+      sort: false,
+    },
+    {
+      field: 'is_active',
+      header: 'Is Active',
+      sort: false,
     },
   ]; //Table display columns
 
@@ -65,15 +84,13 @@ export class LongTermTargetComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  currentUser?: User;
 
   //Mandatory filter
-  strategic_plan_id!: number;
-  objective_id!: number;
-  section_id!: number;
+  objective!: Objective;
 
   constructor(
-    protected longTermTargetService: LongTermTargetService,
-    protected strategicPlanService: StrategicPlanService,
+    protected performanceIndicatorService: PerformanceIndicatorService,
     protected objectiveService: ObjectiveService,
     protected sectionService: SectionService,
     protected activatedRoute: ActivatedRoute,
@@ -81,28 +98,23 @@ export class LongTermTargetComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
-  ) {}
+    protected toastService: ToastService,
+    protected userService: UserService
+  ) {
+    this.currentUser = userService.getCurrentUser();
+  }
 
   ngOnInit(): void {
-    this.strategicPlanService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<StrategicPlan[]>) =>
-          (this.strategicPlans = resp.data)
-      );
-    this.objectiveService
-      .query({ columns: ["id", "description"] })
-      .subscribe(
-        (resp: CustomResponse<Objective[]>) => (this.objectives = resp.data)
-      );
-    console.log("Masese")
-    console.log(this.objectives)
-    this.sectionService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
+    if (this.currentUser?.section) {
+      const parent = `p${this.currentUser.section.position}`;
+      const parentId = this.currentUser.section_id;
+      const userSectionId = this.currentUser.section_id;
+      this.sectionService
+        .targetSections(parent, parentId!, userSectionId!)
+        .subscribe((resp: CustomResponse<Section[]>) => {
+          this.sections = resp.data;
+        });
+    }
     this.handleNavigation();
   }
 
@@ -112,24 +124,22 @@ export class LongTermTargetComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.strategic_plan_id || !this.objective_id || !this.section_id) {
+    if (!this.objective) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.longTermTargetService
+    this.performanceIndicatorService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        strategic_plan_id: this.strategic_plan_id,
-        objective_id: this.objective_id,
-        section_id: this.section_id,
+        objective_id: this.objective.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<LongTermTarget[]>) => {
+        (res: CustomResponse<PerformanceIndicator[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -149,11 +159,11 @@ export class LongTermTargetComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -174,6 +184,13 @@ export class LongTermTargetComponent implements OnInit {
     } else {
       this.loadPage(1);
     }
+  }
+
+  onObjectiveSeletion($event: any): void {
+    console.log($event);
+    this.objective = $event;
+    this.objectives = [this.objective];
+    this.filterChanged();
   }
 
   /**
@@ -228,25 +245,27 @@ export class LongTermTargetComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
   /**
-   * Creating or updating LongTermTarget
-   * @param longTermTarget ; If undefined initize new model to create else edit existing model
+   * Creating or updating PerformanceIndicator
+   * @param performanceIndicator ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(longTermTarget?: LongTermTarget): void {
-    const data: LongTermTarget = longTermTarget ?? {
-      ...new LongTermTarget(),
-      strategic_plan_id: this.strategic_plan_id,
-      objective_id: this.objective_id,
-      section_id: this.section_id,
+  createOrUpdate(performanceIndicator?: PerformanceIndicator): void {
+    const indicator: PerformanceIndicator = performanceIndicator ?? {
+      ...new PerformanceIndicator(),
+      objective_id: this.objective.id,
     };
-    const ref = this.dialogService.open(LongTermTargetUpdateComponent, {
-      data,
-      header: "Create/Update LongTermTarget",
+    const ref = this.dialogService.open(PerformanceIndicatorUpdateComponent, {
+      data: {
+        indicator,
+        sections: this.sections,
+        objectives: this.objectives,
+      },
+      header: 'Create/Update PerformanceIndicator',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -256,15 +275,16 @@ export class LongTermTargetComponent implements OnInit {
   }
 
   /**
-   * Delete LongTermTarget
-   * @param longTermTarget
+   * Delete PerformanceIndicator
+   * @param performanceIndicator
    */
-  delete(longTermTarget: LongTermTarget): void {
+  delete(performanceIndicator: PerformanceIndicator): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this LongTermTarget?",
+      message:
+        'Are you sure that you want to delete this PerformanceIndicator?',
       accept: () => {
-        this.longTermTargetService
-          .delete(longTermTarget.id!)
+        this.performanceIndicatorService
+          .delete(performanceIndicator.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -280,23 +300,23 @@ export class LongTermTargetComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<LongTermTarget[]> | null,
+    resp: CustomResponse<PerformanceIndicator[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/long-term-target"], {
+      this.router.navigate(['/performance-indicator'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
-    this.longTermTargets = resp?.data ?? [];
+    this.performanceIndicators = resp?.data ?? [];
   }
 
   /**
@@ -305,6 +325,6 @@ export class LongTermTargetComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Long Term Target");
+    this.toastService.error('Error loading Performance Indicator');
   }
 }

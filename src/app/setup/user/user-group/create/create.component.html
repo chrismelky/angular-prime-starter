@@ -1,0 +1,70 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-multiSelect [options]="groups!" id="groups" class="p-inputtext-sm" optionValue="id" optionLabel="name"
+                         [filter]="true" appendTo="body" formControlName="groups" display="chip"></p-multiSelect>
+          <label for="groups">Group</label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('groups')!.invalid &&
+            (editForm.get('groups')!.dirty ||
+              editForm.get('groups')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('groups')?.errors?.required"
+          >Group is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-calendar
+            dataType="string"
+            id="expire_date"
+            appendTo="body"
+            dateFormat="MM dd, yy"
+            formControlName="expire_date"
+          ></p-calendar>
+          <label for="expire_date">Expire Date</label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('expire_date')!.invalid &&
+            (editForm.get('expire_date')!.dirty ||
+              editForm.get('expire_date')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('expire_date')?.errors?.required"
+          >Expire Date is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          [disabled]="editForm.invalid"
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

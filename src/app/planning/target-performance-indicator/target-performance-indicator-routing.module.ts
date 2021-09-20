@@ -8,12 +8,12 @@
 
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { LongTermTargetComponent } from "./long-term-target.component";
+import { TargetPerformanceIndicatorComponent } from "./target-performance-indicator.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: LongTermTargetComponent,
+    component: TargetPerformanceIndicatorComponent,
     data: {
       defaultSort: "id:asc",
     },
@@ -25,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class LongTermTargetRoutingModule {}
+export class TargetPerformanceIndicatorRoutingModule {}

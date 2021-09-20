@@ -26,10 +26,10 @@ export class DataValueService {
     );
   }
 
-  upload(formDate: FormData): Observable<CustomResponse<DataValue>> {
+  upload(formData: FormData): Observable<CustomResponse<DataValue>> {
     return this.http.post<CustomResponse<DataValue>>(
       `${this.resourceUrl}/upload`,
-      formDate
+      formData
     );
   }
 

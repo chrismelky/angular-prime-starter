@@ -4,6 +4,7 @@ export class Objective {
     public description?: string,
     public code?: string,
     public objective_type_id?: number,
-    public parent_id?: number
+    public parent_id?: number,
+    public children?: Objective[]
   ) {}
 }

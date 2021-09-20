@@ -136,6 +136,12 @@
           style="width: 100%"
         >
           <thead class="p-datatable-thead">
+            <!-- <tr *ngFor="let tr of prepareHeaders(catComb)">
+              <th></th>
+              <th [attr.colspan]="td.colspan" *ngFor="let td of tr">
+                {{ tr | json }}
+              </th>
+            </tr> -->
             <tr>
               <th></th>
               <th *ngFor="let coc of catComb.category_option_combinations">

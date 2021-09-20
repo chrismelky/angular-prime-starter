@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { FinancialYear } from "./financial-year.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { FinancialYear } from './financial-year.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class FinancialYearService {
-  public resourceUrl = "api/financial_years";
+  public resourceUrl = 'api/financial_years';
 
   constructor(protected http: HttpClient) {}
 
@@ -48,6 +48,21 @@ export class FinancialYearService {
     return this.http.get<CustomResponse<FinancialYear[]>>(this.resourceUrl, {
       params: options,
     });
+  }
+
+  byRange(
+    startFinancialYearId: number,
+    endFinancialYearId: number
+  ): Observable<CustomResponse<FinancialYear[]>> {
+    return this.http.get<CustomResponse<FinancialYear[]>>(
+      `${this.resourceUrl}/by_range/${startFinancialYearId}/${endFinancialYearId}`
+    );
+  }
+
+  findByStatus(status: number): Observable<CustomResponse<FinancialYear>> {
+    return this.http.get<CustomResponse<FinancialYear>>(
+      `${this.resourceUrl}/by_status/${status}`
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

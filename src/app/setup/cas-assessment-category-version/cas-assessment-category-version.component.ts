@@ -68,6 +68,11 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
       header: "Minimum Passmark",
       sort: true,
     },
+    {
+      field: "highest_score",
+      header: "Highest Score",
+      sort: true,
+    },
   ]; //Table display columns
 
   isLoading = false;

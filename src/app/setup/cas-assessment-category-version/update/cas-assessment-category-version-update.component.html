@@ -30,6 +30,29 @@
           >
         </span>
       </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="highest_score"
+            formControlName="highest_score"
+          ></p-inputNumber>
+          <label for="highest_score">Highest Score </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('highest_score')!.invalid &&
+            (editForm.get('highest_score')!.dirty ||
+              editForm.get('highest_score')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('highest_score')?.errors?.required"
+            >Highest Score is required.</small
+          >
+        </span>
+      </div>
 
       <div class="p-field" fxFlex>
         <span class="p-float-label">

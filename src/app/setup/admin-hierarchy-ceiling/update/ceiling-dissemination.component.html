@@ -3,7 +3,7 @@
     <p-table
       #c
              class="ceiling"
-             [value]="department!"
+             [value]="sections!"
              [scrollable]="true"
              scrollHeight="400px"
              dataKey="id"
@@ -20,7 +20,7 @@
                 </span>
         </div>
       </ng-template>
-      <ng-template pTemplate="header" let-columns>
+      <ng-template pTemplate="header" >
         <tr>
           <th colspan="5">
             <div style="width:100%" fxLayout="row" fxLayoutAlign="space-between center">
@@ -53,7 +53,7 @@
           <td  pEditableColumn [pEditableColumnDisabled]="rowData.is_locked"  id="amount">
             <p-cellEditor >
               <ng-template pTemplate="input">
-                <input pInputText (pointerenter)="onEditInit(rowData)" (pointerleave)="updateCeiling(rowIndex,rowData)"  (ngModelChange)="ceilingChange($event,'C',rowIndex,rowData)" type="number" pKeyFilter="money" [(ngModel)]="rowData.amount">
+                <input pInputText (pointerenter)="onEditInit(rowData)" (blur)="updateCeiling(rowIndex,rowData)"  (ngModelChange)="ceilingChange($event,'C',rowIndex,rowData)" type="number" pKeyFilter="money" [(ngModel)]="rowData.amount">
               </ng-template>
               <ng-template pTemplate="output" >
                 <div>
@@ -65,7 +65,7 @@
           <td pEditableColumn [pEditableColumnDisabled]="rowData.is_locked">
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <input pInputText  type="number" (pointerenter)="onEditInit(rowData)" (pointerleave)="updateCeiling(rowIndex,rowData)" (ngModelChange)="ceilingChange($event,'P',rowIndex,rowData)" [(ngModel)]="getPercent(rowData)!">
+                <input pInputText  type="number" (pointerenter)="onEditInit(rowData)" (blur)="updateCeiling(rowIndex,rowData)" (ngModelChange)="ceilingChange($event,'P',rowIndex,rowData)" [(ngModel)]="getPercent(rowData)!">
               </ng-template>
               <ng-template pTemplate="output">
                 <div>

@@ -15,54 +15,12 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="strategic_plan_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="strategicPlans!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="strategic_plan_id"
-              ></p-dropdown>
-              <label for="strategic_plan_id">Strategic Plan </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="objective_id"
-                optionValue="id"
-                optionLabel="description"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="objectives!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="objective_id"
-              ></p-dropdown>
-              <label for="objective_id">Objective </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="section_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="sections!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="section_id"
-              ></p-dropdown>
-              <label for="section_id">Section </label>
-            </span>
-          </div>
+          <app-objective-tree
+            [selectionMode]="'single'"
+            [returnType]="'object'"
+            (onSelect)="onObjectiveSeletion($event)"
+            fxFlex
+          ></app-objective-tree>
         </div>
         <div
           fxLayout="row wrap"
@@ -144,6 +102,22 @@
                   ></i>
                 </span>
               </div>
+              <div class="p-field" fxFlex="30%">
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="section_id"
+                    optionValue="id"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="sections!"
+                    (onChange)="onSearch()"
+                    [(ngModel)]="search['section_id']"
+                  ></p-dropdown>
+                  <label for="section_id">Department </label>
+                </span>
+              </div>
             </div>
             <div
               fxLayout="row"
@@ -172,12 +146,12 @@
   <p-card>
     <p-table
       #table
+      dataKey="id"
       [lazy]="true"
       [resizableColumns]="true"
       [responsive]="true"
       [autoLayout]="true"
       [loading]="isLoading"
-      [columns]="cols"
       [value]="longTermTargets!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
@@ -190,7 +164,7 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!strategic_plan_id || !objective_id || !section_id"
+            [disabled]="!strategicPlan || !objective"
             (click)="createOrUpdate()"
             label="Add Long Term Target"
           ></button>
@@ -198,20 +172,41 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="longTermTargets?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th pSortableColumn="description">
+            Target<p-sortIcon field="description"></p-sortIcon>
           </th>
-          <th></th>
+          <th>KPI</th>
+          <th *ngFor="let y of financialYears" class="fit">
+            {{ y.name }}
+          </th>
+          <th class="fit"></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-expanded="expanded"
+      >
+        <tr [ngClass]="{ 'tr-expanded': expanded }">
+          <td>[{{ rowData.code }}] {{ rowData.description }}</td>
+          <td>
+            <button
+              pButton
+              [pRowToggler]="rowData"
+              pTooltip="Key Performance Indicator"
+              class="p-button p-button-plain p-button-sm p-button-text"
+              label="Indicators"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            ></button>
+          </td>
+          <td *ngFor="let y of financialYears">
+            <app-financial-year-target-view
+              [longTermTarget]="rowData"
+              [financialYearId]="y.id"
+              [currentFinancialYear]="currentFinancialYear"
+              (onSave)="fyTargetSaved($event)"
+            ></app-financial-year-target-view>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
@@ -242,6 +237,16 @@
                 ></button>
               </div>
             </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="rowexpansion" let-rowData>
+        <tr style="background-color: hsl(210, 9%, 96%)">
+          <td [attr.colspan]="3 + financialYears?.length!" style="padding: 0px">
+            <app-target-performance-indicator
+              [financialYears]="financialYears"
+              [longTermTarget]="rowData"
+            ></app-target-performance-indicator>
           </td>
         </tr>
       </ng-template>

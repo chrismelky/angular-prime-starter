@@ -1,0 +1,90 @@
+<div class="sub-table">
+  <p-table
+    #kpiTable
+    [lazy]="false"
+    [resizableColumns]="true"
+    [responsive]="true"
+    [autoLayout]="true"
+    styleClass="p-datatable-gridlines"
+    [value]="targetPerformanceIndicators!"
+  >
+    <ng-template pTemplate="header" let-columns>
+      <tr *ngIf="targetPerformanceIndicators?.length">
+        <th>Peformance Indicator</th>
+        <th class="fit-center">Baseline</th>
+        <th class="fit-center">Actual</th>
+        <th class="fit-center" *ngFor="let y of financialYears">
+          {{ y.name }}
+        </th>
+        <th>
+          <div fxLayout="row" fxLayoutAlign="end">
+            <button
+              pButton
+              icon="pi pi-plus"
+              (click)="createOrUpdate()"
+              label="Add KPI"
+              class="p-button p-button-text"
+            ></button>
+          </div>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr>
+        <td>
+          {{ rowData?.performance_indicator?.description }}
+        </td>
+        <td>
+          {{ rowData.baseline_value }}
+        </td>
+        <td class="fit-center">
+          {{ rowData.actual_value }}
+        </td>
+        <td class="fit-center" *ngFor="let y of financialYears">todo</td>
+        <td class="fit-center">
+          <div fxLayout="row" fxLayoutAlign="end">
+            <div fxLayout="row" fxLayoutGap="2px">
+              <button
+                pButton
+                pTooltip="Edit KPI"
+                tooltipPosition="bottom"
+                class="
+                  p-button-text p-button-plain p-button-rounded p-button-icon
+                "
+                icon="pi pi-pencil
+              "
+                (click)="createOrUpdate(rowData)"
+              ></button>
+              <button
+                pButton
+                pTooltip="Delete KPI"
+                tooltipPosition="bottom"
+                class="
+                  p-button-text p-button-plain p-button-rounded p-button-icon
+                "
+                icon="pi pi-trash
+              "
+                (click)="delete($event, rowData)"
+              ></button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+        <span> No Performance Indicator found </span>
+        <button
+          pButton
+          icon="pi pi-plus"
+          (click)="createOrUpdate()"
+          class="p-button p-button-rounded p-button-text"
+        ></button>
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+<p-confirmPopup key="kpi"> </p-confirmPopup>
+<p-blockUI [blocked]="isLoading" [target]="kpiTable">
+  <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+</p-blockUI>

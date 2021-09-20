@@ -12,26 +12,23 @@ import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
-import { StrategicPlan } from 'src/app/setup/strategic-plan/strategic-plan.model';
-import { StrategicPlanService } from 'src/app/setup/strategic-plan/strategic-plan.service';
 import { Objective } from 'src/app/setup/objective/objective.model';
 import { ObjectiveService } from 'src/app/setup/objective/objective.service';
 import { Section } from 'src/app/setup/section/section.model';
 import { SectionService } from 'src/app/setup/section/section.service';
-import { LongTermTarget } from '../long-term-target.model';
-import { LongTermTargetService } from '../long-term-target.service';
+import { PerformanceIndicator } from '../performance-indicator.model';
+import { PerformanceIndicatorService } from '../performance-indicator.service';
 import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: 'app-long-term-target-update',
-  templateUrl: './long-term-target-update.component.html',
+  selector: 'app-performance-indicator-update',
+  templateUrl: './performance-indicator-update.component.html',
 })
-export class LongTermTargetUpdateComponent implements OnInit {
+export class PerformanceIndicatorUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
 
-  strategicPlans?: StrategicPlan[] = [];
   objectives?: Objective[] = [];
   sections?: Section[] = [];
 
@@ -41,15 +38,16 @@ export class LongTermTargetUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     description: [null, [Validators.required]],
-    strategic_plan_id: [null, [Validators.required]],
+    number: [null, []],
     objective_id: [null, [Validators.required]],
-    code: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
+    is_qualitative: [false, []],
+    less_is_good: [false, []],
+    is_active: [false, []],
   });
 
   constructor(
-    protected longTermTargetService: LongTermTargetService,
-    protected strategicPlanService: StrategicPlanService,
+    protected performanceIndicatorService: PerformanceIndicatorService,
     protected objectiveService: ObjectiveService,
     protected sectionService: SectionService,
     public dialogRef: DynamicDialogRef,
@@ -59,27 +57,14 @@ export class LongTermTargetUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.strategicPlanService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<StrategicPlan[]>) =>
-          (this.strategicPlans = resp.data)
-      );
-    this.objectiveService
-      .query({ columns: ['id', 'description'] })
-      .subscribe(
-        (resp: CustomResponse<Objective[]>) => (this.objectives = resp.data)
-      );
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const data = this.dialogConfig.data;
+    this.objectives = data.objectives;
+    this.sections = data.sections;
+    this.updateForm(data.indicator); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create LongTermTarget Update if exist else set form has error and return
+   * When form is valid Create PerformanceIndicator or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -88,20 +73,20 @@ export class LongTermTargetUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const longTermTarget = this.createFromForm();
-    if (longTermTarget.id !== undefined) {
+    const performanceIndicator = this.createFromForm();
+    if (performanceIndicator.id !== undefined) {
       this.subscribeToSaveResponse(
-        this.longTermTargetService.update(longTermTarget)
+        this.performanceIndicatorService.update(performanceIndicator)
       );
     } else {
       this.subscribeToSaveResponse(
-        this.longTermTargetService.create(longTermTarget)
+        this.performanceIndicatorService.create(performanceIndicator)
       );
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<LongTermTarget>>
+    result: Observable<CustomResponse<PerformanceIndicator>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -131,32 +116,36 @@ export class LongTermTargetUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param longTermTarget
+   * @param performanceIndicator
    */
-  protected updateForm(longTermTarget: LongTermTarget): void {
+  protected updateForm(performanceIndicator: PerformanceIndicator): void {
     this.editForm.patchValue({
-      id: longTermTarget.id,
-      description: longTermTarget.description,
-      strategic_plan_id: longTermTarget.strategic_plan_id,
-      objective_id: longTermTarget.objective_id,
-      code: longTermTarget.code,
-      section_id: longTermTarget.section_id,
+      id: performanceIndicator.id,
+      description: performanceIndicator.description,
+      number: performanceIndicator.number,
+      objective_id: performanceIndicator.objective_id,
+      section_id: performanceIndicator.section_id,
+      is_qualitative: performanceIndicator.is_qualitative,
+      less_is_good: performanceIndicator.less_is_good,
+      is_active: performanceIndicator.is_active,
     });
   }
 
   /**
-   * Return form values as object of type LongTermTarget
-   * @returns LongTermTarget
+   * Return form values as object of type PerformanceIndicator
+   * @returns PerformanceIndicator
    */
-  protected createFromForm(): LongTermTarget {
+  protected createFromForm(): PerformanceIndicator {
     return {
-      ...new LongTermTarget(),
+      ...new PerformanceIndicator(),
       id: this.editForm.get(['id'])!.value,
       description: this.editForm.get(['description'])!.value,
-      strategic_plan_id: this.editForm.get(['strategic_plan_id'])!.value,
+      number: this.editForm.get(['number'])!.value,
       objective_id: this.editForm.get(['objective_id'])!.value,
-      code: this.editForm.get(['code'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
+      is_qualitative: this.editForm.get(['is_qualitative'])!.value,
+      less_is_good: this.editForm.get(['less_is_good'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

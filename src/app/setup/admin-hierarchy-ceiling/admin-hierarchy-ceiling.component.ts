@@ -37,6 +37,8 @@ import {InitiateCeilingComponent} from "./update/initiate-ceiling.component";
 import {SectionLevelService} from "../section-level/section-level.service";
 import {SectionLevel} from "../section-level/section-level.model";
 import {finalize} from "rxjs/operators";
+import {User} from "../user/user.model";
+import {UserService} from "../user/user.service";
 
 @Component({
   selector: "app-admin-hierarchy-ceiling",
@@ -67,12 +69,14 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   search: any = {}; // items search objects
   items: MenuItem[] | undefined;
 
+  currentUser!: User;
+
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
   budget_type!: string;
-  position: number=1;
-  section_id!:any;
+  position!: number | undefined;
+  section_id!:number | undefined;
   admin_hierarchy_position!:number;
 
   constructor(
@@ -90,10 +94,17 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected sectionLevelService: SectionLevelService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    protected userService: UserService,
+  ) {
+    this.currentUser = userService.getCurrentUser();
+  }
 
   ngOnInit(): void {
+    const rootSection = this.currentUser.section;
+    this.section_id = rootSection?.id;
+    this.position = rootSection?.position
+    console.log(this.position);
     this.ceilingService
       .query({ columns: ["id", "name"] })
       .subscribe(
@@ -124,16 +135,23 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     this.budgetTypes = this.enumService.get("budgetTypes");
     this.handleNavigation();
     this.items = [
-      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.initiateCeiling();}},
-      {label: 'Downolad Teplete', icon: 'pi pi-download', command: () => {this.initiateCeiling();}},
-      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.initiateCeiling();}},
-      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.initiateCeiling();}}
+      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.uploadCeiling();}},
+      {label: 'Download Template', icon: 'pi pi-download', command: () => {this.downloadTemplate();}},
+      {label: 'Lock/Unlock Ceiling', icon: 'pi pi-lock', command: () => {this.lockUnlockCeiling();}},
     ];
   }
 
+  uploadCeiling(){
+
+  }
+  downloadTemplate(){
+
+  }
+  lockUnlockCeiling(){
+
+  }
+
   selectionLevelChange(){
-    this.section_id=null;
-    this.section_id=this.position == 1?null:0;
     this.sectionService
       .query({ position :this.position})
       .subscribe(
@@ -151,8 +169,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
-      !this.budget_type ||
-      !this.position
+      !this.budget_type
     ) {
       return;
     }
@@ -167,8 +184,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         admin_hierarchy_id: this.admin_hierarchy_id,
         financial_year_id: this.financial_year_id,
         budget_type: this.budget_type,
-        position:this.position,
-        section_id:this.section_id??null,
+        section_id:this.section_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -359,6 +375,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
     this.admin_hierarchy_position =event.admin_hierarchy_position;
+    this.loadPage();
   }
 
   /**
@@ -368,7 +385,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   initiateCeiling(): void {
     const ref = this.dialogService.open(InitiateCeilingComponent, {
       header: "Ceiling Dissemination",
-      width:"60%"
+      width:"60%",
+      data:this.adminHierarchyCeilings
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -412,12 +430,33 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       admin_hierarchy_id:this.admin_hierarchy_id,
       financial_year_id: this.financial_year_id,
       parent_id: undefined,
-      section_id: undefined,
+      section_id: this.section_id,
       active: true,
       is_locked: false,
       is_approved:false,
       budget_type:this.budget_type,
       amount:0.00,
+    };
+  }
+
+  /**
+   * Return form values as object of type AdminHierarchyCeiling
+   * @returns AdminHierarchyCeiling
+   */
+  protected updateFromForm(ceiling:any): AdminHierarchyCeiling {
+    return {
+      ...new AdminHierarchyCeiling(),
+      id:ceiling.id,
+      ceiling_id:ceiling.ceiling_id ,
+      admin_hierarchy_id:ceiling.admin_hierarchy_id,
+      financial_year_id: ceiling.financial_year_id,
+      parent_id: ceiling.parent_id,
+      section_id: ceiling.section_id,
+      active: ceiling.active,
+      is_locked: ceiling.is_locked,
+      is_approved:ceiling.approved,
+      budget_type:ceiling.budget_type,
+      amount:ceiling.amount,
     };
   }
   protected subscribeToSaveResponse(
@@ -451,20 +490,15 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   onRowEditInit(ceiling: AdminHierarchyCeiling) {
     // @ts-ignore
     this.clonedCeiling[ceiling.id] = {
-
+      ...ceiling
     };
   }
 
   onRowEditSave(ceiling: AdminHierarchyCeiling) {
-    // @ts-ignore
-    if (ceiling.amount > 0) {
-      // @ts-ignore
-      delete this.clonedCeiling[ceiling!.id];
-      this.messageService.add({severity:'success', summary: 'Success', detail:'Product is updated'});
-    }
-    else {
-      this.messageService.add({severity:'error', summary: 'Error', detail:'Invalid Price'});
-    }
+    const adminHierarchyCeiling = this.updateFromForm(ceiling);
+    this.subscribeToSaveResponse(
+      this.adminHierarchyCeilingService.update(adminHierarchyCeiling)
+    );
   }
 
   onRowEditCancel(ceiling: AdminHierarchyCeiling, index: number) {
@@ -472,5 +506,12 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     this.ceilings[index] = this.clonedCeiling[ceiling.id];
     // @ts-ignore
     delete this.clonedCeiling[ceiling.id];
+  }
+
+  toggleActivation(row: AdminHierarchyCeiling){
+    const adminHierarchyCeiling = this.updateFromForm(row);
+    this.subscribeToSaveResponse(
+      this.adminHierarchyCeilingService.update(adminHierarchyCeiling)
+    );
   }
 }

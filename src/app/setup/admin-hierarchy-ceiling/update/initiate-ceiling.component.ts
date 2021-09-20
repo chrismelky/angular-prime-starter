@@ -7,6 +7,7 @@ import {FundSourceBudgetClassService} from "../../fund-source-budget-class/fund-
 import {Table} from "primeng/table";
 import {fromEvent} from "rxjs";
 import {debounceTime, distinctUntilChanged, filter, map, subscribeOn} from 'rxjs/operators';
+import {DynamicDialogConfig} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-initiate-ceiling',
@@ -19,24 +20,29 @@ export class InitiateCeilingComponent implements OnInit {
   selectedSource: any[]=[];
   filterValue: string='';
   isSearching:boolean=false;
+  private existingCeiling: any;
 
   constructor(
     private fundSourceBudgetClassService:FundSourceBudgetClassService,
     public dialogRef: DynamicDialogRef,
-  ) {  console.log(this.ceilingSearchInput);}
+    public config: DynamicDialogConfig
+
+  ) { }
 
   ngAfterViewInit() {
+    this.existingCeiling=this.config.data;
     fromEvent(this.ceilingSearchInput!.nativeElement, 'keyup').pipe(
       map((event: any) => {
         return event.target.value;
       })
-      ,filter(res => res.length > 0)
+      ,filter(res => res.length >3 )
       ,debounceTime(1000)
       ,distinctUntilChanged()
     ).subscribe((searchKey: string) => {
       this.isSearching = true;
+      searchKey=searchKey.toLowerCase( );
       this.loadCeilings(searchKey).subscribe((res)=> {
-        this.ceilings = res.data ?? [];
+        this.ceilings=(res.data ?? []).filter(newCeiling => this.existingCeiling.every((ex: { ceiling_id: any; }) => ex.ceiling_id !== newCeiling.id))
         this.isSearching = false;
       }, (err) => {
           this.isSearching = false;
@@ -46,13 +52,12 @@ export class InitiateCeilingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fundSourceBudgetClassService
-      .queryProjectionCeiling({ can_project: true, page: 1 })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.ceilings = resp.data ?? [])
-      );
-    //this.loadCeilings();
+    this.loadCeilings().subscribe((res)=> {
+      var ceilings = (res.data ?? []);
+      this.ceilings=ceilings.filter(newCeiling => this.existingCeiling.every((ex: { ceiling_id: any; }) => ex.ceiling_id !== newCeiling.id))
+    });
   }
+
   initiate(raw: FundSourceBudgetClass): void {
     this.selectedSource.push(raw);
     this.ceilings = this.ceilings!.filter((obj) => obj !== raw);
@@ -73,7 +78,11 @@ export class InitiateCeilingComponent implements OnInit {
 
   clear(table: Table) {
     this.filterValue = '';
-    this.loadCeilings();
+    this.loadCeilings().subscribe((res)=> {
+      var ceilings = (res.data ?? []);
+      this.ceilings=ceilings.filter(newCeiling => this.existingCeiling.every((ex: { ceiling_id: any; }) => ex.ceiling_id !== newCeiling.id));
+      this.ceilings=this.ceilings.filter(newCeiling => this.selectedSource.every((ex: { id: any; }) => ex.id !== newCeiling.id));
+    });
   }
 
   close(): void {

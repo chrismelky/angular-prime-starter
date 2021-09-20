@@ -48,6 +48,7 @@ export class CasAssessmentCategoryVersionUpdateComponent implements OnInit {
     cas_assessment_state_id: [null, [Validators.required]],
     cas_assessment_category_id: [null, []],
     minimum_passmark: [null, [Validators.required]],
+    highest_score: [null, [Validators.required]],
   });
 
   constructor(
@@ -161,6 +162,7 @@ export class CasAssessmentCategoryVersionUpdateComponent implements OnInit {
       cas_assessment_category_id:
         casAssessmentCategoryVersion.cas_assessment_category_id,
       minimum_passmark: casAssessmentCategoryVersion.minimum_passmark,
+      highest_score: casAssessmentCategoryVersion.highest_score,
     });
   }
 
@@ -181,6 +183,7 @@ export class CasAssessmentCategoryVersionUpdateComponent implements OnInit {
         'cas_assessment_category_id',
       ])!.value,
       minimum_passmark: this.editForm.get(['minimum_passmark'])!.value,
+      highest_score: this.editForm.get(['highest_score'])!.value,
     };
   }
 }

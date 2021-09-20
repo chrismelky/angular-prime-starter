@@ -1,0 +1,81 @@
+<div class="dialog-content">
+  <div class="card">
+    <p-table
+      #c
+      class="ceiling"
+      [value]="facilityCeiling!"
+      [scrollable]="true"
+      scrollHeight="400px"
+      dataKey="id"
+      editMode="row"
+      [globalFilterFields]="['council','facility']"
+      dataKey="id"
+    >
+      <ng-template pTemplate="caption">
+        <div style="width:100%" fxLayout="row" fxLayoutAlign="space-between center">
+          <h2>Revenue Source : {{this.ceiling?.ceiling?.fund_source?.gfs_code?.name}}</h2>
+          <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (ngModelChange)="c.filterGlobal($event, 'contains')" [(ngModel)]="filterValue" placeholder="Search..." />
+                </span>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" >
+        <tr>
+          <th colspan="5">
+            <div style="width:100%" fxLayout="row" fxLayoutAlign="space-between center">
+              <span>
+                Total Available Amount:<br>
+                {{ceiling?.amount}} TZS
+              </span>
+              <span>
+                Total Assigned Amount:<br>
+                {{allocatedAmount}} TZS ({{(ceiling?.amount>0?((allocatedAmount!/ceiling?.amount)*100):0)}} %)
+              </span>
+              <span>
+                Total Remaining Amount:<br>
+                {{((ceiling?.amount)-(allocatedAmount!))}} TZS ({{(ceiling?.amount>0?(((ceiling?.amount)-(allocatedAmount!))/ceiling?.amount):0)*100 }} %)
+              </span>
+            </div>
+          </th>
+        </tr>
+        <tr>
+          <th>Council</th>
+          <th>Facility</th>
+          <th>Amount (TSH)</th>
+          <th>%</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-editing="editing" let-rowIndex="rowIndex">
+        <tr>
+        <td>{{rowData?.council}}</td>
+        <td>{{rowData?.facility}}</td>
+        <td  pEditableColumn [pEditableColumnDisabled]="rowData.is_locked"  id="amount">
+          <p-cellEditor >
+            <ng-template pTemplate="input">
+              <input pInputText (pointerenter)="onEditInit(rowData)" (blur)="updateCeiling(rowData)"  (ngModelChange)="ceilingChange($event,'C',rowData)" type="number" pKeyFilter="money" [(ngModel)]="rowData.amount">
+            </ng-template>
+            <ng-template pTemplate="output" >
+              <div>
+                <b>{{rowData?.amount}}</b>
+              </div>
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td pEditableColumn [pEditableColumnDisabled]="rowData.is_locked">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText  type="number" (pointerenter)="onEditInit(rowData)"  (blur)="updateCeiling(rowData)" (ngModelChange)="ceilingChange($event,'P',rowData)" [(ngModel)]="getPercent(rowData)!">
+            </ng-template>
+            <ng-template pTemplate="output">
+              <div>
+                <b>{{getPercent(rowData)!}}  %</b>
+              </div>
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

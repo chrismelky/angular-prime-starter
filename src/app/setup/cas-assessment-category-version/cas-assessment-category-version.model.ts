@@ -8,6 +8,7 @@ export class CasAssessmentCategoryVersion {
     public cas_assessment_state_id?: number,
     public cas_assessment_category_id?: number,
     public cas_assessment_category?: CasAssessmentCategory,
+    public highest_score?: number,
     public minimum_passmark?: number
   ) {}
 }

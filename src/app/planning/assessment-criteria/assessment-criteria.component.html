@@ -15,27 +15,10 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-<!--          <app-admin-hierarchy-tree-->
-<!--            (onSelect)="onAdminHierarchySelection($event)"-->
-<!--            [returnType]="'object'"-->
-<!--          ></app-admin-hierarchy-tree>-->
-
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="admin_hierarchy_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="adminHierarchies!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_id"
-              ></p-dropdown>
-              <label for="admin_hierarchy_id">Admin Hierarchy </label>
-            </span>
-          </div>
+          <app-assessment-tree
+            (onSelect)="onAdminHierarchySelection($event)"
+            [returnType]="'object'"
+          ></app-assessment-tree>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -137,7 +120,7 @@
         </p-accordionTab>
       </p-accordion>
       <div class="row" fxLayoutAlign="end">
-        <button pButton type="button" class="p-button-primary p-button-raised" label="Report" [disabled]="!admin_hierarchy_id"
+        <button pButton type="button" class="p-button-primary p-button-raised" label="Report" [disabled]="admin_hierarchy_position !=3"
                 style="margin-left: 16px" icon="pi pi-eye" (click)="getAssessmentReport()"
         ></button>
     </div>
@@ -169,13 +152,13 @@
 
             </td>
             <td [colSpan]="2">
-              <button pButton type="button" class="p-button-text p-button-icon" label="Scores({{10}})" [disabled]="!admin_hierarchy_id"
+              <button pButton type="button" class="p-button-text p-button-icon" label="Scores({{10}})" [disabled]="admin_hierarchy_position !=3"
                       style="margin-left: auto" icon="pi pi-check" (click)="setScores(assessmentSubCriteriaOption)"
               ></button>
-              <button pButton type="button" class="p-button-text p-button-icon" label="Comments" [disabled]="!admin_hierarchy_id"
+              <button pButton type="button" class="p-button-text p-button-icon" label="Comments" [disabled]="admin_hierarchy_position !=3"
                       style="margin-left: 16px" icon="pi pi-comment" (click)="setComments(assessmentSubCriteriaOption)"
               ></button>
-              <button pButton type="button" class="p-button-text p-button-icon" label="Report" [disabled]="!admin_hierarchy_id"
+              <button pButton type="button" class="p-button-text p-button-icon" label="Report" [disabled]="admin_hierarchy_position !=3"
                       style="margin-left: 16px" icon="pi pi-list" (click)="getReport(assessmentSubCriteriaOption)"
               ></button>
             </td>
@@ -189,13 +172,13 @@
     <div class="row" fxLayoutAlign="end">
       <textarea rows="2" cols="20" pInputTextarea [autoResize]="true"></textarea>
 
-      <button pButton type="button" class="p-button-text p-button-raised" label="Return" [disabled]="!admin_hierarchy_id"
+      <button pButton type="button" class="p-button-text p-button-raised" label="Return" [disabled]="admin_hierarchy_position !=3"
               style="margin-left: 16px" icon="pi pi-reply" (click)="finishAndQuit()" fxFlex="5%"
       ></button>
-      <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" [disabled]="!admin_hierarchy_id"
+      <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" [disabled]="admin_hierarchy_position !=3"
               style="margin-left: 16px" icon="pi pi-check" (click)="finishAndQuit()" fxFlex="5%"
       ></button>
-      <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit" [disabled]="!admin_hierarchy_id"
+      <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit" [disabled]="admin_hierarchy_position !=3"
               style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="10%"
       ></button>
     </div>

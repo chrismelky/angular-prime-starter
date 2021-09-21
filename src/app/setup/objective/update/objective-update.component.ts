@@ -17,6 +17,8 @@ import { ObjectiveTypeService } from 'src/app/setup/objective-type/objective-typ
 import { Objective } from '../objective.model';
 import { ObjectiveService } from '../objective.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { SectorService } from '../../sector/sector.service';
+import { Sector } from '../../sector/sector.model';
 
 @Component({
   selector: 'app-objective-update',
@@ -29,6 +31,7 @@ export class ObjectiveUpdateComponent implements OnInit {
 
   objectiveTypes?: ObjectiveType[] = [];
   parents?: Objective[] = [];
+  sectors?: Sector[] = [];
   selectedObjectiveType?: ObjectiveType;
 
   /**
@@ -40,6 +43,7 @@ export class ObjectiveUpdateComponent implements OnInit {
     code: [null, []],
     objective_type_id: [null, [Validators.required]],
     parent_id: [null, []],
+    sectors: [null, []],
   });
 
   constructor(
@@ -49,7 +53,8 @@ export class ObjectiveUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected sectorService: SectorService
   ) {}
 
   ngOnInit(): void {
@@ -59,6 +64,11 @@ export class ObjectiveUpdateComponent implements OnInit {
         this.objectiveTypes = resp.data;
         this.objectiveTypeChanged();
       });
+    this.sectorService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe((resp) => (this.sectors = resp.data));
     this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
   }
 
@@ -74,6 +84,7 @@ export class ObjectiveUpdateComponent implements OnInit {
     );
 
     this.updateCodeRequiredValidator();
+    this.updateSectorRequiredValidator();
 
     if (parentObjectiveType) {
       const filter = {
@@ -94,6 +105,16 @@ export class ObjectiveUpdateComponent implements OnInit {
     } else {
       this.editForm.get('code')?.clearValidators();
       this.editForm.get('code')?.updateValueAndValidity();
+    }
+  }
+
+  updateSectorRequiredValidator(): void {
+    if (this.selectedObjectiveType?.is_sectoral) {
+      this.editForm.get('sectors')?.setValidators([Validators.required]);
+      this.editForm.get('sectors')?.updateValueAndValidity();
+    } else {
+      this.editForm.get('sectors')?.clearValidators();
+      this.editForm.get('sectors')?.updateValueAndValidity();
     }
   }
 
@@ -155,6 +176,7 @@ export class ObjectiveUpdateComponent implements OnInit {
       code: objective.code,
       objective_type_id: objective.objective_type_id,
       parent_id: objective.parent_id,
+      sectors: objective.sectors,
     });
   }
 
@@ -170,6 +192,7 @@ export class ObjectiveUpdateComponent implements OnInit {
       code: this.editForm.get(['code'])!.value,
       objective_type_id: this.editForm.get(['objective_type_id'])!.value,
       parent_id: this.editForm.get(['parent_id'])!.value,
+      sectors: this.editForm.get(['sectors'])!.value,
     };
   }
 }

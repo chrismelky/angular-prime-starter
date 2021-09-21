@@ -1,3 +1,5 @@
+import { Sector } from '../sector/sector.model';
+
 export class Objective {
   constructor(
     public id?: number,
@@ -5,6 +7,7 @@ export class Objective {
     public code?: string,
     public objective_type_id?: number,
     public parent_id?: number,
-    public children?: Objective[]
+    public children?: Objective[],
+    public sectors?: Sector[]
   ) {}
 }

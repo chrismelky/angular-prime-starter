@@ -65,6 +65,40 @@
       </div>
 
       <div
+        *ngIf="selectedObjectiveType && selectedObjectiveType.is_sectoral"
+        class="p-field"
+        fxFlex
+      >
+        <span class="p-float-label">
+          <p-multiSelect
+            id="objective_type_id"
+            optionLabel="name"
+            dataKey="id"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="sectors!"
+            formControlName="sectors"
+          ></p-multiSelect>
+          <label for="sectors">Sector </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sectors')!.invalid &&
+            (editForm.get('sectors')!.dirty ||
+              editForm.get('sectors')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('sectors')?.errors?.required"
+            >Sectors is required.</small
+          >
+        </span>
+      </div>
+
+      <div
         *ngIf="selectedObjectiveType && !selectedObjectiveType.is_incremental"
         class="p-field p-col-12 p-md-4"
         fxFlex

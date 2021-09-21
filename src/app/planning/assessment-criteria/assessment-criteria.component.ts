@@ -346,9 +346,16 @@ export class AssessmentCriteriaComponent implements OnInit {
   }
 
   setComments(assessmentSubCriteriaOption: any) {
+    let data = {
+      data: assessmentSubCriteriaOption,
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year: this.financialYears,
+      cas_assessment_round: this.casAssessmentRounds,
+      cas_assessment_category_version_id: this.cas_assessment_category_version_id
+    }
     const ref = this.dialogService.open(SetCommentComponent, {
-      // data,
-      header: "Save Comments",
+       data,
+      header: "Comments",
     });
     ref.onClose.subscribe((result) => {
       if (result) {

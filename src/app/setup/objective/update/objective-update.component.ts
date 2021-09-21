@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { ObjectiveType } from "src/app/setup/objective-type/objective-type.model";
-import { ObjectiveTypeService } from "src/app/setup/objective-type/objective-type.service";
-import { Objective } from "../objective.model";
-import { ObjectiveService } from "../objective.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { ObjectiveType } from 'src/app/setup/objective-type/objective-type.model';
+import { ObjectiveTypeService } from 'src/app/setup/objective-type/objective-type.service';
+import { Objective } from '../objective.model';
+import { ObjectiveService } from '../objective.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-objective-update",
-  templateUrl: "./objective-update.component.html",
+  selector: 'app-objective-update',
+  templateUrl: './objective-update.component.html',
 })
 export class ObjectiveUpdateComponent implements OnInit {
   isSaving = false;
@@ -29,6 +29,7 @@ export class ObjectiveUpdateComponent implements OnInit {
 
   objectiveTypes?: ObjectiveType[] = [];
   parents?: Objective[] = [];
+  selectedObjectiveType?: ObjectiveType;
 
   /**
    * Declare form
@@ -36,7 +37,7 @@ export class ObjectiveUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     description: [null, [Validators.required]],
-    code: [null, [Validators.required]],
+    code: [null, []],
     objective_type_id: [null, [Validators.required]],
     parent_id: [null, []],
   });
@@ -54,16 +55,46 @@ export class ObjectiveUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.objectiveTypeService
       .query()
-      .subscribe(
-        (resp: CustomResponse<ObjectiveType[]>) =>
-          (this.objectiveTypes = resp.data)
-      );
-    this.parentService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<Objective[]>) => (this.parents = resp.data)
-      );
+      .subscribe((resp: CustomResponse<ObjectiveType[]>) => {
+        this.objectiveTypes = resp.data;
+        this.objectiveTypeChanged();
+      });
     this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
+  }
+
+  objectiveTypeChanged(): void {
+    this.parents = [];
+    const selectedObjectiveTypeId =
+      this.editForm.get('objective_type_id')?.value;
+    this.selectedObjectiveType = this.objectiveTypes?.find(
+      (o) => o.id === selectedObjectiveTypeId
+    );
+    const parentObjectiveType = this.objectiveTypes?.find(
+      (p) => p.position === this.selectedObjectiveType?.position! - 1
+    );
+
+    this.updateCodeRequiredValidator();
+
+    if (parentObjectiveType) {
+      const filter = {
+        objective_type_id: parentObjectiveType.id,
+      };
+      this.parentService
+        .query(filter)
+        .subscribe(
+          (resp: CustomResponse<Objective[]>) => (this.parents = resp.data)
+        );
+    }
+  }
+
+  updateCodeRequiredValidator(): void {
+    if (!this.selectedObjectiveType?.is_incremental) {
+      this.editForm.get('code')?.setValidators([Validators.required]);
+      this.editForm.get('code')?.updateValueAndValidity();
+    } else {
+      this.editForm.get('code')?.clearValidators();
+      this.editForm.get('code')?.updateValueAndValidity();
+    }
   }
 
   /**
@@ -134,11 +165,11 @@ export class ObjectiveUpdateComponent implements OnInit {
   protected createFromForm(): Objective {
     return {
       ...new Objective(),
-      id: this.editForm.get(["id"])!.value,
-      description: this.editForm.get(["description"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      objective_type_id: this.editForm.get(["objective_type_id"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      description: this.editForm.get(['description'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      objective_type_id: this.editForm.get(['objective_type_id'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
     };
   }
 }

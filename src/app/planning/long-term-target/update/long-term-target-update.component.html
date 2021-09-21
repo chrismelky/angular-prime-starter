@@ -33,25 +33,6 @@
         </span>
       </div>
 
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="code" type="text" pInputText formControlName="code" />
-          <label for="code">Code </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('code')!.invalid &&
-            (editForm.get('code')!.dirty ||
-              editForm.get('code')!.touched ||
-              formError)
-          "
-        >
-          <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
-            >Code is required.</small
-          >
-        </span>
-      </div>
-
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown

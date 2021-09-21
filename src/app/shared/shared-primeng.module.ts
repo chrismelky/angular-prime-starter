@@ -31,7 +31,9 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { PickListModule } from 'primeng/picklist';
 import { DividerModule } from 'primeng/divider';
 import { FileUploadModule } from 'primeng/fileupload';
-import {ToggleButtonModule} from 'primeng/togglebutton';
+import { BlockUIModule } from 'primeng/blockui';
+import { PanelModule } from 'primeng/panel';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 @NgModule({
   declarations: [],
@@ -67,7 +69,9 @@ import {ToggleButtonModule} from 'primeng/togglebutton';
     PickListModule,
     DividerModule,
     FileUploadModule,
-    ToggleButtonModule
+    BlockUIModule,
+    PanelModule,
+    ToggleButtonModule,
   ],
 })
 export class SharedPrimengModule {}

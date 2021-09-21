@@ -11,6 +11,10 @@ export class ToastService {
     this.messageService.add({ key: 'info', severity: 'info', summary });
   }
 
+  warn(summary: string): void {
+    this.messageService.add({ key: 'info', severity: 'warn', summary });
+  }
+
   error(summary: string, detail?: any) {
     this.messageService.add({
       key: 'error',

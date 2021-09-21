@@ -97,7 +97,9 @@ export class StrategicPlanUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const strategicPlan = this.createFromForm();
-    if (strategicPlan.id !== undefined) {
+    console.log(strategicPlan.get('name'));
+    console.log(strategicPlan.get('id'));
+    if (strategicPlan.get('id') !== 'undefined') {
       this.subscribeToSaveResponse(
         this.strategicPlanService.update(strategicPlan)
       );
@@ -158,21 +160,27 @@ export class StrategicPlanUpdateComponent implements OnInit {
    * Return form values as object of type StrategicPlan
    * @returns StrategicPlan
    */
-  protected createFromForm(): StrategicPlan {
-    return {
-      ...new StrategicPlan(),
-      id: this.editForm.get(['id'])!.value,
-      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
-      start_financial_year_id: this.editForm.get(['start_financial_year_id'])!
-        .value,
-      end_financial_year_id: this.editForm.get(['end_financial_year_id'])!
-        .value,
-      name: this.editForm.get(['name'])!.value,
-      description: this.editForm.get(['description'])!.value,
-      is_active: this.editForm.get(['is_active'])!.value,
-      url: this.editForm.get(['url'])!.value,
-      file: this.editForm.get(['file'])!.value,
-    };
+  protected createFromForm(): FormData {
+    const fd = new FormData();
+    fd.append('id', this.editForm.get(['id'])!.value);
+    fd.append(
+      'admin_hierarchy_id',
+      this.editForm.get(['admin_hierarchy_id'])!.value
+    );
+    fd.append(
+      'start_financial_year_id',
+      this.editForm.get(['start_financial_year_id'])!.value
+    );
+    fd.append(
+      'end_financial_year_id',
+      this.editForm.get(['end_financial_year_id'])!.value
+    );
+    fd.append('name', this.editForm.get(['name'])!.value);
+    fd.append('description', this.editForm.get(['description'])!.value);
+    fd.append('is_active', this.editForm.get(['is_active'])!.value);
+    fd.append('url', this.editForm.get(['url'])!.value);
+    fd.append('file', this.editForm.get(['file'])!.value);
+    return fd;
   }
 
   onSelect(event: any) {

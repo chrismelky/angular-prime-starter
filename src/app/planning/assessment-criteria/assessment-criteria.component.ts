@@ -33,6 +33,8 @@ import { AssessmentCriteriaUpdateComponent } from "./update/assessment-criteria-
 import {CasAssessmentCriteriaOptionService} from "../../setup/cas-assessment-criteria-option/cas-assessment-criteria-option.service";
 import {CasAssessmentSubCriteriaOptionService} from "../../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service";
 import {CasAssessmentSubCriteriaOption} from "../../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
+import {SetScoresComponent} from "./update/set-scores.component";
+import {SetCommentComponent} from "./update/set-comment.component";
 
 @Component({
   selector: "app-assessment-criteria",
@@ -41,14 +43,12 @@ import {CasAssessmentSubCriteriaOption} from "../../setup/cas-assessment-sub-cri
 export class AssessmentCriteriaComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  assessmentCriterias?: TreeNode[] = [];
   assessmentCriteriaData?: AssessmentCriteria[] = [];
-  assessmentCriteriaNodeTree?: TreeNode[] = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
   casAssessmentRounds?: CasAssessmentRound[] = [];
-
+  assessmentSubCriteriaOptions?: CasAssessmentSubCriteriaOption[] = [];
   cols = [{
     field: "name",
     header: "Name",
@@ -74,6 +74,7 @@ export class AssessmentCriteriaComponent implements OnInit {
   financial_year_id!: number;
   cas_assessment_round_id!: number;
   cas_assessment_category_version_id: number;
+  admin_hierarchy_position!:number;
 
   constructor(
     protected assessmentCriteriaService: AssessmentCriteriaService,
@@ -94,13 +95,7 @@ export class AssessmentCriteriaComponent implements OnInit {
   ngOnInit(): void {
     this.assessmentCriteriaService.find(this.cas_assessment_category_version_id)
       .subscribe((resp:CustomResponse<AssessmentCriteria[]>) => {
-        this.assessmentCriterias =(resp?.data ?? []).map((c) => {
-          return {
-            data: c,
-            children: [],
-            leaf: false,
-          };
-        });
+        this.assessmentCriteriaData = resp.data;
       });
 
     this.assessmentCriteriaService.getDataByUser()
@@ -290,7 +285,7 @@ export class AssessmentCriteriaComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<AssessmentCriteria[]> | null,
+    resp: CustomResponse<CasAssessmentSubCriteriaOption[]> | null,
     page: number,
     navigate: boolean
   ): void {
@@ -306,13 +301,7 @@ export class AssessmentCriteriaComponent implements OnInit {
         },
       });
     }
-    this.assessmentCriterias =(resp?.data ?? []).map((c) => {
-      return {
-        data: c,
-        children: [],
-        leaf: false,
-      };
-    });
+    this.assessmentSubCriteriaOptions = resp?.data ?? [];
   }
 
   /**
@@ -328,34 +317,66 @@ export class AssessmentCriteriaComponent implements OnInit {
     this.router.navigate(["/assessment-home"])
   }
 
-  onNodeExpand(event: any): void {
-    const node = event.node;
-    this.isLoading = true;
-    // Load children by parent_id= node.data.id
-    this.casAssessmentSubCriteriaService
-      .query({
-        page: this.page,
-        per_page:this.per_page,
-        cas_assessment_criteria_option_id: node.data.id,
-        sort: ['id:asc'],
-      })
-      .subscribe(
-        (resp:CustomResponse<CasAssessmentSubCriteriaOption[]>) => {
-          this.isLoading = false;
-          // Map response data to @TreeNode type
-          node.children = (resp?.data ?? []).map((c:CasAssessmentSubCriteriaOption) => {
-            return {
-              data: c,
-              children: [],
-              leaf: false,
-            };
-          });
-          // Update Tree state
-          this.assessmentCriteriaNodeTree = [...this.assessmentCriteriaNodeTree!];
-        },
-        (error) => {
-          this.isLoading = false;
-        }
-      );
+  loadSubCriteria(item: any) {
+    this.casAssessmentSubCriteriaService.query({
+      per_page: this.per_page,
+      page: this.page,
+      cas_assessment_criteria_option_id:item.id
+    }).subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) => ( this.assessmentSubCriteriaOptions = resp.data));
+
+  }
+
+  setScores(assessmentSubCriteriaOption: any) {
+    let data = {
+      data: assessmentSubCriteriaOption,
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year: this.financialYears,
+      cas_assessment_round: this.casAssessmentRounds,
+      cas_assessment_category_version_id: this.cas_assessment_category_version_id
+    }
+    const ref = this.dialogService.open(SetScoresComponent, {
+       data,
+      header: "Save Scores",
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  setComments(assessmentSubCriteriaOption: any) {
+    let data = {
+      data: assessmentSubCriteriaOption,
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year: this.financialYears,
+      cas_assessment_round: this.casAssessmentRounds,
+      cas_assessment_category_version_id: this.cas_assessment_category_version_id
+    }
+    const ref = this.dialogService.open(SetCommentComponent, {
+       data,
+      header: "Comments",
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  getReport(assessmentSubCriteriaOption: any) {
+    alert('getReport')
+  }
+
+  getAssessmentReport() {
+
+  }
+  /**
+   *
+   * @param event adminhierarchyId or Ids
+   */
+  onAdminHierarchySelection(event: any): void {
+    this.admin_hierarchy_id = event.id;
+    this.admin_hierarchy_position =event.admin_hierarchy_position;
   }
 }

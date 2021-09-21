@@ -1,0 +1,44 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="commentForm">
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+<!--        <span class="p-float-label">-->
+<!--          <p-dropdown-->
+<!--            id="cas_assessment_sub_criteria_possible_score_id"-->
+<!--            optionValue="id"-->
+<!--            optionLabel="description"-->
+<!--            [autoDisplayFirst]="false"-->
+<!--            [filter]="true"-->
+<!--            class="p-inputtext-sm"-->
+<!--            appendTo="body"-->
+<!--            [options]="possibleScores!"-->
+<!--            formControlName="cas_assessment_sub_criteria_possible_score_id"-->
+<!--          >-->
+<!--            <ng-template let-item pTemplate="item">-->
+<!--                 {{item.value }}  | {{item.description }}-->
+<!--           </ng-template>-->
+<!--          </p-dropdown>-->
+<!--          <label for="cas_assessment_sub_criteria_possible_score_id">Possible Scores </label>-->
+<!--        </span>-->
+        <textarea rows="5" id="cas_assessment_sub_criteria_possible_score_id" formControlName="remarks"
+                  cols="30" placeholder="Put your comments here" pInputTextarea [autoResize]="true"></textarea>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>
+

@@ -1,0 +1,42 @@
+<div class="p-field tree-input" fxFlex>
+  <span class="p-float-label p-input-icon-right">
+    <input
+      fxFlex
+      id="description"
+      type="text"
+      class="p-inputtext-sm"
+      autocomplete="off"
+      pInputText
+      [disabled]="true"
+      style="cursor: pointer"
+      (click)="op.toggle($event)"
+      [ngModel]="objectiveNode?.label"
+    />
+    <label for="description">Objective</label>
+    <i class="pi pi-chevron-down"></i>
+    <div
+      style="
+        cursor: pointer;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      "
+      (click)="op.toggle($event)"
+    ></div>
+  </span>
+</div>
+<p-overlayPanel #op [dismissable]="true" appendTo="body">
+  <ng-template pTemplate>
+    <p-tree
+      fxFlex
+      filterMode="strict"
+      [selectionMode]="selectionMode"
+      (onNodeSelect)="onSelectionChange(); op.hide()"
+      [(selection)]="objectiveNode"
+      [filter]="true"
+      [value]="objectives!"
+    ></p-tree>
+  </ng-template>
+</p-overlayPanel>

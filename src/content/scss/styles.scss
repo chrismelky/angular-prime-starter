@@ -201,6 +201,11 @@ body {
 .fit {
   width: 1%
 }
+.fit-center {
+  width: 1%;
+  padding: 8px 8px !important;
+  text-align: center !important;
+}
 
 .filter-text {
   font-weight: 500;
@@ -283,9 +288,12 @@ p-card.filter {
   font-size: 0.8125rem;
 }
 
-.p-dropdown, .p-multiselect, .p-inputnumber, .p-calendar, .p-password {
+.p-dropdown, .p-multiselect, .p-inputnumber, .p-calendar, .p-password , .p-treeselect{
   min-width: 200px;
   width: 100%;
+}
+.tree-input .p-disabled, .p-component:disabled {
+  opacity: 1;
 }
 
 .p-dropdown.p-dropdown-clearable .p-dropdown-label, .p-password {
@@ -361,6 +369,18 @@ i.clear {
   font-size: 0.75rem;
   padding: 0;
   padding-left: 24px;
+}
+
+.sub-table .p-datatable   {
+  .p-datatable-tbody tr, .p-datatable-thead tr > th, tr > td {
+    background-color: transparent;
+    font-size: 12px;
+    height: 36px !important;
+    .pi {
+      font-size: 12px;
+      line-height: 12px;
+    }
+   }
 }
 
 .p-tooltip {

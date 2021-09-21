@@ -12,13 +12,15 @@ import { AssessmentCriteriaRoutingModule } from "./assessment-criteria-routing.m
 import { SharedModule } from "../../shared/shared.module";
 import { AssessmentCriteriaComponent } from "./assessment-criteria.component";
 import { AssessmentCriteriaUpdateComponent } from "./update/assessment-criteria-update.component";
+import {SetScoresComponent} from "./update/set-scores.component";
+import {SetCommentComponent} from "./update/set-comment.component";
 
 @NgModule({
   imports: [SharedModule, CommonModule, AssessmentCriteriaRoutingModule],
   declarations: [
     AssessmentCriteriaComponent,
-    AssessmentCriteriaUpdateComponent,
+    AssessmentCriteriaUpdateComponent,SetScoresComponent,SetCommentComponent
   ],
-  entryComponents: [AssessmentCriteriaUpdateComponent],
+  entryComponents: [AssessmentCriteriaUpdateComponent,SetScoresComponent,SetCommentComponent],
 })
 export class AssessmentCriteriaModule {}

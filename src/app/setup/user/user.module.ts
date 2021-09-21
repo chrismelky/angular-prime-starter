@@ -13,9 +13,10 @@ import {SharedModule} from "../../shared/shared.module";
 import {UserComponent} from "./user.component";
 import {UserUpdateComponent} from "./update/user-update.component";
 import {UserRoleModule} from "./user-role/user-role.module";
+import {UserGroupModule} from "./user-group/user-group.module";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, UserRoleModule, UserRoutingModule],
+  imports: [SharedModule, CommonModule, UserRoleModule, UserGroupModule, UserRoutingModule],
   declarations: [UserComponent, UserUpdateComponent],
   entryComponents: [UserUpdateComponent],
 })

@@ -15,22 +15,10 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="admin_hierarchy_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="adminHierarchies!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_id"
-              ></p-dropdown>
-              <label for="admin_hierarchy_id">Admin Hierarchy </label>
-            </span>
-          </div>
+          <app-assessment-tree
+            (onSelect)="onAdminHierarchySelection($event)"
+            [returnType]="'object'"
+          ></app-assessment-tree>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -109,7 +97,9 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            ></div>
+            >
+
+            </div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -129,89 +119,70 @@
           </div>
         </p-accordionTab>
       </p-accordion>
+      <div class="row" fxLayoutAlign="end">
+        <button pButton type="button" class="p-button-primary p-button-raised" label="Report" [disabled]="admin_hierarchy_position !=3"
+                style="margin-left: 16px" icon="pi pi-eye" (click)="getAssessmentReport()"
+        ></button>
+    </div>
     </div>
   </p-card>
   <!-- Table Panel -->
+  <p-accordion>
+    <p-accordionTab  *ngFor="let tab of assessmentCriteriaData!; let i = index" header="{{i+1+ '.   ' +tab.name}}" (click)="loadSubCriteria(tab)">
+      <ng-template pTemplate="content">
+        <p-table [value]="assessmentSubCriteriaOptions!">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width:3rem">#</th>
+              <th  [colSpan]="3">Sub Criteria Name</th>
+              <th [colSpan]="2">How to Assess</th>
+              <th>Status</th>
+              <th [colSpan]="2">Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-assessmentSubCriteriaOption let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+          <tr>
+            <td>{{rowIndex+1}}</td>
+            <td [colSpan]="3">{{assessmentSubCriteriaOption.name}}
+            </td>
+            <td [colSpan]="2">{{assessmentSubCriteriaOption.how_to_assess}}
+            </td>
+            <td>
+
+            </td>
+            <td [colSpan]="2">
+              <button pButton type="button" class="p-button-text p-button-icon" label="Scores({{10}})" [disabled]="admin_hierarchy_position !=3"
+                      style="margin-left: auto" icon="pi pi-check" (click)="setScores(assessmentSubCriteriaOption)"
+              ></button>
+              <button pButton type="button" class="p-button-text p-button-icon" label="Comments" [disabled]="admin_hierarchy_position !=3"
+                      style="margin-left: 16px" icon="pi pi-comment" (click)="setComments(assessmentSubCriteriaOption)"
+              ></button>
+              <button pButton type="button" class="p-button-text p-button-icon" label="Report" [disabled]="admin_hierarchy_position !=3"
+                      style="margin-left: 16px" icon="pi pi-list" (click)="getReport(assessmentSubCriteriaOption)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+        </p-table>
+      </ng-template>
+    </p-accordionTab>
+  </p-accordion>
   <p-card>
-<!--    <p-treeTable [value]="assessmentCriterias!" [lazy]="true" (onNodeExpand)="onNodeExpand($event)" >-->
-<!--      <ng-template pTemplate="header">-->
-<!--        <tr>-->
-<!--          <th>Criteria</th>-->
-<!--          <th>Criteria Number</th>-->
-<!--          <th>COLUMN C</th>-->
-<!--          <th>COLUMN D</th>-->
-<!--        </tr>-->
-<!--      </ng-template>-->
-<!--      <ng-template pTemplate="body" let-rowNode let-rowData="rowData">-->
-<!--        <tr>-->
-<!--          <td>-->
-<!--            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>-->
-<!--            {{rowData?.name}}-->
-<!--          </td>-->
-<!--          <td>{{rowData?.number}}</td>-->
-<!--          <td></td>-->
-<!--          <td></td>-->
-<!--        </tr>-->
-<!--      </ng-template>-->
-<!--    </p-treeTable>-->
+    <div class="row" fxLayoutAlign="end">
+      <textarea rows="2" cols="20" pInputTextarea [autoResize]="true"></textarea>
 
-    <p-treeTable
-      #table
-      [lazy]="true"
-      [resizableColumns]="true"
-      [autoLayout]="true"
-      [loading]="isLoading"
-      [columns]="cols"
-      [value]="assessmentCriterias!"
-      [scrollable]="true"
-      (onLazyLoad)="onSortChange($event)"
-      (onNodeExpand)="onNodeExpand($event)"
-      [customSort]="true"
-    >
-      <ng-template pTemplate="caption">
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Cas Assessment Criteria</span>
-          <button
-            pButton
-            class="p-button-raised"
-            [disabled]=""
-            (click)="finishAndQuit()"
-            label="Finish and Quit"
-          ></button>
-        </div>
-      </ng-template>
-      <ng-template pTemplate="header" let-columns>
-        <th *ngFor="let col of columns">
-          {{ col.header}}
-        </th>
-      </ng-template>
-      <ng-template
-        pTemplate="body" let-rowNode
-        let-rowData="rowData"
-        let-columns="columns" >
-        <tr>
-          <td *ngFor="let col of columns; let i = index">
-            <p-treeTableToggler *ngIf="i == 0" [rowNode]="rowNode"></p-treeTableToggler>
-            {{rowData[col?.field]}}
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="assessmentCriterias?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
-    </p-treeTable>
+      <button pButton type="button" class="p-button-text p-button-raised" label="Return" [disabled]="admin_hierarchy_position !=3"
+              style="margin-left: 16px" icon="pi pi-reply" (click)="finishAndQuit()" fxFlex="5%"
+      ></button>
+      <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" [disabled]="admin_hierarchy_position !=3"
+              style="margin-left: 16px" icon="pi pi-check" (click)="finishAndQuit()" fxFlex="5%"
+      ></button>
+      <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit" [disabled]="admin_hierarchy_position !=3"
+              style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="10%"
+      ></button>
+    </div>
   </p-card>
-
 </div>
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"

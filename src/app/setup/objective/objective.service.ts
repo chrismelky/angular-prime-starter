@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { Objective } from "./objective.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Objective } from './objective.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ObjectiveService {
-  public resourceUrl = "api/objectives";
+  public resourceUrl = 'api/objectives';
 
   constructor(protected http: HttpClient) {}
 
@@ -44,6 +44,12 @@ export class ObjectiveService {
     return this.http.get<CustomResponse<Objective[]>>(this.resourceUrl, {
       params: options,
     });
+  }
+
+  tree(): Observable<CustomResponse<Objective[]>> {
+    return this.http.get<CustomResponse<Objective[]>>(
+      `${this.resourceUrl}/tree`
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

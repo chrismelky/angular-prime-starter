@@ -31,7 +31,6 @@
               <label for="admin_hierarchy_id">Admin Hierarchy </label>
             </span>
           </div>
-
         </div>
         <div
           fxLayout="row wrap"
@@ -97,40 +96,6 @@
                   ></i>
                 </span>
               </div>
-              <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="start_financial_year_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                [showClear]="true"
-                class="p-inputtext-sm"
-                [options]="startFinancialYears!"
-                (onChange)="onSearch()"
-                [(ngModel)]="search['start_financial_year_id']"
-              ></p-dropdown>
-              <label for="start_financial_year_id">Start Financial Year </label>
-            </span>
-              </div>
-              <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="end_financial_year_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                [showClear]="true"
-                class="p-inputtext-sm"
-                [options]="endFinancialYears!"
-                (onChange)="onSearch()"
-                [(ngModel)]="search['end_financial_year_id']"
-              ></p-dropdown>
-              <label for="end_financial_year_id">End Financial Year </label>
-            </span>
-              </div>
             </div>
             <div
               fxLayout="row"
@@ -177,9 +142,7 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !admin_hierarchy_id
-            "
+            [disabled]="!admin_hierarchy_id"
             (click)="createOrUpdate()"
             label="Add Strategic Plan"
           ></button>
@@ -195,14 +158,15 @@
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'start_financial_year_id'">
-            Start Financial Year <p-sortIcon [field]="'start_financial_year_id'"></p-sortIcon>
+            Start Financial Year
+            <p-sortIcon [field]="'start_financial_year_id'"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'end_financial_year_id'">
-            End Financial Year <p-sortIcon [field]="'end_financial_year_id'"></p-sortIcon>
+            End Financial Year
+            <p-sortIcon [field]="'end_financial_year_id'"></p-sortIcon>
           </th>
           <th>Document</th>
           <th style="flex: 0 0 2rem"></th>
-          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -210,38 +174,57 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{rowData.start_financial_year?.name}}</td>
-          <td>{{rowData.end_financial_year?.name}}</td>
+          <td>{{ rowData.start_financial_year?.name }}</td>
+          <td>{{ rowData.end_financial_year?.name }}</td>
           <td>
             <button
               pButton
               pTooltip="Edit"
               tooltipPosition="bottom"
-              class="p-button-text p-button-plain p-button-rounded p-button-icon"
+              class="
+                p-button-text p-button-plain p-button-rounded p-button-icon
+              "
               icon="pi pi-download"
               (click)="downloadStrategicPlan(rowData)"
-            >
-            </button>
+            ></button>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
+                  class="p-button-text"
+                  pButton
+                  pRipple
+                  icon="pi pi-external-link"
+                  label="Targets"
+                  [routerLink]="[
+                    '/strategic-plan',
+                    rowData.id,
+                    'long-term-target'
+                  ]"
+                ></button>
+                <button
                   pButton
                   pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
-                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
                   icon="pi pi-pencil"
-                  (click)="createOrUpdate(rowData)"></button>
+                  (click)="createOrUpdate(rowData)"
+                ></button>
                 <button
                   pButton
                   pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
-                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
                   icon="pi pi-trash"
-                  (click)="delete(rowData)"></button>
+                  (click)="delete(rowData)"
+                ></button>
               </div>
             </div>
           </td>

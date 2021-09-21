@@ -1,6 +1,6 @@
-import {AfterViewInit, Component, OnInit, Renderer2} from '@angular/core';
-import {PrimeNGConfig} from 'primeng/api';
-import {LoaderService} from "./shared/loader-service";
+import { AfterViewInit, Component, OnInit, Renderer2 } from '@angular/core';
+import { PrimeNGConfig } from 'primeng/api';
+import { LoaderService } from './shared/loader-service';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +8,14 @@ import {LoaderService} from "./shared/loader-service";
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  constructor(private primengConfig: PrimeNGConfig,
-              private loaderService: LoaderService,
-              private renderer: Renderer2) {
-  }
+  constructor(
+    private primengConfig: PrimeNGConfig,
+    private loaderService: LoaderService,
+    private renderer: Renderer2
+  ) {}
 
   ngOnInit(): void {
-    this.primengConfig.ripple = true;
+    this.primengConfig.ripple = false;
   }
 
   ngAfterViewInit() {

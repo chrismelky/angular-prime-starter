@@ -6,9 +6,10 @@ import {CustomResponse} from "../../../utils/custom-response";
 import {CeilingChain} from "../../ceiling-chain/ceiling-chain.model";
 import {AdminHierarchyCeilingService} from "../admin-hierarchy-ceiling.service";
 import {ToastService} from "../../../shared/toast.service";
-import {AdminHierarchyCeilingComponent} from "../admin-hierarchy-ceiling.component";
 import {Observable} from "rxjs";
 import {finalize} from "rxjs/operators";
+import {BudgetCeilingService} from "../../../shared/budget-ceiling.service";
+import {FacilityService} from "../../facility/facility.service";
 
 @Component({
   selector: 'app-ceiling-dissemination',
@@ -18,11 +19,9 @@ import {finalize} from "rxjs/operators";
 export class CeilingDisseminationComponent implements OnInit {
   position?: number;
   ceiling?: any=null;
-  department?:AdminHierarchyCeiling[]=[];
-  selectedSection?:AdminHierarchyCeiling;
-  costCenter?:AdminHierarchyCeiling[]=[];
+  ceilingChain?: any=null;
+  sections?:AdminHierarchyCeiling[]=[];
   sectionLevel?:String;
-  facility?:any[]=[];
   loading = false;
   filterValue: string = '';
   next?: number;
@@ -35,43 +34,34 @@ export class CeilingDisseminationComponent implements OnInit {
     public config: DynamicDialogConfig,
     protected ceilingChainService: CeilingChainService,
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    protected  budgetCeilingService:BudgetCeilingService,
+    protected  facilityService:FacilityService
   ) {
     this.ceiling=this.config.data.ceiling;
     this.position=this.config.data.position;
+    this.ceilingChain=this.config.data.ceilingChain;
   }
 
   ngOnInit(): void {
-    //get next ceiling Chain
-    this.ceilingChainService
-      .query({ section_level_position:this.position ,active:true,page:1})
-      .subscribe(
-        (resp: CustomResponse<CeilingChain[]>) =>{
-          this.nextCeilingChain = resp.data??[];
-          console.log(this.nextCeilingChain);
-          if(this.nextCeilingChain[0].next !==null){
-            this.adminHierarchyCeilingService
-              .queryCeilingBylevel({
-                next:this.nextCeilingChain[0]?.next?.section_level_position,
-                position:this.position,
-                financial_year_id:this.ceiling?.financial_year_id,
-                admin_hierarchy_id:this.ceiling?.admin_hierarchy_id,
-                ceiling_id:this.ceiling?.ceiling_id,
-                parent_id:this.ceiling?.id,
-                section_id:this.ceiling?.section_id,
-                budget_type:this.ceiling?.budget_type
-              }).subscribe((resp:any) =>{
-              this.department=resp.data??[];
-              // @ts-ignore
-              this.allocatedAmount = this.getTotalAllocatedAmount(this.department);
-              // @ts-ignore
-              this.sectionLevel = this.department[0].section.section_level.name;
-            });
-          }else{
-
-          }
-        }
-      );
+    //Get Next Ceilings
+    this.adminHierarchyCeilingService
+      .queryCeilingBylevel({
+        next:this.ceilingChain?.next?.section_level_position,
+        position:this.position,
+        financial_year_id:this.ceiling?.financial_year_id,
+        admin_hierarchy_id:this.ceiling?.admin_hierarchy_id,
+        ceiling_id:this.ceiling?.ceiling_id,
+        parent_id:this.ceiling?.id,
+        section_id:this.ceiling?.section_id,
+        budget_type:this.ceiling?.budget_type
+      }).subscribe((resp:any) =>{
+      this.sections=resp.data??[];
+      // @ts-ignore
+      this.allocatedAmount = this.getTotalAllocatedAmount(this.sections);
+      // @ts-ignore
+      this.sectionLevel = this.sections[0].section.section_level.name;
+    });
   }
 
   close(): void {
@@ -87,20 +77,20 @@ export class CeilingDisseminationComponent implements OnInit {
 
   ceilingChange(event:any,action:String,i:number,row: AdminHierarchyCeiling){
     // @ts-ignore
-    const index = this.department.findIndex(item => item.id === row.id);
+    const index = this.sections.findIndex(item => item.id === row.id);
     if(action=='P') {
       // @ts-ignore
-      this.department[index].amount=((event!=null?(this.ceiling.amount/100)*event:0)).toFixed(2);
+      this.sections[index].amount=((event!=null?(this.ceiling.amount/100)*event:0)).toFixed(2);
     }else{
       // @ts-ignore
-      this.department[index].amount=event;
+      this.sections[index].amount=event;
     }
     // @ts-ignore
-    this.allocatedAmount = this.getTotalAllocatedAmount(this.department);
+    this.allocatedAmount = this.getTotalAllocatedAmount(this.sections);
 
     if(this.allocatedAmount > this.ceiling.amount){
       // @ts-ignore
-      this.department = this.department.map((value, index) => {
+      this.sections = this.sections.map((value, index) => {
         if(value.id==row.id){
           // @ts-ignore
           return this.clonedCeiling[row.id]
@@ -108,7 +98,7 @@ export class CeilingDisseminationComponent implements OnInit {
           return value
         }
       });
-      this.allocatedAmount = this.getTotalAllocatedAmount(this.department);
+      this.allocatedAmount = this.getTotalAllocatedAmount(this.sections);
       // @ts-ignore
       delete this.clonedCeiling[row.id];
       this.toastService.info('Ceiling Allocation Cannot Exceed Given Total Ceiling');
@@ -154,7 +144,7 @@ export class CeilingDisseminationComponent implements OnInit {
       budget_type:ceiling.budget_type,
       amount:ceiling.amount,
       // @ts-ignore
-      is_facility:this.nextCeilingChain[0].next.next_id===null
+      is_facility:this.ceilingChain.next.next_id===null
     };
   }
   public subscribeToSaveResponse(
@@ -179,7 +169,9 @@ export class CeilingDisseminationComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+    this.toastService.error(error);
+  }
 
   protected onSaveFinalize(): void {
   }

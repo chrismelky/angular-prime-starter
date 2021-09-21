@@ -112,12 +112,75 @@
           >
         </span>
       </div>
+      <div
+        formArrayName="references"
+        fxLayout="row"
+        fxLayoutGap="10px"
+        fxLayoutAlign="start wrap"
+      >
+        <div
+          *ngIf="referenceLoading"
+          fxLayout="row"
+          fxLayoutGap="10px"
+          fxLayoutAlign="center center"
+        >
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+          <span>Loading References</span>
+        </div>
+        <div *ngFor="let c of referenceControls.controls; let i = index" fxFlex>
+          <ng-container [formGroupName]="i">
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  *ngIf="!c.get('isMultiple')?.value"
+                  id="section_id"
+                  optionLabel="description"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  appendTo="body"
+                  dataKey="id"
+                  [options]="c.get('options')?.value"
+                  formControlName="value"
+                ></p-dropdown>
+                <p-multiSelect
+                  *ngIf="c.get('isMultiple')?.value"
+                  id="section_id"
+                  optionLabel="description"
+                  [filter]="true"
+                  dataKey="id"
+                  class="p-inputtext-sm"
+                  appendTo="body"
+                  [options]="c.get('options')?.value"
+                  formControlName="value"
+                >
+                </p-multiSelect>
+
+                <label for="{{ i }}">{{ c.get("name")?.value! }}</label>
+              </span>
+              <span
+                *ngIf="
+                  c.get('value')!.invalid &&
+                  (c.get('value')!.dirty ||
+                    c.get('value')!.touched ||
+                    formError)
+                "
+              >
+                <small class="p-error" *ngIf="c.get('value')?.errors?.required"
+                  >{{ c.get("name")?.value! }} Value is required.</small
+                >
+              </span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button
           class="p-button-raised"
           icon="pi pi-check"
           label="Save"
+          [disabled]="referenceLoading"
           pButton
           pRipple
           type="submit"

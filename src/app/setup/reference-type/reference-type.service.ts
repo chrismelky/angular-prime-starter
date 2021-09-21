@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { ReferenceType } from "./reference-type.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { ReferenceType } from './reference-type.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ReferenceTypeService {
-  public resourceUrl = "api/reference_types";
+  public resourceUrl = 'api/reference_types';
 
   constructor(protected http: HttpClient) {}
 
@@ -52,5 +52,14 @@ export class ReferenceTypeService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  byLinkLevelWithReferences(
+    linkLevel: string,
+    sectorId: number
+  ): Observable<CustomResponse<ReferenceType[]>> {
+    return this.http.get<CustomResponse<ReferenceType[]>>(
+      `${this.resourceUrl}/with_references/${linkLevel}/${sectorId}`
+    );
   }
 }

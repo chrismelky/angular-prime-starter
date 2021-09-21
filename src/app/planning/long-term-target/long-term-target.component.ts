@@ -89,14 +89,6 @@ export class LongTermTargetComponent implements OnInit {
       .findByStatus(1)
       .subscribe((resp) => (this.currentFinancialYear = resp.data));
 
-    // this.indicatorService
-    //   .query({
-    //     objective_id: this.objective.id,
-    //   })
-    //   .subscribe((resp) => {
-    //     this.indicators = resp.data;
-    //   });
-
     if (this.currentUser?.section) {
       const parent = `p${this.currentUser.section.position}`;
       const parentId = this.currentUser.section_id;

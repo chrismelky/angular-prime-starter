@@ -254,6 +254,7 @@ export class EnumService {
     ],
 
     peOutPutValues: [
+      { display: "Text", value: "TEXT" },
       { display: "Number", value: "NUMBER" },
       { display: "Currency", value: "CURRENCY" },
     ],

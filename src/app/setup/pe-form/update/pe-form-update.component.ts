@@ -115,10 +115,6 @@ export class PeFormUpdateComponent implements OnInit {
    * @param peForm
    */
   protected updateForm(peForm: PeForm): void {
-    //let budget_classes_ids = peForm.budget_classes?.map((budget_class: { id: any; })=>budget_class);
-   // let fund_sources_id = peForm.fund_sources?.map((fund_source: { id: any; })=>fund_source);
-    // console.log("EEEEE")
-    // console.log(fund_sources_id)
     this.editForm.patchValue({
       id: peForm.id,
       name: peForm.name,

@@ -43,6 +43,9 @@ import {FundSourceBudgetClassService} from "../../setup/fund-source-budget-class
 import {FundSourceBudgetClass} from "../../setup/fund-source-budget-class/fund-source-budget-class.model";
 import {PeDefinitionService} from "../../setup/pe-definition/pe-definition.service";
 import {isNumeric} from "rxjs/internal-compatibility";
+import {FacilityService} from "../../setup/facility/facility.service";
+import {Facility} from "../../setup/facility/facility.model";
+import {BudgetCeilingService} from "../../shared/budget-ceiling.service";
 
 @Component({
   selector: "app-pe-item",
@@ -60,6 +63,8 @@ export class PeItemComponent implements OnInit {
   budgetClasses?: BudgetClass[] = [];
   fundSources?: FundSource[] = [];
   sections?: Section[] = [];
+  facilities?:any =[]
+
   fetchedFundSources?:FundSource[] = []; // it hold the fund sources fetched from pe forms
 
   /* dynamic table values */
@@ -68,7 +73,6 @@ export class PeItemComponent implements OnInit {
   peTableFields:any = [];
   peDataValues:any = [];
   verticalTotal:any = {};
-
   peValuesArray: any = {};
   dataReady= false;
 
@@ -81,9 +85,6 @@ export class PeItemComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-
-
-
 
 
   //Mandatory filter
@@ -114,7 +115,9 @@ export class PeItemComponent implements OnInit {
     protected userService:UserService,
     protected peFormServices: PeFormService,
     protected fundSourceBudgetClassService: FundSourceBudgetClassService,
-    protected peDefinitionService : PeDefinitionService
+    protected peDefinitionService : PeDefinitionService,
+    protected facilityService : FacilityService,
+    protected budgetCeilingService : BudgetCeilingService,
 
   ) {
     this.currentUser = userService.getCurrentUser();
@@ -141,6 +144,15 @@ export class PeItemComponent implements OnInit {
     this.sectionService.departmentCostCenter().subscribe(resp =>{
       this.sections = resp.data
     })
+
+    if(this.admin_hierarchy_id) {
+      this.facilityService.query({columns: ["id", "name","code"],admin_hierarchy_id:this.admin_hierarchy_id,code:"00000000"}).subscribe(
+        (resp: CustomResponse<Facility[]>) =>
+          (this.facilities = resp.data)
+      );
+    }
+
+
     /*
     this.sectionService
       .query({ columns: ["id", "name"] })
@@ -228,6 +240,9 @@ export class PeItemComponent implements OnInit {
     if (!this.admin_hierarchy_id || !this.financial_year_id || this.budget_class_id <= 0 || this.fund_source_id <= 0 || !this.pe_form_id || !this.section_id) {
      return;
      }
+    /* first fetch ceiling amount */
+    this.fetchCeilingAmount();
+    this.fetchBudgetAmount();
     this.peTableFields = [];
     this.peDefinitionService.getParentChildrenByFormId({"pe_form_id":this.pe_form_id,"pe_sub_form_id":this.pe_sub_form_id}).subscribe(resp =>{
       this.peTableFields = resp.data;
@@ -245,6 +260,22 @@ export class PeItemComponent implements OnInit {
         this.preparation()
       }
     })
+  }
+
+
+  fetchCeilingAmount(){
+    if(this.facilities[0]?.id){
+      this.budgetCeilingService.query({columns: ["id", "amount"],
+        admin_hierarchy_id:this.admin_hierarchy_id,facility_id:this.facilities[0]?.id,
+        financial_year_id:this.financial_year_id,section_id:this.section_id,budget_type:'CURRENT'
+      }).subscribe(resp=>{
+        console.log("response")
+        console.log(resp)
+      })
+    }
+  }
+
+  fetchBudgetAmount(){
 
   }
 

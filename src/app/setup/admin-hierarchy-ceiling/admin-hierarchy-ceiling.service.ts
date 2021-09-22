@@ -37,6 +37,16 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  uploadCeiling(
+    ceiling: any
+  ): Observable<CustomResponse<any>> {
+    const url = 'api/upload_ceiling';
+    return this.http.post<CustomResponse<any>>(
+      url,
+      ceiling
+    );
+  }
+
   find(id: number): Observable<CustomResponse<AdminHierarchyCeiling>> {
     return this.http.get<CustomResponse<AdminHierarchyCeiling>>(
       `${this.resourceUrl}/${id}`
@@ -51,9 +61,39 @@ export class AdminHierarchyCeilingService {
       { params: options }
     );
   }
+
+  queryDownloadTemplate(req?: any): any {
+    const options = createRequestOption(req);
+    const url = "api/download_template";
+    return this.http.get(
+      url,
+      { params: options ,  responseType: 'arraybuffer'}
+
+    );
+  }
+
   queryCeilingWithChildren(req?: any): Observable<CustomResponse<AdminHierarchyCeiling[]>> {
     const options = createRequestOption(req);
     const url = 'api/admin_ceilings_children'
+    return this.http.get<CustomResponse<AdminHierarchyCeiling[]>>(
+      url,
+      { params: options }
+    );
+  }
+
+
+  queryCeilingBylevel(req?: any): Observable<CustomResponse<AdminHierarchyCeiling[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/admin_ceilings_level'
+    return this.http.get<CustomResponse<AdminHierarchyCeiling[]>>(
+      url,
+      { params: options }
+    );
+  }
+
+  queryTotalAllocatedAmount(req?: any): Observable<CustomResponse<AdminHierarchyCeiling[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/admin_ceiling_allocated_amount'
     return this.http.get<CustomResponse<AdminHierarchyCeiling[]>>(
       url,
       { params: options }

@@ -185,7 +185,7 @@
           <th rowspan="" >Fund Source</th>
           <th rowspan="" >Budget Class</th>
           <th rowspan="" >Bank Account</th>
-          <th rowspan="" >Amount</th>
+          <th rowspan="" style="min-width:200px !important;">Amount</th>
           <th rowspan="" >Status</th>
           <th  *ngIf=" position === 1" colspan="">Lock/Unlock</th>
           <th rowspan=""  style="width:8rem"></th>
@@ -202,7 +202,7 @@
           <td>{{rowData?.ceiling.fund_source.name}}</td>
           <td>{{rowData?.ceiling.budget_class.name}}</td>
           <td>{{rowData?.ceiling.bank_account.name}}</td>
-          <td [pEditableRow]="rowData">
+          <td [pEditableRow]="rowData" style="min-width:200px !important;">
             <p-cellEditor>
               <ng-template pTemplate="input">
                 <input pInputText type="text" [(ngModel)]="rowData.amount" required>

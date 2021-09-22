@@ -79,7 +79,6 @@ export class CeilingChainUpdateComponent implements OnInit {
           (this.sectionLevels = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
-    console.log(this.dialogConfig.data)
   }
 
   /**
@@ -141,11 +140,11 @@ export class CeilingChainUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: ceilingChain.id,
       for_admin_hierarchy_level_position:
-        ceilingChain.for_admin_hierarchy_level_position.position,
+        ceilingChain.for_admin_hierarchy_level_position?.position,
       admin_hierarchy_level_position:
-        ceilingChain.admin_hierarchy_level_position.position,
+        ceilingChain.admin_hierarchy_level_position?.position,
       next_id: ceilingChain.next_id,
-      section_level_position: ceilingChain.section_level_position.position,
+      section_level_position: ceilingChain.section_level_position?.position,
       active: ceilingChain.active,
     });
   }

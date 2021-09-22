@@ -40,7 +40,6 @@ export class CeilingBankAccountUpdateComponent implements OnInit {
   }
   saveBankAccount(): void{
     const form = this.createFromForm(this.ceiling,this.bankAccountForm.get('bank_account_id')?.value);
-    console.log(form)
     this.subscribeToSaveResponse(
       this.fundSourceBudgetClassService.update(form)
     );

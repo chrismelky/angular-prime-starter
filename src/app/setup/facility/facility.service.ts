@@ -43,7 +43,8 @@ export class FacilityService {
 
   queryCeilingFacilities(req?: any): Observable<CustomResponse<Facility[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<Facility[]>>(this.resourceUrl, {
+    const url = 'api/ceiling_facilities';
+    return this.http.get<CustomResponse<Facility[]>>(url, {
       params: options,
     });
   }

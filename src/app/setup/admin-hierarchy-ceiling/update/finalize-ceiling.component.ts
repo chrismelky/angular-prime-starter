@@ -177,4 +177,8 @@ export class FinalizeCeilingComponent implements OnInit {
   protected onSaveFinalize(): void {
   }
 
+  test(event:Event){
+    console.log(event);
+  }
+
 }

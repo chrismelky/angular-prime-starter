@@ -65,7 +65,7 @@
         <td pEditableColumn [pEditableColumnDisabled]="rowData.is_locked">
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input pInputText  type="number" (pointerenter)="onEditInit(rowData)"  (blur)="updateCeiling(rowData)" (ngModelChange)="ceilingChange($event,'P',rowData)" [(ngModel)]="getPercent(rowData)!">
+              <input pInputText  type="number" (pointerenter)="onEditInit(rowData)" (keyup)="test($event)"  (blur)="updateCeiling(rowData)" (ngModelChange)="ceilingChange($event,'P',rowData)" [(ngModel)]="getPercent(rowData)!">
             </ng-template>
             <ng-template pTemplate="output">
               <div>

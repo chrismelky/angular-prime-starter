@@ -16,6 +16,8 @@ import { AssessmentCriteria } from "./assessment-criteria.model";
 @Injectable({ providedIn: "root" })
 export class AssessmentCriteriaService {
   public resourceUrl = "api/assessment_criteria";
+  public url = "api/cas_results";
+  public commentUrl = "api/cas_sub_criteria_comments";
   public baseUrl = "api/assessor_hierarchies";
 
   constructor(protected http: HttpClient) {}
@@ -24,7 +26,16 @@ export class AssessmentCriteriaService {
     assessmentCriteria: AssessmentCriteria
   ): Observable<CustomResponse<AssessmentCriteria>> {
     return this.http.post<CustomResponse<AssessmentCriteria>>(
-      this.resourceUrl,
+      this.url,
+      assessmentCriteria
+    );
+  }
+
+createComment(
+    assessmentCriteria: AssessmentCriteria
+  ): Observable<CustomResponse<AssessmentCriteria>> {
+    return this.http.post<CustomResponse<AssessmentCriteria>>(
+      this.commentUrl,
       assessmentCriteria
     );
   }

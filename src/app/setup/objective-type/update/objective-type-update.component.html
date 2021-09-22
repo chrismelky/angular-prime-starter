@@ -49,6 +49,18 @@
           >
         </span>
       </div>
+      <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start">
+        <p-checkbox
+          formControlName="is_incremental"
+          label="Is Incremental"
+          [binary]="true"
+        ></p-checkbox>
+        <p-checkbox
+          formControlName="is_sectoral"
+          label="Is Sectoral"
+          [binary]="true"
+        ></p-checkbox>
+      </div>
 
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

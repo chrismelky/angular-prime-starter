@@ -7,12 +7,14 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { AdminHierarchyTreeComponent } from './admin-hierarchy-tree/admin-hierarchy-tree.component';
 import { SectionTreeComponent } from './section-tree/section-tree.component';
 import { ObjectiveTreeComponent } from './objective-tree/objective-tree.component';
+import {AssessmentTreeComponent} from "./assessment-tree/assessment-tree.component";
 
 @NgModule({
   declarations: [
     AdminHierarchyTreeComponent,
     SectionTreeComponent,
     ObjectiveTreeComponent,
+    AssessmentTreeComponent,
   ],
   imports: [SharedMaterialModule, SharedPrimengModule],
   exports: [
@@ -21,6 +23,7 @@ import { ObjectiveTreeComponent } from './objective-tree/objective-tree.componen
     AdminHierarchyTreeComponent,
     SectionTreeComponent,
     ObjectiveTreeComponent,
+    AssessmentTreeComponent,
     CommonModule,
   ],
   providers: [ConfirmationService, DialogService],

@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { ObjectiveType } from "../objective-type.model";
-import { ObjectiveTypeService } from "../objective-type.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { ObjectiveType } from '../objective-type.model';
+import { ObjectiveTypeService } from '../objective-type.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-objective-type-update",
-  templateUrl: "./objective-type-update.component.html",
+  selector: 'app-objective-type-update',
+  templateUrl: './objective-type-update.component.html',
 })
 export class ObjectiveTypeUpdateComponent implements OnInit {
   isSaving = false;
@@ -32,6 +32,8 @@ export class ObjectiveTypeUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     position: [null, [Validators.required]],
+    is_incremental: [null, [Validators.required]],
+    is_sectoral: [null, [Validators.required]],
   });
 
   constructor(
@@ -43,6 +45,7 @@ export class ObjectiveTypeUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.dialogConfig.data);
     this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
   }
 
@@ -106,6 +109,8 @@ export class ObjectiveTypeUpdateComponent implements OnInit {
       id: objectiveType.id,
       name: objectiveType.name,
       position: objectiveType.position,
+      is_sectoral: objectiveType.is_sectoral,
+      is_incremental: objectiveType.is_incremental,
     });
   }
 
@@ -116,9 +121,11 @@ export class ObjectiveTypeUpdateComponent implements OnInit {
   protected createFromForm(): ObjectiveType {
     return {
       ...new ObjectiveType(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      position: this.editForm.get(["position"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      position: this.editForm.get(['position'])!.value,
+      is_incremental: this.editForm.get(['is_incremental'])!.value,
+      is_sectoral: this.editForm.get(['is_sectoral'])!.value,
     };
   }
 }

@@ -4,6 +4,7 @@ export class PeDefinition {
     public field_name?: string,
     public parent_id?: number,
     public gfs_code_id?: number,
+    public sort_order?: number,
     public unit?: string,
     public is_input?: string,
     public has_breakdown?: string,

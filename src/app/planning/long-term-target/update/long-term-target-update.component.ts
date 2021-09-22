@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -21,6 +21,9 @@ import { SectionService } from 'src/app/setup/section/section.service';
 import { LongTermTarget } from '../long-term-target.model';
 import { LongTermTargetService } from '../long-term-target.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { ReferenceTypeService } from 'src/app/setup/reference-type/reference-type.service';
+import { ReferenceType } from 'src/app/setup/reference-type/reference-type.model';
+import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
 
 @Component({
   selector: 'app-long-term-target-update',
@@ -33,6 +36,8 @@ export class LongTermTargetUpdateComponent implements OnInit {
 
   objectives?: Objective[] = [];
   sections?: Section[] = [];
+  referenceTypes?: ReferenceType[] = [];
+  referenceLoading = false;
 
   /**
    * Declare form
@@ -42,8 +47,9 @@ export class LongTermTargetUpdateComponent implements OnInit {
     description: [null, [Validators.required]],
     strategic_plan_id: [null, [Validators.required]],
     objective_id: [null, [Validators.required]],
-    code: [null, [Validators.required]],
+    code: [null, []],
     section_id: [null, [Validators.required]],
+    references: this.fb.array([]),
   });
 
   constructor(
@@ -54,14 +60,107 @@ export class LongTermTargetUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected referenceTypeService: ReferenceTypeService
   ) {}
 
   ngOnInit(): void {
     const dialogData = this.dialogConfig.data;
     this.sections = dialogData.sections;
     this.objectives = dialogData.objectives;
+
+    if (this.sections?.length === 1) {
+      this.loadReferences(this.sections[0].id!, dialogData.target?.id);
+    }
     this.updateForm(dialogData.target); //Initialize form with data from dialog
+  }
+
+  /**
+   * Load reference type when section selected/changed
+   */
+  loadReferences(sectionId: number, targetId?: number): void {
+    if (!sectionId) {
+      return;
+    }
+    const sectorId = this.sections?.find((s) => s.id === sectionId)?.sector_id;
+    if (!sectorId) {
+      this.toastService.warn(
+        'Could not load reference; Selected section has no sector mapped'
+      );
+      return;
+    }
+    this.referenceLoading = true;
+    this.referenceTypeService
+      .byLinkLevelWithReferences('Target', sectorId!)
+      .subscribe(
+        (resp) => {
+          this.referenceTypes = resp.data;
+          /** If target has id load it selected reference first before prepare reference controlls else prepare controlls */
+          if (targetId) {
+            this.loadExistingReference(targetId);
+          } else {
+            this.prepareReferenceControls([]);
+          }
+        },
+        (error) => {
+          this.referenceLoading = false;
+        }
+      );
+  }
+
+  /**
+   * Load Long term target selected references if target is edit mode
+   * @param targetId
+   */
+  loadExistingReference(targetId: number): void {
+    this.longTermTargetService
+      .find(targetId, {
+        with: ['references'],
+        columns: ['id'],
+      })
+      .subscribe(
+        (resp) => {
+          this.prepareReferenceControls(resp.data?.references || []);
+        },
+        (error) => {
+          this.referenceLoading = false;
+        }
+      );
+  }
+
+  /**
+   * Get reference form array control
+   */
+  get referenceControls(): FormArray {
+    return this.editForm.controls['references'] as FormArray;
+  }
+
+  /**
+   * Prepare reference type component by
+   * for each reference type create form group with
+   * 1. name control for display purpose
+   * 2. value control for binding selected value
+   * 3. options control for select component
+   * 4. isMultiple control dispaly mult or single select
+   * @param selectedReferences
+   */
+  prepareReferenceControls(selectedReferences: NationalReference[]): void {
+    this.referenceLoading = false;
+    const ref = this.referenceControls;
+    this.referenceTypes?.forEach((type) => {
+      const value = type.multi_select
+        ? selectedReferences.filter((r) => r.reference_type_id === type.id)
+        : selectedReferences.find((r) => r.reference_type_id === type.id);
+
+      ref.push(
+        this.fb.group({
+          options: [type.references],
+          isMultiple: [type.multi_select],
+          name: [type.name],
+          value: [value, [Validators.required]],
+        })
+      );
+    });
   }
 
   /**
@@ -143,6 +242,11 @@ export class LongTermTargetUpdateComponent implements OnInit {
       objective_id: this.editForm.get(['objective_id'])!.value,
       code: this.editForm.get(['code'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
+      references: this.editForm
+        .get(['references'])!
+        .value.flatMap((ref: any) => {
+          return ref.value;
+        }),
     };
   }
 }

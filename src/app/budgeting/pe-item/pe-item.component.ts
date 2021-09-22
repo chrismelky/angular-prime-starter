@@ -42,6 +42,7 @@ import {PeFormService} from "../../setup/pe-form/pe-form.service";
 import {FundSourceBudgetClassService} from "../../setup/fund-source-budget-class/fund-source-budget-class.service";
 import {FundSourceBudgetClass} from "../../setup/fund-source-budget-class/fund-source-budget-class.model";
 import {PeDefinitionService} from "../../setup/pe-definition/pe-definition.service";
+import {isNumeric} from "rxjs/internal-compatibility";
 
 @Component({
   selector: "app-pe-item",
@@ -60,12 +61,18 @@ export class PeItemComponent implements OnInit {
   fundSources?: FundSource[] = [];
   sections?: Section[] = [];
   fetchedFundSources?:FundSource[] = []; // it hold the fund sources fetched from pe forms
+
+  /* dynamic table values */
   round: any[] = [];
   inputTexts: any[] = [];
   peTableFields:any = [];
+  peDataValues:any = [];
+  verticalTotal:any = {};
+
+  peValuesArray: any = {};
+  dataReady= false;
 
   cols = []; //Table display columns
-
   isLoading = false;
   page?: number = 1;
   per_page!: number;
@@ -75,7 +82,6 @@ export class PeItemComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
 
-  /* dynamic table values */
 
 
 
@@ -131,11 +137,6 @@ export class PeItemComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<PeSubForm[]>) => (this.peSubForms = resp.data)
       );
-    // this.fundSourceService
-    //   .query({ columns: ["id", "name"] })
-    //   .subscribe(
-    //     (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
-    //   );
     this.sectionService
       .query({ columns: ["id", "name"] })
       .subscribe(
@@ -217,29 +218,27 @@ export class PeItemComponent implements OnInit {
    * @param event
    */
   filterChanged(): void {
-    console.log("PE FORMS")
-    console.log("admin_hierarchy_id",this.admin_hierarchy_id);
-    console.log("financial_year_id",this.financial_year_id);
-    console.log("budget_class_id",this.budget_class_id);
-    console.log("fund_source_id",this.fund_source_id);
-    console.log("section_id",this.section_id);
-    console.log("pe_form_id",this.pe_form_id);
 
     if (!this.admin_hierarchy_id || !this.financial_year_id || this.budget_class_id <= 0 || this.fund_source_id <= 0 || !this.pe_form_id || !this.section_id) {
      return;
      }
     this.peTableFields = [];
-    this.peDefinitionService.getParentChildrenByFormId({"pe_form_id":this.pe_form_id}).subscribe(resp =>{
-      let fetchedColumns = resp.data;
-      this.peTableFields = resp.data
-        console.log("fetchedColumns");
-        console.log(fetchedColumns.textInputs);
-
+    this.peDefinitionService.getParentChildrenByFormId({"pe_form_id":this.pe_form_id,"pe_sub_form_id":this.pe_sub_form_id}).subscribe(resp =>{
+      this.peTableFields = resp.data;
+      //this.verticalTotal =resp.data?.textInputs;
       if(this.round.length === 0){
         this.addRow(0)
+        this.preparation()
+      } else {
+          for(let i = this.round.length; i > 1; i-- ){
+            this.inputTexts[i] = [];
+            this.round.pop();
+          }
+          this.round.pop();
+          this.addRow(0)
+        this.preparation()
       }
     })
-
 
   }
 
@@ -247,14 +246,16 @@ export class PeItemComponent implements OnInit {
    * on change pe sub form search Pe Form(parent) by id and Get budget class assigned
    */
   getPeForm(event: any):void{
-    if(event.value.length > 0){
+   // console.log(event.value?.id)
+    if(event.value?.id >= 1){
       this.budgetClasses! = [];
       this.budget_class_id = 0
       this.fund_source_id = 0
-      this.peFormServices.find(event.value[0]?.pe_form_id).subscribe(resp=>{
+      this.pe_sub_form_id = event.value?.id;
+      this.peFormServices.find(event.value?.pe_form_id).subscribe(resp=>{
         this.budgetClasses = resp.data?.budget_classes;
         this.fetchedFundSources = resp.data?.fund_sources;
-        this.pe_form_id = event.value[0]?.pe_form_id
+        this.pe_form_id = event.value?.pe_form_id
         this.filterChanged();
       })
     } else {
@@ -363,21 +364,7 @@ export class PeItemComponent implements OnInit {
     });
   }
 
-  /**
-   * Delete PeItem
-   * @param peItem
-   */
-  // delete(peItem: PeItem): void {
-  //   this.confirmationService.confirm({
-  //     message: "Are you sure that you want to delete this PeItem?",
-  //     accept: () => {
-  //       this.peItemService.delete(peItem.id!).subscribe((resp) => {
-  //         this.loadPage(this.page);
-  //         this.toastService.info(resp.message);
-  //       });
-  //     },
-  //   });
-  // }
+
 
   /**
    * When successfully data loaded
@@ -414,20 +401,220 @@ export class PeItemComponent implements OnInit {
     this.toastService.error("Error loading Pe Item");
   }
 
-  addRow(position:number){
 
-   if(this.peTableFields.textInputs?.length > 0){
-     this.inputTexts[position] = this.peTableFields.textInputs;
-     this.round.push(position);
-   }
-
+  /**
+   * Delete PeItem
+   * @param peItem
+   */
+  delete(position:number): void {
+    this.confirmationService.confirm({
+      message: "Do you want to remove the last row?",
+        accept: () => {
+          this.deleteRow(position);
+        }
+    })
   }
 
+  /*
+   function used when new row added
+   */
+  addRow(position:number){
+   if(this.peTableFields.textInputs?.length > 0 && this.isCriteriaMeet() && this.pe_sub_form_id){
+     this.inputTexts[position] = this.peTableFields.textInputs;
+
+     //create object of round
+     let roundObject:any = {}
+     roundObject.id =position
+     roundObject.uid = `${this.getRoundUniqueId()}-${position}` // get unique uid
+     this.modifyPayload(this.inputTexts[position],`${this.getRoundUniqueId()}-${position}`,position); //format payload
+     this.round.push(roundObject);
+   }
+
+   /* call all prepare array of each input*/
+    this.preparation()
+  }
+
+
+  /*
+   Each row added format individual textInput  and Create payload
+   then add mandatory fields as attributes
+   then push to peDataValues ready for receiving input value
+   */
+  modifyPayload(payloads:any,uid:any,roundId:number){
+    payloads?.forEach((r:any) => {
+      let object:any = {
+        ...r,
+        uid :uid,
+        roundId:roundId,
+        /*
+        admin_hierarchy_id : this.admin_hierarchy_id,
+        financial_year_id : this.financial_year_id,
+        section_id : this.section_id,
+        budget_class_id : this.budget_class_id,
+        fund_source_id : this.fund_source_id,
+        pe_form_id : this.pe_form_id,
+        pe_sub_form_id : this.pe_sub_form_id
+        */
+      }
+       this.peDataValues.push(object);
+    })
+  }
+
+
+
+  /*Function for deleting rows where id greater than one */
   deleteRow(position:number){
     if(position > 1) {
       this.round.pop();
-      ///delete Procedure
+
+      /*then remove arrays of all fields */
+      this.peTableFields.textInputs?.forEach((value:any)=>{
+        this.peDataValues.pop();
+      })
     }
+  }
+
+
+ /*
+ * This function check if all mandatory field selected, return true if selected, false if nor*/
+  isCriteriaMeet(){
+    if (!this.admin_hierarchy_id || !this.financial_year_id || this.budget_class_id <= 0 || this.fund_source_id <= 0 || !this.pe_form_id || !this.section_id) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  store(){
+   // console.log(this.peValuesArray)
+   //  console.log(this.peDataValues)
+      const object:any = {
+       dataValues:this.peDataValues,
+      admin_hierarchy_id : this.admin_hierarchy_id,
+      financial_year_id : this.financial_year_id,
+      section_id : this.section_id,
+      budget_class_id : this.budget_class_id,
+      fund_source_id : this.fund_source_id,
+      pe_form_id : this.pe_form_id,
+      pe_sub_form_id : this.pe_sub_form_id
+    }
+
+    this.peItemService.create(object).subscribe(response =>{
+      console.log("response")
+    })
+  }
+
+  updateValue(data:any){
+    if(data?.value !== undefined) {
+      const objectIndex = this.peDataValues?.findIndex((pdv: any) => {
+        return (
+          pdv.uid === data.uid &&
+          pdv.id === data.id
+        );
+      })
+      this.peDataValues[objectIndex].value = data.value ? data.value : "";
+      //select_option
+      delete this.peDataValues[objectIndex]?.select_option;
+      this.horizontalTotal(data); // per column parent
+
+      // if row number is greater than one
+      if (this.round.length > 1) {
+        this.getVerticalTotal(data); // last row
+      }
+    }
+  }
+
+  /* sam vertical total */
+  getVerticalTotal(data:any) {
+    if (data.type === "number" || data.output_type ==="CURRENCY") {
+      const filtered = this.peDataValues?.filter((value: any) => value.id === data.id)
+      var verticalTotal = 0;
+      filtered?.forEach((fValue: any) => {
+        let value = parseFloat(fValue?.value) ? parseFloat(fValue?.value): 0;
+        verticalTotal = verticalTotal + value;
+      })
+      this.verticalTotal[data.id!] = verticalTotal.toFixed(2)
+    }
+  }
+
+  /* get vertical for horizontal total */
+  getSamVerticalTotal(data:any){
+    const columnTotals = this.peDataValues?.filter((value: any) => value.id === data.id);
+    var total = 0;
+    columnTotals.forEach((tcolum:any)=>{
+       let value = isNumeric(tcolum?.value) === true ? parseFloat(tcolum?.value): 0;
+       total = total + value;
+    })
+    this.verticalTotal[data.id!] = total.toFixed(2)
+  }
+
+
+  /* sam vertical total */
+  horizontalTotal(data:any){
+    if(data.output_type ==="CURRENCY" || data.type === "number"){
+      /* filter  to find columns than contain totals*/
+        const columnTotals = this.peDataValues?.filter((value: any) => value.parent_id === data.parent_id && value.uid === data.uid && (value.formula !== null && value.formula !== ""));
+        columnTotals.forEach((tcolum:any)=>{
+
+          /* get vertical for horizontal total */
+          var formula = tcolum.formula;
+          let columnArrays = formula.split(/[.\*+-/_]/);
+          columnArrays.forEach((column:any)=>{
+
+          // find all columns
+          const filtered = this.peDataValues?.filter((value: any) => value.parent_id === data.parent_id && value.column_number === column && value.uid === data.uid)
+         // let dataValue = filtered[0]?.value ? filtered[0]?.value : 0;
+          let dataValue = isNumeric(filtered[0]?.value) === true ? parseFloat(filtered[0]?.value): 0;
+            formula = formula.replace(column, dataValue);
+        })
+
+          //find the index of object and update value key
+          const objectIndex = this.peDataValues?.findIndex((pdv:any) => {
+            return (
+              pdv.uid === tcolum.uid &&
+              pdv.id === tcolum.id
+            );
+          })
+
+          let calculatedValue = isNumeric(eval(formula)) === true ? parseFloat(eval(formula)): 0;
+          this.peDataValues[objectIndex].value = calculatedValue.toFixed(2);
+          this.peValuesArray[tcolum.uid!][tcolum.id].value = calculatedValue.toFixed(2)
+
+          // if row number is greater than one
+          if(this.round.length > 1) {
+            this.getSamVerticalTotal(tcolum)
+          }
+      })
+    }
+  }
+
+  /* prepare payload arrays and bind to roundId and InputIds to each textInput */
+  preparation(){
+    this.round?.forEach((r) => {
+     this.peValuesArray[r.uid] = {}
+      this.peTableFields.textInputs?.forEach((f:any) => {
+        const exist = this.peDataValues?.find((pdv:any) => {
+          return (
+            pdv.uid === r.uid &&
+            pdv.id === f.id
+          );
+        });
+
+        this.peValuesArray[r.uid][f.id]={
+          ...exist?exist:undefined
+        };
+      })
+    });
+    this.dataReady = true
+  }
+
+  /* generate round/table row unique Id id added
+  * The id is based on
+  * FinancialYearId, adminHierarchyId, sectionId/CostCenterId,peFormId,peSubFormId,budgetClass,fundSource and serialNumber*/
+  getRoundUniqueId(){
+    let currentDate=new Date(); // 2020-04-17T17:19:19.831Z
+   // return `${this.financial_year_id}-${this.admin_hierarchy_id}-${this.section_id}-${this.pe_form_id}-${this.pe_sub_form_id}-${this.budget_class_id}-${this.fund_source_id}`
+    return `${this.financial_year_id}-${this.admin_hierarchy_id}-${this.section_id}-${this.pe_form_id}-${this.pe_sub_form_id}-${currentDate.getTime()}`
   }
 
 }

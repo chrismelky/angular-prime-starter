@@ -49,6 +49,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
     field_name: [null, [Validators.required]],
     parent_id: [null, []],
     gfs_code_id: [null, []],
+    sort_order: [null, []],
     unit: [null, [Validators.required]],
     is_input: [false, []],
     has_breakdown: [false, []],
@@ -76,7 +77,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.peDefinitionService
-      .query({ columns: ["id", "field_name"] })
+      .query({ columns: ["id", "field_name"],pe_form_id:this.dialogConfig.data?.pe_form_id })
       .subscribe(
         (resp: CustomResponse<PeDefinition[]>) => (this.parents = resp.data)
       );
@@ -164,6 +165,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
       id: peDefinition.id,
       field_name: peDefinition.field_name,
       parent_id: peDefinition.parent_id,
+      sort_order: peDefinition.sort_order,
       gfs_code_id: peDefinition.gfs_code_id,
       unit: peDefinition.unit,
       is_input: peDefinition.is_input,
@@ -190,6 +192,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
       field_name: this.editForm.get(["field_name"])!.value,
       parent_id: this.editForm.get(["parent_id"])!.value,
       gfs_code_id: this.editForm.get(["gfs_code_id"])!.value,
+      sort_order: this.editForm.get(["sort_order"])!.value,
       unit: this.editForm.get(["unit"])!.value,
       is_input: this.editForm.get(["is_input"])!.value,
       has_breakdown: this.editForm.get(["has_breakdown"])!.value,

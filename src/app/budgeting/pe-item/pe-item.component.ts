@@ -137,11 +137,17 @@ export class PeItemComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<PeSubForm[]>) => (this.peSubForms = resp.data)
       );
+
+    this.sectionService.departmentCostCenter().subscribe(resp =>{
+      this.sections = resp.data
+    })
+    /*
     this.sectionService
       .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
+    */
     this.handleNavigation();
   }
 

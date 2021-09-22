@@ -41,6 +41,7 @@ export class FinalizeCeilingComponent implements OnInit {
       .queryCeilingFacilities({
         active:true,
         section_id:this.ceiling?.section_id,
+        ceiling_id:this.ceiling.ceiling_id,
         ownership:'PU'
       }).subscribe((resp:any) =>{
       this.facilities=resp.data??[];

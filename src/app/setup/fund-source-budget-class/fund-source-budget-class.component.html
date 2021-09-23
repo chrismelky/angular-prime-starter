@@ -146,13 +146,6 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="fundSourceBudgetClasses?.length">
-<!--          <th-->
-<!--            *ngFor="let col of columns"-->
-<!--            [pSortableColumn]="col.sort ? col.field : null"-->
-<!--          >-->
-<!--            {{ col.header-->
-<!--            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>-->
-<!--          </th>-->
           <th>Budget Class</th>
           <th>Fund Source</th>
           <th>GFS Code</th>
@@ -165,9 +158,6 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-<!--          <td *ngFor="let col of columns">-->
-<!--            {{ rowData[col.field] }}-->
-<!--          </td>-->
           <td>{{rowData?.budget_class?.name}}</td>
           <td>{{rowData?.fund_source?.name}} </td>
           <td>
@@ -191,6 +181,9 @@
             ></p-inputSwitch>
           </td>
           <td>
+            <app-ceiling-facility-type
+              [ceiling]="rowData">
+            </app-ceiling-facility-type>
             <app-ceinings-sector
               [ceiling_id]="rowData.id"
             ></app-ceinings-sector>

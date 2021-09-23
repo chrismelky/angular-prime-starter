@@ -58,22 +58,22 @@ export class CeilingChainUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.adminHierarchyLevelService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "name",'position'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.forAdminHierarchyLevels = resp.data)
       );
     this.adminHierarchyLevelService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "name","position"] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
     this.ceilingChainService
-      .query({ columns: ["id", "name"] })
+      .queryWithChild({page:1})
       .subscribe((resp: CustomResponse<CeilingChain[]>) => (this.nexts = resp.data));
     this.sectionLevelService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "name","position"] })
       .subscribe(
         (resp: CustomResponse<SectionLevel[]>) =>
           (this.sectionLevels = resp.data)
@@ -140,11 +140,11 @@ export class CeilingChainUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: ceilingChain.id,
       for_admin_hierarchy_level_position:
-        ceilingChain.for_admin_hierarchy_level_position,
+        ceilingChain.for_admin_hierarchy_level_position?.position,
       admin_hierarchy_level_position:
-        ceilingChain.admin_hierarchy_level_position,
+        ceilingChain.admin_hierarchy_level_position?.position,
       next_id: ceilingChain.next_id,
-      section_level_position: ceilingChain.section_level_position,
+      section_level_position: ceilingChain.section_level_position?.position,
       active: ceilingChain.active,
     });
   }

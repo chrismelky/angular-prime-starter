@@ -52,7 +52,7 @@
 
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-multiSelect
+                  <!--p-multiSelect
                     id="pe_sub_form_id"
                     optionValue="value"
                     [options]="peSubForms!"
@@ -69,7 +69,27 @@
                         <span>{{group.label}}</span>
                       </div>
                     </ng-template>
-                  </p-multiSelect>
+                  </p-multiSelect-->
+
+                  <p-dropdown
+                    id="pe_sub_form_id"
+                    optionValue="value"
+                    [options]="peSubForms!"
+                    [group]="true"
+                    (onChange)="getPeForm($event)"
+                    [autoDisplayFirst]=false
+                    [filter]="true"
+                    scrollHeight="150px"
+                    [itemSize]="5"
+                    [(ngModel)]="parent_sub_budget_class"
+                  >
+                  <ng-template let-group pTemplate="group">
+                      <div class="p-d-flex p-ai-center">
+                        <i class="pi pi-folder-open">&nbsp;</i>
+                          <span>{{group.label}}</span>
+                      </div>
+                  </ng-template>
+                </p-dropdown>
                   <label for="pe_sub_form_id">Personal Emolument Sub Form </label>
                 </span>
               </div>
@@ -111,7 +131,7 @@
             </div>
             <div class="p-field" fxFlex>
               <span class="p-float-label">
-                <p-dropdown
+                <!--p-dropdown
                   id="section_id"
                   optionValue="id"
                   optionLabel="name"
@@ -121,7 +141,37 @@
                   [options]="sections!"
                   (onChange)="filterChanged()"
                   [(ngModel)]="section_id"
-                ></p-dropdown>
+                ></p-dropdown-->
+
+                <p-dropdown
+                  id="section_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  optionGroupLabel="name"
+                  optionGroupChildren="children"
+                  [autoDisplayFirst]="false"
+                  [options]="sections!"
+                  [group]="true"
+                  (onChange)="filterChanged()"
+                  [autoDisplayFirst]=false
+                  [filter]="true"
+                  [(ngModel)]="section_id"
+                >
+                  <ng-template let-group pTemplate="group">
+                      <div class="p-d-flex p-ai-center">
+                        <i class="pi pi-folder-open">&nbsp;</i>
+                          <span>[ {{group.code}} ] {{group.name}}</span>
+                      </div>
+                  </ng-template>
+
+                  <ng-template let-costCenter pTemplate="item">
+                    <div class="country-item">
+                        <div>[ {{costCenter.code}} ] {{costCenter.name}}</div>
+                    </div>
+                </ng-template>
+
+                </p-dropdown>
+
                 <label for="section_id">Planning Unit </label>
               </span>
             </div>
@@ -143,7 +193,7 @@
       </span>
     </div>
 
-    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+    <div *ngIf="dataReady" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <table id="peTable" class="p-datatable" style="width: 100%" >
         <tr class="p-datatable-header	">
           <th rowspan="2">#</th>
@@ -154,18 +204,35 @@
         </tr>
 
         <tr *ngFor="let i of round">
-          <td>{{i + 1}}</td>
-          <td *ngFor="let input of inputTexts[i]">
-            <div *ngIf="input.is_input && input.select_option === null">
-              <input type="text"  class="p-inputtext-sm"  pInputText >
+          <td title="{{i.uid}}">{{i.id + 1}}</td>
+
+          <td *ngFor="let input of inputTexts[i.id]">
+            <div *ngIf="input.select_option === null">
+              <input
+                type="{{input.type}}"
+                id="{{ i.uid! }}-{{ input.id! }}"
+                class="p-inputtext-sm"
+                pInputText
+                [disabled]=!!input.formula
+                [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                 (blur)="updateValue(peValuesArray[i.uid!][input.id])"
+                 autocomplete="off"
+              >
             </div>
-            <div *ngIf="!input.is_input && input.select_option === null">
-              <div class="p-inputtext-sm">
-                <span class="p-inputgroup-addon">62,721,234,567.00</span>
-              </div>
-            </div>
-            <div *ngIf="input.is_input && input.select_option !== null">
-              <p-dropdown [options]="input.select_option" [showClear]="true" [filter]="true" optionLabel="name" optionGroupLabel	="name" optionGroupChildren="children" placeholder="{{input.select_option[0]?.name}}" [group]="true">
+            <div *ngIf="input.select_option !== null">
+              <p-dropdown
+                [options]="input.select_option"
+                [showClear]="true"
+                [filter]="true"
+                optionLabel="name"
+                optionGroupLabel="name"
+                optionGroupChildren="children"
+                optionValue ="name"
+                placeholder="{{input.select_option[0]?.name}}"
+                [group]="true"
+                [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                (onChange)="updateValue(peValuesArray[i.uid!][input.id])"
+               >
                 <ng-template let-group pTemplate="group">
                   <div class="p-d-flex p-ai-center">
                     <span>{{group.name}}</span>
@@ -176,14 +243,16 @@
           </td>
         </tr>
         <tr *ngIf="round.length > 1">
-          <th>Total</th>
-          <th>ww</th>
-          <th>ww</th>
-          <th>ww</th>
-          <th>ww</th>
-          <th>ww</th>
-          <th>ww</th>
-          <th>ww</th>
+          <td>TOTAL</td>
+          <td *ngFor="let total of peTableFields?.textInputs">
+            <input
+              id="{{total.id}}"
+              type="text"
+              pInputText
+              [disabled]=true
+              [(ngModel)]="verticalTotal[total.id!]"
+            />
+          </td>
         </tr>
 
       </table>
@@ -192,9 +261,11 @@
 
   <p-card>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-      <button  (click)="addRow(round.length)" pButton pRipple type="button" label="Add Row" icon="pi pi-plus" class="p-button-raised p-button-text"></button>
-      <button (click)="deleteRow(round.length)" pButton pRipple type="button" label="Delete Row" icon="pi pi-trash" class="p-button-raised p-button-danger p-button-text"></button>
-      <button pButton pRipple type="button" label="Submit" icon="pi pi-check"></button>
+      <div *ngIf="peTableFields.peSubForm?.is_multiple" fxLayout="row" fxLayoutGap="10px">
+        <button  (click)="addRow(round.length)" pButton pRipple type="button" label="Add New Row" icon="pi pi-plus" class="p-button-raised p-button-text"></button>
+        <button (click)="delete(round.length)" pButton pRipple type="button" label="Delete Last Row" icon="pi pi-trash" class="p-button-raised p-button-danger p-button-text"></button>
+      </div>
+      <button (click)="store()"  pButton pRipple type="button" label="Submit" icon="pi pi-check"></button>
     </div>
   </p-card>
 

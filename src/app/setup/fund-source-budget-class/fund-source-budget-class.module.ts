@@ -15,6 +15,7 @@ import { FundSourceBudgetClassUpdateComponent } from "./update/fund-source-budge
 import { CeiningsSectorComponent } from './update/ceinings-sector.component';
 import { CeilingFundTypeUpdateComponent } from './update/ceiling-fund-type-update.component';
 import { CeilingBankAccountUpdateComponent } from './update/ceiling-bank-account-update.component';
+import { CeilingFacilityTypeComponent } from './update/ceiling-facility-type.component';
 
 @NgModule({
   imports: [SharedModule, CommonModule, FundSourceBudgetClassRoutingModule],
@@ -24,6 +25,7 @@ import { CeilingBankAccountUpdateComponent } from './update/ceiling-bank-account
     CeiningsSectorComponent,
     CeilingFundTypeUpdateComponent,
     CeilingBankAccountUpdateComponent,
+    CeilingFacilityTypeComponent,
   ],
   entryComponents: [FundSourceBudgetClassUpdateComponent],
 })

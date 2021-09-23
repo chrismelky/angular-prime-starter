@@ -47,7 +47,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
     description: [null, [Validators.required]],
     strategic_plan_id: [null, [Validators.required]],
     objective_id: [null, [Validators.required]],
-    code: [null, [Validators.required]],
+    code: [null, []],
     section_id: [null, [Validators.required]],
     references: this.fb.array([]),
   });

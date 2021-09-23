@@ -20,7 +20,7 @@
         <span class="p-float-label">
           <p-dropdown
             id="for_admin_hierarchy_level_position"
-            optionValue="id"
+            optionValue="position"
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
@@ -47,7 +47,7 @@
         <span class="p-float-label">
           <p-dropdown
             id="admin_hierarchy_level_position"
-            optionValue="id"
+            optionValue="position"
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
@@ -82,14 +82,20 @@
           <p-dropdown
             id="next_id"
             optionValue="id"
-            optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="nexts!"
             formControlName="next_id"
-          ></p-dropdown>
+          >
+             <ng-template let-item pTemplate="item">
+              {{item?.section_level_position?.name}} - {{item?.next?.section_level_position?.name}}
+            </ng-template>
+            <ng-template let-item pTemplate="selectedItem">
+                {{item?.section_level_position?.name}} - {{item?.next?.section_level_position?.name}}
+            </ng-template>
+          </p-dropdown>
           <label for="next_id">Next </label>
         </span>
         <span
@@ -106,7 +112,7 @@
         <span class="p-float-label">
           <p-dropdown
             id="section_level_position"
-            optionValue="id"
+            optionValue="position"
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"

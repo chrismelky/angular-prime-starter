@@ -41,6 +41,14 @@ export class FacilityService {
     });
   }
 
+  queryCeilingFacilities(req?: any): Observable<CustomResponse<Facility[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/ceiling_facilities';
+    return this.http.get<CustomResponse<Facility[]>>(url, {
+      params: options,
+    });
+  }
+
   search(
     facilityTypeId: number,
     parent: string,

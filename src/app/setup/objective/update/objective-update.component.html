@@ -7,6 +7,37 @@
     [formGroup]="editForm"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="objective_type_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            (onChange)="objectiveTypeChanged()"
+            [options]="objectiveTypes!"
+            formControlName="objective_type_id"
+          ></p-dropdown>
+          <label for="objective_type_id">Objective Type </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('objective_type_id')!.invalid &&
+            (editForm.get('objective_type_id')!.dirty ||
+              editForm.get('objective_type_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('objective_type_id')?.errors?.required"
+            >Objective Type is required.</small
+          >
+        </span>
+      </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input
@@ -33,7 +64,45 @@
         </span>
       </div>
 
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div
+        *ngIf="selectedObjectiveType && selectedObjectiveType.is_sectoral"
+        class="p-field"
+        fxFlex
+      >
+        <span class="p-float-label">
+          <p-multiSelect
+            id="objective_type_id"
+            optionLabel="name"
+            dataKey="id"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="sectors!"
+            formControlName="sectors"
+          ></p-multiSelect>
+          <label for="sectors">Sector </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sectors')!.invalid &&
+            (editForm.get('sectors')!.dirty ||
+              editForm.get('sectors')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('sectors')?.errors?.required"
+            >Sectors is required.</small
+          >
+        </span>
+      </div>
+
+      <div
+        *ngIf="selectedObjectiveType && !selectedObjectiveType.is_incremental"
+        class="p-field p-col-12 p-md-4"
+        fxFlex
+      >
         <span class="p-float-label">
           <input id="code" type="text" pInputText formControlName="code" />
           <label for="code">Code </label>
@@ -55,45 +124,11 @@
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="objective_type_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            optionValue="id"
-            optionLabel="name"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="objectiveTypes!"
-            formControlName="objective_type_id"
-          ></p-dropdown>
-          <label for="objective_type_id">Objective Type </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('objective_type_id')!.invalid &&
-            (editForm.get('objective_type_id')!.dirty ||
-              editForm.get('objective_type_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('objective_type_id')?.errors?.required"
-            >Objective Type is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
             id="parent_id"
             optionValue="id"
-            optionLabel="name"
+            optionLabel="description"
             [autoDisplayFirst]="false"
             [filter]="true"
-            optionValue="id"
-            optionLabel="name"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="parents!"

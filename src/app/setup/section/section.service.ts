@@ -55,4 +55,8 @@ export class SectionService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  departmentCostCenter(): Observable<CustomResponse<any>> {
+    return this.http.get<CustomResponse<any>>(`${this.resourceUrl}/department-cost-centers`);
+  }
 }

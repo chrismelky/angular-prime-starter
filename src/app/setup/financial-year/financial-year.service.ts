@@ -65,6 +65,18 @@ export class FinancialYearService {
     );
   }
 
+  openPreRequisite(id: number): Observable<CustomResponse<FinancialYear>> {
+    return this.http.get<CustomResponse<FinancialYear>>(
+      `${this.resourceUrl}/open_pre_requisite/${id}`
+    );
+  }
+
+  open(id: number): Observable<CustomResponse<FinancialYear>> {
+    return this.http.get<CustomResponse<FinancialYear>>(
+      `${this.resourceUrl}/open/${id}`
+    );
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

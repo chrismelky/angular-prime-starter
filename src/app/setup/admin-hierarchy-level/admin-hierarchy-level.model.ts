@@ -5,6 +5,8 @@ export class AdminHierarchyLevel {
     public name?: string,
     public position?: number,
     public code_required?: boolean,
-    public code_length?: number
+    public can_budget?: boolean,
+    public code_length?: number,
+    public cost_centre_position?: number
   ) {}
 }

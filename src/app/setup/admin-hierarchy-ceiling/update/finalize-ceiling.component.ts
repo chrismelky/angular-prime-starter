@@ -128,7 +128,7 @@ export class FinalizeCeilingComponent implements OnInit {
   //this return Allocated Paercet
   getPercent(row: AdminHierarchyCeiling){
     // @ts-ignore
-    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(2);
+    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(0);
   }
 
   /**

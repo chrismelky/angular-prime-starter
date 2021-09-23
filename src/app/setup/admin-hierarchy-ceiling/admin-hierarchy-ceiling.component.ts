@@ -45,6 +45,7 @@ import {CeilingChain} from "../ceiling-chain/ceiling-chain.model";
 import {FinalizeCeilingComponent} from "./update/finalize-ceiling.component";
 import {saveAs} from 'file-saver';
 import {UploadCeilingComponent} from "./update/upload-ceiling.component";
+import {LockCeilingComponent} from "./update/lock-ceiling.component";
 
 @Component({
   selector: "app-admin-hierarchy-ceiling",
@@ -174,7 +175,18 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     });
   }
   lockUnlockCeiling(){
+    const ref = this.dialogService.open(LockCeilingComponent, {
+      data:{
+        admin_hierarchy_id:this.admin_hierarchy_id,
+        section_id:this.section_id,
+        financial_year_id:this.financial_year_id,
+        budget_type:this.budget_type
+      },
+      header: "Lock/Unlock Ceiling",
+    });
+    ref.onClose.subscribe((result) => {
 
+    });
   }
 
   selectionLevelChange(){

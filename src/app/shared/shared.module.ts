@@ -8,6 +8,7 @@ import { AdminHierarchyTreeComponent } from './admin-hierarchy-tree/admin-hierar
 import { SectionTreeComponent } from './section-tree/section-tree.component';
 import { ObjectiveTreeComponent } from './objective-tree/objective-tree.component';
 import {AssessmentTreeComponent} from "./assessment-tree/assessment-tree.component";
+import {NgxPermissionsModule} from "ngx-permissions";
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import {AssessmentTreeComponent} from "./assessment-tree/assessment-tree.compone
     ObjectiveTreeComponent,
     AssessmentTreeComponent,
     CommonModule,
+    NgxPermissionsModule,
   ],
   providers: [ConfirmationService, DialogService],
 })

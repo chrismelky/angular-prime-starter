@@ -1,7 +1,9 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { MainComponent } from './main/main.component';
-import { NotFoundComponent } from './not-found/not-found.component';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {MainComponent} from './main/main.component';
+import {NotFoundComponent} from './not-found/not-found.component';
+import {NgxPermissionsGuard} from "ngx-permissions";
+import {PermissionDeniedComponent} from "./permission-denied/permission-denied.component";
 
 const routes: Routes = [
   {
@@ -26,6 +28,12 @@ const routes: Routes = [
           import('../setup/asset-use/asset-use.module').then(
             (m) => m.AssetUseModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'bank-account',
@@ -33,6 +41,12 @@ const routes: Routes = [
           import('../setup/bank-account/bank-account.module').then(
             (m) => m.BankAccountModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'asset-condition',
@@ -40,6 +54,12 @@ const routes: Routes = [
           import('../setup/asset-condition/asset-condition.module').then(
             (m) => m.AssetConditionModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'account-type',
@@ -47,6 +67,12 @@ const routes: Routes = [
           import('../setup/account-type/account-type.module').then(
             (m) => m.AccountTypeModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'activity-type',
@@ -54,18 +80,23 @@ const routes: Routes = [
           import('../setup/activity-type/activity-type.module').then(
             (m) => m.ActivityTypeModule
           ),
-      },
-      {
-        path: 'admin-hierarchy_level',
-        loadChildren: () =>
-          import(
-            '../setup/admin-hierarchy-level/admin-hierarchy-level.module'
-          ).then((m) => m.AdminHierarchyLevelModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'sector',
         loadChildren: () =>
           import('../setup/sector/sector.module').then((m) => m.SectorModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'section-level',
@@ -73,6 +104,12 @@ const routes: Routes = [
           import('../setup/section-level/section-level.module').then(
             (m) => m.SectionLevelModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'section',
@@ -80,13 +117,25 @@ const routes: Routes = [
           import('../setup/section/section.module').then(
             (m) => m.SectionModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'reference-document-type',
         loadChildren: () =>
           import(
             '../setup/reference-document-type/reference-document-type.module'
-          ).then((m) => m.ReferenceDocumentTypeModule),
+            ).then((m) => m.ReferenceDocumentTypeModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'decision-level',
@@ -94,27 +143,12 @@ const routes: Routes = [
           import('../setup/decision-level/decision-level.module').then(
             (m) => m.DecisionLevelModule
           ),
-      },
-      {
-        path: 'reference-document_type',
-        loadChildren: () =>
-          import(
-            '../setup/reference-document-type/reference-document-type.module'
-          ).then((m) => m.ReferenceDocumentTypeModule),
-      },
-      {
-        path: 'reference-type',
-        loadChildren: () =>
-          import('../setup/reference-type/reference-type.module').then(
-            (m) => m.ReferenceTypeModule
-          ),
-      },
-      {
-        path: 'financial-year',
-        loadChildren: () =>
-          import('../setup/financial-year/financial-year.module').then(
-            (m) => m.FinancialYearModule
-          ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'reference-type',
@@ -122,6 +156,12 @@ const routes: Routes = [
           import('../setup/reference-type/reference-type.module').then(
             (m) => m.ReferenceTypeModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'financial-year',
@@ -129,27 +169,25 @@ const routes: Routes = [
           import('../setup/financial-year/financial-year.module').then(
             (m) => m.FinancialYearModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'admin-hierarchy-level',
         loadChildren: () =>
           import(
             '../setup/admin-hierarchy-level/admin-hierarchy-level.module'
-          ).then((m) => m.AdminHierarchyLevelModule),
-      },
-      {
-        path: 'decision-level',
-        loadChildren: () =>
-          import('../setup/decision-level/decision-level.module').then(
-            (m) => m.DecisionLevelModule
-          ),
-      },
-      {
-        path: 'reference-document-type',
-        loadChildren: () =>
-          import(
-            '../setup/reference-document-type/reference-document-type.module'
-          ).then((m) => m.ReferenceDocumentTypeModule),
+            ).then((m) => m.AdminHierarchyLevelModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'admin-hierarchy',
@@ -157,6 +195,12 @@ const routes: Routes = [
           import('../setup/admin-hierarchy/admin-hierarchy.module').then(
             (m) => m.AdminHierarchyModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'strategic-plan',
@@ -164,13 +208,25 @@ const routes: Routes = [
           import('../setup/strategic-plan/strategic-plan.module').then(
             (m) => m.StrategicPlanModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'planning'
+          }
+        },
       },
       {
         path: 'activity-task-nature',
         loadChildren: () =>
           import(
             '../setup/activity-task-nature/activity-task-nature.module'
-          ).then((m) => m.ActivityTaskNatureModule),
+            ).then((m) => m.ActivityTaskNatureModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'objective-type',
@@ -178,6 +234,12 @@ const routes: Routes = [
           import('../setup/objective-type/objective-type.module').then(
             (m) => m.ObjectiveTypeModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'objective',
@@ -185,6 +247,12 @@ const routes: Routes = [
           import('../setup/objective/objective.module').then(
             (m) => m.ObjectiveModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'long-term-target',
@@ -192,6 +260,12 @@ const routes: Routes = [
           import('../planning/long-term-target/long-term-target.module').then(
             (m) => m.LongTermTargetModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'calendar-event',
@@ -199,6 +273,12 @@ const routes: Routes = [
           import('../setup/calendar-event/calendar-event.module').then(
             (m) => m.CalendarEventModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'calendar',
@@ -206,13 +286,25 @@ const routes: Routes = [
           import('../setup/calendar/calendar.module').then(
             (m) => m.CalendarModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-assessment-round',
         loadChildren: () =>
           import(
             '../setup/cas-assessment-round/cas-assessment-round.module'
-          ).then((m) => m.CasAssessmentRoundModule),
+            ).then((m) => m.CasAssessmentRoundModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-plan',
@@ -220,6 +312,12 @@ const routes: Routes = [
           import('../setup/cas-plan/cas-plan.module').then(
             (m) => m.CasPlanModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-plan-content',
@@ -227,48 +325,88 @@ const routes: Routes = [
           import('../setup/cas-plan-content/cas-plan-content.module').then(
             (m) => m.CasPlanContentModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-assessment-state',
         loadChildren: () =>
           import(
             '../setup/cas-assessment-state/cas-assessment-state.module'
-          ).then((m) => m.CasAssessmentStateModule),
+            ).then((m) => m.CasAssessmentStateModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-assessment-sub-criteria-option',
         loadChildren: () =>
           import(
             '../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.module'
-          ).then((m) => m.CasAssessmentSubCriteriaOptionModule),
+            ).then((m) => m.CasAssessmentSubCriteriaOptionModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-assessment-category-version',
         loadChildren: () =>
-          import(
-            '../setup/cas-assessment-category-version/cas-assessment-category-version.module'
-          ).then((m) => m.CasAssessmentCategoryVersionModule),
+          import('../setup/cas-assessment-category-version/cas-assessment-category-version.module')
+            .then((m) => m.CasAssessmentCategoryVersionModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-assessment-criteria-option',
         loadChildren: () =>
           import(
             '../setup/cas-assessment-criteria-option/cas-assessment-criteria-option.module'
-          ).then((m) => m.CasAssessmentCriteriaOptionModule),
+            ).then((m) => m.CasAssessmentCriteriaOptionModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-assessment-category',
         loadChildren: () =>
           import(
             '../setup/cas-assessment-category/cas-assessment-category.module'
-          ).then((m) => m.CasAssessmentCategoryModule),
+            ).then((m) => m.CasAssessmentCategoryModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'reference-document',
         loadChildren: () =>
-          import('../setup/reference-document/reference-document.module').then(
-            (m) => m.ReferenceDocumentModule
-          ),
+          import('../setup/reference-document/reference-document.module')
+            .then((m) => m.ReferenceDocumentModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'period-group',
@@ -276,6 +414,12 @@ const routes: Routes = [
           import('../setup/period-group/period-group.module').then(
             (m) => m.PeriodGroupModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'data-set',
@@ -283,6 +427,12 @@ const routes: Routes = [
           import('../setup/data-set/data-set.module').then(
             (m) => m.DataSetModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'planning'
+          }
+        },
       },
       {
         path: 'option-set',
@@ -290,6 +440,12 @@ const routes: Routes = [
           import('../setup/option-set/option-set.module').then(
             (m) => m.OptionSetModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'category-option',
@@ -297,20 +453,38 @@ const routes: Routes = [
           import('../setup/category-option/category-option.module').then(
             (m) => m.CategoryOptionModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'category-combination',
         loadChildren: () =>
           import(
             '../setup/category-combination/category-combination.module'
-          ).then((m) => m.CategoryCombinationModule),
+            ).then((m) => m.CategoryCombinationModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'category-category-option',
         loadChildren: () =>
           import(
             '../setup/category-category-option/category-category-option.module'
-          ).then((m) => m.CategoryCategoryOptionModule),
+            ).then((m) => m.CategoryCategoryOptionModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'category',
@@ -318,21 +492,25 @@ const routes: Routes = [
           import('../setup/category/category.module').then(
             (m) => m.CategoryModule
           ),
-      },
-      {
-        path: 'calendar',
-        loadChildren: () =>
-          import('../setup/calendar/calendar.module').then(
-            (m) => m.CalendarModule
-          ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'category-category-combination',
-
         loadChildren: () =>
           import(
             '../setup/category-category-combination/category-category-combination.module'
-          ).then((m) => m.CategoryCategoryCombinationModule),
+            ).then((m) => m.CategoryCategoryCombinationModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'data-element',
@@ -340,6 +518,12 @@ const routes: Routes = [
           import('../setup/data-element/data-element.module').then(
             (m) => m.DataElementModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'facility-type',
@@ -347,6 +531,12 @@ const routes: Routes = [
           import('../setup/facility-type/facility-type.module').then(
             (m) => m.FacilityTypeModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'facility',
@@ -354,18 +544,36 @@ const routes: Routes = [
           import('../setup/facility/facility.module').then(
             (m) => m.FacilityModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'cas-assessment-category-version-state',
         loadChildren: () =>
           import(
             '../setup/cas-assessment-category-version-state/cas-assessment-category-version-state.module'
-          ).then((m) => m.CasAssessmentCategoryVersionStateModule),
+            ).then((m) => m.CasAssessmentCategoryVersionStateModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'user',
         loadChildren: () =>
           import('../setup/user/user.module').then((m) => m.UserModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup.user_management'
+          }
+        },
       },
       {
         path: 'baseline-statistic',
@@ -373,13 +581,25 @@ const routes: Routes = [
           import('../setup/baseline-statistic/baseline-statistic.module').then(
             (m) => m.BaselineStatisticModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'baseline-statistic-value',
         loadChildren: () =>
           import(
             '../setup/baseline-statistic-value/baseline-statistic-value.module'
-          ).then((m) => m.BaselineStatisticValueModule),
+            ).then((m) => m.BaselineStatisticValueModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'planning'
+          }
+        },
       },
       {
         path: 'advertisement',
@@ -387,6 +607,12 @@ const routes: Routes = [
           import('../setup/advertisement/advertisement.module').then(
             (m) => m.AdvertisementModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup.advertisement'
+          }
+        },
       },
       {
         path: 'ceiling-chain',
@@ -394,13 +620,25 @@ const routes: Routes = [
           import('../setup/ceiling-chain/ceiling-chain.module').then(
             (m) => m.CeilingChainModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'fund-source-category',
         loadChildren: () =>
           import(
             '../setup/fund-source-category/fund-source-category.module'
-          ).then((m) => m.FundSourceCategoryModule),
+            ).then((m) => m.FundSourceCategoryModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'fund-type',
@@ -408,6 +646,12 @@ const routes: Routes = [
           import('../setup/fund-type/fund-type.module').then(
             (m) => m.FundTypeModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'gfs-code-category',
@@ -415,6 +659,12 @@ const routes: Routes = [
           import('../setup/gfs-code-category/gfs-code-category.module').then(
             (m) => m.GfsCodeCategoryModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'gfs-code',
@@ -422,11 +672,23 @@ const routes: Routes = [
           import('../setup/gfs-code/gfs-code.module').then(
             (m) => m.GfsCodeModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'pe-form',
         loadChildren: () =>
           import('../setup/pe-form/pe-form.module').then((m) => m.PeFormModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'pe-definition',
@@ -434,20 +696,12 @@ const routes: Routes = [
           import('../setup/pe-definition/pe-definition.module').then(
             (m) => m.PeDefinitionModule
           ),
-      },
-      {
-        path: 'gfs-code-category',
-        loadChildren: () =>
-          import('../setup/gfs-code-category/gfs-code-category.module').then(
-            (m) => m.GfsCodeCategoryModule
-          ),
-      },
-      {
-        path: 'gfs-code',
-        loadChildren: () =>
-          import('../setup/gfs-code/gfs-code.module').then(
-            (m) => m.GfsCodeModule
-          ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'pe-sub-form',
@@ -455,20 +709,38 @@ const routes: Routes = [
           import('../setup/pe-sub-form/pe-sub-form.module').then(
             (m) => m.PeSubFormModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
-        path: 'cas-assessment-sub-criteria-possible_score',
+        path: 'cas-assessment-sub-criteria-possible-score',
         loadChildren: () =>
           import(
             '../setup/cas-assessment-sub-criteria-possible_score/cas-assessment-sub-criteria-possible_score.module'
-          ).then((m) => m.CasAssessmentSubCriteriaPossibleScoreModule),
+            ).then((m) => m.CasAssessmentSubCriteriaPossibleScoreModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
-        path: 'cas-assessment-sub-criteria-report_set',
+        path: 'cas-assessment-sub-criteria-report-set',
         loadChildren: () =>
           import(
             '../setup/cas-assessment-sub-criteria-report_set/cas-assessment-sub-criteria-report_set.module'
-          ).then((m) => m.CasAssessmentSubCriteriaReportSetModule),
+            ).then((m) => m.CasAssessmentSubCriteriaReportSetModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'pe-select-option',
@@ -476,11 +748,23 @@ const routes: Routes = [
           import('../setup/pe-select-option/pe-select-option.module').then(
             (m) => m.PeSelectOptionModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'role',
         loadChildren: () =>
           import('../setup/role/role.module').then((m) => m.RoleModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup.user_management'
+          }
+        },
       },
       {
         path: 'project',
@@ -488,6 +772,12 @@ const routes: Routes = [
           import('../setup/project/project.module').then(
             (m) => m.ProjectModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'transport-category',
@@ -495,6 +785,12 @@ const routes: Routes = [
           import('../setup/transport-category/transport-category.module').then(
             (m) => m.TransportCategoryModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'budget-class',
@@ -502,6 +798,12 @@ const routes: Routes = [
           import('../setup/budget-class/budget-class.module').then(
             (m) => m.BudgetClassModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'fund-source',
@@ -509,6 +811,12 @@ const routes: Routes = [
           import('../setup/fund-source/fund-source.module').then(
             (m) => m.FundSourceModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'priority-area',
@@ -516,13 +824,25 @@ const routes: Routes = [
           import('../setup/priority-area/priority-area.module').then(
             (m) => m.PriorityAreaModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'category-option-combination',
         loadChildren: () =>
           import(
             '../setup/category-option-combination/category-option-combination.module'
-          ).then((m) => m.CategoryOptionCombinationModule),
+            ).then((m) => m.CategoryOptionCombinationModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'data-value',
@@ -530,6 +850,12 @@ const routes: Routes = [
           import('../setup/data-value/data-value.module').then(
             (m) => m.DataValueModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'planning'
+          }
+        },
       },
       {
         path: 'national-reference',
@@ -537,27 +863,51 @@ const routes: Routes = [
           import('../setup/national-reference/national-reference.module').then(
             (m) => m.NationalReferenceModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'fund-source-budget-class',
         loadChildren: () =>
           import(
             '../setup/fund-source-budget-class/fund-source-budget-class.module'
-          ).then((m) => m.FundSourceBudgetClassModule),
+            ).then((m) => m.FundSourceBudgetClassModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'planning.ceiling'
+          }
+        },
       },
       {
         path: 'facility-custom-detail',
         loadChildren: () =>
           import(
             '../setup/facility-custom-detail/facility-custom-detail.module'
-          ).then((m) => m.FacilityCustomDetailModule),
+            ).then((m) => m.FacilityCustomDetailModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'facility-custom-detail-mapping',
         loadChildren: () =>
           import(
             '../setup/facility-custom-detail-mapping/facility-custom-detail-mapping.module'
-          ).then((m) => m.FacilityCustomDetailMappingModule),
+            ).then((m) => m.FacilityCustomDetailMappingModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'pe-item',
@@ -565,25 +915,49 @@ const routes: Routes = [
           import('../budgeting/pe-item/pe-item.module').then(
             (m) => m.PeItemModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'period',
         loadChildren: () =>
           import('../setup/period/period.module').then((m) => m.PeriodModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'assessor-assignment',
         loadChildren: () =>
           import(
             '../setup/assessor-assignment/assessor-assignment.module'
-          ).then((m) => m.AssessorAssignmentModule),
+            ).then((m) => m.AssessorAssignmentModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'assessment'
+          }
+        },
       },
       {
         path: 'admin-hierarchy-ceiling',
         loadChildren: () =>
           import(
             '../setup/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module'
-          ).then((m) => m.AdminHierarchyCeilingModule),
+            ).then((m) => m.AdminHierarchyCeilingModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'planning.ceiling'
+          }
+        },
       },
       {
         path: 'assessment-home',
@@ -591,6 +965,12 @@ const routes: Routes = [
           import('../setup/assessment-home/assessment-home.module').then(
             (m) => m.AssessmentHomeModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'assessment'
+          }
+        },
       },
       {
         path: 'my-assessment',
@@ -598,13 +978,25 @@ const routes: Routes = [
           import('../planning/my-assessment/my-assessment.module').then(
             (m) => m.MyAssessmentModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'assessment'
+          }
+        },
       },
       {
         path: 'received-assessment',
         loadChildren: () =>
           import(
             '../planning/received-assessment/received-assessment.module'
-          ).then((m) => m.ReceivedAssessmentModule),
+            ).then((m) => m.ReceivedAssessmentModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'assessment'
+          }
+        },
       },
       {
         path: 'option-set-value',
@@ -612,27 +1004,51 @@ const routes: Routes = [
           import('../setup/option-set-value/option-set-value.module').then(
             (m) => m.OptionSetValueModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'configuration-setting',
         loadChildren: () =>
           import(
             '../setup/configuration-setting/configuration-setting.module'
-          ).then((m) => m.ConfigurationSettingModule),
+            ).then((m) => m.ConfigurationSettingModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'performance-indicator',
         loadChildren: () =>
           import(
             '../setup/performance-indicator/performance-indicator.module'
-          ).then((m) => m.PerformanceIndicatorModule),
+            ).then((m) => m.PerformanceIndicatorModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'assessment-criteria',
         loadChildren: () =>
           import(
             '../planning/assessment-criteria/assessment-criteria.module'
-          ).then((m) => m.AssessmentCriteriaModule),
+            ).then((m) => m.AssessmentCriteriaModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup'
+          }
+        },
       },
       {
         path: 'permission',
@@ -640,16 +1056,33 @@ const routes: Routes = [
           import('../setup/permission/permission.module').then(
             (m) => m.PermissionModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup.user_management',
+            redirectTo: '/'
+          }
+        },
       },
       {
         path: 'group',
         loadChildren: () =>
           import('../setup/group/group.module').then((m) => m.GroupModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'setup.user_management',
+          }
+        },
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: '**',
         component: NotFoundComponent,
+      },
+      {
+        path: 'permission-denied',
+        component: PermissionDeniedComponent,
       },
     ],
   },
@@ -659,4 +1092,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class LayoutRoutingModule {}
+export class LayoutRoutingModule {
+}

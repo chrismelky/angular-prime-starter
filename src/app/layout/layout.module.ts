@@ -15,9 +15,10 @@ import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { BlockUIModule } from 'primeng/blockui';
 import { RippleModule } from 'primeng/ripple';
+import { PermissionDeniedComponent } from './permission-denied/permission-denied.component';
 
 @NgModule({
-  declarations: [MainComponent, NotFoundComponent],
+  declarations: [MainComponent, NotFoundComponent, PermissionDeniedComponent],
   imports: [
     CommonModule,
     LayoutRoutingModule,

@@ -7,8 +7,9 @@ import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 import { Login } from 'src/app/login/login.model';
 import { StateStorageService } from './state-storage.service';
 import {CustomResponse} from "../utils/custom-response";
+import {NgxPermissionsService} from "ngx-permissions";
 
-type LoginRespose = {
+type LoginResponse = {
   token: string;
   user: any;
 };
@@ -19,7 +20,8 @@ export class AuthService {
     private http: HttpClient,
     private $localStorage: LocalStorageService,
     private $sessionStorage: SessionStorageService,
-    private stateService: StateStorageService
+    private stateService: StateStorageService,
+    private permissionsService: NgxPermissionsService,
   ) {}
 
   getToken(): string {
@@ -34,7 +36,7 @@ export class AuthService {
 
   login(credentials: Login): Observable<void> {
     return this.http
-      .post<CustomResponse<LoginRespose>>('api/authenticate', credentials)
+      .post<CustomResponse<LoginResponse>>('api/authenticate', credentials)
       .pipe(
         map((response) =>
           this.authenticateSuccess(response.data!, credentials.rememberMe)
@@ -51,17 +53,18 @@ export class AuthService {
   clearAuth(): void {
     this.$localStorage.clear('authenticationToken');
     this.$sessionStorage.clear('authenticationToken');
+    this.permissionsService.flushPermissions();
     this.stateService.clearUrl();
   }
 
   private authenticateSuccess(
-    response: LoginRespose,
+    response: LoginResponse,
     rememberMe: boolean
   ): void {
     const token = response.token;
     const user = response.user;
     this.$localStorage.store('user', user);
-
+    this.permissionsService.loadPermissions(user.permissions);
     if (rememberMe) {
       this.$localStorage.store('authenticationToken', token);
       this.$sessionStorage.clear('authenticationToken');

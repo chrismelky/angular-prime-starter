@@ -85,7 +85,7 @@
                   >
                   <ng-template let-group pTemplate="group">
                       <div class="p-d-flex p-ai-center">
-                        <i class="pi pi-folder-open"></i>
+                        <i class="pi pi-folder-open">&nbsp;</i>
                           <span>{{group.label}}</span>
                       </div>
                   </ng-template>
@@ -131,7 +131,7 @@
             </div>
             <div class="p-field" fxFlex>
               <span class="p-float-label">
-                <p-dropdown
+                <!--p-dropdown
                   id="section_id"
                   optionValue="id"
                   optionLabel="name"
@@ -141,7 +141,37 @@
                   [options]="sections!"
                   (onChange)="filterChanged()"
                   [(ngModel)]="section_id"
-                ></p-dropdown>
+                ></p-dropdown-->
+
+                <p-dropdown
+                  id="section_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  optionGroupLabel="name"
+                  optionGroupChildren="children"
+                  [autoDisplayFirst]="false"
+                  [options]="sections!"
+                  [group]="true"
+                  (onChange)="filterChanged()"
+                  [autoDisplayFirst]=false
+                  [filter]="true"
+                  [(ngModel)]="section_id"
+                >
+                  <ng-template let-group pTemplate="group">
+                      <div class="p-d-flex p-ai-center">
+                        <i class="pi pi-folder-open">&nbsp;</i>
+                          <span>[ {{group.code}} ] {{group.name}}</span>
+                      </div>
+                  </ng-template>
+
+                  <ng-template let-costCenter pTemplate="item">
+                    <div class="country-item">
+                        <div>[ {{costCenter.code}} ] {{costCenter.name}}</div>
+                    </div>
+                </ng-template>
+
+                </p-dropdown>
+
                 <label for="section_id">Planning Unit </label>
               </span>
             </div>

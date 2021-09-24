@@ -28,6 +28,25 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  lockOrUnlockCeiling(
+    payload: any
+  ): Observable<CustomResponse<AdminHierarchyCeiling>> {
+    const url = 'api/lock_unlock_ceiling';
+    return this.http.post<CustomResponse<any>>(
+      url,
+      payload
+    );
+  }
+
+  getCeilingLockUnlockSummary(req?: any): Observable<CustomResponse<any[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/ceiling_lock_summary';
+    return this.http.get<CustomResponse<any[]>>(
+      url,
+      { params: options }
+    );
+  }
+
   update(
     adminHierarchyCeiling: AdminHierarchyCeiling
   ): Observable<CustomResponse<AdminHierarchyCeiling>> {

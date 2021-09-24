@@ -178,14 +178,16 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     const ref = this.dialogService.open(LockCeilingComponent, {
       data:{
         admin_hierarchy_id:this.admin_hierarchy_id,
-        section_id:this.section_id,
+        admin_hierarchy_position:this.admin_hierarchy_position,
+        position:this.position,
         financial_year_id:this.financial_year_id,
         budget_type:this.budget_type
       },
+      width:'60%',
       header: "Lock/Unlock Ceiling",
     });
     ref.onClose.subscribe((result) => {
-
+      this.loadPage(this.page);
     });
   }
 
@@ -446,24 +448,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
           );
         }
         this.loadPage(this.page);
-      }
-    });
-  }
-
-  /**
-   * Lock or unlock AdminHierarchyCeiling
-   * @param adminHierarchyCeiling ;
-   */
-  lock(action: number): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to ' + (action===0?'Lock All Levels':'UnLock All Levels'),
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-
-      },
-      reject: (type:any) => {
-
       }
     });
   }

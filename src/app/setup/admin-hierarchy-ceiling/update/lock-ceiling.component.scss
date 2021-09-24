@@ -1,0 +1,19 @@
+.ceiling::ng-deep {
+  th{
+    background-color: #F3F3F3  !important;
+    border: none !important;
+  }
+  td{
+    border: none !important;
+    text-align: end;
+    input{
+      text-align: end !important;
+      float: right !important;
+    }
+    div{
+      text-align: right !important;
+    }
+  }
+}
+
+

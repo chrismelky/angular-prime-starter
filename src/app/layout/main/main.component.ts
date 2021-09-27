@@ -17,6 +17,7 @@ export class MainComponent implements OnInit {
   isGtMd = true;
   user: any = this.localStorage.retrieve("user");
   avator: string = "U";
+  currentUserMenuItems: MenuItem[] = [];
 
   constructor(
     private breakPointObsever: BreakpointObserver,
@@ -40,7 +41,9 @@ export class MainComponent implements OnInit {
   }
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadMenu();
+  }
 
   userMenus: MenuItem[] = [
     { label: "Change password", icon: "pi pi-fw pi-lock" },
@@ -636,5 +639,13 @@ export class MainComponent implements OnInit {
 
   logout(): void {
     this.authService.logout().subscribe(() => {});
+  }
+
+  private loadMenu() {
+    this.authService
+      .currentUserMenu()
+      .subscribe(
+        (resp: MenuItem[]) => (this.currentUserMenuItems = resp)
+      );
   }
 }

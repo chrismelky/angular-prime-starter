@@ -1,20 +1,21 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {LocalStorageService, SessionStorageService} from 'ngx-webstorage';
 
-import { Login } from 'src/app/login/login.model';
-import { StateStorageService } from './state-storage.service';
+import {Login} from 'src/app/login/login.model';
+import {StateStorageService} from './state-storage.service';
 import {CustomResponse} from "../utils/custom-response";
 import {NgxPermissionsService} from "ngx-permissions";
+import {MenuItem} from "primeng/api";
 
 type LoginResponse = {
   token: string;
   user: any;
 };
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AuthService {
   constructor(
     private http: HttpClient,
@@ -22,7 +23,8 @@ export class AuthService {
     private $sessionStorage: SessionStorageService,
     private stateService: StateStorageService,
     private permissionsService: NgxPermissionsService,
-  ) {}
+  ) {
+  }
 
   getToken(): string {
     const tokenInLocalStorage: string | null = this.$localStorage.retrieve(
@@ -72,5 +74,9 @@ export class AuthService {
       this.$sessionStorage.store('authenticationToken', token);
       this.$localStorage.clear('authenticationToken');
     }
+  }
+
+  currentUserMenu(): Observable<MenuItem[]> {
+    return this.http.get<MenuItem[]>('api/currentUserMenu');
   }
 }

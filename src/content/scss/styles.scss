@@ -210,10 +210,16 @@ body {
 .filter-text {
   font-weight: 500;
 }
-
+.p-inline-message {
+  padding: 0.25rem 0.5rem;
+  .p-inline-message-text {
+    font-size: 0.75rem;
+  }
+}
 .p-card-header {
   padding: 1.25rem 1.25rem 0.5rem 1.25rem;
 }
+
 
 .p-overlaypanel .p-overlaypanel-content {
   padding: 0.75rem;
@@ -286,6 +292,11 @@ p-card.filter {
 
 .p-component {
   font-size: 0.8125rem;
+}
+
+.p-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .p-dropdown, .p-multiselect, .p-inputnumber, .p-calendar, .p-password , .p-treeselect{
@@ -442,9 +453,9 @@ i.clear {
     padding: 0;
     height: auto;
 
-    .p-inputtext {
+    .p-inputtext, .p-inputnumber {
       border-radius: 2px;
-      width: auto;
+      width: 100%;
     }
 
   }

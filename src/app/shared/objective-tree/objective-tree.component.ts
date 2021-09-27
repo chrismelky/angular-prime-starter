@@ -52,8 +52,6 @@ export class ObjectiveTreeComponent implements OnInit {
   }
 
   onSelectionChange(event?: any): void {
-    console.log(event);
-    console.log(this.objectiveNode);
     const selection =
       typeof this.objectiveNode.data === 'object'
         ? this.returnType === 'object'

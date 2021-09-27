@@ -20,38 +20,22 @@ import {
 } from '../../config/pagination.constants';
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { FinancialYear } from './financial-year.model';
-import { FinancialYearService } from './financial-year.service';
-import { FinancialYearUpdateComponent } from './update/financial-year-update.component';
-import { FinancialYearOpenComponent } from './open/financial-year-open.component';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
+
+import { AdminHierarchyCostCentres } from './admin-hierarchy-cost-centres.model';
+import { AdminHierarchyCostCentresService } from './admin-hierarchy-cost-centres.service';
 
 @Component({
-  selector: 'app-financial-year',
-  templateUrl: './financial-year.component.html',
+  selector: 'app-admin-hierarchy-cost-centres',
+  templateUrl: './admin-hierarchy-cost-centres.component.html',
 })
-export class FinancialYearComponent implements OnInit {
+export class AdminHierarchyCostCentresComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
-  financialYears?: FinancialYear[] = [];
-  previousFinancialYears?: FinancialYear[] = [];
-
-  cols = [
-    {
-      field: 'name',
-      header: 'Name',
-      sort: true,
-    },
-    {
-      field: 'is_current',
-      header: 'Is Current',
-      sort: false,
-    },
-    {
-      field: 'status',
-      header: 'Status',
-      sort: false,
-    },
-  ]; //Table display columns
+  adminHierarchyCostCentres?: AdminHierarchyCostCentres[] = [];
 
   isLoading = false;
   page?: number = 1;
@@ -63,9 +47,11 @@ export class FinancialYearComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  admin_hierarchy_id!: number;
+  budget_type?: string;
 
   constructor(
-    protected financialYearService: FinancialYearService,
+    protected adminHierarchyCostCentresService: AdminHierarchyCostCentresService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -75,33 +61,31 @@ export class FinancialYearComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.financialYearService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.previousFinancialYears = resp.data)
-      );
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.admin_hierarchy_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.financialYearService
+    this.adminHierarchyCostCentresService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        admin_hierarchy_id: this.admin_hierarchy_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<FinancialYear[]>) => {
+        (res: CustomResponse<AdminHierarchyCostCentres[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -119,11 +103,13 @@ export class FinancialYearComponent implements OnInit {
   protected handleNavigation(): void {
     combineLatest([
       this.activatedRoute.data,
+      this.activatedRoute.params,
       this.activatedRoute.queryParamMap,
-    ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+    ]).subscribe(([data, params, queryParams]) => {
+      this.budget_type = params.budgetType;
+      const page = queryParams.get('page');
+      const perPage = queryParams.get('per_page');
+      const sort = (queryParams.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
       const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
@@ -132,8 +118,12 @@ export class FinancialYearComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  onAdminHierarchySelection(event: any): void {
+    this.admin_hierarchy_id = event.id;
+    this.loadPage(1);
   }
 
   /**
@@ -194,78 +184,32 @@ export class FinancialYearComponent implements OnInit {
   }
 
   /**
-   * Creating or updating FinancialYear
-   * @param financialYear ; If undefined initize new model to create else edit existing model
-   */
-  createOrUpdate(financialYear?: FinancialYear): void {
-    const data: FinancialYear = financialYear ?? {
-      ...new FinancialYear(),
-    };
-    const ref = this.dialogService.open(FinancialYearUpdateComponent, {
-      data,
-      header: 'Create/Update FinancialYear',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
-  }
-
-  open(financialYear: FinancialYear): void {
-    const ref = this.dialogService.open(FinancialYearOpenComponent, {
-      data: financialYear,
-      header: 'Open FinancialYear',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
-  }
-
-  /**
-   * Delete FinancialYear
-   * @param financialYear
-   */
-  delete(financialYear: FinancialYear): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this FinancialYear?',
-      accept: () => {
-        this.financialYearService
-          .delete(financialYear.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
-      },
-    });
-  }
-
-  /**
    * When successfully data loaded
    * @param resp
    * @param page
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<FinancialYear[]> | null,
+    resp: CustomResponse<AdminHierarchyCostCentres[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
-    if (navigate) {
-      this.router.navigate(['/financial-year'], {
-        queryParams: {
-          page: this.page,
-          per_page: this.per_page,
-          sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
-        },
-      });
+    if (navigate && this.budget_type) {
+      this.router.navigate(
+        ['/admin-hierarchy-cost-centres', this.budget_type],
+        {
+          queryParams: {
+            page: this.page,
+            per_page: this.per_page,
+            sort:
+              this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+          },
+        }
+      );
     }
-    this.financialYears = resp?.data ?? [];
+    this.adminHierarchyCostCentres = resp?.data ?? [];
   }
 
   /**
@@ -274,6 +218,6 @@ export class FinancialYearComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error('Error loading Financial Year');
+    this.toastService.error('Error loading Admin Hierarchy Cost Centres');
   }
 }

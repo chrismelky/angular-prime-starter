@@ -38,13 +38,16 @@
       [formGroup]="editForm"
     >
       <div fxLayout="column" fxLayoutGap="10px" style="width: 400px">
-        <div class="p-field" fxFlex>
+        <div pFocusTrap class="p-field" fxFlex>
           <span class="p-float-label">
             <textarea
-              id="description"
+              inputId="description"
+              name="description"
               formControlName="description"
               pInputTextarea
+              pFocusTrap
               [autoResize]="true"
+              appendTo="body"
             ></textarea>
             <label for="description">Financial year target</label>
           </span>

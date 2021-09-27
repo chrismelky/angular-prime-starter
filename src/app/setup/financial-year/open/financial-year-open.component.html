@@ -1,0 +1,37 @@
+<p-splitter [panelSizes]="[50, 50]">
+  <ng-template pTemplate>
+    <p-panel [style]="{ height: '100%', width: 'auto' }" header="Info">
+      <div fxFlex></div>
+    </p-panel>
+  </ng-template>
+  <ng-template pTemplate>
+    <p-panel header="Required" [style]="{ height: '100%', width: '100%' }">
+      <div
+        *ngIf="preRequisite?.failed"
+        fxLayout="column"
+        fxLayoutGap="4px"
+        fxLayoutAlign="start stretch"
+      >
+        <p-message
+          *ngFor="let m of preRequisite?.messages"
+          [text]="m"
+          severity="error"
+        >
+        </p-message>
+      </div>
+    </p-panel>
+  </ng-template>
+</p-splitter>
+<div fxLayout="row" fxLayoutGap="0.75rem">
+  <span fxFlex></span>
+  <button
+    class="p-button-raised"
+    icon="pi pi-check"
+    *ngIf="!preRequisite?.failed"
+    label="Open"
+    pButton
+    pRipple
+    (click)="open()"
+    type="button"
+  ></button>
+</div>

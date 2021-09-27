@@ -34,6 +34,10 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { BlockUIModule } from 'primeng/blockui';
 import { PanelModule } from 'primeng/panel';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import { MessageModule } from 'primeng/message';
+import { SplitterModule } from 'primeng/splitter';
+import { FocusTrapModule } from 'primeng/focustrap';
+import { TagModule } from 'primeng/tag';
 
 @NgModule({
   declarations: [],
@@ -72,6 +76,11 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     BlockUIModule,
     PanelModule,
     ToggleButtonModule,
+    MessagesModule,
+    MessageModule,
+    SplitterModule,
+    FocusTrapModule,
+    TagModule,
   ],
 })
 export class SharedPrimengModule {}

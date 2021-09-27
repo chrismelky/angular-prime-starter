@@ -575,6 +575,11 @@ export class MainComponent implements OnInit {
             },
           ],
         },
+        {
+          label: 'Admin Hierarchy Cost Centres',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'admin-hierarchy-cost-centres/CURRENT',
+        },
         /**====Planrep planning Menu Generator Hook: Dont Delete====*/
       ],
     },

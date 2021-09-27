@@ -31,6 +31,22 @@
               <label for="financial_year_id">Financial Year </label>
             </span>
           </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="cas_assessment_round_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casAssessmentRounds!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="cas_assessment_round_id"
+              ></p-dropdown>
+              <label for="cas_assessment_round_id">Assessment Round </label>
+            </span>
+          </div>
         </div>
         <div
           fxLayout="row wrap"
@@ -132,13 +148,13 @@
           <td>{{rowData.cas_assessment_category.name}}</td>
           <td>
             <button pButton type="button" class="p-button-plain p-button-info p-button-icon" label="Received Assessments"
-                 style="margin-left: auto" [routerLink]="['/assessment-home',rowData.id,'received-assessments']"
+                 style="margin-left: auto" [routerLink]="['/assessment-home',rowData.id,'received-assessments',cas_assessment_round_id,financial_year_id]"
             ></button>
             <button pButton type="button" class="p-button-plain p-button-success p-button-icon" label="My Assessments"
-                    [routerLink]="['/assessment-home',rowData.id,'my-assessments']" style="margin-left: 16px"
+                    [routerLink]="['/assessment-home',rowData.id,'my-assessments',cas_assessment_round_id,financial_year_id]" style="margin-left: 16px"
             ></button>
             <button pButton type="button" class="p-button-plain p-button-warning p-button-icon" label="Assess"
-                    [routerLink]="['/assessment-home',rowData.id,'assessment-criteria']" style="margin-left: 16px"
+                    [routerLink]="['/assessment-home',rowData.id,'assessment-criteria',cas_assessment_round_id,financial_year_id]" style="margin-left: 16px"
             ></button>
           </td>
         </tr>

@@ -12,11 +12,13 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { CasAssessmentSubCriteriaOption } from "./cas-assessment-sub-criteria-option.model";
+import {AssessmentCriteria} from "../../planning/assessment-criteria/assessment-criteria.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentSubCriteriaOptionService {
   public resourceUrl = "api/cas_sub_criteria_options";
   public baseUrl = "api/get_sub_criteria_by_criteria_id";
+  public commentUrl = "api/cas_general_comments";
 
   constructor(protected http: HttpClient) {}
 
@@ -54,7 +56,31 @@ export class CasAssessmentSubCriteriaOptionService {
     );
   }
 
+  getSubCriteriaWithScores(criteria_id: number,admin_id: number,fy_id: number,round_id: number,): Observable<CustomResponse<CasAssessmentSubCriteriaOption[]>> {
+    return this.http.get<CustomResponse<CasAssessmentSubCriteriaOption[]>>(
+      `${this.resourceUrl}/${criteria_id}/${admin_id}/${fy_id}/${round_id}`
+    )
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  createGeneralComment(
+    assessmentCriteria: AssessmentCriteria
+  ): Observable<CustomResponse<AssessmentCriteria>> {
+    return this.http.post<CustomResponse<AssessmentCriteria>>(
+      this.commentUrl,
+      assessmentCriteria
+    );
+  }
+
+  updateGeneralComment(
+    assessmentCriteria: AssessmentCriteria
+  ): Observable<CustomResponse<AssessmentCriteria>> {
+    return this.http.put<CustomResponse<AssessmentCriteria>>(
+      `${this.commentUrl}/${assessmentCriteria.id}`,
+      assessmentCriteria
+    );
   }
 }

@@ -46,7 +46,15 @@ export class MyAssessmentComponent implements OnInit {
   casAssessmentRounds?: CasAssessmentRound[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
 
-  cols = []; //Table display columns
+  cols = [
+    { field: 'council', header: 'Council' },
+    { field: 'round', header: 'Round' },
+    { field: 'category', header: 'Category' },
+    { field: 'minimum_passmark', header: 'Minimum Passmark' },
+    { field: 'highest_score', header: 'Highest Score' },
+    { field: 'score', header: 'Score' },
+    { field: 'pct', header: '%' }
+  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -85,13 +93,14 @@ export class MyAssessmentComponent implements OnInit {
     this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;  }
 
   ngOnInit(): void {
-
-    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,this.cas_assessment_category_version_id)
+    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,
+      this.cas_assessment_category_version_id)
       .subscribe((resp) => {
         this.adminHierarchies = resp.data.adminHierarchies;
         this.financialYears = resp.data.financialYears;
         this.casAssessmentRounds = resp.data.casRounds;
       });
+
     this.handleNavigation();
   }
 
@@ -293,5 +302,21 @@ export class MyAssessmentComponent implements OnInit {
 
   finishAndQuit() {
     this.router.navigate(["/assessment-home"])
+  }
+
+  loadCouncils(adm: any) {
+    this.myAssessmentService.getCouncils(adm.id,this.financial_year_id,this.cas_assessment_round_id,this.cas_assessment_category_version_id)
+      .subscribe(resp => {
+        this.myAssessments = resp.data;
+      });
+  }
+
+  getReport(rowData: any) {
+   this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,rowData.financial_year_id,rowData.round_id,rowData.version_id)
+     .subscribe(resp =>{
+       let file = new Blob([resp], { type: 'application/pdf'});
+       let fileURL = URL.createObjectURL(file);
+       window.open(fileURL,"_blank");
+     })
   }
 }

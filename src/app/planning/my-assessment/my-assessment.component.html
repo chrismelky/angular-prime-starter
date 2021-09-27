@@ -124,12 +124,33 @@
 
   <!-- Table Panel -->
   <p-accordion>
-    <p-accordionTab   *ngFor="let adm of adminHierarchies!; let i = index"  >
+    <p-accordionTab   *ngFor="let adm of adminHierarchies!; let i = index" (click)="loadCouncils(adm)" >
       <ng-template pTemplate="header" >
         <div>{{i + 1+'.'}}   {{adm.name }}</div>
       </ng-template>
       <ng-template pTemplate="content">
-
+        <p-table [columns]="cols" [value]="myAssessments!" responsiveLayout="scroll">
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th *ngFor="let col of columns">
+                {{col.header}}
+              </th>
+              <th>Action</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns">
+                {{rowData[col.field]}}
+              </td>
+              <td>
+                <button pButton type="button" class="p-button-outlined" label="View Report"
+                        style="margin-left: 16px" icon="pi pi-list" (click)="getReport(rowData)"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </ng-template>
     </p-accordionTab>
   </p-accordion>

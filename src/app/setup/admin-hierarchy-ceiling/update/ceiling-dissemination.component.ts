@@ -72,7 +72,7 @@ export class CeilingDisseminationComponent implements OnInit {
   }
   getPercent(row: AdminHierarchyCeiling){
     // @ts-ignore
-    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(2);
+    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(0);
   }
 
   ceilingChange(event:any,action:String,i:number,row: AdminHierarchyCeiling){
@@ -115,7 +115,7 @@ export class CeilingDisseminationComponent implements OnInit {
     this.clonedCeiling[row.id] = {...row};
   }
 
-  updateCeiling(i:number,row:AdminHierarchyCeiling){
+  updateCeiling(row:AdminHierarchyCeiling){
     // @ts-ignore
     if(this.clonedCeiling[row.id].amount != row.amount){
       const adminHierarchyCeiling = this.updateFromForm(row);
@@ -124,6 +124,10 @@ export class CeilingDisseminationComponent implements OnInit {
       );
     }
   }
+
+  // update(row:any,event:any): void{
+  //   console.log(event);
+  // }
 
   /**
    * Return form values as object of type AdminHierarchyCeiling

@@ -57,13 +57,13 @@ export class PeDefinitionComponent implements OnInit {
       sort: true,
     },
     {
-      field: "unit",
-      header: "Unit",
-      sort: true,
-    },
-    {
       field: "column_number",
       header: "Column Number",
+      sort: false,
+    },
+    {
+      field: "sort_order",
+      header: "Order",
       sort: false,
     },
     {
@@ -140,6 +140,7 @@ export class PeDefinitionComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         pe_form_id: this.pe_form_id,
+        parent_id: null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(

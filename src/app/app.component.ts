@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, OnInit, Renderer2 } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
 import { LoaderService } from './shared/loader-service';
+import {NgxPermissionsService} from "ngx-permissions";
+import {LocalStorageService} from "ngx-webstorage";
 
 @Component({
   selector: 'app-root',
@@ -11,11 +13,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(
     private primengConfig: PrimeNGConfig,
     private loaderService: LoaderService,
+    private permissionsService: NgxPermissionsService,
+    private $localStorage: LocalStorageService,
     private renderer: Renderer2
   ) {}
 
   ngOnInit(): void {
     this.primengConfig.ripple = false;
+    const user = this.$localStorage.retrieve('user');
+    this.permissionsService.loadPermissions(user.permissions);
   }
 
   ngAfterViewInit() {

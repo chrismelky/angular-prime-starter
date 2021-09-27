@@ -15,13 +15,21 @@ import { PeItem } from "./pe-item.model";
 
 @Injectable({ providedIn: "root" })
 export class PeItemService {
-  public resourceUrl = "api/pe_items";
+ // public resourceUrl = "api/pe_items";
+  public resourceUrl = "api/pe_lines";
 
   constructor(protected http: HttpClient) {}
 
-  create(peItem: PeItem): Observable<CustomResponse<PeItem>> {
-    return this.http.post<CustomResponse<PeItem>>(this.resourceUrl, peItem);
+
+  create(payload: any): Observable<CustomResponse<any>> {
+
+    return this.http.post<CustomResponse<any>>(this.resourceUrl, payload);
   }
+
+  // create(peItem: PeItem): Observable<CustomResponse<PeItem>> {
+  //   return this.http.post<CustomResponse<PeItem>>(this.resourceUrl, peItem);
+  // }
+
 
   // update(peItem: PeItem): Observable<CustomResponse<PeItem>> {
   //   return this.http.put<CustomResponse<PeItem>>(

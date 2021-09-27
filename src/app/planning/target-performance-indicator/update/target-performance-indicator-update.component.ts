@@ -141,7 +141,7 @@ export class TargetPerformanceIndicatorUpdateComponent implements OnInit {
     const yearValues = this.yearValues;
     const existingValues =
       targetPerformanceIndicator.year_values !== undefined
-        ? JSON.parse(targetPerformanceIndicator.year_values!)
+        ? targetPerformanceIndicator.year_values
         : [];
     this.financialYears.forEach((fy) => {
       const existing = existingValues.find((e: any) => e.id === fy.id);

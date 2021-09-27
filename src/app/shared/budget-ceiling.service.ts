@@ -10,7 +10,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import {CustomResponse} from "../utils/custom-response";
 import {createRequestOption} from "../utils/request-util";
-import { BudgetCeilingModel } from './budget-ceiling.model';
+import { BudgetCeiling } from './budget-ceiling.model';
 
 @Injectable({ providedIn: "root" })
 export class BudgetCeilingService {
@@ -19,33 +19,33 @@ export class BudgetCeilingService {
   constructor(protected http: HttpClient) {}
 
   create(
-    adminHierarchyCeiling: any
-  ): Observable<CustomResponse<BudgetCeilingModel>> {
-    return this.http.post<CustomResponse<BudgetCeilingModel>>(
+    budgetCeiling: BudgetCeiling
+  ): Observable<CustomResponse<BudgetCeiling>> {
+    return this.http.post<CustomResponse<BudgetCeiling>>(
       this.resourceUrl,
-      adminHierarchyCeiling
+      budgetCeiling
     );
   }
 
   update(
-    adminHierarchyCeiling: any
-  ): Observable<CustomResponse<any>> {
-    return this.http.put<CustomResponse<any>>(
-      `${this.resourceUrl}/${adminHierarchyCeiling.id}`,
-      adminHierarchyCeiling
+    budgetCeiling: BudgetCeiling
+  ): Observable<CustomResponse<BudgetCeiling>> {
+    return this.http.put<CustomResponse<BudgetCeiling>>(
+      `${this.resourceUrl}/${budgetCeiling.id}`,
+      budgetCeiling
     );
   }
 
-  find(id: number): Observable<CustomResponse<any>> {
-    return this.http.get<CustomResponse<any>>(
+  find(id: number): Observable<CustomResponse<BudgetCeiling>> {
+    return this.http.get<CustomResponse<BudgetCeiling>>(
       `${this.resourceUrl}/${id}`
     );
   }
 
 
-  query(req?: any): Observable<CustomResponse<any[]>> {
+  query(req?: any): Observable<CustomResponse<BudgetCeiling[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<any[]>>(
+    return this.http.get<CustomResponse<BudgetCeiling[]>>(
       this.resourceUrl,
       { params: options }
     );

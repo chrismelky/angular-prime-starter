@@ -39,7 +39,7 @@
           >
             <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="4px">
               <div class="p-field" fxFlex>
-                <p-multiSelect formControlName="budget_Classes" optionLabel="name"	 optionGroupChildren="children" optionValue="id"  [filter]="true" [itemSize]="34" [options]="budgetClasses!" [group]="true"  defaultLabel="Select Budget Classes" scrollHeight="200px" display="chip">
+                <p-multiSelect formControlName="budget_Classes" appendTo="body" optionLabel="name"	 optionGroupChildren="children" optionValue="id"  [filter]="true" [itemSize]="34" [options]="budgetClasses!" [group]="true"  defaultLabel="Select Budget Classes" scrollHeight="200px" display="chip">
                   <ng-template let-group pTemplate="group">
                     <div class="p-d-flex p-ai-center">
                       <span>{{group.label}}</span>

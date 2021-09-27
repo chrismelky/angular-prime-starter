@@ -5,6 +5,6 @@ export class TargetPerformanceIndicator {
     public performance_indicator_id?: number,
     public baseline_value?: string,
     public actual_value?: string,
-    public year_values?: string
+    public year_values?: any
   ) {}
 }

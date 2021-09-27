@@ -85,6 +85,7 @@ export class PeItemComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  cellingAmount:any = 0;
 
 
   //Mandatory filter
@@ -230,6 +231,7 @@ export class PeItemComponent implements OnInit {
     });
   }
 
+
   /**
    * Mandatory filter field changed;
    * Mandatory filter= fields that must be specified when requesting data
@@ -268,9 +270,12 @@ export class PeItemComponent implements OnInit {
       this.budgetCeilingService.query({columns: ["id", "amount"],
         admin_hierarchy_id:this.admin_hierarchy_id,facility_id:this.facilities[0]?.id,
         financial_year_id:this.financial_year_id,section_id:this.section_id,budget_type:'CURRENT'
-      }).subscribe(resp=>{
-        console.log("response")
-        console.log(resp)
+      }).subscribe(resp=> {
+        let amount = 0;
+        resp.data?.forEach((d:any) => {
+          amount+=parseFloat(d.amount);
+        })
+        this.cellingAmount = amount;
       })
     }
   }
@@ -452,7 +457,7 @@ export class PeItemComponent implements OnInit {
     })
   }
 
-  /*
+  /**
    function used when new row added
    */
   addRow(position:number){
@@ -472,7 +477,7 @@ export class PeItemComponent implements OnInit {
   }
 
 
-  /*
+  /**
    Each row added format individual textInput  and Create payload
    then add mandatory fields as attributes
    then push to peDataValues ready for receiving input value
@@ -483,15 +488,6 @@ export class PeItemComponent implements OnInit {
         ...r,
         uid :uid,
         roundId:roundId,
-        /*
-        admin_hierarchy_id : this.admin_hierarchy_id,
-        financial_year_id : this.financial_year_id,
-        section_id : this.section_id,
-        budget_class_id : this.budget_class_id,
-        fund_source_id : this.fund_source_id,
-        pe_form_id : this.pe_form_id,
-        pe_sub_form_id : this.pe_sub_form_id
-        */
       }
        this.peDataValues.push(object);
     })
@@ -523,8 +519,6 @@ export class PeItemComponent implements OnInit {
   }
 
   store(){
-   // console.log(this.peValuesArray)
-   //  console.log(this.peDataValues)
       const object:any = {
        dataValues:this.peDataValues,
       admin_hierarchy_id : this.admin_hierarchy_id,
@@ -533,7 +527,10 @@ export class PeItemComponent implements OnInit {
       budget_class_id : this.budget_class_id,
       fund_source_id : this.fund_source_id,
       pe_form_id : this.pe_form_id,
-      pe_sub_form_id : this.pe_sub_form_id
+      pe_sub_form_id : this.pe_sub_form_id,
+      facility_id: this.facilities[0]?.id,
+      ceiling_amount: this.cellingAmount,
+      budget_amount: 0,
     }
 
     this.peItemService.create(object).subscribe(response =>{
@@ -553,7 +550,6 @@ export class PeItemComponent implements OnInit {
       //select_option
       delete this.peDataValues[objectIndex]?.select_option;
       this.horizontalTotal(data); // per column parent
-
       // if row number is greater than one
       if (this.round.length > 1) {
         this.getVerticalTotal(data); // last row
@@ -645,7 +641,8 @@ export class PeItemComponent implements OnInit {
     this.dataReady = true
   }
 
-  /* generate round/table row unique Id id added
+
+  /** generate round/table row unique Id id added
   * The id is based on
   * FinancialYearId, adminHierarchyId, sectionId/CostCenterId,peFormId,peSubFormId,budgetClass,fundSource and serialNumber*/
   getRoundUniqueId(){

@@ -52,25 +52,6 @@
 
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <!--p-multiSelect
-                    id="pe_sub_form_id"
-                    optionValue="value"
-                    [options]="peSubForms!"
-                    [group]="true"
-                    [filter]="true"
-                    [selectionLimit]="1"
-                    (onChange)="getPeForm($event)"
-                    scrollHeight="150px"
-                    [itemSize]="5"
-                    [(ngModel)]="parent_sub_budget_class"
-                  >
-                    <ng-template let-group pTemplate="group">
-                      <div class="p-d-flex p-ai-center">
-                        <span>{{group.label}}</span>
-                      </div>
-                    </ng-template>
-                  </p-multiSelect-->
-
                   <p-dropdown
                     id="pe_sub_form_id"
                     optionValue="value"
@@ -131,23 +112,13 @@
             </div>
             <div class="p-field" fxFlex>
               <span class="p-float-label">
-                <!--p-dropdown
-                  id="section_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="sections!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="section_id"
-                ></p-dropdown-->
 
                 <p-dropdown
                   id="section_id"
                   optionValue="id"
                   optionLabel="name"
                   optionGroupLabel="name"
+                  appendTo="body"
                   optionGroupChildren="children"
                   [autoDisplayFirst]="false"
                   [options]="sections!"
@@ -259,7 +230,7 @@
     </div>
   </p-card>
 
-  <p-card>
+  <p-card *ngIf ="peTableFields?.childrenDefinitions" >
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
       <div *ngIf="peTableFields.peSubForm?.is_multiple" fxLayout="row" fxLayoutGap="10px">
         <button  (click)="addRow(round.length)" pButton pRipple type="button" label="Add New Row" icon="pi pi-plus" class="p-button-raised p-button-text"></button>

@@ -963,8 +963,8 @@ const routes: Routes = [
         path: "admin-hierarchy-ceiling",
         loadChildren: () =>
           import(
-            "../setup/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module"
-          ).then((m) => m.AdminHierarchyCeilingModule),
+            '../budgeting/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module'
+            ).then((m) => m.AdminHierarchyCeilingModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {

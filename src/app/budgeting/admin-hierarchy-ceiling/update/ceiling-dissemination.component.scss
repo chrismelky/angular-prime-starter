@@ -5,13 +5,14 @@
   }
   td{
     border: none !important;
-    text-align: end;
+    text-align: center;
     input{
       text-align: end !important;
       float: right !important;
     }
-    div{
-      text-align: right !important;
+    .end{
+      text-align: end !important;
+      width: 100% !important;
     }
   }
 }

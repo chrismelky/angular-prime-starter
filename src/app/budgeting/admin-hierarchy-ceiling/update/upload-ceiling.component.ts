@@ -4,7 +4,7 @@ import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {FormBuilder, Validators,FormGroup} from "@angular/forms";
 import {Observable} from "rxjs";
 import {CustomResponse} from "../../../utils/custom-response";
-import {StrategicPlan} from "../../strategic-plan/strategic-plan.model";
+import {StrategicPlan} from "../../../setup/strategic-plan/strategic-plan.model";
 import {finalize} from "rxjs/operators";
 import {ToastService} from "../../../shared/toast.service";
 

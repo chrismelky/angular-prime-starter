@@ -1,25 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import {CustomResponse} from "../../../utils/custom-response";
-import {Sector} from "../../sector/sector.model";
+import {Sector} from "../../../setup/sector/sector.model";
 import {FormBuilder, Validators} from "@angular/forms";
-import {BudgetClassService} from "../../budget-class/budget-class.service";
-import {FundSourceBudgetClassService} from "../../fund-source-budget-class/fund-source-budget-class.service";
+import {BudgetClassService} from "../../../setup/budget-class/budget-class.service";
+import {FundSourceBudgetClassService} from "../../../setup/fund-source-budget-class/fund-source-budget-class.service";
 import {ToastService} from "../../../shared/toast.service";
-import {SectorService} from "../../sector/sector.service";
-import {FundSourceService} from "../../fund-source/fund-source.service";
+import {SectorService} from "../../../setup/sector/sector.service";
+import {FundSourceService} from "../../../setup/fund-source/fund-source.service";
 import {SelectItemGroup} from "primeng/api";
-import {FundSource} from "../../fund-source/fund-source.model";
-import {AdminHierarchyLevel} from "../../admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchyService} from "../../admin-hierarchy/admin-hierarchy.service";
-import {AdminHierarchyLevelService} from "../../admin-hierarchy-level/admin-hierarchy-level.service";
-import {CeilingChainService} from "../../ceiling-chain/ceiling-chain.service";
-import {SectionLevel} from "../../section-level/section-level.model";
-import {AdminHierarchy} from "../../admin-hierarchy/admin-hierarchy.model";
+import {FundSource} from "../../../setup/fund-source/fund-source.model";
+import {AdminHierarchyLevel} from "../../../setup/admin-hierarchy-level/admin-hierarchy-level.model";
+import {AdminHierarchyService} from "../../../setup/admin-hierarchy/admin-hierarchy.service";
+import {AdminHierarchyLevelService} from "../../../setup/admin-hierarchy-level/admin-hierarchy-level.service";
+import {CeilingChainService} from "../../../setup/ceiling-chain/ceiling-chain.service";
+import {SectionLevel} from "../../../setup/section-level/section-level.model";
+import {AdminHierarchy} from "../../../setup/admin-hierarchy/admin-hierarchy.model";
 import {Observable} from "rxjs";
 import {finalize} from "rxjs/operators";
 import {AdminHierarchyCeilingService} from "../admin-hierarchy-ceiling.service";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {AdminHierarchyCeiling} from "../admin-hierarchy-ceiling.model";
+import {UserService} from "../../../setup/user/user.service";
+import {User} from "../../../setup/user/user.model";
 
 @Component({
   selector: 'app-lock-ceiling',
@@ -35,7 +37,7 @@ export class LockCeilingComponent implements OnInit {
   adminHierarchies?: AdminHierarchy[] = [];
   ceilingLockStatus?: any[] = [];
   sectionLevelStatus?: any[] = [];
-
+  currentUser!: User;
   lockCeilingForm = this.fb.group({
     fund_sources: [null, []],
     budget_classes: [null, []],
@@ -55,9 +57,13 @@ export class LockCeilingComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService,
     protected ceilingChainService: CeilingChainService,
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
+    protected userService : UserService,
     public config: DynamicDialogConfig,
     public dialogRef: DynamicDialogRef,
-  ) { }
+  ) {
+    this.currentUser = userService.getCurrentUser();
+    console.log(this.currentUser)
+  }
 
   ngOnInit(): void {
     this.budgetClassService.getParentChild().subscribe(
@@ -91,8 +97,15 @@ export class LockCeilingComponent implements OnInit {
   lockCeiling(): void{
 
   }
+
   getAdminHierarchyByPosition(position:number){
-    this.adminHierarchyService.query({columns:['id','name','code'],admin_hierarchy_position:position}).subscribe(
+    this.adminHierarchyService.queryByPositionAndParent(
+      {
+        position:position,
+        parent: `p${this.currentUser.admin_hierarchy?.admin_hierarchy_position}`,
+        parentId: this.currentUser.admin_hierarchy?.id
+
+      }).subscribe(
       (resp: CustomResponse<AdminHierarchy[]>) =>{
         this.adminHierarchies = resp.data;
         this.ceilingLockStatus = this.adminHierarchies?.filter((a:any)=>{ if(this.lockCeilingForm.get('admin_hierarchies')?.value.includes(a.id)){return a} });

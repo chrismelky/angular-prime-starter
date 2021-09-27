@@ -537,12 +537,12 @@ export class MainComponent implements OnInit {
             {
               label: 'Cas Assessment Sub Criteria Possible Scores',
               icon: 'pi pi-fw pi-arrow-right',
-              routerLink: 'cas-assessment-sub-criteria-possible_score',
+              routerLink: 'cas-assessment-sub-criteria-possible-score',
             },
             {
               label: 'Cas Assessment Sub Criteria Report Sets',
               icon: 'pi pi-fw pi-arrow-right',
-              routerLink: 'cas-assessment-sub-criteria-report_set',
+              routerLink: 'cas-assessment-sub-criteria-report-set',
             },
           ],
         },

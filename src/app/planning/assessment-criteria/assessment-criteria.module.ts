@@ -14,9 +14,10 @@ import { AssessmentCriteriaComponent } from "./assessment-criteria.component";
 import { AssessmentCriteriaUpdateComponent } from "./update/assessment-criteria-update.component";
 import {SetScoresComponent} from "./update/set-scores.component";
 import {SetCommentComponent} from "./update/set-comment.component";
+import {BadgeModule} from "primeng/badge";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, AssessmentCriteriaRoutingModule],
+    imports: [SharedModule, CommonModule, AssessmentCriteriaRoutingModule, BadgeModule],
   declarations: [
     AssessmentCriteriaComponent,
     AssessmentCriteriaUpdateComponent,SetScoresComponent,SetCommentComponent

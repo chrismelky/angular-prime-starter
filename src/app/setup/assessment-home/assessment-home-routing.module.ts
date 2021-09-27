@@ -10,6 +10,8 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { AssessmentHomeComponent } from "./assessment-home.component";
 import {AssessmentCriteriaComponent} from "../../planning/assessment-criteria/assessment-criteria.component";
+import {MyAssessmentComponent} from "../../planning/my-assessment/my-assessment.component";
+import {ReceivedAssessmentComponent} from "../../planning/received-assessment/received-assessment.component";
 
 const routes: Routes = [
   {
@@ -21,23 +23,23 @@ const routes: Routes = [
     //canActivate: [UserRouteAccessService],
   },
   {
-    path: ":id/assessment-criteria",
+    path: ":id/assessment-criteria/:round_id/:fy_id",
     component: AssessmentCriteriaComponent,
     data: {
       defaultSort: "id:asc",
     },
     //canActivate: [UserRouteAccessService],
   },{
-    path: ":id/my-assessments",
-    component: AssessmentCriteriaComponent,
+    path: ":id/my-assessments/:round_id/:fy_id",
+    component: MyAssessmentComponent,
     data: {
       defaultSort: "id:asc",
     },
     //canActivate: [UserRouteAccessService],
   },
   {
-    path: ":id/received-assessments",
-    component: AssessmentCriteriaComponent,
+    path: ":id/received-assessments/:round_id/:fy_id",
+    component: ReceivedAssessmentComponent,
     data: {
       defaultSort: "id:asc",
     },

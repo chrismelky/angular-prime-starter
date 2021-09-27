@@ -121,14 +121,18 @@
       </p-accordion>
       <div class="row" fxLayoutAlign="end">
         <button pButton type="button" class="p-button-primary p-button-raised" label="Report" [disabled]="admin_hierarchy_position !=3"
-                style="margin-left: 16px" icon="pi pi-eye" (click)="getAssessmentReport()"
+                style="margin-left: 16px" icon="pi pi-file-pdf" (click)="getAssessmentReport()"
         ></button>
     </div>
     </div>
   </p-card>
   <!-- Table Panel -->
   <p-accordion>
-    <p-accordionTab  *ngFor="let tab of assessmentCriteriaData!; let i = index" header="{{i+1+ '.   ' +tab.name}}" (click)="loadSubCriteria(tab)">
+    <p-accordionTab  *ngFor="let tab of assessmentCriteriaData!; let i = index"  (click)="loadSubCriteria(tab.id)">
+      <ng-template pTemplate="header" >
+        <div>{{i + 1+'.'}}   {{tab.name }}</div>
+        <div>[{{tab.number}}]</div>
+      </ng-template>
       <ng-template pTemplate="content">
         <p-table [value]="assessmentSubCriteriaOptions!">
           <ng-template pTemplate="header">
@@ -149,16 +153,16 @@
             <td [colSpan]="2">{{assessmentSubCriteriaOption.how_to_assess}}
             </td>
             <td>
-
+              <p-badge value="{{assessmentSubCriteriaOption.cas_assessment_state?assessmentSubCriteriaOption.cas_assessment_state:'Not Assessed'}}" severity="{{assessmentSubCriteriaOption.cas_assessment_state?'success':'warning'}}"></p-badge>
             </td>
             <td [colSpan]="2">
-              <button pButton type="button" class="p-button-text p-button-icon" label="Scores({{10}})" [disabled]="admin_hierarchy_position !=3"
+              <button pButton type="button" class="p-button-outlined p-button-icon" label="Scores({{assessmentSubCriteriaOption.value?assessmentSubCriteriaOption.value: 0}})" [disabled]="admin_hierarchy_position !=3"
                       style="margin-left: auto" icon="pi pi-check" (click)="setScores(assessmentSubCriteriaOption)"
               ></button>
-              <button pButton type="button" class="p-button-text p-button-icon" label="Comments" [disabled]="admin_hierarchy_position !=3"
+              <button pButton type="button" class="p-button-outlined p-button-icon" label="Comments" [disabled]="admin_hierarchy_position !=3"
                       style="margin-left: 16px" icon="pi pi-comment" (click)="setComments(assessmentSubCriteriaOption)"
               ></button>
-              <button pButton type="button" class="p-button-text p-button-icon" label="Report" [disabled]="admin_hierarchy_position !=3"
+              <button pButton type="button" class="p-button-outlined p-button-icon" label="Report" [disabled]="admin_hierarchy_position !=3"
                       style="margin-left: 16px" icon="pi pi-list" (click)="getReport(assessmentSubCriteriaOption)"
               ></button>
             </td>
@@ -169,18 +173,58 @@
     </p-accordionTab>
   </p-accordion>
   <p-card>
-    <div class="row" fxLayoutAlign="end">
-      <textarea rows="2" cols="20" pInputTextarea [autoResize]="true"></textarea>
+    <div class="row">
+      <div fxFlex="80%">
+        <form
+          name="commentForm"
+          role="form"
+          novalidate
+          (ngSubmit)="finishAndQuit()"
+          [formGroup]="commentForm">
+<!--          <textarea rows="2" cols="20" formControlName="remarks" pInputTextarea [autoResize]="true">-->
+<!--            -->
+<!--          </textarea>-->
+          <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <textarea
+            id="remarks"
+            formControlName="remarks"
+            [rows]="2"
+            [cols]="20"
+            pInputTextarea
+            [autoResize]="true"
+          ></textarea>
+          <label for="remarks"
+          >Put your remarks here
+          </label>
+        </span>
+            <span
+              *ngIf="
+            commentForm.get('remarks')!.invalid &&
+            (commentForm.get('remarks')!.dirty ||
+              commentForm.get('remarks')!.touched ||
+              formError)
+          "
+            >
+        </span>
+          </div>
+        </form>
+      </div>
+      <div fxFlex="30%">
+        <button pButton type="button" class="p-button-text p-button-raised" label="Forward" [disabled]="admin_hierarchy_position !=3"
+                style="margin-left: 16px" icon="pi pi-forward" (click)="forwardPlan()" fxFlex="20%"
+        ></button>
+        <button pButton type="button" class="p-button-text p-button-raised" label="Return" [disabled]="admin_hierarchy_position !=3"
+                style="margin-left: 16px" icon="pi pi-reply" (click)="returnPlan()" fxFlex="20%"
+        ></button>
+        <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" [disabled]="admin_hierarchy_position !=3"
+                style="margin-left: 16px" icon="pi pi-check" (click)="confirmPlan()" fxFlex="25%"
+        ></button>
+        <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit" [disabled]="admin_hierarchy_position !=3"
+                style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="35%"
+        ></button>
+      </div>
 
-      <button pButton type="button" class="p-button-text p-button-raised" label="Return" [disabled]="admin_hierarchy_position !=3"
-              style="margin-left: 16px" icon="pi pi-reply" (click)="finishAndQuit()" fxFlex="5%"
-      ></button>
-      <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" [disabled]="admin_hierarchy_position !=3"
-              style="margin-left: 16px" icon="pi pi-check" (click)="finishAndQuit()" fxFlex="5%"
-      ></button>
-      <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit" [disabled]="admin_hierarchy_position !=3"
-              style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="10%"
-      ></button>
     </div>
   </p-card>
 </div>

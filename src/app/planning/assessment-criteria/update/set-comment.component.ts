@@ -36,6 +36,7 @@ export class SetCommentComponent implements OnInit {
 
   save() {
     let data = {
+      id: this.dialogConfig.data.data.cas_assessment_result_comment_id!,
       admin_hierarchy_id: this.dialogConfig.data.admin_hierarchy_id,
       admin_hierarchy_level_id:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
       cas_assessment_sub_criteria_option_id:this.dialogConfig.data.data.id,
@@ -47,11 +48,42 @@ export class SetCommentComponent implements OnInit {
       this.formError = true;
       return;
     }
-    this.isSaving = true;
-    this.casAssessmentResultsService.createComment(data).subscribe(resp => {
-      this.toastService.info(resp.message);
-      this.dialogRef.close(true);
-      this.isSaving = false;
+    if(this.dialogConfig.data.data.cas_assessment_result_comment_id){
+      this.isSaving = true;
+      this.casAssessmentResultsService.updateComment(data).subscribe(resp => {
+        this.toastService.info(resp.message);
+        this.dialogRef.close(true);
+        this.isSaving = false;
+      });
+    } else {
+      this.isSaving = true;
+      this.casAssessmentResultsService.createComment(data).subscribe(resp => {
+        this.toastService.info(resp.message);
+        this.dialogRef.close(true);
+        this.isSaving = false;
+      });
+    }
+  }
+  /**
+   * Set/Initialize form values
+   * @param
+   */
+  protected updateForm(
+    casAssessmentSubCriteriaPossibleScore:any
+  ): void {
+    this.commentForm.patchValue({
+      id: casAssessmentSubCriteriaPossibleScore.cas_assessment_result_comment_id,
+      remarks: casAssessmentSubCriteriaPossibleScore.remarks
     });
+  }
+  /**
+   * Return form values as object of type CasAssessmentSubCriteriaPossibleScore
+   * @returns
+   */
+  protected createFromForm(): any {
+    return {
+      id: this.commentForm.get(["cas_assessment_result_comment_id"])!.value,
+      remarks: this.commentForm.get(["remarks"])!.value,
+    };
   }
 }

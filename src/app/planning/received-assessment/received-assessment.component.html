@@ -21,13 +21,30 @@
                 id="financial_year_id"
                 optionValue="id"
                 optionLabel="name"
-                [autoDisplayFirst]="false"
+                [autoDisplayFirst]="true"
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="financialYears!"
                 [(ngModel)]="financial_year_id"
               ></p-dropdown>
               <label for="financial_year_id"> </label>
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="cas_assessment_round_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="true"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casAssessmentRounds!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="casAssessmentRounds"
+              ></p-dropdown>
+              <label for="cas_assessment_round_id"> </label>
             </span>
           </div>
         </div>
@@ -96,99 +113,25 @@
           </div>
         </p-accordionTab>
       </p-accordion>
+      <div class="row" fxLayoutAlign="end">
+        <button pButton type="button" class="p-button-outlined" label="Finish and Quit"
+                style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()"
+        ></button>
+      </div>
     </div>
   </p-card>
 
   <!-- Table Panel -->
-  <p-card>
-    <p-table
-      #table
-      [lazy]="true"
-      [resizableColumns]="true"
-      [responsive]="true"
-      [autoLayout]="true"
-      [loading]="isLoading"
-      [columns]="cols"
-      [value]="receivedAssessments!"
-      [scrollable]="true"
-      scrollHeight="500px"
-      (onLazyLoad)="onSortChange($event)"
-      [customSort]="true"
-    >
-      <ng-template pTemplate="caption">
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Received Assessments</span>
-          <button
-            pButton
-            icon="pi pi-close"
-            class="p-button-raised"
-            (click)="finishAndQuit()"
-            label="Finish and Quit"
-          ></button>
-        </div>
+  <p-accordion>
+    <p-accordionTab   *ngFor="let adm of adminHierarchies!; let i = index"  >
+      <ng-template pTemplate="header" >
+        <div>{{i + 1+'.'}}   {{adm.name }}</div>
       </ng-template>
-      <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="receivedAssessments?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th style="flex: 0 0 2rem"></th>
-        </tr>
+      <ng-template pTemplate="content">
+
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
-          </td>
-          <td style="flex: 0 0 2 rem">
-            <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" fxLayoutGap="2px">
-                <button
-                  pButton
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pTooltip="Delete"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-trash
-              "
-                  (click)="delete(rowData)"
-                ></button>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="receivedAssessments?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
-    </p-table>
-  </p-card>
+    </p-accordionTab>
+  </p-accordion>
 </div>
 
 <p-confirmDialog

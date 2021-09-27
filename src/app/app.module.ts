@@ -14,6 +14,7 @@ import {ErrorHandlerInterceptor} from './interceptors/error-handler.interceptor'
 import {AuthExpiredInterceptor} from './interceptors/auth-expired.interceptor';
 import {RippleModule} from 'primeng/ripple';
 import {LoaderInterceptor} from "./shared/loader-interceptor";
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,6 +31,7 @@ import {LoaderInterceptor} from "./shared/loader-interceptor";
       caseSensitive: true,
     }),
     MessageModule,
+    NgxPermissionsModule.forRoot(),
   ],
   providers: [
     MessageService,

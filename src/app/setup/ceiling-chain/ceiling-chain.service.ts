@@ -12,6 +12,8 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { CeilingChain } from "./ceiling-chain.model";
+import {Section} from "../section/section.model";
+import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
 
 @Injectable({ providedIn: "root" })
 export class CeilingChainService {
@@ -43,6 +45,20 @@ export class CeilingChainService {
     const options = createRequestOption(req);
     const url = 'api/ceiling_chain_with_children';
     return this.http.get<CustomResponse<CeilingChain[]>>(url, {
+      params: options,
+    });
+  }
+  ceilingSectionLevels(req?: any): Observable<CustomResponse<Section[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/ceiling_section_levels';
+    return this.http.get<CustomResponse<Section[]>>(url, {
+      params: options,
+    });
+  }
+  ceilingHierarchyLevels(req?: any): Observable<CustomResponse<AdminHierarchyLevel[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/ceiling_hierarchy_levels';
+    return this.http.get<CustomResponse<AdminHierarchyLevel[]>>(url, {
       params: options,
     });
   }

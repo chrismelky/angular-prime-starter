@@ -24,9 +24,10 @@ import { FinancialYear } from "src/app/setup/financial-year/financial-year.model
 import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
 
 import { AssessmentHome } from "./assessment-home.model";
-import { AssessmentHomeService } from "./assessment-home.service";
 import { AssessmentHomeUpdateComponent } from "./update/assessment-home-update.component";
 import {CasAssessmentCategoryVersionService} from "../cas-assessment-category-version/cas-assessment-category-version.service";
+import {CasAssessmentRound} from "../cas-assessment-round/cas-assessment-round.model";
+import {CasAssessmentRoundService} from "../cas-assessment-round/cas-assessment-round.service";
 
 @Component({
   selector: "app-assessment-home",
@@ -38,6 +39,7 @@ export class AssessmentHomeComponent implements OnInit {
   assessmentHomes?: AssessmentHome[] = [];
 
   financialYears?: FinancialYear[] = [];
+  casAssessmentRounds: CasAssessmentRound[] | undefined  = [];
 
   cols = []; //Table display columns
 
@@ -52,10 +54,12 @@ export class AssessmentHomeComponent implements OnInit {
 
   //Mandatory filter
   financial_year_id!: number;
+  cas_assessment_round_id!: number;
 
   constructor(
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
     protected financialYearService: FinancialYearService,
+    protected casAssessmentRondService: CasAssessmentRoundService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -71,6 +75,12 @@ export class AssessmentHomeComponent implements OnInit {
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
       );
+    this.casAssessmentRondService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CasAssessmentRound[]>) =>
+          (this.casAssessmentRounds = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -80,7 +90,7 @@ export class AssessmentHomeComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.financial_year_id) {
+    if (!this.financial_year_id || !this.cas_assessment_round_id) {
       return;
     }
     this.isLoading = true;
@@ -92,6 +102,7 @@ export class AssessmentHomeComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         financial_year_id: this.financial_year_id,
+        cas_assessment_round_id: this.cas_assessment_round_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(

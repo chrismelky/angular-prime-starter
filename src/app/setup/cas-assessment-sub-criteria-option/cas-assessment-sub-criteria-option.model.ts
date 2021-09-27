@@ -5,6 +5,7 @@ export class CasAssessmentSubCriteriaOption {
     public serial_number?: number,
     public cas_assessment_criteria_option_id?: number,
     public score_value?: string,
+    public how_to_assess?: string,
     public is_free_score?: string
   ) {}
 }

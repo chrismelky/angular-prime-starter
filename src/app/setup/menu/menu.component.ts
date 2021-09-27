@@ -5,48 +5,65 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-
-import { MyAssessment } from "./my-assessment.model";
-import { MyAssessmentService } from "./my-assessment.service";
-import { MyAssessmentUpdateComponent } from "./update/my-assessment-update.component";
-import {CasAssessmentRound} from "../../setup/cas-assessment-round/cas-assessment-round.model";
-import {User} from "../../setup/user/user.model";
-import {UserService} from "../../setup/user/user.service";
-import {AssessmentCriteriaService} from "../assessment-criteria/assessment-criteria.service";
-import {AdminHierarchy} from "../../setup/admin-hierarchy/admin-hierarchy.model";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {Menu} from "./menu.model";
+import {MenuService} from "./menu.service";
+import {MenuUpdateComponent} from "./update/menu-update.component";
+import {MenuPermissionComponent} from "./menu-permission/menu-permission.component";
+import {SubComponent} from "./sub/sub.component";
 
 @Component({
-  selector: "app-my-assessment",
-  templateUrl: "./my-assessment.component.html",
+  selector: "app-menu",
+  templateUrl: "./menu.component.html",
 })
-export class MyAssessmentComponent implements OnInit {
+export class MenuComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  myAssessments?: MyAssessment[] = [];
+  menus?: Menu[] = [];
 
+  parents?: Menu[] = [];
 
-  financialYears?: FinancialYear[] = [];
-  casAssessmentRounds?: CasAssessmentRound[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
-
-  cols = []; //Table display columns
+  cols = [
+    {
+      field: "label",
+      header: "Label",
+      sort: true,
+    },
+    {
+      field: "icon",
+      header: "Icon",
+      sort: true,
+    },
+    {
+      field: "separator",
+      header: "Separator",
+      sort: false,
+    },
+    {
+      field: "router_link",
+      header: "Router Link",
+      sort: true,
+    },
+    {
+      field: "sort_order",
+      header: "Sort Order",
+      sort: true,
+    },
+  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -58,65 +75,45 @@ export class MyAssessmentComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
-  financial_year_id!: number;
-  cas_assessment_round_id!: number;
-  cas_assessment_category_version_id: number;
-  admin_hierarchy_position!:number;
-  admin_hierarchy_level_id!: number | undefined;
-  currentUser: User;
 
   constructor(
-    protected assessmentCriteriaService: AssessmentCriteriaService,
-    protected myAssessmentService: MyAssessmentService,
-    protected financialYearService: FinancialYearService,
-    protected actRoute: ActivatedRoute,
+    protected menuService: MenuService,
+    protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected userService: UserService,
     protected toastService: ToastService
   ) {
-    this.cas_assessment_category_version_id = this.actRoute.snapshot.params.id;
-    this.cas_assessment_round_id = this.actRoute.snapshot.params.round_id;
-    this.financial_year_id = this.actRoute.snapshot.params.fy_id;
-    this.currentUser = userService.getCurrentUser();
-    this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;  }
+  }
 
   ngOnInit(): void {
-
-    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,this.cas_assessment_category_version_id)
-      .subscribe((resp) => {
-        this.adminHierarchies = resp.data.adminHierarchies;
-        this.financialYears = resp.data.financialYears;
-        this.casAssessmentRounds = resp.data.casRounds;
-      });
+    this.menuService
+      .query({columns: ["id", "label", "router_link"]})
+      .subscribe(
+        (resp: CustomResponse<Menu[]>) => (this.parents = resp.data)
+      );
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.financial_year_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.myAssessmentService
+    this.menuService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        financial_year_id: this.financial_year_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<MyAssessment[]>) => {
+        (res: CustomResponse<Menu[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -133,8 +130,8 @@ export class MyAssessmentComponent implements OnInit {
    */
   protected handleNavigation(): void {
     combineLatest([
-      this.actRoute.data,
-      this.actRoute.queryParamMap,
+      this.activatedRoute.data,
+      this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
       const page = params.get("page");
       const perPage = params.get("per_page");
@@ -147,20 +144,8 @@ export class MyAssessmentComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -221,17 +206,16 @@ export class MyAssessmentComponent implements OnInit {
   }
 
   /**
-   * Creating or updating MyAssessment
-   * @param myAssessment ; If undefined initize new model to create else edit existing model
+   * Creating or updating Menu
+   * @param menu ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(myAssessment?: MyAssessment): void {
-    const data: MyAssessment = myAssessment ?? {
-      ...new MyAssessment(),
-      financial_year_id: this.financial_year_id,
+  createOrUpdate(menu?: Menu): void {
+    const data: Menu = menu ?? {
+      ...new Menu(),
     };
-    const ref = this.dialogService.open(MyAssessmentUpdateComponent, {
+    const ref = this.dialogService.open(MenuUpdateComponent, {
       data,
-      header: "Create/Update MyAssessment",
+      header: "Create/Update Menu",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -241,14 +225,14 @@ export class MyAssessmentComponent implements OnInit {
   }
 
   /**
-   * Delete MyAssessment
-   * @param myAssessment
+   * Delete Menu
+   * @param menu
    */
-  delete(myAssessment: MyAssessment): void {
+  delete(menu: Menu): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this MyAssessment?",
+      message: "Are you sure that you want to delete this Menu?",
       accept: () => {
-        this.myAssessmentService.delete(myAssessment.id!).subscribe((resp) => {
+        this.menuService.delete(menu.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -263,14 +247,14 @@ export class MyAssessmentComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<MyAssessment[]> | null,
+    resp: CustomResponse<Menu[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/my-assessment"], {
+      this.router.navigate(["/menu"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -279,7 +263,7 @@ export class MyAssessmentComponent implements OnInit {
         },
       });
     }
-    this.myAssessments = resp?.data ?? [];
+    this.menus = resp?.data ?? [];
   }
 
   /**
@@ -288,10 +272,36 @@ export class MyAssessmentComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading My Assessment");
+    this.toastService.error("Error loading Menu");
   }
 
-  finishAndQuit() {
-    this.router.navigate(["/assessment-home"])
+  permissions(rowData: Menu): void {
+    const data = {
+      menu: rowData
+    }
+    const ref = this.dialogService.open(MenuPermissionComponent, {
+      data,
+      width: '60%',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  subMenu(rowData: Menu): void {
+    const data = {
+      menu: rowData
+    }
+    const ref = this.dialogService.open(SubComponent, {
+      data,
+      width: '60%',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

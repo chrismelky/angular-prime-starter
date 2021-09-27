@@ -9,66 +9,46 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
 import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
+import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from "../../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
+} from "../../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { CasAssessmentCriteriaOption } from "src/app/setup/cas-assessment-criteria-option/cas-assessment-criteria-option.model";
-import { CasAssessmentCriteriaOptionService } from "src/app/setup/cas-assessment-criteria-option/cas-assessment-criteria-option.service";
+import { Menu } from "src/app/setup/menu/menu.model";
+import { MenuService } from "src/app/setup/menu/menu.service";
+import { Permission } from "src/app/setup/permission/permission.model";
+import { PermissionService } from "src/app/setup/permission/permission.service";
 
-import { CasAssessmentSubCriteriaOption } from "./cas-assessment-sub-criteria-option.model";
-import { CasAssessmentSubCriteriaOptionService } from "./cas-assessment-sub-criteria-option.service";
-import { CasAssessmentSubCriteriaOptionUpdateComponent } from "./update/cas-assessment-sub-criteria-option-update.component";
+import { MenuPermission } from "./menu-permission.model";
+import { MenuPermissionService } from "./menu-permission.service";
+import { MenuPermissionUpdateComponent } from "./update/menu-permission-update.component";
+import {CreateComponent} from "./create/create.component";
 
 @Component({
-  selector: "app-cas-assessment-sub-criteria-option",
-  templateUrl: "./cas-assessment-sub-criteria-option.component.html",
+  selector: "app-menu-permission",
+  templateUrl: "./menu-permission.component.html",
 })
-export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
+export class MenuPermissionComponent implements OnInit {
+  menu: Menu | undefined;
+
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  casAssessmentSubCriteriaOptions?: CasAssessmentSubCriteriaOption[] = [];
+  menuPermissions?: MenuPermission[] = [];
 
-  casAssessmentCriteriaOptions?: CasAssessmentCriteriaOption[] = [];
+  menus?: Menu[] = [];
+  permissions?: Permission[] = [];
 
-  cols = [
-    {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
-    {
-      field: "serial_number",
-      header: "Serial Number",
-      sort: false,
-    },
-    {
-      field: "how_to_assess",
-      header: "How to Access",
-      sort: false,
-    },
-    {
-      field: "score_value",
-      header: "Score Value",
-      sort: false,
-    },
-    {
-      field: "is_free_score",
-      header: "Is Free Score",
-      sort: false,
-    },
-  ]; //Table display columns
+  cols = []; //Table display columns
 
   isLoading = false;
-  page?: number = 1;
-  per_page!: number;
+  page: number = 1;
+  perPage: number = 15;
   totalItems = 0;
   perPageOptions = PER_PAGE_OPTIONS;
   predicate!: string; //Sort column
@@ -76,26 +56,26 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  cas_assessment_criteria_option_id!: number;
+  menu_id!: number;
 
   constructor(
-    protected casAssessmentSubCriteriaOptionService: CasAssessmentSubCriteriaOptionService,
-    protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
+    protected menuPermissionService: MenuPermissionService,
+    protected menuService: MenuService,
+    protected permissionService: PermissionService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
+    public dialogRef: DynamicDialogRef,
+    public dialogConfig: DynamicDialogConfig,
     protected toastService: ToastService
-  ) {}
+  ) {
+    this.menu = dialogConfig.data.menu;
+    this.menu_id = dialogConfig.data.menu.id;
+  }
 
   ngOnInit(): void {
-    this.casAssessmentCriteriaOptionService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<CasAssessmentCriteriaOption[]>) =>
-          (this.casAssessmentCriteriaOptions = resp.data)
-      );
     this.handleNavigation();
   }
 
@@ -105,23 +85,22 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_assessment_criteria_option_id) {
+    if (!this.menu_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
-    this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.casAssessmentSubCriteriaOptionService
+    this.perPage = this.perPage ?? ITEMS_PER_PAGE;
+    this.menuPermissionService
       .query({
         page: pageToLoad,
-        per_page: this.per_page,
+        per_page: this.perPage,
         sort: this.sort(),
-        cas_assessment_criteria_option_id:
-          this.cas_assessment_criteria_option_id,
+        menu_id: this.menu_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<CasAssessmentSubCriteriaOption[]>) => {
+        (res: CustomResponse<MenuPermission[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -137,22 +116,11 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
    * Restore page, sort option from url query params if exist and load page
    */
   protected handleNavigation(): void {
-    combineLatest([
-      this.activatedRoute.data,
-      this.activatedRoute.queryParamMap,
-    ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
-      const predicate = sort[0];
-      const ascending = sort[1] === "asc";
-      this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
-      this.page = page !== null ? parseInt(page) : 1;
-      if (predicate !== this.predicate || ascending !== this.ascending) {
-        this.predicate = predicate;
-        this.ascending = ascending;
-      }
-    });
+    const page = this.page;
+    const perPage = this.perPage;
+    this.perPage = perPage !== null ? perPage : ITEMS_PER_PAGE;
+    this.page = page !== null ? page : 1;
+    this.loadPage(this.page, true);
   }
 
   /**
@@ -211,7 +179,7 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
    */
   pageChanged(event: any): void {
     this.page = event.page + 1;
-    this.per_page = event.rows!;
+    this.perPage = event.rows!;
     this.loadPage();
   }
 
@@ -226,25 +194,33 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
   }
 
   /**
-   * Creating or updating CasAssessmentSubCriteriaOption
-   * @param casAssessmentSubCriteriaOption ; If undefined initize new model to create else edit existing model
+   * Creating or updating MenuPermission
+   * @param menuPermission ; If undefined initialize new model to create else edit existing model
    */
-  createOrUpdate(
-    casAssessmentSubCriteriaOption?: CasAssessmentSubCriteriaOption
-  ): void {
-    const data: CasAssessmentSubCriteriaOption =
-      casAssessmentSubCriteriaOption ?? {
-        ...new CasAssessmentSubCriteriaOption(),
-        cas_assessment_criteria_option_id:
-          this.cas_assessment_criteria_option_id,
-      };
-    const ref = this.dialogService.open(
-      CasAssessmentSubCriteriaOptionUpdateComponent,
-      {
-        data,
-        header: "Create/Update CasAssessmentSubCriteriaOption",
+  create(): void {
+    const data = {
+      menu: this.menu
+    }
+    const ref = this.dialogService.open(CreateComponent, {
+      data,
+      header: "Add Permission",
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
       }
-    );
+    });
+  }
+
+  edit(menuPermission?: MenuPermission): void {
+    const data: MenuPermission = menuPermission ?? {
+      ...new MenuPermission(),
+      menu_id: this.menu_id,
+    };
+    const ref = this.dialogService.open(MenuPermissionUpdateComponent, {
+      data,
+      header: "Update MenuPermission",
+    });
     ref.onClose.subscribe((result) => {
       if (result) {
         this.loadPage(this.page);
@@ -253,16 +229,15 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
   }
 
   /**
-   * Delete CasAssessmentSubCriteriaOption
-   * @param casAssessmentSubCriteriaOption
+   * Delete MenuPermission
+   * @param menuPermission
    */
-  delete(casAssessmentSubCriteriaOption: CasAssessmentSubCriteriaOption): void {
+  delete(menuPermission: MenuPermission): void {
     this.confirmationService.confirm({
-      message:
-        "Are you sure that you want to delete this CasAssessmentSubCriteriaOption?",
+      message: "Are you sure that you want to delete this MenuPermission?",
       accept: () => {
-        this.casAssessmentSubCriteriaOptionService
-          .delete(casAssessmentSubCriteriaOption.id!)
+        this.menuPermissionService
+          .delete(menuPermission.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -278,23 +253,23 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<CasAssessmentSubCriteriaOption[]> | null,
+    resp: CustomResponse<MenuPermission[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-assessment-sub-criteria-option"], {
+      this.router.navigate(["/menu"], {
         queryParams: {
           page: this.page,
-          per_page: this.per_page,
+          per_page: this.perPage,
           sort:
             this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
         },
       });
     }
-    this.casAssessmentSubCriteriaOptions = resp?.data ?? [];
+    this.menuPermissions = resp?.data ?? [];
   }
 
   /**
@@ -303,6 +278,6 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Cas Assessment Sub Criteria Option");
+    this.toastService.error("Error loading Menu Permission");
   }
 }

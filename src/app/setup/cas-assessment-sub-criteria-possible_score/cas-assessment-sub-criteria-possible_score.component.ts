@@ -176,7 +176,11 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
    */
   fetchSubCriteria(item: any) {
     if (item) {
-      this.casAssessmentSubCriteriaOptionService.query({cas_assessment_criteria_option_id: item.value})
+      this.casAssessmentSubCriteriaOptionService.query({
+        perPage: this.per_page,
+        page: this.page,
+        cas_assessment_criteria_option_id: item.value
+      })
         .subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>)=>
           (this.casAssessmentSubCriteria = resp.data));
     }

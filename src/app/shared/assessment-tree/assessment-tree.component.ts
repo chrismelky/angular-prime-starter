@@ -4,6 +4,9 @@ import {AssessmentCriteriaService} from "../../planning/assessment-criteria/asse
 import {AdminHierarchy} from "../../setup/admin-hierarchy/admin-hierarchy.model";
 import {AdminHierarchyService} from "../../setup/admin-hierarchy/admin-hierarchy.service";
 import {ToastService} from "../toast.service";
+import {ActivatedRoute} from "@angular/router";
+import {UserService} from "../../setup/user/user.service";
+import {User} from "../../setup/user/user.model";
 
 @Component({
   selector: 'app-assessment-tree',
@@ -18,18 +21,28 @@ export class AssessmentTreeComponent implements OnInit {
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
-  adminHierarchies?: AdminHierarchy[] = [];
+  adminHierarchies: AdminHierarchy[] = [];
+  financial_year_id!: number;
+  cas_assessment_round_id!: number;
+  cas_assessment_category_version_id!: number;
+  currentUser!: User;
   constructor(
     protected assessmentCriteriaService: AssessmentCriteriaService,
     private toastService: ToastService,
+    protected userService: UserService,
+    protected actRoute: ActivatedRoute,
     protected adminHierarchyService: AdminHierarchyService
   ) {
+    this.currentUser = userService.getCurrentUser();
+    this.cas_assessment_category_version_id = this.actRoute.snapshot.params.id;
+    this.cas_assessment_round_id = this.actRoute.snapshot.params.round_id;
+    this.financial_year_id = this.actRoute.snapshot.params.fy_id;
   }
   ngOnInit(): void {
-    this.assessmentCriteriaService.getDataByUser()
+    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,this.cas_assessment_category_version_id)
       .subscribe((resp) => {
         this.adminHierarchies = resp.data.adminHierarchies;
-        if (this.adminHierarchies){
+        if (this.adminHierarchies.length > 0){
           for (let i = 0; i < this.adminHierarchies.length; i++) {
             this.nodes.push({
               label: this.adminHierarchies[i].name,
@@ -41,7 +54,20 @@ export class AssessmentTreeComponent implements OnInit {
           this.selectedValue = this.nodes[0];
           this.onSelectionChange();
         }else {
-          this.toastService.info(resp.message);
+          // this.toastService.info(resp.message);
+         const adminHierarchies = this.currentUser.admin_hierarchy;
+          if (adminHierarchies) {
+            this.nodes = [
+              {
+                label: adminHierarchies.name,
+                data:  adminHierarchies,
+                children: [],
+                leaf: false,
+              },
+            ];
+            this.selectedValue = this.nodes[0];
+            this.onSelectionChange();
+          }
         }
       });
   }

@@ -26,6 +26,11 @@ import { FinancialYearService } from "src/app/setup/financial-year/financial-yea
 import { ReceivedAssessment } from "./received-assessment.model";
 import { ReceivedAssessmentService } from "./received-assessment.service";
 import { ReceivedAssessmentUpdateComponent } from "./update/received-assessment-update.component";
+import {CasAssessmentRound} from "../../setup/cas-assessment-round/cas-assessment-round.model";
+import {User} from "../../setup/user/user.model";
+import {UserService} from "../../setup/user/user.service";
+import {AssessmentCriteriaService} from "../assessment-criteria/assessment-criteria.service";
+import {AdminHierarchy} from "../../setup/admin-hierarchy/admin-hierarchy.model";
 
 @Component({
   selector: "app-received-assessment",
@@ -36,8 +41,9 @@ export class ReceivedAssessmentComponent implements OnInit {
   @ViewChild("table") table!: Table;
   receivedAssessments?: ReceivedAssessment[] = [];
 
-  financialYears? : FinancialYear[] = [];
-
+  financialYears?: FinancialYear[] = [];
+  casAssessmentRounds?: CasAssessmentRound[] = [];
+  adminHierarchies?: AdminHierarchy[] = [];
   cols = []; //Table display columns
 
   isLoading = false;
@@ -50,30 +56,40 @@ export class ReceivedAssessmentComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  admin_hierarchy_id!: number;
   financial_year_id!: number;
+  cas_assessment_round_id!: number;
+  cas_assessment_category_version_id: number;
+  admin_hierarchy_position!:number;
+  admin_hierarchy_level_id!: number | undefined;
+  currentUser: User;
 
   constructor(
+    protected assessmentCriteriaService: AssessmentCriteriaService,
     protected receivedAssessmentService: ReceivedAssessmentService,
     protected financialYearService: FinancialYearService,
-    protected activatedRoute: ActivatedRoute,
+    protected actRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
+    protected userService: UserService,
     protected toastService: ToastService
   ) {
-     this.financial_year_id = this.router.getCurrentNavigation()?.extras.state?.financial_year.id;
-  }
+    this.cas_assessment_category_version_id = this.actRoute.snapshot.params.id;
+    this.cas_assessment_round_id = this.actRoute.snapshot.params.round_id;
+    this.financial_year_id = this.actRoute.snapshot.params.fy_id;
+    this.currentUser = userService.getCurrentUser();
+    this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;  }
 
   ngOnInit(): void {
-    // this.financialYearService
-    //   .find(this.financial_year_id)
-    //   .subscribe(
-    //     (resp: CustomResponse<FinancialYear>) =>
-    //     {
-    //       (this.financialYears = resp.data)
-    //     }
-    //   );
+
+    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,this.cas_assessment_category_version_id)
+      .subscribe((resp) => {
+        this.adminHierarchies = resp.data.adminHierarchies;
+        this.financialYears = resp.data.financialYears;
+        this.casAssessmentRounds = resp.data.casRounds;
+      });
     this.handleNavigation();
   }
 
@@ -115,8 +131,8 @@ export class ReceivedAssessmentComponent implements OnInit {
    */
   protected handleNavigation(): void {
     combineLatest([
-      this.activatedRoute.data,
-      this.activatedRoute.queryParamMap,
+      this.actRoute.data,
+      this.actRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
       const page = params.get("page");
       const perPage = params.get("per_page");

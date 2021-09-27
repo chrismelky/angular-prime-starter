@@ -35,6 +35,11 @@ import {CasAssessmentSubCriteriaOptionService} from "../../setup/cas-assessment-
 import {CasAssessmentSubCriteriaOption} from "../../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
 import {SetScoresComponent} from "./update/set-scores.component";
 import {SetCommentComponent} from "./update/set-comment.component";
+import {FormBuilder, Validators} from "@angular/forms";
+import {UserService} from "../../setup/user/user.service";
+import {User} from "../../setup/user/user.model";
+
+
 
 @Component({
   selector: "app-assessment-criteria",
@@ -59,7 +64,10 @@ export class AssessmentCriteriaComponent implements OnInit {
       header: "Number",
       sort: true,
     },]; //Table display columns
-
+  commentForm = this.fb.group({
+    id: [null, []],
+    remarks: [null, [Validators.required]],
+  });
   isLoading = false;
   page?: number = 1;
   per_page!: number;
@@ -68,13 +76,17 @@ export class AssessmentCriteriaComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-
+  isSaving = false;
+  errors = [];
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
   cas_assessment_round_id!: number;
   cas_assessment_category_version_id: number;
   admin_hierarchy_position!:number;
+  admin_hierarchy_level_id!: number | undefined;
+  currentUser: User;
+  formError = false;
 
   constructor(
     protected assessmentCriteriaService: AssessmentCriteriaService,
@@ -83,13 +95,19 @@ export class AssessmentCriteriaComponent implements OnInit {
     protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
+    protected fb: FormBuilder,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected actRoute: ActivatedRoute,
+    protected userService: UserService,
     protected toastService: ToastService
   ) {
     this.cas_assessment_category_version_id = this.actRoute.snapshot.params.id;
+    this.cas_assessment_round_id = this.actRoute.snapshot.params.round_id;
+    this.financial_year_id = this.actRoute.snapshot.params.fy_id;
+    this.currentUser = userService.getCurrentUser();
+    this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;
     }
 
   ngOnInit(): void {
@@ -97,8 +115,7 @@ export class AssessmentCriteriaComponent implements OnInit {
       .subscribe((resp:CustomResponse<AssessmentCriteria[]>) => {
         this.assessmentCriteriaData = resp.data;
       });
-
-    this.assessmentCriteriaService.getDataByUser()
+    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,this.cas_assessment_category_version_id)
       .subscribe((resp) => {
         this.adminHierarchies = resp.data.adminHierarchies;
         this.financialYears = resp.data.financialYears;
@@ -313,16 +330,10 @@ export class AssessmentCriteriaComponent implements OnInit {
     this.toastService.error("Error loading Assessment Criteria");
   }
 
-  finishAndQuit() {
-    this.router.navigate(["/assessment-home"])
-  }
-
-  loadSubCriteria(item: any) {
-    this.casAssessmentSubCriteriaService.query({
-      per_page: this.per_page,
-      page: this.page,
-      cas_assessment_criteria_option_id:item.id
-    }).subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) => ( this.assessmentSubCriteriaOptions = resp.data));
+  loadSubCriteria(id: any) {
+    this.casAssessmentSubCriteriaService.getSubCriteriaWithScores(
+      id,this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id
+    ).subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) => ( this.assessmentSubCriteriaOptions = resp.data));
 
   }
 
@@ -336,11 +347,11 @@ export class AssessmentCriteriaComponent implements OnInit {
     }
     const ref = this.dialogService.open(SetScoresComponent, {
        data,
-      header: "Save Scores",
+      header: "Save/Update Scores",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadPage(this.page);
+        this.loadSubCriteria(result);
       }
     });
   }
@@ -355,11 +366,11 @@ export class AssessmentCriteriaComponent implements OnInit {
     }
     const ref = this.dialogService.open(SetCommentComponent, {
        data,
-      header: "Comments",
+      header: "Save/Update Comments",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadPage(this.page);
+        // this.loadPage(this.page);
       }
     });
   }
@@ -369,14 +380,120 @@ export class AssessmentCriteriaComponent implements OnInit {
   }
 
   getAssessmentReport() {
-
+    this.assessmentCriteriaService.getAssessmentReport(this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id).subscribe(resp =>{
+      let file = new Blob([resp], { type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank");
+    });
   }
   /**
    *
    * @param event adminhierarchyId or Ids
    */
   onAdminHierarchySelection(event: any): void {
+
     this.admin_hierarchy_id = event.id;
     this.admin_hierarchy_position =event.admin_hierarchy_position;
+  }
+
+  /**
+   *
+   * @param event adminhierarchyId & cas assessment criteria Ids
+   */
+  confirmPlan() {
+    this.confirmationService.confirm({
+      header: 'Confirm Plan',
+      message: 'Are you sure that you want to perform this action?. This action cannot be undone',
+      accept: () => {
+        let data = {
+          cas_assessment_round_id: this.cas_assessment_round_id,
+          financial_year_id: this.financial_year_id,
+          admin_hierarchy_level_id: this.admin_hierarchy_level_id,
+          admin_hierarchy_id: this.admin_hierarchy_id,
+          cas_assessment_category_version_id:this.cas_assessment_category_version_id,
+          remarks : this.commentForm.value.remarks
+        }
+        if (this.commentForm.invalid) {
+          this.formError = true;
+          this.toastService.error('Please write your remarks before confirming assessment plan');
+          return;
+        }
+        this.casAssessmentSubCriteriaService.createGeneralComment(data).subscribe(resp => {
+
+        });
+        this.router.navigate(["/assessment-home"])
+        // if(this.dialogConfig.data.data.cas_assessment_result_comment_id){
+        //   this.isSaving = true;
+        //   this.casAssessmentResultsService.updateComment(data).subscribe(resp => {
+        //     this.toastService.info(resp.message);
+        //     this.dialogRef.close(true);
+        //     this.isSaving = false;
+        //   });
+        // } else {
+        //   this.isSaving = true;
+        //   this.casAssessmentResultsService.createComment(data).subscribe(resp => {
+        //     this.toastService.info(resp.message);
+        //     this.dialogRef.close(true);
+        //     this.isSaving = false;
+        //   });
+        // }
+      }
+    });
+  }
+  returnPlan() {
+    this.confirmationService.confirm({
+      header: 'Return Plan',
+      message: 'Are you sure that you want to perform this action?. This action cannot be undone',
+      accept: () => {
+        //Actual logic to perform a confirmation
+        let data = {
+          cas_assessment_round_id: this.cas_assessment_round_id,
+          financial_year_id: this.financial_year_id,
+          admin_hierarchy_level_id: this.admin_hierarchy_level_id,
+          admin_hierarchy_id: this.admin_hierarchy_id,
+          cas_assessment_category_version_id:this.cas_assessment_category_version_id,
+          remarks : this.commentForm.value.remarks
+        }
+        if (this.commentForm.invalid) {
+          this.formError = true;
+          this.toastService.error('Please write your remarks before returning assessment plan');
+          return;
+        }
+        this.casAssessmentSubCriteriaService.createGeneralComment(data).subscribe(resp => {
+          this.router.navigate(["/assessment-home"])
+        });
+      }
+    });
+
+  }
+
+  finishAndQuit() {
+    this.confirmationService.confirm({
+      header: 'Confirm Finish and Quit',
+      message: 'All your work will be saved. Continue?',
+      accept: () => {
+        //Actual logic to perform a confirmation
+        let data = {
+          cas_assessment_round_id: this.cas_assessment_round_id,
+          financial_year_id: this.financial_year_id,
+          admin_hierarchy_level_id: this.admin_hierarchy_level_id,
+          admin_hierarchy_id: this.admin_hierarchy_id,
+          cas_assessment_category_version_id:this.cas_assessment_category_version_id,
+          remarks : this.commentForm.value.remarks
+        }
+        if (this.commentForm.invalid) {
+          this.formError = true;
+          this.toastService.error('Please write your remarks before quiting');
+          return;
+        }
+        this.casAssessmentSubCriteriaService.createGeneralComment(data).subscribe(resp => {
+          this.router.navigate(["/assessment-home"])
+        });
+      }
+    });
+  }
+
+  forwardPlan() {
+
   }
 }

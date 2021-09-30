@@ -5,7 +5,7 @@ export class Role {
     public id?: number,
     public name?: string,
     public active?: string,
-    public admin_hierarchy_level_id?: number,
+    public admin_hierarchy_position?: number,
     public level?: AdminHierarchyLevel,
   ) {
   }

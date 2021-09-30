@@ -34,7 +34,7 @@ export class RoleUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    admin_hierarchy_level_id: [null, [Validators.required]],
+    admin_hierarchy_position: [null, [Validators.required]],
   });
 
   constructor(
@@ -111,7 +111,7 @@ export class RoleUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: role.id,
       name: role.name,
-      admin_hierarchy_level_id: role.admin_hierarchy_level_id,
+      admin_hierarchy_position: role.admin_hierarchy_position,
     });
   }
 
@@ -124,7 +124,7 @@ export class RoleUpdateComponent implements OnInit {
       ...new Role(),
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
-      admin_hierarchy_level_id: this.editForm.get(["admin_hierarchy_level_id"])!.value,
+      admin_hierarchy_position: this.editForm.get(["admin_hierarchy_position"])!.value,
     };
   }
 }

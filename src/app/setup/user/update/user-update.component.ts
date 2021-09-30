@@ -215,7 +215,7 @@ export class UserUpdateComponent implements OnInit {
     this.roleService
       .query(
         {columns: ['id', 'name'],
-        admin_hierarchy_level_id:adminHierarchy.admin_hierarchy_position
+          admin_hierarchy_position:adminHierarchy.admin_hierarchy_position
       })
       .subscribe(
         (resp: CustomResponse<Role[]>) => (this.roles = resp.data)

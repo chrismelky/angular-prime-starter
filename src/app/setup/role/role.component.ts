@@ -25,6 +25,8 @@ import {Role} from "./role.model";
 import {RoleService} from "./role.service";
 import {RoleUpdateComponent} from "./update/role-update.component";
 import {RolePermissionComponent} from "./role-permission/role-permission.component";
+import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
+import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
 
 @Component({
   selector: "app-role",
@@ -51,7 +53,6 @@ export class RoleComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-
   //Mandatory filter
 
   constructor(
@@ -61,7 +62,7 @@ export class RoleComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
   ) {
   }
 
@@ -240,7 +241,7 @@ export class RoleComponent implements OnInit {
   }
 
   /**
-   * When error on loading data set data to empt and resert page to load
+   * When error on loading data set data to empty and reset page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));

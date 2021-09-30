@@ -213,6 +213,29 @@
               >
         </span>
             </div>
+
+            <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
+                                    (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
+        </span>
+              <span
+                *ngIf="
+            editForm.get('admin_hierarchy_id')!.invalid &&
+            (editForm.get('admin_hierarchy_id')!.dirty ||
+              editForm.get('admin_hierarchy_id')!.touched ||
+              formError)
+          "
+              >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
+          >Admin Hierarchy is required.</small
+          >
+        </span>
+            </div>
+          </div>
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-multiSelect
@@ -236,28 +259,6 @@
               formError)
           "
               >
-        </span>
-            </div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-            <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
-                                    (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('admin_hierarchy_id')!.invalid &&
-            (editForm.get('admin_hierarchy_id')!.dirty ||
-              editForm.get('admin_hierarchy_id')!.touched ||
-              formError)
-          "
-              >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
-          >Admin Hierarchy is required.</small
-          >
         </span>
             </div>
           </div>

@@ -5,23 +5,25 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
-import {AdminHierarchyLevel} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchyLevelService} from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
-import {FacilityType} from "../facility-type.model";
-import {FacilityTypeService} from "../facility-type.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
+import { FacilityType } from '../facility-type.model';
+import { FacilityTypeService } from '../facility-type.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Section } from '../../section/section.model';
+import { SectionService } from '../../section/section.service';
 
 @Component({
-  selector: "app-facility-type-update",
-  templateUrl: "./facility-type-update.component.html",
+  selector: 'app-facility-type-update',
+  templateUrl: './facility-type-update.component.html',
 })
 export class FacilityTypeUpdateComponent implements OnInit {
   isSaving = false;
@@ -29,6 +31,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
   errors = [];
 
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
+  sections?: Section[] = [];
   lgaLevels?: PlanrepEnum[] = [];
 
   /**
@@ -40,6 +43,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
     name: ['', [Validators.required]],
     lga_level: ['LLG', [Validators.required]],
     admin_hierarchy_level_id: [null, [Validators.required]],
+    sections: [this.fb.array([]), [Validators.required]],
   });
 
   constructor(
@@ -49,18 +53,21 @@ export class FacilityTypeUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected enumService: EnumService
-  ) {
-  }
+    protected enumService: EnumService,
+    protected sectionService: SectionService
+  ) {}
 
   ngOnInit(): void {
     this.adminHierarchyLevelService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
-    this.lgaLevels = this.enumService.get("lgaLevels");
+    this.sectionService
+      .costCentreSections()
+      .subscribe((resp) => (this.sections = resp.data));
+    this.lgaLevels = this.enumService.get('lgaLevels');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -109,8 +116,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -127,6 +133,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
       name: facilityType.name,
       lga_level: facilityType.lga_level,
       admin_hierarchy_level_id: facilityType.admin_hierarchy_level_id,
+      sections: facilityType.sections,
     });
   }
 
@@ -137,11 +144,13 @@ export class FacilityTypeUpdateComponent implements OnInit {
   protected createFromForm(): FacilityType {
     return {
       ...new FacilityType(),
-      id: this.editForm.get(["id"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      lga_level: this.editForm.get(["lga_level"])!.value,
-      admin_hierarchy_level_id: this.editForm.get(["admin_hierarchy_level_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      lga_level: this.editForm.get(['lga_level'])!.value,
+      admin_hierarchy_level_id: this.editForm.get(['admin_hierarchy_level_id'])!
+        .value,
+      sections: this.editForm.get(['sections'])!.value,
     };
   }
 }

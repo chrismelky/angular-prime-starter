@@ -650,8 +650,22 @@ const routes: Routes = [
         path: "admin-hierarchy-cost-centres",
         loadChildren: () =>
           import(
-            "../planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centres.module"
-          ).then((m) => m.AdminHierarchyCostCentresModule),
+            "../planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.module"
+          ).then((m) => m.AdminHierarchyCostCentreModule),
+      },
+      {
+        path: "activity",
+        loadChildren: () =>
+          import("../planning/activity/activity.module").then(
+            (m) => m.ActivityModule
+          ),
+      },
+      {
+        path: "responsible-person",
+        loadChildren: () =>
+          import(
+            "../planning/responsible-person/responsible-person.module"
+          ).then((m) => m.ResponsiblePersonModule),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

@@ -1,0 +1,342 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <!-- Description field -->
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <textarea
+            id="description"
+            formControlName="description"
+            [rows]="2"
+            [cols]="30"
+            pInputTextarea
+            [autoResize]="true"
+          ></textarea>
+          <label for="description">Description </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('description')!.invalid &&
+            (editForm.get('description')!.dirty ||
+              editForm.get('description')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('description')?.errors?.required"
+            >Description is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+        <!-- Budget class -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-cascadeSelect
+              [style]="{ minWidth: '100%' }"
+              inputId="budget_class_id"
+              formControlName="budget_class_id"
+              [options]="budgetClasses!"
+              optionValue="id"
+              optionLabel="name"
+              optionGroupLabel="name"
+              class="p-inputtext-sm"
+              [optionGroupChildren]="['children']"
+            ></p-cascadeSelect>
+            <label for="budget_class_id">Budget Class </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('budget_class_id')!.invalid &&
+              (editForm.get('budget_class_id')!.dirty ||
+                editForm.get('budget_class_id')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('budget_class_id')?.errors?.required"
+              >Budget Class is required.</small
+            >
+          </span>
+        </div>
+        <!-- Activity type -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              #activityType
+              id="activity_type_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              (onChange)="loadActivityTaskNature(activityType.value)"
+              [options]="activityTypes!"
+              formControlName="activity_type_id"
+            ></p-dropdown>
+            <label for="activity_type_id">Activity Type </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('activity_type_id')!.invalid &&
+              (editForm.get('activity_type_id')!.dirty ||
+                editForm.get('activity_type_id')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('activity_type_id')?.errors?.required"
+              >Activity Type is required.</small
+            >
+          </span>
+        </div>
+        <!-- Activity task nature -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="activity_task_nature_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="activityTaskNatures!"
+              formControlName="activity_task_nature_id"
+            ></p-dropdown>
+            <label for="activity_task_nature_id">Activity Task Nature </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('activity_task_nature_id')!.invalid &&
+              (editForm.get('activity_task_nature_id')!.dirty ||
+                editForm.get('activity_task_nature_id')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('activity_task_nature_id')?.errors?.required"
+              >Activity Task Nature is required.</small
+            >
+          </span>
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <!-- Project -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="project_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="projects!"
+              formControlName="project_id"
+            ></p-dropdown>
+            <label for="project_id">Project </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('project_id')!.invalid &&
+              (editForm.get('project_id')!.dirty ||
+                editForm.get('project_id')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('project_id')?.errors?.required"
+              >Project is required.</small
+            >
+          </span>
+        </div>
+
+        <!-- Responsible perdion -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="responsible_person_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="responsiblePeople!"
+              formControlName="responsible_person_id"
+            ></p-dropdown>
+            <label for="responsible_person_id">Responsible Person </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('responsible_person_id')!.invalid &&
+              (editForm.get('responsible_person_id')!.dirty ||
+                editForm.get('responsible_person_id')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('responsible_person_id')?.errors?.required"
+              >Responsible Person is required.</small
+            >
+          </span>
+        </div>
+      </div>
+      <!-- Indicator field -->
+      <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="indicator" formControlName="indicator" pInputText />
+            <label for="indicator">Indicator </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('indicator')!.invalid &&
+              (editForm.get('indicator')!.dirty ||
+                editForm.get('indicator')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
+        <!-- Indicator value field -->
+        <div class="p-field p-col-12 p-md-4">
+          <span class="p-float-label">
+            <input
+              id="indicator_value"
+              type="text"
+              pInputText
+              formControlName="indicator_value"
+            />
+            <label for="indicator_value">Indicator Value </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('indicator_value')!.invalid &&
+              (editForm.get('indicator_value')!.dirty ||
+                editForm.get('indicator_value')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
+        <!-- Period Onde field -->
+        <p-checkbox
+          name="q1"
+          [value]="true"
+          label="Q1"
+          formControlName="period_one"
+        ></p-checkbox>
+        <p-checkbox
+          name="q2"
+          [value]="true"
+          label="Q2"
+          formControlName="period_two"
+        ></p-checkbox>
+        <p-checkbox
+          name="q3"
+          [value]="true"
+          label="Q3"
+          formControlName="period_three"
+        ></p-checkbox>
+        <p-checkbox
+          name="q4"
+          [value]="true"
+          label="Q4"
+          formControlName="period_four"
+        ></p-checkbox>
+      </div>
+
+      <!-- Intervention -->
+      <!-- <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="intervention_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="interventions!"
+            formControlName="intervention_id"
+          ></p-dropdown>
+          <label for="intervention_id">Intervention </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('intervention_id')!.invalid &&
+            (editForm.get('intervention_id')!.dirty ||
+              editForm.get('intervention_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('intervention_id')?.errors?.required"
+            >Intervention is required.</small
+          >
+        </span>
+      </div> -->
+      <!-- Sector problem -->
+      <!-- <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="sector_problem_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="sectorProblems!"
+            formControlName="sector_problem_id"
+          ></p-dropdown>
+          <label for="sector_problem_id">Sector Problem </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sector_problem_id')!.invalid &&
+            (editForm.get('sector_problem_id')!.dirty ||
+              editForm.get('sector_problem_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('sector_problem_id')?.errors?.required"
+            >Sector Problem is required.</small
+          >
+        </span>
+      </div> -->
+
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

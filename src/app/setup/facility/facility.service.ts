@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 
 import { createRequestOption } from '../../utils/request-util';
 import { CustomResponse } from '../../utils/custom-response';
-import { Facility } from './facility.model';
+import { Facility, FacilityView } from './facility.model';
 
 @Injectable({ providedIn: 'root' })
 export class FacilityService {
@@ -39,6 +39,21 @@ export class FacilityService {
     return this.http.get<CustomResponse<Facility[]>>(this.resourceUrl, {
       params: options,
     });
+  }
+
+  planning(
+    parentName: string,
+    parentId: number,
+    sectionId: number,
+    req?: any
+  ): Observable<CustomResponse<FacilityView[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<FacilityView[]>>(
+      `${this.resourceUrl}/planning/${parentName}/${parentId}/${sectionId}`,
+      {
+        params: options,
+      }
+    );
   }
 
   search(

@@ -31,7 +31,7 @@ body {
     background-color: transparent;
 
     .p-menuitem-icon {
-      font-size: 17px;
+      font-size: 18px;
       font-weight: 500;
       color: $navIcon;
     }
@@ -462,6 +462,12 @@ i.clear {
 
 }
 
+.p-dialog-mask {
+  align-items:flex-start !important;
+  padding-top: 64px;
+  padding-left: 256px;
+}
+
 .mat-card-header {
   padding: 4px 24px 4px 0px;
 }
@@ -469,6 +475,19 @@ i.clear {
 .p-inputtext, .p-float-label {
   width: 100%;
   font-size: 0.8125rem;
+}
+
+.p-inputtext-sm .p-inputtext, .p-inputtext.p-inputtext-sm {
+  font-size: 0.8125rem;
+}
+
+.p-inputtext.p-inputtext-sm {
+  padding: 0.75rem
+}
+
+.p-inputtext-sm .p-inputtext,
+.p-cascadeselect .p-cascadeselect-label {
+  padding: 0.65625rem 0.65625rem;
 }
 
 .mat-dialog-content {

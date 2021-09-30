@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { BudgetClass } from "./budget-class.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { BudgetClass } from './budget-class.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class BudgetClassService {
-  public resourceUrl = "api/budget_classes";
+  public resourceUrl = 'api/budget_classes';
 
   constructor(protected http: HttpClient) {}
 
@@ -50,8 +50,15 @@ export class BudgetClassService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  getParentChild():Observable<CustomResponse<any>>{
-    return this.http.get<CustomResponse<any[]>>(`${this.resourceUrl}/get_parent_child`);
+  getParentChild(): Observable<CustomResponse<any>> {
+    return this.http.get<CustomResponse<any[]>>(
+      `${this.resourceUrl}/get_parent_child`
+    );
   }
 
+  tree(): Observable<CustomResponse<BudgetClass[]>> {
+    return this.http.get<CustomResponse<BudgetClass[]>>(
+      `${this.resourceUrl}/tree`
+    );
+  }
 }

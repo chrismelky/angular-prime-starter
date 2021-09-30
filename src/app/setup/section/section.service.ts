@@ -52,6 +52,12 @@ export class SectionService {
     );
   }
 
+  costCentreSections(): Observable<CustomResponse<Section[]>> {
+    return this.http.get<CustomResponse<Section[]>>(
+      `${this.resourceUrl}/cost-centre-sections`
+    );
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

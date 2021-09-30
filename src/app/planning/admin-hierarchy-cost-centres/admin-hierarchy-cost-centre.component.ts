@@ -20,22 +20,17 @@ import {
 } from '../../config/pagination.constants';
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
-
-import { AdminHierarchyCostCentres } from './admin-hierarchy-cost-centres.model';
-import { AdminHierarchyCostCentresService } from './admin-hierarchy-cost-centres.service';
+import { AdminHierarchyCostCentre } from './admin-hierarchy-cost-centre.model';
+import { AdminHierarchyCostCentreService } from './admin-hierarchy-cost-centre.service';
 
 @Component({
-  selector: 'app-admin-hierarchy-cost-centres',
-  templateUrl: './admin-hierarchy-cost-centres.component.html',
+  selector: 'app-admin-hierarchy-cost-centre',
+  templateUrl: './admin-hierarchy-cost-centre.component.html',
 })
-export class AdminHierarchyCostCentresComponent implements OnInit {
+export class AdminHierarchyCostCentreComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
-  adminHierarchyCostCentres?: AdminHierarchyCostCentres[] = [];
+  adminHierarchyCostCentres?: AdminHierarchyCostCentre[] = [];
 
   isLoading = false;
   page?: number = 1;
@@ -51,7 +46,7 @@ export class AdminHierarchyCostCentresComponent implements OnInit {
   budget_type?: string;
 
   constructor(
-    protected adminHierarchyCostCentresService: AdminHierarchyCostCentresService,
+    protected adminHierarchyCostCentresService: AdminHierarchyCostCentreService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -85,7 +80,7 @@ export class AdminHierarchyCostCentresComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<AdminHierarchyCostCentres[]>) => {
+        (res: CustomResponse<AdminHierarchyCostCentre[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -190,7 +185,7 @@ export class AdminHierarchyCostCentresComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<AdminHierarchyCostCentres[]> | null,
+    resp: CustomResponse<AdminHierarchyCostCentre[]> | null,
     page: number,
     navigate: boolean
   ): void {

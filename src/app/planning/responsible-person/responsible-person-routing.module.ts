@@ -6,16 +6,16 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AdminHierarchyCostCentresComponent } from './admin-hierarchy-cost-centres.component';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { ResponsiblePersonComponent } from "./responsible-person.component";
 
 const routes: Routes = [
   {
-    path: ':budgetType',
-    component: AdminHierarchyCostCentresComponent,
+    path: "",
+    component: ResponsiblePersonComponent,
     data: {
-      defaultSort: 'id:asc',
+      defaultSort: "id:asc",
     },
     //canActivate: [UserRouteAccessService],
   },
@@ -25,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdminHierarchyCostCentresRoutingModule {}
+export class ResponsiblePersonRoutingModule {}

@@ -7,14 +7,14 @@
  */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminHierarchyCostCentresRoutingModule } from './admin-hierarchy-cost-centres-routing.module';
+import { AdminHierarchyCostCentreRoutingModule } from './admin-hierarchy-cost-centre-routing.module';
 
 import { SharedModule } from '../../shared/shared.module';
-import { AdminHierarchyCostCentresComponent } from './admin-hierarchy-cost-centres.component';
+import { AdminHierarchyCostCentreComponent } from './admin-hierarchy-cost-centre.component';
 
 @NgModule({
-  imports: [SharedModule, CommonModule, AdminHierarchyCostCentresRoutingModule],
-  declarations: [AdminHierarchyCostCentresComponent],
+  imports: [SharedModule, CommonModule, AdminHierarchyCostCentreRoutingModule],
+  declarations: [AdminHierarchyCostCentreComponent],
   entryComponents: [],
 })
-export class AdminHierarchyCostCentresModule {}
+export class AdminHierarchyCostCentreModule {}

@@ -108,15 +108,21 @@
           </div>
         </div>
         <span fxFlex></span>
-        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="4px">
-          <span fxFlex></span>
+        <div
+          fxLayout="row"
+          fxLayoutAlign="space-between center"
+          fxLayoutGap="10px"
+        >
           <button
+            fxFlex
             pButton
             class="p-button p-button-success p-button-outlined p-button-sm"
             label="Plan"
             icon="pi pi-list"
+            [routerLink]="['/activity', budget_type, c.id]"
           ></button>
           <button
+            fxFlex
             pButton
             class="p-button p-button-info p-button-outlined p-button-sm"
             label="Budget"

@@ -38,6 +38,8 @@ import { MessageModule } from 'primeng/message';
 import { SplitterModule } from 'primeng/splitter';
 import { FocusTrapModule } from 'primeng/focustrap';
 import { TagModule } from 'primeng/tag';
+import { ListboxModule } from 'primeng/listbox';
+import { CascadeSelectModule } from 'primeng/cascadeselect';
 
 @NgModule({
   declarations: [],
@@ -81,6 +83,8 @@ import { TagModule } from 'primeng/tag';
     SplitterModule,
     FocusTrapModule,
     TagModule,
+    ListboxModule,
+    CascadeSelectModule,
   ],
 })
 export class SharedPrimengModule {}

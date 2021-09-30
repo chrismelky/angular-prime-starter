@@ -67,12 +67,11 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="roles?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'admin_hierarchy_level_id'">
+            Level <p-sortIcon [field]="'admin_hierarchy_level_id'"></p-sortIcon>
           </th>
 <!--          <th>Rights</th>-->
           <th style="flex: 0 0 2 rem">Action</th>
@@ -82,6 +81,9 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            {{ rowData.level?.name }}
           </td>
 <!--          <td>-->
 

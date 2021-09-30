@@ -49,4 +49,8 @@ export class MyAssessmentService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  getCouncils(admin_id: number, fy_id: number, round_id: number, version_id: number):  Observable<CustomResponse<MyAssessment[]>> {
+    return this.http.get<CustomResponse<MyAssessment[]>>(`${this.resourceUrl}/${admin_id}/${fy_id}/${round_id}/${version_id}`);
+  }
 }

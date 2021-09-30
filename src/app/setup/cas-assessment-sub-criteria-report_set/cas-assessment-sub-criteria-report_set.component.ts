@@ -87,13 +87,6 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
         (resp: CustomResponse<CasPlanContent[]>) =>
           (this.casPlanContents = resp.data)
       );
-
-    this.casAssessmentSubCriteriaOptionService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) =>
-          (this.casAssessmentSubCriteriaOptions = resp.data)
-      );
     this.handleNavigation();
   }
 
@@ -328,9 +321,16 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
    */
   fetchSubCriteria(item: any) {
     if (item) {
-      this.casAssessmentSubCriteriaOptionService.query({cas_assessment_criteria_option_id: item.value})
-        .subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>)=>
-          (this.casAssessmentSubCriteriaOptions = resp.data));
+      this.casAssessmentSubCriteriaOptionService
+        .query({
+          perPage: this.per_page,
+          page: this.page,
+          cas_assessment_criteria_option_id: item.value
+        })
+        .subscribe(
+          (resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) =>
+            (this.casAssessmentSubCriteriaOptions = resp.data)
+        );
     }
   }
 }

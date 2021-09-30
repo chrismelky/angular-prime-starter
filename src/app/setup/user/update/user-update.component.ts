@@ -81,11 +81,6 @@ export class UserUpdateComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
-    this.roleService
-      .query({columns: ['id', 'name']})
-      .subscribe(
-        (resp: CustomResponse<Role[]>) => (this.roles = resp.data)
-      );
     this.adminHierarchyService
       .query({columns: ['id', 'name']})
       .subscribe(
@@ -217,5 +212,13 @@ export class UserUpdateComponent implements OnInit {
 
   onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
     this.editForm.get('admin_hierarchy_id')?.setValue(adminHierarchy.id);
+    this.roleService
+      .query(
+        {columns: ['id', 'name'],
+        admin_hierarchy_level_id:adminHierarchy.admin_hierarchy_position
+      })
+      .subscribe(
+        (resp: CustomResponse<Role[]>) => (this.roles = resp.data)
+      );
   }
 }

@@ -83,10 +83,13 @@ export class AssessmentCriteriaComponent implements OnInit {
   financial_year_id!: number;
   cas_assessment_round_id!: number;
   cas_assessment_category_version_id: number;
-  admin_hierarchy_position!:number;
   admin_hierarchy_level_id!: number | undefined;
   currentUser: User;
   formError = false;
+  admin_hierarchy_position!: number;
+  position3 = false;
+  position2 = false;
+  position1 = false;
 
   constructor(
     protected assessmentCriteriaService: AssessmentCriteriaService,
@@ -96,6 +99,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected fb: FormBuilder,
+    protected casAssessmentResultsService: AssessmentCriteriaService,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
@@ -111,11 +115,21 @@ export class AssessmentCriteriaComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 3){
+      this.position3 = true;
+    }
+    if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 2){
+      this.position2 = true;
+    }
+    if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 1){
+      this.position1 = true;
+    }
     this.assessmentCriteriaService.find(this.cas_assessment_category_version_id)
       .subscribe((resp:CustomResponse<AssessmentCriteria[]>) => {
         this.assessmentCriteriaData = resp.data;
       });
-    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,this.cas_assessment_category_version_id)
+    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,
+      this.cas_assessment_category_version_id,this.currentUser.id,this.currentUser.admin_hierarchy?.admin_hierarchy_position)
       .subscribe((resp) => {
         this.adminHierarchies = resp.data.adminHierarchies;
         this.financialYears = resp.data.financialYears;
@@ -332,7 +346,8 @@ export class AssessmentCriteriaComponent implements OnInit {
 
   loadSubCriteria(id: any) {
     this.casAssessmentSubCriteriaService.getSubCriteriaWithScores(
-      id,this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id
+      id,this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id,
+      this.admin_hierarchy_level_id,this.cas_assessment_category_version_id
     ).subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) => ( this.assessmentSubCriteriaOptions = resp.data));
 
   }
@@ -411,32 +426,15 @@ export class AssessmentCriteriaComponent implements OnInit {
           admin_hierarchy_level_id: this.admin_hierarchy_level_id,
           admin_hierarchy_id: this.admin_hierarchy_id,
           cas_assessment_category_version_id:this.cas_assessment_category_version_id,
-          remarks : this.commentForm.value.remarks
-        }
+          remarks : this.commentForm.value.remarks,
+          is_confirmed : true,
+          }
         if (this.commentForm.invalid) {
           this.formError = true;
           this.toastService.error('Please write your remarks before confirming assessment plan');
           return;
         }
-        this.casAssessmentSubCriteriaService.createGeneralComment(data).subscribe(resp => {
-
-        });
-        this.router.navigate(["/assessment-home"])
-        // if(this.dialogConfig.data.data.cas_assessment_result_comment_id){
-        //   this.isSaving = true;
-        //   this.casAssessmentResultsService.updateComment(data).subscribe(resp => {
-        //     this.toastService.info(resp.message);
-        //     this.dialogRef.close(true);
-        //     this.isSaving = false;
-        //   });
-        // } else {
-        //   this.isSaving = true;
-        //   this.casAssessmentResultsService.createComment(data).subscribe(resp => {
-        //     this.toastService.info(resp.message);
-        //     this.dialogRef.close(true);
-        //     this.isSaving = false;
-        //   });
-        // }
+        this.saveOrUpdateComment(data);
       }
     });
   }
@@ -447,21 +445,15 @@ export class AssessmentCriteriaComponent implements OnInit {
       accept: () => {
         //Actual logic to perform a confirmation
         let data = {
-          cas_assessment_round_id: this.cas_assessment_round_id,
-          financial_year_id: this.financial_year_id,
-          admin_hierarchy_level_id: this.admin_hierarchy_level_id,
+          return_from: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+          return_to:this.currentUser.admin_hierarchy?.admin_hierarchy_position! + 1,
           admin_hierarchy_id: this.admin_hierarchy_id,
           cas_assessment_category_version_id:this.cas_assessment_category_version_id,
-          remarks : this.commentForm.value.remarks
+          cas_assessment_round_id: this.cas_assessment_round_id,
+          financial_year_id: this.financial_year_id,
+          admin_hierarchy_level_id: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
         }
-        if (this.commentForm.invalid) {
-          this.formError = true;
-          this.toastService.error('Please write your remarks before returning assessment plan');
-          return;
-        }
-        this.casAssessmentSubCriteriaService.createGeneralComment(data).subscribe(resp => {
-          this.router.navigate(["/assessment-home"])
-        });
+        this.updatePlan(data);
       }
     });
 
@@ -473,27 +465,51 @@ export class AssessmentCriteriaComponent implements OnInit {
       message: 'All your work will be saved. Continue?',
       accept: () => {
         //Actual logic to perform a confirmation
-        let data = {
-          cas_assessment_round_id: this.cas_assessment_round_id,
-          financial_year_id: this.financial_year_id,
-          admin_hierarchy_level_id: this.admin_hierarchy_level_id,
-          admin_hierarchy_id: this.admin_hierarchy_id,
-          cas_assessment_category_version_id:this.cas_assessment_category_version_id,
-          remarks : this.commentForm.value.remarks
-        }
-        if (this.commentForm.invalid) {
-          this.formError = true;
-          this.toastService.error('Please write your remarks before quiting');
-          return;
-        }
-        this.casAssessmentSubCriteriaService.createGeneralComment(data).subscribe(resp => {
-          this.router.navigate(["/assessment-home"])
-        });
+        this.router.navigate(["/assessment-home"])
       }
     });
   }
 
   forwardPlan() {
+  let data = {
+    forward_from: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+    forward_to:this.currentUser.admin_hierarchy?.admin_hierarchy_position! - 1,
+    admin_hierarchy_id: this.admin_hierarchy_id,
+    cas_assessment_category_version_id:this.cas_assessment_category_version_id,
+    cas_assessment_round_id: this.cas_assessment_round_id,
+    financial_year_id: this.financial_year_id,
+    admin_hierarchy_level_id: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+  }
+  this.updatePlan(data);
+  }
 
+  saveOrUpdateComment(data: any){
+
+    // if(this.dialogConfig.data.data.cas_assessment_result_comment_id){
+    //   this.isSaving = true;
+    //   this.casAssessmentResultsService.updateComment(data).subscribe(resp => {
+    //     this.toastService.info(resp.message);
+    //     this.dialogRef.close(true);
+    //     this.isSaving = false;
+    //   });
+    // } else {
+    //   this.isSaving = true;
+    //   this.casAssessmentResultsService.createComment(data).subscribe(resp => {
+    //     this.toastService.info(resp.message);
+    //     this.dialogRef.close(true);
+    //     this.isSaving = false;
+    //   });
+    // }
+
+    this.casAssessmentSubCriteriaService.createGeneralComment(data).subscribe(resp => {
+      this.toastService.info(resp.message);
+    });
+  }
+
+  updatePlan(data : any) {
+    this.casAssessmentResultsService.updatePlan(data).subscribe(resp => {
+      this.toastService.info(resp.message);
+      this.router.navigate(["/assessment-home"])
+    });
   }
 }

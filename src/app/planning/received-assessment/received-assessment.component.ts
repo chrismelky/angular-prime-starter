@@ -94,7 +94,8 @@ export class ReceivedAssessmentComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,this.cas_assessment_category_version_id)
+    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id,
+      this.financial_year_id,this.cas_assessment_category_version_id,this.currentUser.id,this.currentUser.admin_hierarchy?.admin_hierarchy_position)
       .subscribe((resp) => {
         this.adminHierarchies = resp.data.adminHierarchies;
         this.financialYears = resp.data.financialYears;

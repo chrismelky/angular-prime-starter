@@ -181,9 +181,6 @@
           novalidate
           (ngSubmit)="finishAndQuit()"
           [formGroup]="commentForm">
-<!--          <textarea rows="2" cols="20" formControlName="remarks" pInputTextarea [autoResize]="true">-->
-<!--            -->
-<!--          </textarea>-->
           <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <textarea
@@ -211,17 +208,17 @@
         </form>
       </div>
       <div fxFlex="30%">
-        <button pButton type="button" class="p-button-text p-button-raised" label="Forward" [disabled]="admin_hierarchy_position !=3"
-                style="margin-left: 16px" icon="pi pi-forward" (click)="forwardPlan()" fxFlex="20%"
+        <button pButton type="button" class="p-button-text p-button-raised" label="Forward" *ngIf="position3 || position2"
+                style="margin-left: 16px" icon="pi pi-forward" (click)="forwardPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3"
         ></button>
-        <button pButton type="button" class="p-button-text p-button-raised" label="Return" [disabled]="admin_hierarchy_position !=3"
-                style="margin-left: 16px" icon="pi pi-reply" (click)="returnPlan()" fxFlex="20%"
+        <button pButton type="button" class="p-button-text p-button-raised" label="Return" *ngIf="position1 || position2"
+                style="margin-left: 16px" icon="pi pi-reply" (click)="returnPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3"
         ></button>
-        <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" [disabled]="admin_hierarchy_position !=3"
-                style="margin-left: 16px" icon="pi pi-check" (click)="confirmPlan()" fxFlex="25%"
+        <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" *ngIf="position1"
+                style="margin-left: 16px" icon="pi pi-check" (click)="confirmPlan()" fxFlex="25%" [disabled]="admin_hierarchy_position != 3"
         ></button>
-        <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit" [disabled]="admin_hierarchy_position !=3"
-                style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="35%"
+        <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit"
+                style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="35%" [disabled]="admin_hierarchy_position != 3"
         ></button>
       </div>
 

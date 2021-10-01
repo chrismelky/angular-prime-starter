@@ -1,5 +1,5 @@
-import {Section} from "../section/section.model";
-import {SectionLevel} from "../section-level/section-level.model";
+import {Section} from "../../setup/section/section.model";
+import {SectionLevel} from "../../setup/section-level/section-level.model";
 
 export class AdminHierarchyCeiling {
   constructor(

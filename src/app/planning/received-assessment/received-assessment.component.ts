@@ -31,6 +31,7 @@ import {User} from "../../setup/user/user.model";
 import {UserService} from "../../setup/user/user.service";
 import {AssessmentCriteriaService} from "../assessment-criteria/assessment-criteria.service";
 import {AdminHierarchy} from "../../setup/admin-hierarchy/admin-hierarchy.model";
+import {MyAssessmentService} from "../my-assessment/my-assessment.service";
 
 @Component({
   selector: "app-received-assessment",
@@ -44,7 +45,15 @@ export class ReceivedAssessmentComponent implements OnInit {
   financialYears?: FinancialYear[] = [];
   casAssessmentRounds?: CasAssessmentRound[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
-  cols = []; //Table display columns
+  cols = [
+    { field: 'council', header: 'Council' },
+    { field: 'round', header: 'Round' },
+    { field: 'category', header: 'Category' },
+    { field: 'minimum_passmark', header: 'Minimum Passmark' },
+    { field: 'highest_score', header: 'Highest Score' },
+    { field: 'score', header: 'Score' },
+    { field: 'pct', header: '%' }
+  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -70,6 +79,7 @@ export class ReceivedAssessmentComponent implements OnInit {
     protected financialYearService: FinancialYearService,
     protected actRoute: ActivatedRoute,
     protected router: Router,
+    protected myAssessmentService: MyAssessmentService,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
@@ -293,5 +303,20 @@ export class ReceivedAssessmentComponent implements OnInit {
 
   finishAndQuit() {
     this.router.navigate(["/assessment-home"])
+  }
+  loadCouncils(adm: any) {
+    this.myAssessmentService.getCouncils(adm.id,this.financial_year_id,this.cas_assessment_round_id,this.cas_assessment_category_version_id)
+      .subscribe(resp => {
+        this.receivedAssessments = resp.data;
+      });
+  }
+
+  getReport(rowData: any) {
+    this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,rowData.financial_year_id,rowData.round_id,rowData.version_id)
+      .subscribe(resp =>{
+        let file = new Blob([resp], { type: 'application/pdf'});
+        let fileURL = URL.createObjectURL(file);
+        window.open(fileURL,"_blank");
+      })
   }
 }

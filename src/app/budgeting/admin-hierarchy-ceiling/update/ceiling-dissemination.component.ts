@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {AdminHierarchyCeiling} from "../admin-hierarchy-ceiling.model";
-import {CeilingChainService} from "../../ceiling-chain/ceiling-chain.service";
+import {CeilingChainService} from "../../../setup/ceiling-chain/ceiling-chain.service";
 import {CustomResponse} from "../../../utils/custom-response";
-import {CeilingChain} from "../../ceiling-chain/ceiling-chain.model";
+import {CeilingChain} from "../../../setup/ceiling-chain/ceiling-chain.model";
 import {AdminHierarchyCeilingService} from "../admin-hierarchy-ceiling.service";
 import {ToastService} from "../../../shared/toast.service";
 import {Observable} from "rxjs";
 import {finalize} from "rxjs/operators";
 import {BudgetCeilingService} from "../../../shared/budget-ceiling.service";
-import {FacilityService} from "../../facility/facility.service";
+import {FacilityService} from "../../../setup/facility/facility.service";
 
 @Component({
   selector: 'app-ceiling-dissemination',

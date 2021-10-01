@@ -8,7 +8,7 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent} from "primeng/api";
 import {DialogService} from "primeng/dynamicdialog";
 import {Paginator} from "primeng/paginator";
 import {Table} from "primeng/table";
@@ -20,28 +20,48 @@ import {
 } from "../../config/pagination.constants";
 import {HelperService} from "src/app/utils/helper.service";
 import {ToastService} from "src/app/shared/toast.service";
-
-import {Role} from "./role.model";
-import {RoleService} from "./role.service";
-import {RoleUpdateComponent} from "./update/role-update.component";
-import {RolePermissionComponent} from "./role-permission/role-permission.component";
-import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import {Menu} from "./menu.model";
+import {MenuService} from "./menu.service";
+import {MenuUpdateComponent} from "./update/menu-update.component";
+import {MenuPermissionComponent} from "./menu-permission/menu-permission.component";
+import {SubComponent} from "./sub/sub.component";
 
 @Component({
-  selector: "app-role",
-  templateUrl: "./role.component.html",
+  selector: "app-menu",
+  templateUrl: "./menu.component.html",
 })
-export class RoleComponent implements OnInit {
+export class MenuComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  roles?: Role[] = [];
+  menus?: Menu[] = [];
+
+  parents?: Menu[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "label",
+      header: "Label",
+      sort: true,
+    },
+    {
+      field: "icon",
+      header: "Icon",
+      sort: true,
+    },
+    {
+      field: "separator",
+      header: "Separator",
       sort: false,
+    },
+    {
+      field: "router_link",
+      header: "Router Link",
+      sort: true,
+    },
+    {
+      field: "sort_order",
+      header: "Sort Order",
+      sort: true,
     },
   ]; //Table display columns
 
@@ -53,33 +73,39 @@ export class RoleComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+
   //Mandatory filter
 
   constructor(
-    protected roleService: RoleService,
+    protected menuService: MenuService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
+    protected toastService: ToastService
   ) {
   }
 
   ngOnInit(): void {
+    this.menuService
+      .query({columns: ["id", "label", "router_link"]})
+      .subscribe(
+        (resp: CustomResponse<Menu[]>) => (this.parents = resp.data)
+      );
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.roleService
+    this.menuService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -87,7 +113,7 @@ export class RoleComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<Role[]>) => {
+        (res: CustomResponse<Menu[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -180,16 +206,16 @@ export class RoleComponent implements OnInit {
   }
 
   /**
-   * Creating or updating Role
-   * @param role ; If undefined initize new model to create else edit existing model
+   * Creating or updating Menu
+   * @param menu ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(role?: Role): void {
-    const data: Role = role ?? {
-      ...new Role(),
+  createOrUpdate(menu?: Menu): void {
+    const data: Menu = menu ?? {
+      ...new Menu(),
     };
-    const ref = this.dialogService.open(RoleUpdateComponent, {
+    const ref = this.dialogService.open(MenuUpdateComponent, {
       data,
-      header: "Create/Update Role",
+      header: "Create/Update Menu",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -199,14 +225,14 @@ export class RoleComponent implements OnInit {
   }
 
   /**
-   * Delete Role
-   * @param role
+   * Delete Menu
+   * @param menu
    */
-  delete(role: Role): void {
+  delete(menu: Menu): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Role?",
+      message: "Are you sure that you want to delete this Menu?",
       accept: () => {
-        this.roleService.delete(role.id!).subscribe((resp) => {
+        this.menuService.delete(menu.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -221,14 +247,14 @@ export class RoleComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<Role[]> | null,
+    resp: CustomResponse<Menu[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/role"], {
+      this.router.navigate(["/menu"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -237,23 +263,38 @@ export class RoleComponent implements OnInit {
         },
       });
     }
-    this.roles = resp?.data ?? [];
+    this.menus = resp?.data ?? [];
   }
 
   /**
-   * When error on loading data set data to empty and reset page to load
+   * When error on loading data set data to empt and resert page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Role");
+    this.toastService.error("Error loading Menu");
   }
 
-  permissions(rowData: Role): void {
+  permissions(rowData: Menu): void {
     const data = {
-      role: rowData
+      menu: rowData
     }
-    const ref = this.dialogService.open(RolePermissionComponent, {
+    const ref = this.dialogService.open(MenuPermissionComponent, {
+      data,
+      width: '60%',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  subMenu(rowData: Menu): void {
+    const data = {
+      menu: rowData
+    }
+    const ref = this.dialogService.open(SubComponent, {
       data,
       width: '60%',
     });

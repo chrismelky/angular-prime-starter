@@ -15,6 +15,8 @@ import { CustomResponse } from "../../../utils/custom-response";
 import { Role } from "../role.model";
 import { RoleService } from "../role.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {AdminHierarchyLevel} from "../../admin-hierarchy-level/admin-hierarchy-level.model";
+import {AdminHierarchyLevelService} from "../../admin-hierarchy-level/admin-hierarchy-level.service";
 
 @Component({
   selector: "app-role-update",
@@ -24,6 +26,7 @@ export class RoleUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
 
   /**
    * Declare form
@@ -31,6 +34,7 @@ export class RoleUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
+    admin_hierarchy_level_id: [null, [Validators.required]],
   });
 
   constructor(
@@ -38,10 +42,17 @@ export class RoleUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
   ) {}
 
   ngOnInit(): void {
+    this.adminHierarchyLevelService
+      .query()
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
+          (this.adminHierarchyLevels = resp.data)
+      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -100,6 +111,7 @@ export class RoleUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: role.id,
       name: role.name,
+      admin_hierarchy_level_id: role.admin_hierarchy_level_id,
     });
   }
 
@@ -112,6 +124,7 @@ export class RoleUpdateComponent implements OnInit {
       ...new Role(),
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
+      admin_hierarchy_level_id: this.editForm.get(["admin_hierarchy_level_id"])!.value,
     };
   }
 }

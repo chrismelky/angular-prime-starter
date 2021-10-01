@@ -1,9 +1,9 @@
 import { CustomResponse } from '../../../utils/custom-response';
-import { Section } from '../../section/section.model';
-import { FundSourceBudgetClass } from '../../fund-source-budget-class/fund-source-budget-class.model';
+import { Section } from '../../../setup/section/section.model';
+import { FundSourceBudgetClass } from '../../../setup/fund-source-budget-class/fund-source-budget-class.model';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FundSourceBudgetClassService} from "../../fund-source-budget-class/fund-source-budget-class.service";
+import {FundSourceBudgetClassService} from "../../../setup/fund-source-budget-class/fund-source-budget-class.service";
 import {Table} from "primeng/table";
 import {fromEvent} from "rxjs";
 import {debounceTime, distinctUntilChanged, filter, map, subscribeOn} from 'rxjs/operators';

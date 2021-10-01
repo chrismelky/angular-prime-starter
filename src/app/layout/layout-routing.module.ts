@@ -1,1087 +1,1100 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {MainComponent} from './main/main.component';
-import {NotFoundComponent} from './not-found/not-found.component';
-import {NgxPermissionsGuard} from "ngx-permissions";
-import {PermissionDeniedComponent} from "./permission-denied/permission-denied.component";
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { MainComponent } from "./main/main.component";
+import { NotFoundComponent } from "./not-found/not-found.component";
+import { NgxPermissionsGuard } from "ngx-permissions";
+import { PermissionDeniedComponent } from "./permission-denied/permission-denied.component";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: MainComponent,
     children: [
       {
-        path: '',
-        redirectTo: '/dashboard',
-        pathMatch: 'full',
+        path: "",
+        redirectTo: "/dashboard",
+        pathMatch: "full",
       },
       {
-        path: 'dashboard',
+        path: "dashboard",
         loadChildren: () =>
-          import('../dashboard/dashboard.module').then(
+          import("../dashboard/dashboard.module").then(
             (m) => m.DashboardModule
           ),
       },
       {
-        path: 'asset-use',
+        path: "asset-use",
         loadChildren: () =>
-          import('../setup/asset-use/asset-use.module').then(
+          import("../setup/asset-use/asset-use.module").then(
             (m) => m.AssetUseModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'bank-account',
+        path: "bank-account",
         loadChildren: () =>
-          import('../setup/bank-account/bank-account.module').then(
+          import("../setup/bank-account/bank-account.module").then(
             (m) => m.BankAccountModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'asset-condition',
+        path: "asset-condition",
         loadChildren: () =>
-          import('../setup/asset-condition/asset-condition.module').then(
+          import("../setup/asset-condition/asset-condition.module").then(
             (m) => m.AssetConditionModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'account-type',
+        path: "account-type",
         loadChildren: () =>
-          import('../setup/account-type/account-type.module').then(
+          import("../setup/account-type/account-type.module").then(
             (m) => m.AccountTypeModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'activity-type',
+        path: "activity-type",
         loadChildren: () =>
-          import('../setup/activity-type/activity-type.module').then(
+          import("../setup/activity-type/activity-type.module").then(
             (m) => m.ActivityTypeModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'sector',
+        path: "sector",
         loadChildren: () =>
-          import('../setup/sector/sector.module').then((m) => m.SectorModule),
+          import("../setup/sector/sector.module").then((m) => m.SectorModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'section-level',
+        path: "section-level",
         loadChildren: () =>
-          import('../setup/section-level/section-level.module').then(
+          import("../setup/section-level/section-level.module").then(
             (m) => m.SectionLevelModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'section',
+        path: "section",
         loadChildren: () =>
-          import('../setup/section/section.module').then(
+          import("../setup/section/section.module").then(
             (m) => m.SectionModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'reference-document-type',
+        path: "reference-document-type",
         loadChildren: () =>
           import(
-            '../setup/reference-document-type/reference-document-type.module'
-            ).then((m) => m.ReferenceDocumentTypeModule),
+            "../setup/reference-document-type/reference-document-type.module"
+          ).then((m) => m.ReferenceDocumentTypeModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'decision-level',
+        path: "decision-level",
         loadChildren: () =>
-          import('../setup/decision-level/decision-level.module').then(
+          import("../setup/decision-level/decision-level.module").then(
             (m) => m.DecisionLevelModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'reference-type',
+        path: "reference-type",
         loadChildren: () =>
-          import('../setup/reference-type/reference-type.module').then(
+          import("../setup/reference-type/reference-type.module").then(
             (m) => m.ReferenceTypeModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'financial-year',
+        path: "financial-year",
         loadChildren: () =>
-          import('../setup/financial-year/financial-year.module').then(
+          import("../setup/financial-year/financial-year.module").then(
             (m) => m.FinancialYearModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'admin-hierarchy-level',
+        path: "admin-hierarchy-level",
         loadChildren: () =>
           import(
-            '../setup/admin-hierarchy-level/admin-hierarchy-level.module'
-            ).then((m) => m.AdminHierarchyLevelModule),
+            "../setup/admin-hierarchy-level/admin-hierarchy-level.module"
+          ).then((m) => m.AdminHierarchyLevelModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'admin-hierarchy',
+        path: "admin-hierarchy",
         loadChildren: () =>
-          import('../setup/admin-hierarchy/admin-hierarchy.module').then(
+          import("../setup/admin-hierarchy/admin-hierarchy.module").then(
             (m) => m.AdminHierarchyModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'strategic-plan',
+        path: "strategic-plan",
         loadChildren: () =>
-          import('../setup/strategic-plan/strategic-plan.module').then(
+          import("../setup/strategic-plan/strategic-plan.module").then(
             (m) => m.StrategicPlanModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning'
-          }
+            only: "planning",
+          },
         },
       },
       {
-        path: 'activity-task-nature',
+        path: "activity-task-nature",
         loadChildren: () =>
           import(
-            '../setup/activity-task-nature/activity-task-nature.module'
-            ).then((m) => m.ActivityTaskNatureModule),
+            "../setup/activity-task-nature/activity-task-nature.module"
+          ).then((m) => m.ActivityTaskNatureModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'objective-type',
+        path: "objective-type",
         loadChildren: () =>
-          import('../setup/objective-type/objective-type.module').then(
+          import("../setup/objective-type/objective-type.module").then(
             (m) => m.ObjectiveTypeModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'objective',
+        path: "objective",
         loadChildren: () =>
-          import('../setup/objective/objective.module').then(
+          import("../setup/objective/objective.module").then(
             (m) => m.ObjectiveModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'long-term-target',
+        path: "long-term-target",
         loadChildren: () =>
-          import('../planning/long-term-target/long-term-target.module').then(
+          import("../planning/long-term-target/long-term-target.module").then(
             (m) => m.LongTermTargetModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'calendar-event',
+        path: "calendar-event",
         loadChildren: () =>
-          import('../setup/calendar-event/calendar-event.module').then(
+          import("../setup/calendar-event/calendar-event.module").then(
             (m) => m.CalendarEventModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'calendar',
+        path: "calendar",
         loadChildren: () =>
-          import('../setup/calendar/calendar.module').then(
+          import("../setup/calendar/calendar.module").then(
             (m) => m.CalendarModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-assessment-round',
+        path: "cas-assessment-round",
         loadChildren: () =>
           import(
-            '../setup/cas-assessment-round/cas-assessment-round.module'
-            ).then((m) => m.CasAssessmentRoundModule),
+            "../setup/cas-assessment-round/cas-assessment-round.module"
+          ).then((m) => m.CasAssessmentRoundModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-plan',
+        path: "cas-plan",
         loadChildren: () =>
-          import('../setup/cas-plan/cas-plan.module').then(
+          import("../setup/cas-plan/cas-plan.module").then(
             (m) => m.CasPlanModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-plan-content',
+        path: "cas-plan-content",
         loadChildren: () =>
-          import('../setup/cas-plan-content/cas-plan-content.module').then(
+          import("../setup/cas-plan-content/cas-plan-content.module").then(
             (m) => m.CasPlanContentModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-assessment-state',
+        path: "cas-assessment-state",
         loadChildren: () =>
           import(
-            '../setup/cas-assessment-state/cas-assessment-state.module'
-            ).then((m) => m.CasAssessmentStateModule),
+            "../setup/cas-assessment-state/cas-assessment-state.module"
+          ).then((m) => m.CasAssessmentStateModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-assessment-sub-criteria-option',
+        path: "cas-assessment-sub-criteria-option",
         loadChildren: () =>
           import(
-            '../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.module'
-            ).then((m) => m.CasAssessmentSubCriteriaOptionModule),
+            "../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.module"
+          ).then((m) => m.CasAssessmentSubCriteriaOptionModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-assessment-category-version',
-        loadChildren: () =>
-          import('../setup/cas-assessment-category-version/cas-assessment-category-version.module')
-            .then((m) => m.CasAssessmentCategoryVersionModule),
-        canLoad: [NgxPermissionsGuard],
-        data: {
-          permissions: {
-            only: 'setup'
-          }
-        },
-      },
-      {
-        path: 'cas-assessment-criteria-option',
+        path: "cas-assessment-category-version",
         loadChildren: () =>
           import(
-            '../setup/cas-assessment-criteria-option/cas-assessment-criteria-option.module'
-            ).then((m) => m.CasAssessmentCriteriaOptionModule),
+            "../setup/cas-assessment-category-version/cas-assessment-category-version.module"
+          ).then((m) => m.CasAssessmentCategoryVersionModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-assessment-category',
+        path: "cas-assessment-criteria-option",
         loadChildren: () =>
           import(
-            '../setup/cas-assessment-category/cas-assessment-category.module'
-            ).then((m) => m.CasAssessmentCategoryModule),
+            "../setup/cas-assessment-criteria-option/cas-assessment-criteria-option.module"
+          ).then((m) => m.CasAssessmentCriteriaOptionModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'reference-document',
+        path: "cas-assessment-category",
         loadChildren: () =>
-          import('../setup/reference-document/reference-document.module')
-            .then((m) => m.ReferenceDocumentModule),
+          import(
+            "../setup/cas-assessment-category/cas-assessment-category.module"
+          ).then((m) => m.CasAssessmentCategoryModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'period-group',
+        path: "reference-document",
         loadChildren: () =>
-          import('../setup/period-group/period-group.module').then(
+          import("../setup/reference-document/reference-document.module").then(
+            (m) => m.ReferenceDocumentModule
+          ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: "setup",
+          },
+        },
+      },
+      {
+        path: "period-group",
+        loadChildren: () =>
+          import("../setup/period-group/period-group.module").then(
             (m) => m.PeriodGroupModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'data-set',
+        path: "data-set",
         loadChildren: () =>
-          import('../setup/data-set/data-set.module').then(
+          import("../setup/data-set/data-set.module").then(
             (m) => m.DataSetModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning'
-          }
+            only: "planning",
+          },
         },
       },
       {
-        path: 'option-set',
+        path: "option-set",
         loadChildren: () =>
-          import('../setup/option-set/option-set.module').then(
+          import("../setup/option-set/option-set.module").then(
             (m) => m.OptionSetModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'category-option',
+        path: "category-option",
         loadChildren: () =>
-          import('../setup/category-option/category-option.module').then(
+          import("../setup/category-option/category-option.module").then(
             (m) => m.CategoryOptionModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'category-combination',
+        path: "category-combination",
         loadChildren: () =>
           import(
-            '../setup/category-combination/category-combination.module'
-            ).then((m) => m.CategoryCombinationModule),
+            "../setup/category-combination/category-combination.module"
+          ).then((m) => m.CategoryCombinationModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'category-category-option',
+        path: "category-category-option",
         loadChildren: () =>
           import(
-            '../setup/category-category-option/category-category-option.module'
-            ).then((m) => m.CategoryCategoryOptionModule),
+            "../setup/category-category-option/category-category-option.module"
+          ).then((m) => m.CategoryCategoryOptionModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'category',
+        path: "category",
         loadChildren: () =>
-          import('../setup/category/category.module').then(
+          import("../setup/category/category.module").then(
             (m) => m.CategoryModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'category-category-combination',
+        path: "category-category-combination",
         loadChildren: () =>
           import(
-            '../setup/category-category-combination/category-category-combination.module'
-            ).then((m) => m.CategoryCategoryCombinationModule),
+            "../setup/category-category-combination/category-category-combination.module"
+          ).then((m) => m.CategoryCategoryCombinationModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'data-element',
+        path: "data-element",
         loadChildren: () =>
-          import('../setup/data-element/data-element.module').then(
+          import("../setup/data-element/data-element.module").then(
             (m) => m.DataElementModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'facility-type',
+        path: "facility-type",
         loadChildren: () =>
-          import('../setup/facility-type/facility-type.module').then(
+          import("../setup/facility-type/facility-type.module").then(
             (m) => m.FacilityTypeModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'facility',
+        path: "facility",
         loadChildren: () =>
-          import('../setup/facility/facility.module').then(
+          import("../setup/facility/facility.module").then(
             (m) => m.FacilityModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-assessment-category-version-state',
+        path: "cas-assessment-category-version-state",
         loadChildren: () =>
           import(
-            '../setup/cas-assessment-category-version-state/cas-assessment-category-version-state.module'
-            ).then((m) => m.CasAssessmentCategoryVersionStateModule),
+            "../setup/cas-assessment-category-version-state/cas-assessment-category-version-state.module"
+          ).then((m) => m.CasAssessmentCategoryVersionStateModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'user',
+        path: "user",
         loadChildren: () =>
-          import('../setup/user/user.module').then((m) => m.UserModule),
+          import("../setup/user/user.module").then((m) => m.UserModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management'
-          }
+            only: "setup.user_management",
+          },
         },
       },
       {
-        path: 'baseline-statistic',
+        path: "menu",
         loadChildren: () =>
-          import('../setup/baseline-statistic/baseline-statistic.module').then(
+          import("../setup/menu/menu.module").then((m) => m.MenuModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: "setup.user_management",
+          },
+        },
+      },
+      {
+        path: "baseline-statistic",
+        loadChildren: () =>
+          import("../setup/baseline-statistic/baseline-statistic.module").then(
             (m) => m.BaselineStatisticModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'baseline-statistic-value',
+        path: "baseline-statistic-value",
         loadChildren: () =>
           import(
-            '../setup/baseline-statistic-value/baseline-statistic-value.module'
-            ).then((m) => m.BaselineStatisticValueModule),
+            "../setup/baseline-statistic-value/baseline-statistic-value.module"
+          ).then((m) => m.BaselineStatisticValueModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning'
-          }
+            only: "planning",
+          },
         },
       },
       {
-        path: 'advertisement',
+        path: "advertisement",
         loadChildren: () =>
-          import('../setup/advertisement/advertisement.module').then(
+          import("../setup/advertisement/advertisement.module").then(
             (m) => m.AdvertisementModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.advertisement'
-          }
+            only: "setup.advertisement",
+          },
         },
       },
       {
-        path: 'ceiling-chain',
+        path: "ceiling-chain",
         loadChildren: () =>
-          import('../setup/ceiling-chain/ceiling-chain.module').then(
+          import("../setup/ceiling-chain/ceiling-chain.module").then(
             (m) => m.CeilingChainModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'fund-source-category',
+        path: "fund-source-category",
         loadChildren: () =>
           import(
-            '../setup/fund-source-category/fund-source-category.module'
-            ).then((m) => m.FundSourceCategoryModule),
+            "../setup/fund-source-category/fund-source-category.module"
+          ).then((m) => m.FundSourceCategoryModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'fund-type',
+        path: "fund-type",
         loadChildren: () =>
-          import('../setup/fund-type/fund-type.module').then(
+          import("../setup/fund-type/fund-type.module").then(
             (m) => m.FundTypeModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'gfs-code-category',
+        path: "gfs-code-category",
         loadChildren: () =>
-          import('../setup/gfs-code-category/gfs-code-category.module').then(
+          import("../setup/gfs-code-category/gfs-code-category.module").then(
             (m) => m.GfsCodeCategoryModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'gfs-code',
+        path: "gfs-code",
         loadChildren: () =>
-          import('../setup/gfs-code/gfs-code.module').then(
+          import("../setup/gfs-code/gfs-code.module").then(
             (m) => m.GfsCodeModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'pe-form',
+        path: "pe-form",
         loadChildren: () =>
-          import('../setup/pe-form/pe-form.module').then((m) => m.PeFormModule),
+          import("../setup/pe-form/pe-form.module").then((m) => m.PeFormModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'pe-definition',
+        path: "pe-definition",
         loadChildren: () =>
-          import('../setup/pe-definition/pe-definition.module').then(
+          import("../setup/pe-definition/pe-definition.module").then(
             (m) => m.PeDefinitionModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'pe-sub-form',
+        path: "pe-sub-form",
         loadChildren: () =>
-          import('../setup/pe-sub-form/pe-sub-form.module').then(
+          import("../setup/pe-sub-form/pe-sub-form.module").then(
             (m) => m.PeSubFormModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-assessment-sub-criteria-possible-score',
+        path: "cas-assessment-sub-criteria-possible-score",
         loadChildren: () =>
           import(
-            '../setup/cas-assessment-sub-criteria-possible_score/cas-assessment-sub-criteria-possible_score.module'
-            ).then((m) => m.CasAssessmentSubCriteriaPossibleScoreModule),
+            "../setup/cas-assessment-sub-criteria-possible_score/cas-assessment-sub-criteria-possible_score.module"
+          ).then((m) => m.CasAssessmentSubCriteriaPossibleScoreModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'cas-assessment-sub-criteria-report-set',
+        path: "cas-assessment-sub-criteria-report-set",
         loadChildren: () =>
           import(
-            '../setup/cas-assessment-sub-criteria-report_set/cas-assessment-sub-criteria-report_set.module'
-            ).then((m) => m.CasAssessmentSubCriteriaReportSetModule),
+            "../setup/cas-assessment-sub-criteria-report_set/cas-assessment-sub-criteria-report_set.module"
+          ).then((m) => m.CasAssessmentSubCriteriaReportSetModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'pe-select-option',
+        path: "pe-select-option",
         loadChildren: () =>
-          import('../setup/pe-select-option/pe-select-option.module').then(
+          import("../setup/pe-select-option/pe-select-option.module").then(
             (m) => m.PeSelectOptionModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'role',
+        path: "role",
         loadChildren: () =>
-          import('../setup/role/role.module').then((m) => m.RoleModule),
+          import("../setup/role/role.module").then((m) => m.RoleModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management'
-          }
+            only: "setup.user_management",
+          },
         },
       },
       {
-        path: 'project',
+        path: "project",
         loadChildren: () =>
-          import('../setup/project/project.module').then(
+          import("../setup/project/project.module").then(
             (m) => m.ProjectModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'transport-category',
+        path: "transport-category",
         loadChildren: () =>
-          import('../setup/transport-category/transport-category.module').then(
+          import("../setup/transport-category/transport-category.module").then(
             (m) => m.TransportCategoryModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'budget-class',
+        path: "budget-class",
         loadChildren: () =>
-          import('../setup/budget-class/budget-class.module').then(
+          import("../setup/budget-class/budget-class.module").then(
             (m) => m.BudgetClassModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'fund-source',
+        path: "fund-source",
         loadChildren: () =>
-          import('../setup/fund-source/fund-source.module').then(
+          import("../setup/fund-source/fund-source.module").then(
             (m) => m.FundSourceModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'priority-area',
+        path: "priority-area",
         loadChildren: () =>
-          import('../setup/priority-area/priority-area.module').then(
+          import("../setup/priority-area/priority-area.module").then(
             (m) => m.PriorityAreaModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'category-option-combination',
+        path: "category-option-combination",
         loadChildren: () =>
           import(
-            '../setup/category-option-combination/category-option-combination.module'
-            ).then((m) => m.CategoryOptionCombinationModule),
+            "../setup/category-option-combination/category-option-combination.module"
+          ).then((m) => m.CategoryOptionCombinationModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'data-value',
+        path: "data-value",
         loadChildren: () =>
-          import('../setup/data-value/data-value.module').then(
+          import("../setup/data-value/data-value.module").then(
             (m) => m.DataValueModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning'
-          }
+            only: "planning",
+          },
         },
       },
       {
-        path: 'national-reference',
+        path: "national-reference",
         loadChildren: () =>
-          import('../setup/national-reference/national-reference.module').then(
+          import("../setup/national-reference/national-reference.module").then(
             (m) => m.NationalReferenceModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'fund-source-budget-class',
+        path: "fund-source-budget-class",
         loadChildren: () =>
           import(
-            '../setup/fund-source-budget-class/fund-source-budget-class.module'
-            ).then((m) => m.FundSourceBudgetClassModule),
+            "../setup/fund-source-budget-class/fund-source-budget-class.module"
+          ).then((m) => m.FundSourceBudgetClassModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning.ceiling'
-          }
+            only: "planning.ceiling",
+          },
         },
       },
       {
-        path: 'facility-custom-detail',
+        path: "facility-custom-detail",
         loadChildren: () =>
           import(
-            '../setup/facility-custom-detail/facility-custom-detail.module'
-            ).then((m) => m.FacilityCustomDetailModule),
+            "../setup/facility-custom-detail/facility-custom-detail.module"
+          ).then((m) => m.FacilityCustomDetailModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'facility-custom-detail-mapping',
+        path: "facility-custom-detail-mapping",
         loadChildren: () =>
           import(
-            '../setup/facility-custom-detail-mapping/facility-custom-detail-mapping.module'
-            ).then((m) => m.FacilityCustomDetailMappingModule),
+            "../setup/facility-custom-detail-mapping/facility-custom-detail-mapping.module"
+          ).then((m) => m.FacilityCustomDetailMappingModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'pe-item',
+        path: "pe-item",
         loadChildren: () =>
-          import('../budgeting/pe-item/pe-item.module').then(
+          import("../budgeting/pe-item/pe-item.module").then(
             (m) => m.PeItemModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'period',
+        path: "period",
         loadChildren: () =>
-          import('../setup/period/period.module').then((m) => m.PeriodModule),
+          import("../setup/period/period.module").then((m) => m.PeriodModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'assessor-assignment',
+        path: "assessor-assignment",
         loadChildren: () =>
           import(
-            '../setup/assessor-assignment/assessor-assignment.module'
-            ).then((m) => m.AssessorAssignmentModule),
+            "../setup/assessor-assignment/assessor-assignment.module"
+          ).then((m) => m.AssessorAssignmentModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'assessment'
-          }
+            only: "assessment",
+          },
         },
       },
       {
-        path: 'admin-hierarchy-ceiling',
+        path: "admin-hierarchy-ceiling",
         loadChildren: () =>
           import(
-            '../setup/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module'
+            '../budgeting/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module'
             ).then((m) => m.AdminHierarchyCeilingModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning.ceiling'
-          }
+            only: "planning.ceiling",
+          },
         },
       },
       {
-        path: 'assessment-home',
+        path: "assessment-home",
         loadChildren: () =>
-          import('../setup/assessment-home/assessment-home.module').then(
+          import("../setup/assessment-home/assessment-home.module").then(
             (m) => m.AssessmentHomeModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'assessment'
-          }
+            only: "assessment",
+          },
         },
       },
       {
-        path: 'my-assessment',
+        path: "my-assessment",
         loadChildren: () =>
-          import('../planning/my-assessment/my-assessment.module').then(
+          import("../planning/my-assessment/my-assessment.module").then(
             (m) => m.MyAssessmentModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'assessment'
-          }
+            only: "assessment",
+          },
         },
       },
       {
-        path: 'received-assessment',
+        path: "received-assessment",
         loadChildren: () =>
           import(
-            '../planning/received-assessment/received-assessment.module'
-            ).then((m) => m.ReceivedAssessmentModule),
+            "../planning/received-assessment/received-assessment.module"
+          ).then((m) => m.ReceivedAssessmentModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'assessment'
-          }
+            only: "assessment",
+          },
         },
       },
       {
-        path: 'option-set-value',
+        path: "option-set-value",
         loadChildren: () =>
-          import('../setup/option-set-value/option-set-value.module').then(
+          import("../setup/option-set-value/option-set-value.module").then(
             (m) => m.OptionSetValueModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'configuration-setting',
+        path: "configuration-setting",
         loadChildren: () =>
           import(
-            '../setup/configuration-setting/configuration-setting.module'
-            ).then((m) => m.ConfigurationSettingModule),
+            "../setup/configuration-setting/configuration-setting.module"
+          ).then((m) => m.ConfigurationSettingModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'performance-indicator',
+        path: "performance-indicator",
         loadChildren: () =>
           import(
-            '../setup/performance-indicator/performance-indicator.module'
-            ).then((m) => m.PerformanceIndicatorModule),
+            "../setup/performance-indicator/performance-indicator.module"
+          ).then((m) => m.PerformanceIndicatorModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'assessment-criteria',
+        path: "assessment-criteria",
         loadChildren: () =>
           import(
-            '../planning/assessment-criteria/assessment-criteria.module'
-            ).then((m) => m.AssessmentCriteriaModule),
+            "../planning/assessment-criteria/assessment-criteria.module"
+          ).then((m) => m.AssessmentCriteriaModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup'
-          }
+            only: "setup",
+          },
         },
       },
       {
-        path: 'permission',
+        path: "permission",
         loadChildren: () =>
-          import('../setup/permission/permission.module').then(
+          import("../setup/permission/permission.module").then(
             (m) => m.PermissionModule
           ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management',
-            redirectTo: '/'
-          }
+            only: "setup.user_management",
+            redirectTo: "/",
+          },
         },
       },
       {
-        path: 'group',
+        path: "group",
         loadChildren: () =>
-          import('../setup/group/group.module').then((m) => m.GroupModule),
+          import("../setup/group/group.module").then((m) => m.GroupModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management',
-          }
+            only: "setup.user_management",
+          },
         },
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
-        path: '**',
+        path: "**",
         component: NotFoundComponent,
       },
       {
-        path: 'permission-denied',
+        path: "permission-denied",
         component: PermissionDeniedComponent,
       },
     ],
@@ -1092,5 +1105,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class LayoutRoutingModule {
-}
+export class LayoutRoutingModule {}

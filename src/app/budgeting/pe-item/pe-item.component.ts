@@ -64,6 +64,8 @@ export class PeItemComponent implements OnInit {
   fundSources?: FundSource[] = [];
   sections?: Section[] = [];
   facilities?:any =[]
+  selectedRowsArray?:any =[] //seletec rows tobe deleted
+  selectedRowsIndexArray?:any =[] //seletec rows tobe deleted
 
   fetchedFundSources?:FundSource[] = []; // it hold the fund sources fetched from pe forms
 
@@ -75,6 +77,7 @@ export class PeItemComponent implements OnInit {
   verticalTotal:any = {};
   peValuesArray: any = {};
   dataReady= false;
+  deleteButton?: MenuItem[];
 
   cols = []; //Table display columns
   isLoading = false;
@@ -152,17 +155,17 @@ export class PeItemComponent implements OnInit {
           (this.facilities = resp.data)
       );
     }
-
-
-    /*
-    this.sectionService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    */
+    this.splitButtons();
     this.handleNavigation();
   }
+
+  splitButtons(){
+    this.deleteButton = [
+      {label: 'Delete last row', icon: 'pi pi-times' , command: () =>{this.delete(this.round.length)}},
+      {label: 'Delete selected row', icon: 'pi pi-trash',command:() =>{this.deleteSelectedRows()}}
+    ];
+  }
+
 
   /**
    * Load data from api
@@ -238,7 +241,7 @@ export class PeItemComponent implements OnInit {
    * @param event
    */
   filterChanged(): void {
-
+    this.peDataValues = [];
     if (!this.admin_hierarchy_id || !this.financial_year_id || this.budget_class_id <= 0 || this.fund_source_id <= 0 || !this.pe_form_id || !this.section_id) {
      return;
      }
@@ -248,7 +251,6 @@ export class PeItemComponent implements OnInit {
     this.peTableFields = [];
     this.peDefinitionService.getParentChildrenByFormId({"pe_form_id":this.pe_form_id,"pe_sub_form_id":this.pe_sub_form_id}).subscribe(resp =>{
       this.peTableFields = resp.data;
-      //this.verticalTotal =resp.data?.textInputs;
       if(this.round.length === 0){
         this.addRow(0)
         this.preparation()
@@ -259,11 +261,89 @@ export class PeItemComponent implements OnInit {
           }
           this.round.pop();
           this.addRow(0)
-        this.preparation()
+         this.preparation()
       }
+      /** the fetch dataValue*/
+      this.fetchDataValues()
     })
   }
 
+  fetchDataValues(){
+    if(this.facilities[0]?.id){
+      this.peItemService.fetchDataValues(
+        {
+          financial_year_id:this.financial_year_id,
+          admin_hierarchy_id:this.admin_hierarchy_id,
+          section_id:this.section_id,
+          facility_id: this.facilities[0]?.id,
+          budget_class_id:this.budget_class_id,
+          fund_source_id:this.fund_source_id,
+          pe_sub_form_id: this.pe_sub_form_id,
+        }
+      ).subscribe(resp => {
+
+       if(resp.data.rows.length === 1){
+         // sync data value
+       } else if (resp.data.rows.length >= 1) {
+         /** increase row and add dataValue */
+         for(let i = 1; i < resp.data.rows.length; i++){
+           this.addRow(i);
+         }
+       }
+        /** Update dataValue fetched */
+        this.updateFetchedDataValues(resp.data.dataValues)
+      })
+    }
+  }
+
+  updateFetchedDataValues(fetchedDataValues:any){
+    if(fetchedDataValues.length > 0) {
+
+      /** copy all object to peValueArray */
+      this.round?.forEach((r) => {
+        this.peValuesArray[r.uid] = {}
+        fetchedDataValues?.forEach((f:any) => {
+          const exist = this.peDataValues?.find((pdv:any) => {
+            return (
+              pdv.uid === r.uid &&
+              pdv.id === f.pe_definition_id
+            );
+          });
+          this.peValuesArray[r.uid!][f.pe_definition_id!]={
+            ...exist?exist:undefined
+          };
+        })
+      });
+
+      /**iterate all fetched dataValues */
+      fetchedDataValues?.forEach((fetched:any) => {
+
+        /** Assign data Value used as display on html */
+        const exist = this.peDataValues?.find((pedv: any) => {
+          return (
+            pedv.uid === fetched.row_uid &&
+            pedv.id === fetched.pe_definition_id
+          );
+        })
+        this.peValuesArray[fetched.row_uid!][fetched.pe_definition_id!].value = fetched.field_value ? fetched.field_value : "";
+
+        /** Assign data Value used as to hold value for backEnd uses by using Index */
+        const index = this.peDataValues?.findIndex((pedv: any) => {
+          return (
+            pedv.uid === fetched.row_uid &&
+            pedv.id === fetched.pe_definition_id
+          );
+        })
+        this.peDataValues[index].value = fetched.field_value ? fetched.field_value : "";
+
+        /** if row number is greater than one */
+       // if (this.round.length > 1) {
+          this.getVerticalTotal(exist); // per last row
+        //}
+
+      });
+    }
+  }
 
   fetchCeilingAmount(){
     if(this.facilities[0]?.id){
@@ -457,14 +537,12 @@ export class PeItemComponent implements OnInit {
     })
   }
 
-  /**
-   function used when new row added
-   */
+  /** function used when new row added */
   addRow(position:number){
    if(this.peTableFields.textInputs?.length > 0 && this.isCriteriaMeet() && this.pe_sub_form_id){
      this.inputTexts[position] = this.peTableFields.textInputs;
 
-     //create object of round
+     /**create object of round */
      let roundObject:any = {}
      roundObject.id =position
      roundObject.uid = `${this.getRoundUniqueId()}-${position}` // get unique uid
@@ -472,7 +550,7 @@ export class PeItemComponent implements OnInit {
      this.round.push(roundObject);
    }
 
-   /* call all prepare array of each input*/
+   /** call all prepare array of each input*/
     this.preparation()
   }
 
@@ -495,12 +573,11 @@ export class PeItemComponent implements OnInit {
 
 
 
-  /*Function for deleting rows where id greater than one */
+  /**Function for deleting rows where id greater than one */
   deleteRow(position:number){
     if(position > 1) {
       this.round.pop();
-
-      /*then remove arrays of all fields */
+      /** then remove arrays of all fields */
       this.peTableFields.textInputs?.forEach((value:any)=>{
         this.peDataValues.pop();
       })
@@ -508,8 +585,7 @@ export class PeItemComponent implements OnInit {
   }
 
 
- /*
- * This function check if all mandatory field selected, return true if selected, false if nor*/
+ /** This function check if all mandatory field selected, return true if selected, false if nor*/
   isCriteriaMeet(){
     if (!this.admin_hierarchy_id || !this.financial_year_id || this.budget_class_id <= 0 || this.fund_source_id <= 0 || !this.pe_form_id || !this.section_id) {
       return false;
@@ -546,18 +622,43 @@ export class PeItemComponent implements OnInit {
           pdv.id === data.id
         );
       })
+      console.log("")
       this.peDataValues[objectIndex].value = data.value ? data.value : "";
-      //select_option
+      /** Remove select_option */
       delete this.peDataValues[objectIndex]?.select_option;
       this.horizontalTotal(data); // per column parent
-      // if row number is greater than one
+      /** if row number is greater than one */
       if (this.round.length > 1) {
-        this.getVerticalTotal(data); // last row
+        this.getVerticalTotal(data); // per last row
+      }
+    }
+
+    /** For accuracy, Re update function call, to make sure if any skipped value is there
+     *But this functions has not importance
+     * */
+    this.reUpdateValue(data)
+  }
+
+  reUpdateValue(data:any){
+    if(data?.value !== undefined) {
+      const objectIndex = this.peDataValues?.findIndex((pdv: any) => {
+        return (
+          pdv.uid === data.uid &&
+          pdv.id === data.id
+        );
+      })
+      this.peDataValues[objectIndex].value = data.value ? data.value : "";
+      /** Remove select_option */
+      delete this.peDataValues[objectIndex]?.select_option;
+      this.horizontalTotal(data); // per column parent
+      /** if row number is greater than one */
+      if (this.round.length > 1) {
+        this.getVerticalTotal(data); // per last row
       }
     }
   }
 
-  /* sam vertical total */
+  /** sam vertical total */
   getVerticalTotal(data:any) {
     if (data.type === "number" || data.output_type ==="CURRENCY") {
       const filtered = this.peDataValues?.filter((value: any) => value.id === data.id)
@@ -570,7 +671,7 @@ export class PeItemComponent implements OnInit {
     }
   }
 
-  /* get vertical for horizontal total */
+  /** Calculate vertical for horizontal total */
   getSamVerticalTotal(data:any){
     const columnTotals = this.peDataValues?.filter((value: any) => value.id === data.id);
     var total = 0;
@@ -582,26 +683,25 @@ export class PeItemComponent implements OnInit {
   }
 
 
-  /* sam vertical total */
+  /** Calculate vertical total */
   horizontalTotal(data:any){
     if(data.output_type ==="CURRENCY" || data.type === "number"){
-      /* filter  to find columns than contain totals*/
+       /** filter  to find columns than contain totals*/
         const columnTotals = this.peDataValues?.filter((value: any) => value.parent_id === data.parent_id && value.uid === data.uid && (value.formula !== null && value.formula !== ""));
         columnTotals.forEach((tcolum:any)=>{
 
-          /* get vertical for horizontal total */
-          var formula = tcolum.formula;
+          /** get vertical for horizontal total */
+          let formula = tcolum.formula;
           let columnArrays = formula.split(/[.\*+-/_]/);
           columnArrays.forEach((column:any)=>{
 
-          // find all columns
+          /** find all columns */
           const filtered = this.peDataValues?.filter((value: any) => value.parent_id === data.parent_id && value.column_number === column && value.uid === data.uid)
-         // let dataValue = filtered[0]?.value ? filtered[0]?.value : 0;
           let dataValue = isNumeric(filtered[0]?.value) === true ? parseFloat(filtered[0]?.value): 0;
             formula = formula.replace(column, dataValue);
         })
 
-          //find the index of object and update value key
+          /**find the index of object and update value key */
           const objectIndex = this.peDataValues?.findIndex((pdv:any) => {
             return (
               pdv.uid === tcolum.uid &&
@@ -621,7 +721,7 @@ export class PeItemComponent implements OnInit {
     }
   }
 
-  /* prepare payload arrays and bind to roundId and InputIds to each textInput */
+  /** Prepare payload arrays and bind to roundId and InputIds to each textInput */
   preparation(){
     this.round?.forEach((r) => {
      this.peValuesArray[r.uid] = {}
@@ -642,13 +742,90 @@ export class PeItemComponent implements OnInit {
   }
 
 
-  /** generate round/table row unique Id id added
+  /** Generate round/table row unique Id id added
   * The id is based on
-  * FinancialYearId, adminHierarchyId, sectionId/CostCenterId,peFormId,peSubFormId,budgetClass,fundSource and serialNumber*/
+  * FinancialYearId, adminHierarchyId, CostCenterId ,peFormId ,peSubFormId,budgetClass,fundSource and serialNumber*/
   getRoundUniqueId(){
-    let currentDate=new Date(); // 2020-04-17T17:19:19.831Z
-   // return `${this.financial_year_id}-${this.admin_hierarchy_id}-${this.section_id}-${this.pe_form_id}-${this.pe_sub_form_id}-${this.budget_class_id}-${this.fund_source_id}`
-    return `${this.financial_year_id}-${this.admin_hierarchy_id}-${this.section_id}-${this.pe_form_id}-${this.pe_sub_form_id}-${currentDate.getTime()}`
+    return `${this.financial_year_id}-${this.admin_hierarchy_id}-${this.section_id}-${this.pe_form_id}-${this.pe_sub_form_id}`
+  }
+
+
+  /** selected Row to be deleted */
+  selectedRows(data:any, uid:any,rowId:number){
+    const selectedItems = this.peDataValues?.filter((pdv:any) => {return(pdv.uid === uid)});
+    if(data.checked){
+      console.log("rowId")
+      console.log(rowId)
+      this.selectedRowsIndexArray.push(rowId);/** used to display */
+      selectedItems.forEach((value:any)=>{
+         this.selectedRowsArray.push(value)
+      })
+    } else {
+      for(let i = 0; i < selectedItems.length; i++){
+         let object = selectedItems[i];
+         let index = this.selectedRowsArray.findIndex((info:any)=>{
+            return(
+              info.uid === object.uid &&
+                info.id === object.id
+            )
+          })
+        this.selectedRowsArray.splice(index, 1);
+      }
+      let rowIdIndex = this.selectedRowsIndexArray?.findIndex((value:number) => value === rowId);
+      this.selectedRowsIndexArray?.splice(rowIdIndex, 1);
+    }
+  }
+
+
+  /** handle delete to the backend */
+  deleteSelectedRows(){
+    const object = {
+      dataValues: this.selectedRowsArray,
+      admin_hierarchy_id : this.admin_hierarchy_id,
+      financial_year_id : this.financial_year_id,
+      section_id : this.section_id,
+      budget_class_id : this.budget_class_id,
+      fund_source_id : this.fund_source_id,
+      pe_form_id : this.pe_form_id,
+      pe_sub_form_id : this.pe_sub_form_id,
+      facility_id: this.facilities[0]?.id,
+    }
+
+    this.peItemService.deletePeLineValues(object).subscribe(resp => {
+      if(resp.success === true){
+        /** remove selected items to the arrays used to save to the backend */
+        this.selectedRowsArray?.forEach((selected:any)=> {
+          const index = this.peDataValues.findIndex((all:any)=>{
+            return (
+              all.id === selected.id &&
+                all.uid === selected.uid
+            )
+          })
+          this.peDataValues.splice(index, 1);
+        });
+
+        /** remove selected items display to html */
+
+        this.peDataValues?.forEach((v:any)=>{
+          this.peValuesArray[v.uid!][v.id!].value = v.value ? v.value : "";
+        })
+
+        this.selectedRowsIndexArray?.forEach((index:number) =>{
+          this.round.splice(index, 1);
+        })
+
+        /** calculate new Vertical total */
+        this.peDataValues.forEach((v:any)=>{
+          this.peValuesArray[v.uid!][v.id!].value = v.value ? v.value : "";
+          this.getVerticalTotal(v);
+        })
+
+        /** clear arrays */
+        this.selectedRowsArray = [];
+        this.selectedRowsIndexArray = [];
+      }
+      this.toastService.info("Data successfully");
+    })
   }
 
 }

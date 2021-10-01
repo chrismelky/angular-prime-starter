@@ -22,21 +22,16 @@ export class PeItemService {
 
 
   create(payload: any): Observable<CustomResponse<any>> {
-
     return this.http.post<CustomResponse<any>>(this.resourceUrl, payload);
   }
 
-  // create(peItem: PeItem): Observable<CustomResponse<PeItem>> {
-  //   return this.http.post<CustomResponse<PeItem>>(this.resourceUrl, peItem);
-  // }
 
-
-  // update(peItem: PeItem): Observable<CustomResponse<PeItem>> {
-  //   return this.http.put<CustomResponse<PeItem>>(
-  //     `${this.resourceUrl}/${peItem.id}`,
-  //     peItem
-  //   );
-  // }
+  update(peItem: PeItem): Observable<CustomResponse<PeItem>> {
+    return this.http.put<CustomResponse<PeItem>>(
+      `${this.resourceUrl}/${peItem}`,
+      peItem
+    );
+  }
 
   find(id: number): Observable<CustomResponse<PeItem>> {
     return this.http.get<CustomResponse<PeItem>>(`${this.resourceUrl}/${id}`);
@@ -49,7 +44,19 @@ export class PeItemService {
     });
   }
 
-  // delete(id: number): Observable<CustomResponse<null>> {
-  //   return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
-  // }
+  delete(id: number): Observable<CustomResponse<null>> {
+    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  fetchDataValues(req?: any): Observable<CustomResponse<any>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<any>>(`${this.resourceUrl}/fetch-data-values`, {
+      params: options,
+    });
+  }
+
+  deletePeLineValues(req?: any): Observable<CustomResponse<any>> {
+    const url ='api/pe_line_values';
+    return this.http.post<CustomResponse<any>>(`${url}/delete-pe-line-values`, req);
+  }
 }

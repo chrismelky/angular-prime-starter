@@ -16,7 +16,7 @@ import {finalize} from "rxjs/operators";
   styleUrls: ['./finalize-ceiling.component.scss']
 })
 export class FinalizeCeilingComponent implements OnInit {
-  position?: number;
+  position?: string;
   ceiling?: any=null;
   ceilingChain?: any=null;
   facilityCeiling?:any[]=[];
@@ -33,18 +33,13 @@ export class FinalizeCeilingComponent implements OnInit {
     protected  facilityService:FacilityService,
   ) {
     this.ceiling=this.config.data.ceiling;
+    this.position = 'p'+ this.config.data.position;
     this.ceilingChain=this.config.data.ceilingChain;
   }
 
   ngOnInit(): void {
     this.facilityService
-      .queryCeilingFacilities({
-        active:true,
-        section_id:this.ceiling?.section_id,
-        ceiling_id:this.ceiling.ceiling_id,
-        admin_hierarchy_id:this.ceiling.admin_hierarchy_id,
-        ownership:'PU'
-      }).subscribe((resp:any) =>{
+      .planning(this.position!,this.ceiling.admin_hierarchy_id,this.ceiling.section_id).subscribe((resp:any) =>{
       this.facilities=resp.data??[];
       this.budgetCeilingService
         .query({

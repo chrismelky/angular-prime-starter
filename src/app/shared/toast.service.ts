@@ -21,7 +21,7 @@ export class ToastService {
       severity: 'error',
       summary,
       sticky: true,
-      detail: JSON.stringify(detail),
+      detail: detail ? `${JSON.stringify(detail).substr(0, 100)}...` : '',
     });
   }
 }

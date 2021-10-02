@@ -50,7 +50,6 @@ export class FinancialYearUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private datePipe: DatePipe,
     private toastService: ToastService
   ) {}
 

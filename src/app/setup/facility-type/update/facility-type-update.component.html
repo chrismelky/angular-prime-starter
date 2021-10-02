@@ -105,6 +105,34 @@
           >
         </span>
       </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-multiSelect
+            id="sections"
+            optionLabel="name"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="sections!"
+            formControlName="sections"
+          ></p-multiSelect>
+          <label for="sections">Section/Cost Centres </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sections')!.invalid &&
+            (editForm.get('sections')!.dirty ||
+              editForm.get('sections')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('sections')?.errors?.required"
+            >Section is required.</small
+          >
+        </span>
+      </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

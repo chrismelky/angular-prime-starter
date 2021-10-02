@@ -23,6 +23,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { FinancialYear } from './financial-year.model';
 import { FinancialYearService } from './financial-year.service';
 import { FinancialYearUpdateComponent } from './update/financial-year-update.component';
+import { FinancialYearOpenComponent } from './open/financial-year-open.component';
 
 @Component({
   selector: 'app-financial-year',
@@ -203,6 +204,18 @@ export class FinancialYearComponent implements OnInit {
     const ref = this.dialogService.open(FinancialYearUpdateComponent, {
       data,
       header: 'Create/Update FinancialYear',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  open(financialYear: FinancialYear): void {
+    const ref = this.dialogService.open(FinancialYearOpenComponent, {
+      data: financialYear,
+      header: 'Open FinancialYear',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

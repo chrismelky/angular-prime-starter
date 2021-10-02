@@ -14,6 +14,7 @@ import { DividerModule } from 'primeng/divider';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -32,6 +33,7 @@ import { MessagesModule } from 'primeng/messages';
     RippleModule,
     ToastModule,
     MessagesModule,
+    MessageModule,
   ],
 })
 export class LoginModule {}

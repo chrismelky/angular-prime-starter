@@ -20,10 +20,11 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       tap({
-        error: (err: HttpErrorResponse) => {
-          if (err.status !== 401) {
-            const summary = err.error.message || 'Error';
-            this.toastService.error(summary, err.error.errors);
+        error: (error: HttpErrorResponse) => {
+          if (error.status !== 401) {
+            const summary = `[${error.status}] ${error.statusText}`;
+            const detail = error.error.message || error.error.errors;
+            this.toastService.error(summary, detail);
           }
         },
       })

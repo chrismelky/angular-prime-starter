@@ -99,6 +99,7 @@
             End Date<p-sortIcon [field]="'end_date'"></p-sortIcon>
           </th>
           <th></th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -111,6 +112,18 @@
           </td>
           <td>
             {{ rowData["end_date"] | date: "mediumDate" }}
+          </td>
+          <td>
+            <button
+              pButton
+              pRipple
+              pTooltip="Open"
+              tooltipPosition="bottom"
+              class="p-button-icon"
+              label="Open"
+              icon="pi pi-unlock"
+              (click)="open(rowData)"
+            ></button>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

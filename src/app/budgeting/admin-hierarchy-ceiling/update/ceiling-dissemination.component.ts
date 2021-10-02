@@ -72,7 +72,7 @@ export class CeilingDisseminationComponent implements OnInit {
   }
   getPercent(row: AdminHierarchyCeiling){
     // @ts-ignore
-    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(0);
+    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(2);
   }
 
   ceilingChange(event:any,action:String,i:number,row: AdminHierarchyCeiling){

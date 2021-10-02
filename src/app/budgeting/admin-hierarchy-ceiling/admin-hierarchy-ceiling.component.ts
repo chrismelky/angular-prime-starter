@@ -490,6 +490,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       is_approved:ceiling.approved,
       budget_type:ceiling.budget_type,
       amount:ceiling.amount,
+      is_facility:false
     };
   }
   public subscribeToSaveResponse(

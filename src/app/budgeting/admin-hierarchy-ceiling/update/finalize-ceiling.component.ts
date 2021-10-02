@@ -42,6 +42,7 @@ export class FinalizeCeilingComponent implements OnInit {
         active:true,
         section_id:this.ceiling?.section_id,
         ceiling_id:this.ceiling.ceiling_id,
+        admin_hierarchy_id:this.ceiling.admin_hierarchy_id,
         ownership:'PU'
       }).subscribe((resp:any) =>{
       this.facilities=resp.data??[];
@@ -128,7 +129,7 @@ export class FinalizeCeilingComponent implements OnInit {
   //this return Allocated Paercet
   getPercent(row: AdminHierarchyCeiling){
     // @ts-ignore
-    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(0);
+    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(2);
   }
 
   /**
@@ -178,8 +179,8 @@ export class FinalizeCeilingComponent implements OnInit {
   protected onSaveFinalize(): void {
   }
 
-  test(event:Event){
-    console.log(event);
+  close(): void {
+    this.dialogRef.close(true);
   }
 
 }

@@ -42,21 +42,23 @@
         <tr>
           <th>Council</th>
           <th>{{ sectionLevel}}</th>
-          <th>Amount (TSH)</th>
-          <th>%</th>
+          <th class="end">Amount (TSH)</th>
+          <th class="end">%</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-editing="editing" let-rowIndex="rowIndex" let-columns="columns">
         <tr>
           <td>{{rowData?.admin_hierarchy.name}}</td>
           <td>{{rowData?.section?.name}}</td>
-          <td  pEditableColumn [pEditableColumnDisabled]="rowData.is_locked"  id="amount">
+          <td  styleClass="col-button" pEditableColumn [pEditableColumnDisabled]="rowData.is_locked"  id="amount">
             <p-cellEditor >
               <ng-template pTemplate="input">
-                <input pInputText (pointerenter)="onEditInit(rowData)" (blur)="updateCeiling(rowIndex,rowData)"  (ngModelChange)="ceilingChange($event,'C',rowIndex,rowData)" type="number" pKeyFilter="money" [(ngModel)]="rowData.amount">
+                <div class="end">
+                  <input pInputText (pointerenter)="onEditInit(rowData)"  (blur)="updateCeiling(rowData)"  (ngModelChange)="ceilingChange($event,'C',rowIndex,rowData)" type="number" pKeyFilter="money" [(ngModel)]="rowData.amount">
+                </div>
               </ng-template>
               <ng-template pTemplate="output" >
-                <div>
+                <div class="end">
                   <b>{{rowData?.amount}}</b>
                 </div>
               </ng-template>
@@ -65,10 +67,10 @@
           <td pEditableColumn [pEditableColumnDisabled]="rowData.is_locked">
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <input pInputText  type="number" (pointerenter)="onEditInit(rowData)" (blur)="updateCeiling(rowIndex,rowData)" (ngModelChange)="ceilingChange($event,'P',rowIndex,rowData)" [(ngModel)]="getPercent(rowData)!">
+                <input pInputText  type="number" (pointerenter)="onEditInit(rowData)"  (blur)="updateCeiling(rowData)" (ngModelChange)="ceilingChange($event,'P',rowIndex,rowData)" [(ngModel)]="getPercent(rowData)!">
               </ng-template>
               <ng-template pTemplate="output">
-                <div>
+                <div class="end">
                   <b>{{getPercent(rowData)!}}  %</b>
                 </div>
               </ng-template>

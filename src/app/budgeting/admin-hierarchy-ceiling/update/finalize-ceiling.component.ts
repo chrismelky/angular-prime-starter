@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {ToastService} from "../../../shared/toast.service";
 import {BudgetCeilingService} from "../../../shared/budget-ceiling.service";
-import {FacilityService} from "../../facility/facility.service";
-import {Facility} from "../../facility/facility.model";
+import {FacilityService} from "../../../setup/facility/facility.service";
+import {Facility} from "../../../setup/facility/facility.model";
 import {AdminHierarchyCeiling} from "../admin-hierarchy-ceiling.model";
 import {BudgetCeiling} from "../../../shared/budget-ceiling.model";
 import {Observable} from "rxjs";
@@ -41,6 +41,7 @@ export class FinalizeCeilingComponent implements OnInit {
       .queryCeilingFacilities({
         active:true,
         section_id:this.ceiling?.section_id,
+        ceiling_id:this.ceiling.ceiling_id,
         ownership:'PU'
       }).subscribe((resp:any) =>{
       this.facilities=resp.data??[];
@@ -127,7 +128,7 @@ export class FinalizeCeilingComponent implements OnInit {
   //this return Allocated Paercet
   getPercent(row: AdminHierarchyCeiling){
     // @ts-ignore
-    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(2);
+    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(0);
   }
 
   /**
@@ -175,6 +176,10 @@ export class FinalizeCeilingComponent implements OnInit {
   }
 
   protected onSaveFinalize(): void {
+  }
+
+  test(event:Event){
+    console.log(event);
   }
 
 }

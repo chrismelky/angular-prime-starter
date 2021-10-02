@@ -85,6 +85,32 @@
         </span>
       </div>
 
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <textarea
+            id="how_to_assess"
+            formControlName="how_to_assess"
+            [rows]="5"
+            [cols]="30"
+            pInputTextarea
+            [autoResize]="true"
+          ></textarea>
+          <label for="how_to_assess"
+          >How to Access
+          </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('how_to_assess')!.invalid &&
+            (editForm.get('how_to_assess')!.dirty ||
+              editForm.get('how_to_assess')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+
       <div fxLayout="row" fxLayoutGap="2px">
         <p-inputSwitch
           id="is_free_score"

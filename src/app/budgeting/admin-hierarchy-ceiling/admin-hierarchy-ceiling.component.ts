@@ -34,11 +34,18 @@ import { AdminHierarchyCeiling } from "./admin-hierarchy-ceiling.model";
 import { AdminHierarchyCeilingService } from "./admin-hierarchy-ceiling.service";
 import { AdminHierarchyCeilingUpdateComponent } from "./update/admin-hierarchy-ceiling-update.component";
 import {InitiateCeilingComponent} from "./update/initiate-ceiling.component";
-import {SectionLevelService} from "../section-level/section-level.service";
-import {SectionLevel} from "../section-level/section-level.model";
+import {SectionLevelService} from "../../setup/section-level/section-level.service";
+import {SectionLevel} from "../../setup/section-level/section-level.model";
 import {finalize} from "rxjs/operators";
-import {User} from "../user/user.model";
-import {UserService} from "../user/user.service";
+import {User} from "../../setup/user/user.model";
+import {UserService} from "../../setup/user/user.service";
+import {CeilingDisseminationComponent} from "./update/ceiling-dissemination.component";
+import {CeilingChainService} from "../../setup/ceiling-chain/ceiling-chain.service";
+import {CeilingChain} from "../../setup/ceiling-chain/ceiling-chain.model";
+import {FinalizeCeilingComponent} from "./update/finalize-ceiling.component";
+import {saveAs} from 'file-saver';
+import {UploadCeilingComponent} from "./update/upload-ceiling.component";
+import {LockCeilingComponent} from "./update/lock-ceiling.component";
 
 @Component({
   selector: "app-admin-hierarchy-ceiling",
@@ -68,7 +75,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
   items: MenuItem[] | undefined;
-
+  rootSection?: Section;
   currentUser!: User;
 
   //Mandatory filter
@@ -94,17 +101,16 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected sectionLevelService: SectionLevelService,
-    private messageService: MessageService,
+    protected ceilingChainService: CeilingChainService,
     protected userService: UserService,
   ) {
     this.currentUser = userService.getCurrentUser();
   }
 
   ngOnInit(): void {
-    const rootSection = this.currentUser.section;
-    this.section_id = rootSection?.id;
-    this.position = rootSection?.position
-    console.log(this.position);
+    this.rootSection = this.currentUser.section;
+    this.section_id = this.rootSection?.id;
+    this.position = this.rootSection?.position
     this.ceilingService
       .query({ columns: ["id", "name"] })
       .subscribe(
@@ -135,29 +141,72 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     this.budgetTypes = this.enumService.get("budgetTypes");
     this.handleNavigation();
     this.items = [
-      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.uploadCeiling();}},
       {label: 'Download Template', icon: 'pi pi-download', command: () => {this.downloadTemplate();}},
+      {label: 'Upload Ceiling', icon: 'pi pi-upload', command: () => {this.uploadCeiling();}},
       {label: 'Lock/Unlock Ceiling', icon: 'pi pi-lock', command: () => {this.lockUnlockCeiling();}},
     ];
   }
 
   uploadCeiling(){
-
+    const ref = this.dialogService.open(UploadCeilingComponent, {
+      header: "Upload Ceiling Template File",
+      data:{
+        admin_hierarchy_id:this.admin_hierarchy_id,
+        budget_type:this.budget_type,
+        section_id:this.section_id,
+        financial_year_id:this.financial_year_id
+      }
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
   downloadTemplate(){
-
+    this.adminHierarchyCeilingService.queryDownloadTemplate(
+      { admin_hierarchy_id :this.admin_hierarchy_id,
+        section_id:this.section_id}
+    ).subscribe((response: BlobPart) => {
+      saveAs(new Blob([response], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+      ), 'ceiling-upload-template.xlsx');
+    });
   }
   lockUnlockCeiling(){
-
+    const ref = this.dialogService.open(LockCeilingComponent, {
+      data:{
+        admin_hierarchy_id:this.admin_hierarchy_id,
+        admin_hierarchy_position:this.admin_hierarchy_position,
+        position:this.position,
+        financial_year_id:this.financial_year_id,
+        budget_type:this.budget_type
+      },
+      width:'60%',
+      header: "Lock/Unlock Ceiling",
+    });
+    ref.onClose.subscribe((result) => {
+      this.loadPage(this.page);
+    });
   }
 
   selectionLevelChange(){
     this.sectionService
       .query({ position :this.position})
       .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+        (resp: CustomResponse<Section[]>) =>{
+          this.sections = resp.data;
+          // @ts-ignore
+          if(this.rootSection.position === this.position){
+            this.section_id = this.rootSection?.id;
+          }else{
+            // @ts-ignore
+            this.section_id = this.sections[0].id;
+          }
+          this.loadPage();
+        }
       );
-    this.loadPage();
   }
 
   /**
@@ -176,6 +225,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
+
     this.adminHierarchyCeilingService
       .queryCeilingWithChildren({
         page: pageToLoad,
@@ -185,6 +235,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         financial_year_id: this.financial_year_id,
         budget_type: this.budget_type,
         section_id:this.section_id,
+        position:this.position,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -402,24 +453,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   }
 
   /**
-   * Lock or unlock AdminHierarchyCeiling
-   * @param adminHierarchyCeiling ;
-   */
-  lock(action: number): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to ' + (action===0?'Lock All Levels':'UnLock All Levels'),
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-
-      },
-      reject: (type:any) => {
-
-      }
-    });
-  }
-
-  /**
    * Return form values as object of type AdminHierarchyCeiling
    * @returns AdminHierarchyCeiling
    */
@@ -443,7 +476,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
    * Return form values as object of type AdminHierarchyCeiling
    * @returns AdminHierarchyCeiling
    */
-  protected updateFromForm(ceiling:any): AdminHierarchyCeiling {
+  public updateFromForm(ceiling:any): AdminHierarchyCeiling {
     return {
       ...new AdminHierarchyCeiling(),
       id:ceiling.id,
@@ -459,7 +492,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       amount:ceiling.amount,
     };
   }
-  protected subscribeToSaveResponse(
+  public subscribeToSaveResponse(
     result: Observable<CustomResponse<AdminHierarchyCeiling>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
@@ -503,15 +536,61 @@ export class AdminHierarchyCeilingComponent implements OnInit {
 
   onRowEditCancel(ceiling: AdminHierarchyCeiling, index: number) {
     // @ts-ignore
-    this.ceilings[index] = this.clonedCeiling[ceiling.id];
+    this.adminHierarchyCeilings[index] = this.clonedCeiling[ceiling.id];
     // @ts-ignore
     delete this.clonedCeiling[ceiling.id];
   }
 
   toggleActivation(row: AdminHierarchyCeiling){
-    const adminHierarchyCeiling = this.updateFromForm(row);
-    this.subscribeToSaveResponse(
-      this.adminHierarchyCeilingService.update(adminHierarchyCeiling)
-    );
+    this.confirmationService.confirm({
+      message: (('Are you sure that you want to ') + (row.is_locked?'Lock Ceiling?':'Unlock Ceiling?')),
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        const adminHierarchyCeiling = this.updateFromForm(row);
+        this.subscribeToSaveResponse(
+          this.adminHierarchyCeilingService.update(adminHierarchyCeiling)
+        );
+      },
+      reject: () => {
+        this.loadPage();
+      }
+    });
   }
+
+  allocate(row: AdminHierarchyCeiling){
+
+    //get next ceiling Chain
+    this.ceilingChainService
+      .query({ section_level_position:this.position ,active:true,page:1})
+      .subscribe(
+        (resp: CustomResponse<CeilingChain[]>) =>{
+          let ceilingChain = resp.data??[];
+          if(ceilingChain.length > 0){
+            const data: any ={
+              ceiling: row,
+              position: this.position,
+              ceilingChain:ceilingChain[0]
+            };
+            if(ceilingChain[0].next !==null){
+              const ref = this.dialogService.open(CeilingDisseminationComponent, {
+                header: "Ceiling Dissemination",
+                width:"60%",
+                data
+              });
+              ref.onClose.subscribe((result) => {});
+            }else{
+              const ref = this.dialogService.open(FinalizeCeilingComponent, {
+                header: "Ceiling Dissemination",
+                width:"60%",
+                data
+              });
+              ref.onClose.subscribe((result) => {});
+            }
+          }else{
+            this.toastService.info('Please Set The Ceiling Chain Before This Process');
+          }
+        }
+      );
+}
 }

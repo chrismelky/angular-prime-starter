@@ -50,6 +50,13 @@ export class AdminHierarchyService {
     });
   }
 
+  queryByPositionAndParent(req?: any): Observable<CustomResponse<AdminHierarchy[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<AdminHierarchy[]>>(`${this.resourceUrl}/search/${req.position}/${req.parent}/${req.parentId}`, {
+      params: options,
+    });
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

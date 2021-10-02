@@ -37,6 +37,7 @@ export class CasAssessmentSubCriteriaOptionUpdateComponent implements OnInit {
     name: [null, [Validators.required, Validators.maxLength(200)]],
     serial_number: [null, [Validators.required, Validators.min(0)]],
     cas_assessment_criteria_option_id: [null, [Validators.required]],
+    how_to_assess: [null, [Validators.required]],
     score_value: [null, [Validators.min(0.0)]],
     is_free_score: [false, []],
   });
@@ -129,6 +130,7 @@ export class CasAssessmentSubCriteriaOptionUpdateComponent implements OnInit {
       cas_assessment_criteria_option_id:
         casAssessmentSubCriteriaOption.cas_assessment_criteria_option_id,
       score_value: casAssessmentSubCriteriaOption.score_value,
+      how_to_assess: casAssessmentSubCriteriaOption.how_to_assess,
       is_free_score: casAssessmentSubCriteriaOption.is_free_score,
     });
   }
@@ -147,6 +149,7 @@ export class CasAssessmentSubCriteriaOptionUpdateComponent implements OnInit {
         'cas_assessment_criteria_option_id',
       ])!.value,
       score_value: this.editForm.get(['score_value'])!.value,
+      how_to_assess: this.editForm.get(['how_to_assess'])!.value,
       is_free_score: this.editForm.get(['is_free_score'])!.value,
     };
   }

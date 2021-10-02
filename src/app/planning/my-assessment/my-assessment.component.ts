@@ -26,6 +26,11 @@ import { FinancialYearService } from "src/app/setup/financial-year/financial-yea
 import { MyAssessment } from "./my-assessment.model";
 import { MyAssessmentService } from "./my-assessment.service";
 import { MyAssessmentUpdateComponent } from "./update/my-assessment-update.component";
+import {CasAssessmentRound} from "../../setup/cas-assessment-round/cas-assessment-round.model";
+import {User} from "../../setup/user/user.model";
+import {UserService} from "../../setup/user/user.service";
+import {AssessmentCriteriaService} from "../assessment-criteria/assessment-criteria.service";
+import {AdminHierarchy} from "../../setup/admin-hierarchy/admin-hierarchy.model";
 
 @Component({
   selector: "app-my-assessment",
@@ -36,9 +41,20 @@ export class MyAssessmentComponent implements OnInit {
   @ViewChild("table") table!: Table;
   myAssessments?: MyAssessment[] = [];
 
-  financialYears?: FinancialYear[] = [];
 
-  cols = []; //Table display columns
+  financialYears?: FinancialYear[] = [];
+  casAssessmentRounds?: CasAssessmentRound[] = [];
+  adminHierarchies?: AdminHierarchy[] = [];
+
+  cols = [
+    { field: 'council', header: 'Council' },
+    { field: 'round', header: 'Round' },
+    { field: 'category', header: 'Category' },
+    { field: 'minimum_passmark', header: 'Minimum Passmark' },
+    { field: 'highest_score', header: 'Highest Score' },
+    { field: 'score', header: 'Score' },
+    { field: 'pct', header: '%' }
+  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -50,28 +66,41 @@ export class MyAssessmentComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  admin_hierarchy_id!: number;
   financial_year_id!: number;
+  cas_assessment_round_id!: number;
+  cas_assessment_category_version_id: number;
+  admin_hierarchy_position!:number;
+  admin_hierarchy_level_id!: number | undefined;
+  currentUser: User;
 
   constructor(
+    protected assessmentCriteriaService: AssessmentCriteriaService,
     protected myAssessmentService: MyAssessmentService,
     protected financialYearService: FinancialYearService,
-    protected activatedRoute: ActivatedRoute,
+    protected actRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
+    protected userService: UserService,
     protected toastService: ToastService
   ) {
-    // this.receivedData = this.router.getCurrentNavigation()?.extras.state?.financial_year.id;
-  }
+    this.cas_assessment_category_version_id = this.actRoute.snapshot.params.id;
+    this.cas_assessment_round_id = this.actRoute.snapshot.params.round_id;
+    this.financial_year_id = this.actRoute.snapshot.params.fy_id;
+    this.currentUser = userService.getCurrentUser();
+    this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;  }
 
   ngOnInit(): void {
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
+    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,
+      this.cas_assessment_category_version_id)
+      .subscribe((resp) => {
+        this.adminHierarchies = resp.data.adminHierarchies;
+        this.financialYears = resp.data.financialYears;
+        this.casAssessmentRounds = resp.data.casRounds;
+      });
+
     this.handleNavigation();
   }
 
@@ -113,8 +142,8 @@ export class MyAssessmentComponent implements OnInit {
    */
   protected handleNavigation(): void {
     combineLatest([
-      this.activatedRoute.data,
-      this.activatedRoute.queryParamMap,
+      this.actRoute.data,
+      this.actRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
       const page = params.get("page");
       const perPage = params.get("per_page");
@@ -273,5 +302,21 @@ export class MyAssessmentComponent implements OnInit {
 
   finishAndQuit() {
     this.router.navigate(["/assessment-home"])
+  }
+
+  loadCouncils(adm: any) {
+    this.myAssessmentService.getCouncils(adm.id,this.financial_year_id,this.cas_assessment_round_id,this.cas_assessment_category_version_id)
+      .subscribe(resp => {
+        this.myAssessments = resp.data;
+      });
+  }
+
+  getReport(rowData: any) {
+   this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,rowData.financial_year_id,rowData.round_id,rowData.version_id)
+     .subscribe(resp =>{
+       let file = new Blob([resp], { type: 'application/pdf'});
+       let fileURL = URL.createObjectURL(file);
+       window.open(fileURL,"_blank");
+     })
   }
 }

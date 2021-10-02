@@ -19,6 +19,8 @@ export class AssessmentCriteriaService {
   public url = "api/cas_results";
   public commentUrl = "api/cas_sub_criteria_comments";
   public baseUrl = "api/assessor_hierarchies";
+  public reportUrl = "api/assessment_criteria";
+  public criteriaScore = "api/assessment_criteria_score";
 
   constructor(protected http: HttpClient) {}
 
@@ -40,11 +42,20 @@ createComment(
     );
   }
 
+  updateComment(
+    assessmentCriteria: AssessmentCriteria
+  ): Observable<CustomResponse<AssessmentCriteria>> {
+    return this.http.put<CustomResponse<AssessmentCriteria>>(
+      `${this.commentUrl}/${assessmentCriteria.id}`,
+      assessmentCriteria
+    );
+  }
+
   update(
     assessmentCriteria: AssessmentCriteria
   ): Observable<CustomResponse<AssessmentCriteria>> {
     return this.http.put<CustomResponse<AssessmentCriteria>>(
-      `${this.resourceUrl}/${assessmentCriteria.id}`,
+      `${this.url}/${assessmentCriteria.id}`,
       assessmentCriteria
     );
   }
@@ -67,9 +78,24 @@ createComment(
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  getDataByUser(): Observable<CustomResponse<any>> {
+  getDataByUser(round_id: number, fy_id: number, version_id: number): Observable<CustomResponse<any>> {
     return this.http.get<CustomResponse<any>>(
-      this.baseUrl
+      `${this.baseUrl}/${round_id}/${fy_id}/${version_id}`
     );
+  }
+
+  getAssessmentReport(admin_hierarchy_id: number, financial_year_id: number,round_id: number, version_id: number){
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+    };
+    return this.http.get<any>(
+      `${this.reportUrl}/${admin_hierarchy_id}/${financial_year_id}/${round_id}/${version_id}`,httpOptions
+    );
+  }
+
+  getCriteriaScores(admin_id: number,round_id: number,version_id: number) {
+    return this.http.get<CustomResponse<AssessmentCriteria[]>>(
+      `${this.resourceUrl}/${admin_id}/${round_id}/${version_id}`
+    )
   }
 }

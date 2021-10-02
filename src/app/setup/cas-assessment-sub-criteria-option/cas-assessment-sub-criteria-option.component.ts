@@ -50,6 +50,11 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
       sort: false,
     },
     {
+      field: "how_to_assess",
+      header: "How to Access",
+      sort: false,
+    },
+    {
       field: "score_value",
       header: "Score Value",
       sort: false,

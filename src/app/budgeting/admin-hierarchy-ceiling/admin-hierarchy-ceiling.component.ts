@@ -490,6 +490,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       is_approved:ceiling.approved,
       budget_type:ceiling.budget_type,
       amount:ceiling.amount,
+      is_facility:false
     };
   }
   public subscribeToSaveResponse(
@@ -569,7 +570,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
           if(ceilingChain.length > 0){
             const data: any ={
               ceiling: row,
-              position: this.position,
+              position: this.admin_hierarchy_position,
               ceilingChain:ceilingChain[0]
             };
             if(ceilingChain[0].next !==null){

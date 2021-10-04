@@ -1,56 +1,56 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
-import { SectionLevel } from "./section-level.model";
-import { SectionLevelService } from "./section-level.service";
-import { SectionLevelUpdateComponent } from "./update/section-level-update.component";
+import { SectionLevel } from './section-level.model';
+import { SectionLevelService } from './section-level.service';
+import { SectionLevelUpdateComponent } from './update/section-level-update.component';
 
 @Component({
-  selector: "app-section-level",
-  templateUrl: "./section-level.component.html",
+  selector: 'app-section-level',
+  templateUrl: './section-level.component.html',
 })
 export class SectionLevelComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   sectionLevels?: SectionLevel[] = [];
 
   cols = [
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: false,
     },
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: false,
     },
     {
-      field: "position",
-      header: "Position",
+      field: 'position',
+      header: 'Position',
       sort: false,
     },
     {
-      field: "code_required",
-      header: "Code Required",
+      field: 'code_required',
+      header: 'Code Required',
       sort: false,
     },
     {
-      field: "code_length",
-      header: "Code Length",
+      field: 'code_length',
+      header: 'Code Length',
       sort: false,
     },
   ]; //Table display columns
@@ -117,11 +117,11 @@ export class SectionLevelComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -184,8 +184,8 @@ export class SectionLevelComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -196,10 +196,12 @@ export class SectionLevelComponent implements OnInit {
   createOrUpdate(sectionLevel?: SectionLevel): void {
     const data: SectionLevel = sectionLevel ?? {
       ...new SectionLevel(),
+      code_required: true,
+      is_cost_centre: false,
     };
     const ref = this.dialogService.open(SectionLevelUpdateComponent, {
       data,
-      header: "Create/Update SectionLevel",
+      header: 'Create/Update SectionLevel',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -214,7 +216,7 @@ export class SectionLevelComponent implements OnInit {
    */
   delete(sectionLevel: SectionLevel): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this SectionLevel?",
+      message: 'Are you sure that you want to delete this SectionLevel?',
       accept: () => {
         this.sectionLevelService.delete(sectionLevel.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -238,12 +240,12 @@ export class SectionLevelComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/section-level"], {
+      this.router.navigate(['/section-level'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -256,6 +258,6 @@ export class SectionLevelComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Section Level");
+    this.toastService.error('Error loading Section Level');
   }
 }

@@ -4,6 +4,7 @@ export class BudgetClass {
     public name?: string,
     public code?: string,
     public parent_id?: number,
-    public active?: boolean
+    public active?: boolean,
+    public children?: BudgetClass[]
   ) {}
 }

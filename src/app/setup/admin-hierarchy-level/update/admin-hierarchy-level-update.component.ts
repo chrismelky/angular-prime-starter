@@ -15,6 +15,8 @@ import { CustomResponse } from '../../../utils/custom-response';
 import { AdminHierarchyLevel } from '../admin-hierarchy-level.model';
 import { AdminHierarchyLevelService } from '../admin-hierarchy-level.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { SectionLevel } from '../../section-level/section-level.model';
+import { SectionLevelService } from '../../section-level/section-level.service';
 
 @Component({
   selector: 'app-admin-hierarchy-level-update',
@@ -24,6 +26,7 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  sectionLevels?: SectionLevel[] = [];
 
   /**
    * Declare form
@@ -37,7 +40,9 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       [Validators.required, Validators.min(1), Validators.max(6)],
     ],
     code_required: [true, []],
+    can_budget: [false, []],
     code_length: [null, []],
+    cost_centre_position: [null, []],
   });
 
   constructor(
@@ -45,10 +50,14 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected sectionLevelService: SectionLevelService
   ) {}
 
   ngOnInit(): void {
+    this.sectionLevelService
+      .query({ column: ['id', 'position', 'name'] })
+      .subscribe((resp) => (this.sectionLevels = resp.data));
     this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
   }
 
@@ -71,6 +80,19 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       this.subscribeToSaveResponse(
         this.adminHierarchyLevelService.create(adminHierarchyLevel)
       );
+    }
+  }
+
+  canBudgetChange(canBudget: boolean): void {
+    console.log(canBudget);
+    if (canBudget) {
+      this.editForm
+        .get('cost_centre_position')
+        ?.setValidators([Validators.required]);
+      this.editForm.get('cost_centre_position')?.updateValueAndValidity();
+    } else {
+      this.editForm.get('cost_centre_position')?.clearValidators();
+      this.editForm.get('cost_centre_position')?.updateValueAndValidity();
     }
   }
 
@@ -114,8 +136,11 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       name: adminHierarchyLevel.name,
       position: adminHierarchyLevel.position,
       code_required: adminHierarchyLevel.code_required,
+      can_budget: adminHierarchyLevel.can_budget,
       code_length: adminHierarchyLevel.code_length,
+      cost_centre_position: adminHierarchyLevel.cost_centre_position,
     });
+    this.canBudgetChange(adminHierarchyLevel.can_budget!);
   }
 
   /**
@@ -130,7 +155,9 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       position: this.editForm.get(['position'])!.value,
       code_required: this.editForm.get(['code_required'])!.value,
+      can_budget: this.editForm.get(['can_budget'])!.value,
       code_length: this.editForm.get(['code_length'])!.value,
+      cost_centre_position: this.editForm.get(['cost_centre_position'])!.value,
     };
   }
 }

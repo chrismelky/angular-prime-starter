@@ -204,6 +204,7 @@ export class AdminHierarchyLevelComponent implements OnInit {
     const data: AdminHierarchyLevel = adminHierarchyLevel ?? {
       ...new AdminHierarchyLevel(),
       code_required: true,
+      can_budget: false,
     };
     const ref = this.dialogService.open(AdminHierarchyLevelUpdateComponent, {
       data,

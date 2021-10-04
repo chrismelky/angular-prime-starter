@@ -32,6 +32,7 @@ export class MainComponent implements OnInit {
       this.isGtMd = value;
     });
     if (this.user) {
+      this.currentUserMenuItems = this.user.menus;
       this.avator = this.user.first_name.charAt(0).toUpperCase();
       this.userMenus.unshift({
         label: `${this.user.first_name} ${this.user.last_name}`,
@@ -42,7 +43,7 @@ export class MainComponent implements OnInit {
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
-    this.loadMenu();
+    // this.loadMenu();
   }
 
   userMenus: MenuItem[] = [

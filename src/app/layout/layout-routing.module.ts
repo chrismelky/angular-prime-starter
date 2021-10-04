@@ -1021,6 +1021,45 @@ const routes: Routes = [
         },
       },
       {
+        path: 'admin-hierarchy-cost-centres',
+        loadChildren: () =>
+          import(
+            '../planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.module'
+          ).then((m) => m.AdminHierarchyCostCentreModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'WRITE_ACTIVITY',
+          },
+        },
+      },
+      {
+        path: 'activity',
+        loadChildren: () =>
+          import('../planning/activity/activity.module').then(
+            (m) => m.ActivityModule
+          ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'WRITE_ACTIVITY',
+          },
+        },
+      },
+      {
+        path: 'responsible-person',
+        loadChildren: () =>
+          import(
+            '../planning/responsible-person/responsible-person.module'
+          ).then((m) => m.ResponsiblePersonModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'WRITE_ACTIVITY',
+          },
+        },
+      },
+      {
         path: 'assessment-home',
         loadChildren: () =>
           import('../setup/assessment-home/assessment-home.module').then(

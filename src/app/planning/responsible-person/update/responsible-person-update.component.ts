@@ -5,26 +5,26 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
-import { Facility } from "src/app/setup/facility/facility.model";
-import { FacilityService } from "src/app/setup/facility/facility.service";
-import { ResponsiblePerson } from "../responsible-person.model";
-import { ResponsiblePersonService } from "../responsible-person.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
+import { Facility } from 'src/app/setup/facility/facility.model';
+import { FacilityService } from 'src/app/setup/facility/facility.service';
+import { ResponsiblePerson } from '../responsible-person.model';
+import { ResponsiblePersonService } from '../responsible-person.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-responsible-person-update",
-  templateUrl: "./responsible-person-update.component.html",
+  selector: 'app-responsible-person-update',
+  templateUrl: './responsible-person-update.component.html',
 })
 export class ResponsiblePersonUpdateComponent implements OnInit {
   isSaving = false;
@@ -46,9 +46,9 @@ export class ResponsiblePersonUpdateComponent implements OnInit {
     cheque_number: [null, [Validators.required]],
     title: [null, [Validators.required]],
     admin_hierarchy_id: [null, [Validators.required]],
-    section_id: [null, [Validators.required]],
-    facility_id: [null, [Validators.required]],
-    is_active: [false, []],
+    sector_id: [null, [Validators.required]],
+    facility_id: [null, []],
+    is_active: [true, []],
   });
 
   constructor(
@@ -63,22 +63,6 @@ export class ResponsiblePersonUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.sectionService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.facilityService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -146,7 +130,7 @@ export class ResponsiblePersonUpdateComponent implements OnInit {
       cheque_number: responsiblePerson.cheque_number,
       title: responsiblePerson.title,
       admin_hierarchy_id: responsiblePerson.admin_hierarchy_id,
-      section_id: responsiblePerson.section_id,
+      sector_id: responsiblePerson.sector_id,
       facility_id: responsiblePerson.facility_id,
       is_active: responsiblePerson.is_active,
     });
@@ -159,16 +143,16 @@ export class ResponsiblePersonUpdateComponent implements OnInit {
   protected createFromForm(): ResponsiblePerson {
     return {
       ...new ResponsiblePerson(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      mobile: this.editForm.get(["mobile"])!.value,
-      email: this.editForm.get(["email"])!.value,
-      cheque_number: this.editForm.get(["cheque_number"])!.value,
-      title: this.editForm.get(["title"])!.value,
-      admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
-      section_id: this.editForm.get(["section_id"])!.value,
-      facility_id: this.editForm.get(["facility_id"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      mobile: this.editForm.get(['mobile'])!.value,
+      email: this.editForm.get(['email'])!.value,
+      cheque_number: this.editForm.get(['cheque_number'])!.value,
+      title: this.editForm.get(['title'])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      sector_id: this.editForm.get(['sector_id'])!.value,
+      facility_id: this.editForm.get(['facility_id'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

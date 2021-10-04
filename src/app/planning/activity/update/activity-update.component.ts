@@ -35,6 +35,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { TreeNode } from 'primeng/api';
 import { ResponsiblePersonService } from '../../responsible-person/responsible-person.service';
 import { ResponsiblePerson } from '../../responsible-person/responsible-person.model';
+import { AdminHierarchyCostCentre } from '../../admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
 
 @Component({
   selector: 'app-activity-update',
@@ -61,6 +62,7 @@ export class ActivityUpdateComponent implements OnInit {
   budgetClassTree?: any[] = [];
   budgetClasses?: BudgetClass[] = [];
   budgetClass?: TreeNode;
+  adminHierarchyCostCentre?: AdminHierarchyCostCentre;
 
   /**
    * Declare form
@@ -71,7 +73,7 @@ export class ActivityUpdateComponent implements OnInit {
     code: [null, []],
     indicator: [null, []],
     indicator_value: [null, []],
-    long_term_target_id: [null, [Validators.required]],
+    long_term_target_id: [null, []],
     financial_year_target_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
     budget_class_id: [null, [Validators.required]], //Budget class will be binded to tree node of Type @TreeNode
@@ -86,7 +88,7 @@ export class ActivityUpdateComponent implements OnInit {
     sector_problem_id: [null, []],
     generic_activity_id: [null, []],
     responsible_person_id: [null, [Validators.required]],
-    period_type: [null, [Validators.required]],
+    period_type: [null, []],
     period_one: [false, []],
     period_two: [false, []],
     period_three: [false, []],
@@ -128,15 +130,26 @@ export class ActivityUpdateComponent implements OnInit {
       })
       .subscribe((resp) => (this.activityTypes = resp.data));
 
+    /** get perio type from enums */
     this.periodTypes = this.enumService.get('periodTypes');
 
-    this.loadResponsiblePeople();
-    this.loadProjects();
-
+    /** Get dialog data set from activity component */
     const dialogData = this.dialogConfig.data;
-    const activity: Activity = dialogData;
+
+    /** set admin hierarchy cost centre */
+    this.adminHierarchyCostCentre = dialogData.adminHierarchyCostCentre;
+
+    /** get activity to edit or create  from dialog   */
+    const activity: Activity = dialogData.activity;
+
     /** fetch activity task nature by selected activity_type_id if edit mode */
     activity.id && this.loadActivityTaskNature(activity.activity_type_id!);
+
+    /** Load responsible person by admin hiearch and sector */
+    this.loadResponsiblePeople();
+
+    /** Load project by sector */
+    this.loadProjects();
 
     //Initialize form with data from dialog
     this.updateForm(activity);
@@ -167,9 +180,13 @@ export class ActivityUpdateComponent implements OnInit {
    * Load responsible people
    */
   loadResponsiblePeople(): void {
+    if (!this.adminHierarchyCostCentre?.section) {
+      return;
+    }
     this.responsiblePersonService
       .query({
-        //TODO filter by admin area and section
+        admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
+        sector_id: this.adminHierarchyCostCentre?.section?.sector_id,
       })
       .subscribe((resp) => (this.responsiblePeople = resp.data));
   }
@@ -180,6 +197,7 @@ export class ActivityUpdateComponent implements OnInit {
    */
   save(): void {
     if (this.editForm.invalid) {
+      console.log(this.editForm.errors);
       this.formError = true;
       return;
     }

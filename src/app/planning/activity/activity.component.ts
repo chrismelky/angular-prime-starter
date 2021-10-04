@@ -358,7 +358,10 @@ export class ActivityComponent implements OnInit {
       budget_type: this.budget_type,
     };
     const ref = this.dialogService.open(ActivityUpdateComponent, {
-      data,
+      data: {
+        activity: data,
+        adminHierarchyCostCentre: this.adminHierarchyCostCentre,
+      },
       header: 'Create/Update Activity',
       width: '900px',
     });

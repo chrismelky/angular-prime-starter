@@ -128,7 +128,7 @@
   </p-card>
   <!-- Table Panel -->
   <p-accordion>
-    <p-accordionTab  *ngFor="let tab of assessmentCriteriaData!; let i = index"  (click)="loadSubCriteria(tab.id)">
+    <p-accordionTab  *ngFor="let tab of assessmentCriteriaData!; let i = index"  (click)="loadSubCriteria(tab.id, i)" [ngClass]="{'highlight': selectedIndex === i}">
       <ng-template pTemplate="header" >
         <div>{{i + 1+'.'}}   {{tab.name }}</div>
         <div>[{{tab.number}}]</div>

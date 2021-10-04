@@ -44,6 +44,7 @@ import {User} from "../../setup/user/user.model";
 @Component({
   selector: "app-assessment-criteria",
   templateUrl: "./assessment-criteria.component.html",
+  styleUrls: ['./assessment-criteria.component.scss'],
 })
 export class AssessmentCriteriaComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
@@ -90,6 +91,7 @@ export class AssessmentCriteriaComponent implements OnInit {
   position3 = false;
   position2 = false;
   position1 = false;
+  selectedIndex = 0;
 
   constructor(
     protected assessmentCriteriaService: AssessmentCriteriaService,
@@ -344,7 +346,8 @@ export class AssessmentCriteriaComponent implements OnInit {
     this.toastService.error("Error loading Assessment Criteria");
   }
 
-  loadSubCriteria(id: any) {
+  loadSubCriteria(id: any, i: number) {
+    this.selectedIndex = i;
     this.casAssessmentSubCriteriaService.getSubCriteriaWithScores(
       id,this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id,
       this.admin_hierarchy_level_id,this.cas_assessment_category_version_id
@@ -366,7 +369,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadSubCriteria(result);
+        this.loadSubCriteria(result, 1);
       }
     });
   }

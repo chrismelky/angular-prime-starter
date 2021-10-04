@@ -80,7 +80,7 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-angle-down",
           items: [
             {
-                label: "Financial Years",
+              label: "Financial Years",
               icon: "pi pi-fw pi-link",
               routerLink: "financial-year",
             },
@@ -582,6 +582,11 @@ export class MainComponent implements OnInit {
             },
           ],
         },
+        {
+          label: "Scrutinizations",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "scrutinization",
+        },
         /**====Planrep planning Menu Generator Hook: Dont Delete====*/
       ],
     },
@@ -644,8 +649,6 @@ export class MainComponent implements OnInit {
   private loadMenu() {
     this.authService
       .currentUserMenu()
-      .subscribe(
-        (resp: MenuItem[]) => (this.currentUserMenuItems = resp)
-      );
+      .subscribe((resp: MenuItem[]) => (this.currentUserMenuItems = resp));
   }
 }

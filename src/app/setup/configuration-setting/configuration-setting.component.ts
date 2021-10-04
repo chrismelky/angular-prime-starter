@@ -37,6 +37,7 @@ export class ConfigurationSettingComponent implements OnInit {
 
   valueTypes?: PlanrepEnum[] = [];
 
+
   cols = [
     {
       field: "key",
@@ -83,6 +84,8 @@ export class ConfigurationSettingComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  items: MenuItem[] = [];
+  activeItem: MenuItem | undefined;
 
   //Mandatory filter
 
@@ -100,6 +103,22 @@ export class ConfigurationSettingComponent implements OnInit {
   ngOnInit(): void {
     this.valueTypes = this.enumService.get("valueTypes");
     this.handleNavigation();
+    // this.items = [
+    //   {label: 'Home', icon: 'pi pi-fw pi-home'},
+    //   {label: 'Calendar', icon: 'pi pi-fw pi-calendar'},
+    //   {label: 'Edit', icon: 'pi pi-fw pi-pencil'},
+    //   {label: 'Documentation', icon: 'pi pi-fw pi-file'},
+    //   {label: 'Settings', icon: 'pi pi-fw pi-cog'}
+    // ];
+    this.activeItem = this.items[0];
+    this.configurationSettingService
+      .groups()
+      .subscribe(
+        (res: CustomResponse<any[]>) => {
+          this.items = res.data!;
+          console.log(this.items);
+        }
+      );
   }
 
   /**

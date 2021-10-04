@@ -16,7 +16,7 @@ import {finalize} from "rxjs/operators";
   styleUrls: ['./finalize-ceiling.component.scss']
 })
 export class FinalizeCeilingComponent implements OnInit {
-  position?: number;
+  position?: string;
   ceiling?: any=null;
   ceilingChain?: any=null;
   facilityCeiling?:any[]=[];
@@ -33,17 +33,13 @@ export class FinalizeCeilingComponent implements OnInit {
     protected  facilityService:FacilityService,
   ) {
     this.ceiling=this.config.data.ceiling;
+    this.position = 'p'+ this.config.data.position;
     this.ceilingChain=this.config.data.ceilingChain;
   }
 
   ngOnInit(): void {
     this.facilityService
-      .queryCeilingFacilities({
-        active:true,
-        section_id:this.ceiling?.section_id,
-        ceiling_id:this.ceiling.ceiling_id,
-        ownership:'PU'
-      }).subscribe((resp:any) =>{
+      .planning(this.position!,this.ceiling.admin_hierarchy_id,this.ceiling.section_id).subscribe((resp:any) =>{
       this.facilities=resp.data??[];
       this.budgetCeilingService
         .query({
@@ -128,7 +124,7 @@ export class FinalizeCeilingComponent implements OnInit {
   //this return Allocated Paercet
   getPercent(row: AdminHierarchyCeiling){
     // @ts-ignore
-    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(0);
+    return (this.ceiling?.amount>0?(((row?.amount)/this.ceiling?.amount)*100):0).toFixed(2);
   }
 
   /**
@@ -178,8 +174,8 @@ export class FinalizeCeilingComponent implements OnInit {
   protected onSaveFinalize(): void {
   }
 
-  test(event:Event){
-    console.log(event);
+  close(): void {
+    this.dialogRef.close(true);
   }
 
 }

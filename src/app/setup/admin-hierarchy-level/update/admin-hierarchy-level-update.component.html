@@ -78,13 +78,53 @@
         </span>
       </div>
 
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
+      <div fxLayout="row" fxLayoutGap="10px">
+        <p-checkbox
           id="code_required"
           name="code_required"
           formControlName="code_required"
-        ></p-inputSwitch>
-        <label for="code_required">Code Required </label>
+          label="Code Required"
+          [binary]="true"
+        ></p-checkbox>
+        <p-checkbox
+          id="can_budget"
+          name="can_budget"
+          formControlName="can_budget"
+          label="Can Budget"
+          (onChange)="canBudgetChange($event.checked)"
+          [binary]="true"
+        ></p-checkbox>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="cost_centre_position"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            optionValue="position"
+            optionLabel="name"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="sectionLevels!"
+            formControlName="cost_centre_position"
+          ></p-dropdown>
+          <label for="cost_centre_position">Cost Centre Level</label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('cost_centre_position')!.invalid &&
+            (editForm.get('cost_centre_position')!.dirty ||
+              editForm.get('cost_centre_position')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('cost_centre_position')?.errors?.required"
+            >Cost Centre Level is required.</small
+          >
+        </span>
       </div>
 
       <div class="p-field p-col-12 p-md-4" fxFlex>

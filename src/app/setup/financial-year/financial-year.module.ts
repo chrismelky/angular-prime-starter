@@ -5,17 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FinancialYearRoutingModule } from "./financial-year-routing.module";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FinancialYearRoutingModule } from './financial-year-routing.module';
 
-import { SharedModule } from "../../shared/shared.module";
-import { FinancialYearComponent } from "./financial-year.component";
-import { FinancialYearUpdateComponent } from "./update/financial-year-update.component";
+import { SharedModule } from '../../shared/shared.module';
+import { FinancialYearComponent } from './financial-year.component';
+import { FinancialYearUpdateComponent } from './update/financial-year-update.component';
+import { FinancialYearOpenComponent } from './open/financial-year-open.component';
 
 @NgModule({
   imports: [SharedModule, CommonModule, FinancialYearRoutingModule],
-  declarations: [FinancialYearComponent, FinancialYearUpdateComponent],
+  declarations: [
+    FinancialYearComponent,
+    FinancialYearUpdateComponent,
+    FinancialYearOpenComponent,
+  ],
   entryComponents: [FinancialYearUpdateComponent],
 })
 export class FinancialYearModule {}

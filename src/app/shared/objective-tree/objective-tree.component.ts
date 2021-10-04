@@ -30,30 +30,27 @@ export class ObjectiveTreeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.objectiveService.tree().subscribe(
-      (resp: CustomResponse<Objective[]>) =>
-        (this.objectives = resp.data?.map((obj) => {
-          return {
-            label: `[ ${obj.code} ] - ${obj.description}`,
-            data: obj,
-            selectable: false, //TODO make configurable
-            expanded: true,
-            key: obj.id,
-            children: obj.children?.map((obj2) => {
-              return {
-                label: `[ ${obj2.code} ] - ${obj2.description}`,
-                data: obj2,
-                key: obj2.id,
-              };
-            }),
-          };
-        }))
-    );
+    this.objectiveService
+      .tree()
+      .subscribe(
+        (resp: CustomResponse<Objective[]>) =>
+          (this.objectives = resp.data?.map((obj) => this.getNode(obj)))
+      );
+  }
+
+  private getNode(ob: Objective): TreeNode {
+    const hasChildren = ob.children?.length! > 0;
+    return {
+      label: `[ ${ob.code} ] - ${ob.description}`,
+      data: ob,
+      key: ob.id?.toString(),
+      selectable: !hasChildren,
+      expanded: hasChildren,
+      children: hasChildren ? ob.children?.map((cob) => this.getNode(cob)) : [],
+    };
   }
 
   onSelectionChange(event?: any): void {
-    console.log(event);
-    console.log(this.objectiveNode);
     const selection =
       typeof this.objectiveNode.data === 'object'
         ? this.returnType === 'object'

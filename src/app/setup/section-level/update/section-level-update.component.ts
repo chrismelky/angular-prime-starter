@@ -1,17 +1,17 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { SectionLevel } from "../section-level.model";
-import { SectionLevelService } from "../section-level.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { SectionLevel } from '../section-level.model';
+import { SectionLevelService } from '../section-level.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-section-level-update",
-  templateUrl: "./section-level-update.component.html",
+  selector: 'app-section-level-update',
+  templateUrl: './section-level-update.component.html',
 })
 export class SectionLevelUpdateComponent implements OnInit {
   isSaving = false;
@@ -27,6 +27,7 @@ export class SectionLevelUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     position: [null, [Validators.required]],
     code_required: [null, []],
+    is_cost_centre: [null, []],
     code_length: [null, []],
   });
 
@@ -104,6 +105,7 @@ export class SectionLevelUpdateComponent implements OnInit {
       name: sectionLevel.name,
       position: sectionLevel.position,
       code_required: sectionLevel.code_required,
+      is_cost_centre: sectionLevel.is_cost_centre,
       code_length: sectionLevel.code_length,
     });
   }
@@ -115,12 +117,13 @@ export class SectionLevelUpdateComponent implements OnInit {
   protected createFromForm(): SectionLevel {
     return {
       ...new SectionLevel(),
-      id: this.editForm.get(["id"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      position: this.editForm.get(["position"])!.value,
-      code_required: this.editForm.get(["code_required"])!.value,
-      code_length: this.editForm.get(["code_length"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      position: this.editForm.get(['position'])!.value,
+      code_required: this.editForm.get(['code_required'])!.value,
+      is_cost_centre: this.editForm.get(['is_cost_centre'])!.value,
+      code_length: this.editForm.get(['code_length'])!.value,
     };
   }
 }

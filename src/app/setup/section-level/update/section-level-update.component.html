@@ -66,14 +66,24 @@
           >
         </span>
       </div>
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
+
+      <div fxLayout="row" fxLayoutGap="10px">
+        <p-checkbox
           id="code_required"
           name="code_required"
           formControlName="code_required"
-        ></p-inputSwitch>
-        <label for="code_required">Code Required </label>
+          label="Code Required"
+          [binary]="true"
+        ></p-checkbox>
+        <p-checkbox
+          id="is_cost_centre"
+          name="is_cost_centre"
+          formControlName="is_cost_centre"
+          label="Is Cost centre"
+          [binary]="true"
+        ></p-checkbox>
       </div>
+
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <p-inputNumber

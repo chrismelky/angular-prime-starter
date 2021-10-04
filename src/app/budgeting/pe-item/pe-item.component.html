@@ -52,25 +52,6 @@
 
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <!--p-multiSelect
-                    id="pe_sub_form_id"
-                    optionValue="value"
-                    [options]="peSubForms!"
-                    [group]="true"
-                    [filter]="true"
-                    [selectionLimit]="1"
-                    (onChange)="getPeForm($event)"
-                    scrollHeight="150px"
-                    [itemSize]="5"
-                    [(ngModel)]="parent_sub_budget_class"
-                  >
-                    <ng-template let-group pTemplate="group">
-                      <div class="p-d-flex p-ai-center">
-                        <span>{{group.label}}</span>
-                      </div>
-                    </ng-template>
-                  </p-multiSelect-->
-
                   <p-dropdown
                     id="pe_sub_form_id"
                     optionValue="value"
@@ -131,23 +112,13 @@
             </div>
             <div class="p-field" fxFlex>
               <span class="p-float-label">
-                <!--p-dropdown
-                  id="section_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="sections!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="section_id"
-                ></p-dropdown-->
 
                 <p-dropdown
                   id="section_id"
                   optionValue="id"
                   optionLabel="name"
                   optionGroupLabel="name"
+                  appendTo="body"
                   optionGroupChildren="children"
                   [autoDisplayFirst]="false"
                   [options]="sections!"
@@ -169,9 +140,7 @@
                         <div>[ {{costCenter.code}} ] {{costCenter.name}}</div>
                     </div>
                 </ng-template>
-
                 </p-dropdown>
-
                 <label for="section_id">Planning Unit </label>
               </span>
             </div>
@@ -189,7 +158,7 @@
 
     <div fxLayout="row" fxLayoutAlign="end">
       <span class="p-card-subheader">
-        Budget : 74849, Ceilling: 7383, Balance: 930
+        Balance: 930, Budget : 74849,  Ceilling: {{cellingAmount | currency: 'TZS'}}
       </span>
     </div>
 
@@ -204,7 +173,12 @@
         </tr>
 
         <tr *ngFor="let i of round">
-          <td title="{{i.uid}}">{{i.id + 1}}</td>
+          <td title="{{i.uid}}">
+            <!--p-checkbox *ngIf="round.length > 1" name="groupname"   (onChange)="selectedRows($event,i.uid,i.id)"
+            >
+            </p-checkbox-->
+            {{i.id + 1}}
+          </td>
 
           <td *ngFor="let input of inputTexts[i.id]">
             <div *ngIf="input.select_option === null">
@@ -259,11 +233,13 @@
     </div>
   </p-card>
 
-  <p-card>
+  <p-card *ngIf ="peTableFields?.childrenDefinitions" >
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
       <div *ngIf="peTableFields.peSubForm?.is_multiple" fxLayout="row" fxLayoutGap="10px">
-        <button  (click)="addRow(round.length)" pButton pRipple type="button" label="Add New Row" icon="pi pi-plus" class="p-button-raised p-button-text"></button>
-        <button (click)="delete(round.length)" pButton pRipple type="button" label="Delete Last Row" icon="pi pi-trash" class="p-button-raised p-button-danger p-button-text"></button>
+        <button  (click)="addRow((round[0].id)+(round.length))" pButton pRipple type="button" label="Add New Row" icon="pi pi-plus" class="p-button-raised p-button-text"></button>
+        <!-- button (click)="delete(round.length)" pButton pRipple type="button" label="Delete Last Row" icon="pi pi-trash" class="p-button-raised p-button-danger p-button-text"></button -->
+        <!--p-splitButton label="Delete" icon="pi pi-trash"  [model]="deleteButton!" styleClass="p-button-danger p-mb-2"></p-splitButton-->
+
       </div>
       <button (click)="store()"  pButton pRipple type="button" label="Submit" icon="pi pi-check"></button>
     </div>

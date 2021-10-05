@@ -51,8 +51,6 @@
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
-            optionValue="id"
-            optionLabel="name"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="sectors!"
@@ -74,8 +72,6 @@
         <span class="p-float-label">
           <p-dropdown
             id="position"
-            optionValue="id"
-            optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
             optionValue="position"
@@ -85,7 +81,7 @@
             [options]="sectionLevels!"
             formControlName="position"
           ></p-dropdown>
-          <label for="position">Section Level </label>
+          <label for="position">Section Level</label>
         </span>
         <span
           *ngIf="
@@ -110,8 +106,6 @@
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
-            optionValue="id"
-            optionLabel="name"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="parents!"

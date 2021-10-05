@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {finalize} from 'rxjs/operators';
 
@@ -23,6 +23,8 @@ import {FacilityService} from "../../facility/facility.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Role} from "../../role/role.model";
 import {RoleService} from "../../role/role.service";
+import {SectionLevelService} from "../../section-level/section-level.service";
+import {SectionLevel} from "../../section-level/section-level.model";
 
 @Component({
   selector: 'app-user-update',
@@ -34,7 +36,8 @@ export class UserUpdateComponent implements OnInit {
   errors = [];
   id: number;
   user: User;
-
+  levelControl = new FormControl(null, [Validators.required]);
+  sectionLevels?: SectionLevel[] = [];
   sections?: Section[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   roles?: Role[] = [];
@@ -63,6 +66,7 @@ export class UserUpdateComponent implements OnInit {
   constructor(
     protected userService: UserService,
     protected sectionService: SectionService,
+    protected sectionLevelService: SectionLevelService,
     protected roleService: RoleService,
     protected adminHierarchyService: AdminHierarchyService,
     protected facilityService: FacilityService,
@@ -76,10 +80,10 @@ export class UserUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sectionService
-      .query({columns: ['id', 'name']})
+    this.sectionLevelService
+      .query({columns: ['id', 'name', 'code', 'position']})
       .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+        (resp: CustomResponse<SectionLevel[]>) => (this.sectionLevels = resp.data)
       );
     this.adminHierarchyService
       .query({columns: ['id', 'name']})
@@ -114,6 +118,13 @@ export class UserUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const user = this.createFromForm();
+    let roles = [];
+    const roleId = this.editForm.get('roles')?.value as number;
+    const role = {
+      id: roleId
+    } as Role;
+    roles.push(role)
+    user.roles = roles;
     if (this.id !== undefined) {
       user.id = this.id;
       this.subscribeToSaveResponse(this.userService.update(user));
@@ -214,11 +225,24 @@ export class UserUpdateComponent implements OnInit {
     this.editForm.get('admin_hierarchy_id')?.setValue(adminHierarchy.id);
     this.roleService
       .query(
-        {columns: ['id', 'name'],
-          admin_hierarchy_position:adminHierarchy.admin_hierarchy_position
-      })
+        {
+          columns: ['id', 'name'],
+          admin_hierarchy_position: adminHierarchy.admin_hierarchy_position
+        })
       .subscribe(
         (resp: CustomResponse<Role[]>) => (this.roles = resp.data)
       );
+  }
+
+  loadSections(): void {
+    const position = this.levelControl.value as number;
+    console.log(position);
+    if (position > 0) {
+      this.sectionService
+        .query({columns: ['id', 'name', 'code'], position: position})
+        .subscribe(
+          (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+        );
+    }
   }
 }

@@ -89,6 +89,10 @@ export class PeItemComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
   cellingAmount:any = 0;
+  budgetedAmount:any = 0;
+  balanceAmount:any = 0;
+  city?: string;
+
 
 
   //Mandatory filter
@@ -245,9 +249,8 @@ export class PeItemComponent implements OnInit {
     if (!this.admin_hierarchy_id || !this.financial_year_id || this.budget_class_id <= 0 || this.fund_source_id <= 0 || !this.pe_form_id || !this.section_id) {
      return;
      }
-    /* first fetch ceiling amount */
+    /** first fetch ceiling amount */
     this.fetchCeilingAmount();
-    this.fetchBudgetAmount();
     this.peTableFields = [];
     this.peDefinitionService.getParentChildrenByFormId({"pe_form_id":this.pe_form_id,"pe_sub_form_id":this.pe_sub_form_id}).subscribe(resp =>{
       this.peTableFields = resp.data;
@@ -281,7 +284,7 @@ export class PeItemComponent implements OnInit {
           pe_sub_form_id: this.pe_sub_form_id,
         }
       ).subscribe(resp => {
-
+        this.budgetedAmount = resp.data.budgetedAmount;
        if(resp.data.rows.length === 1){
          // sync data value
        } else if (resp.data.rows.length >= 1) {
@@ -291,7 +294,10 @@ export class PeItemComponent implements OnInit {
          }
        }
         /** Update dataValue fetched */
-        this.updateFetchedDataValues(resp.data.dataValues)
+        this.updateFetchedDataValues(resp.data.dataValues);
+
+        /** Update dataValue fetched */
+        this.budgetBalance();
       })
     }
   }
@@ -325,7 +331,7 @@ export class PeItemComponent implements OnInit {
             pedv.id === fetched.pe_definition_id
           );
         })
-        this.peValuesArray[fetched.row_uid!][fetched.pe_definition_id!].value = fetched.field_value ? fetched.field_value : "";
+        this.peValuesArray[fetched.row_uid!][fetched.pe_definition_id!].value = fetched?.field_value ? fetched?.field_value : "";
 
         /** Assign data Value used as to hold value for backEnd uses by using Index */
         const index = this.peDataValues?.findIndex((pedv: any) => {
@@ -345,6 +351,7 @@ export class PeItemComponent implements OnInit {
     }
   }
 
+  /** used to fetch ceiling Amount */
   fetchCeilingAmount(){
     if(this.facilities[0]?.id){
       this.budgetCeilingService.query({columns: ["id", "amount"],
@@ -360,15 +367,13 @@ export class PeItemComponent implements OnInit {
     }
   }
 
-  fetchBudgetAmount(){
-
+  /** check balance, ceiling - budget */
+  budgetBalance(){
+    this.balanceAmount = parseFloat(this.cellingAmount) - parseFloat(this.budgetedAmount);
   }
 
-  /**
-   * on change pe sub form search Pe Form(parent) by id and Get budget class assigned
-   */
+  /** on change pe sub form search Pe Form(parent) by id and Get budget class assignee*/
   getPeForm(event: any):void{
-   // console.log(event.value?.id)
     if(event.value?.id >= 1){
       this.budgetClasses! = [];
       this.budget_class_id = 0
@@ -388,9 +393,7 @@ export class PeItemComponent implements OnInit {
   }
 
 
-  /**
-   * on change budget class search fund sources from ceilings
-   */
+  /** on change budget class search fund sources from ceilings */
   getFundSources(event: any):void{
    let budgetClassId = event.value;
     this.fund_source_id = 0
@@ -415,9 +418,7 @@ export class PeItemComponent implements OnInit {
     }
   }
 
-  /**
-   * Clear search params
-   */
+  /** Clear search params */
   clearSearch(): void {
     this.search = {};
     if (this.page !== 1) {
@@ -594,6 +595,7 @@ export class PeItemComponent implements OnInit {
     }
   }
 
+
   store(){
       const object:any = {
        dataValues:this.peDataValues,
@@ -606,11 +608,15 @@ export class PeItemComponent implements OnInit {
       pe_sub_form_id : this.pe_sub_form_id,
       facility_id: this.facilities[0]?.id,
       ceiling_amount: this.cellingAmount,
-      budget_amount: 0,
+      balanceAmount: this.balanceAmount,
     }
 
     this.peItemService.create(object).subscribe(response =>{
-      console.log("response")
+      if(response.success){
+        this.toastService.info(response.message);
+      } else {
+        this.toastService.error("Error While Updating data");
+      }
     })
   }
 
@@ -638,6 +644,7 @@ export class PeItemComponent implements OnInit {
      * */
     this.reUpdateValue(data)
   }
+
 
   reUpdateValue(data:any){
     if(data?.value !== undefined) {
@@ -752,10 +759,12 @@ export class PeItemComponent implements OnInit {
 
   /** selected Row to be deleted */
   selectedRows(data:any, uid:any,rowId:number){
+    /** clear arrays */
+    this.selectedRowsArray = [];
+    this.selectedRowsIndexArray = [];
+
     const selectedItems = this.peDataValues?.filter((pdv:any) => {return(pdv.uid === uid)});
-    if(data.checked){
-      console.log("rowId")
-      console.log(rowId)
+    if(data.isTrusted){
       this.selectedRowsIndexArray.push(rowId);/** used to display */
       selectedItems.forEach((value:any)=>{
          this.selectedRowsArray.push(value)
@@ -777,8 +786,9 @@ export class PeItemComponent implements OnInit {
   }
 
 
+
   /** handle delete to the backend */
-  deleteSelectedRows(){
+  handleDeleteSelectedRows(){
     const object = {
       dataValues: this.selectedRowsArray,
       admin_hierarchy_id : this.admin_hierarchy_id,
@@ -823,9 +833,44 @@ export class PeItemComponent implements OnInit {
         /** clear arrays */
         this.selectedRowsArray = [];
         this.selectedRowsIndexArray = [];
+        this.filterChanged();
+        this.store()
       }
-      this.toastService.info("Data successfully");
     })
   }
+
+  /*** Delete */
+  deleteSelectedRows(){
+    this.confirmationService.confirm({
+      message: "Do you want to delete Personal Emolument Budget?",
+      accept: () => {
+       this. handleDeleteSelectedRows();
+      }
+    })
+  }
+
+  printPeFormStatus() {
+    if(this.isCriteriaMeet()){
+
+    const object = {
+      admin_hierarchy_id : this.admin_hierarchy_id,
+      financial_year_id : this.financial_year_id,
+      section_id : this.section_id,
+      budget_class_id : this.budget_class_id,
+      fund_source_id : this.fund_source_id,
+      pe_form_id : this.pe_form_id,
+      pe_sub_form_id : this.pe_sub_form_id,
+      facility_id: this.facilities[0]?.id,
+    }
+    this.peItemService.printPeFormStatus(object).subscribe(resp => {
+      let file = new Blob([resp], { type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank");
+    })
+  } else {
+      this.toastService.error("Please make sure all filters are selected");
+    }
+  }
+
 
 }

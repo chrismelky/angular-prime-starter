@@ -9,13 +9,16 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { PeItemRoutingModule } from "./pe-item-routing.module";
 import {SplitButtonModule} from 'primeng/splitbutton';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {ToolbarModule} from 'primeng/toolbar';
+
 
 import { SharedModule } from "../../shared/shared.module";
 import { PeItemComponent } from "./pe-item.component";
 import { PeItemUpdateComponent } from "./update/pe-item-update.component";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, PeItemRoutingModule,SplitButtonModule],
+  imports: [SharedModule, CommonModule, PeItemRoutingModule,SplitButtonModule,RadioButtonModule,ToolbarModule],
   declarations: [PeItemComponent, PeItemUpdateComponent],
   entryComponents: [PeItemUpdateComponent],
 })

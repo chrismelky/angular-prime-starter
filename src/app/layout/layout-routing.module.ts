@@ -979,7 +979,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PE_VALUES',
           },
         },
       },

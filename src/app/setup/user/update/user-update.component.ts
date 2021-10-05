@@ -5,6 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
+<<<<<<< HEAD
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -23,6 +24,28 @@ import { FacilityService } from '../../facility/facility.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Role } from '../../role/role.model';
 import { RoleService } from '../../role/role.service';
+=======
+import {Component, Inject, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {finalize} from 'rxjs/operators';
+
+import {CustomResponse} from '../../../utils/custom-response';
+import {Section} from 'src/app/setup/section/section.model';
+import {SectionService} from 'src/app/setup/section/section.service';
+import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import {User} from '../user.model';
+import {UserService} from '../user.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {Facility} from "../../facility/facility.model";
+import {FacilityService} from "../../facility/facility.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {Role} from "../../role/role.model";
+import {RoleService} from "../../role/role.service";
+import {SectionLevelService} from "../../section-level/section-level.service";
+import {SectionLevel} from "../../section-level/section-level.model";
+>>>>>>> 6a28b36191f840c110998b2037a136d910df9a3e
 
 @Component({
   selector: 'app-user-update',
@@ -34,7 +57,8 @@ export class UserUpdateComponent implements OnInit {
   errors = [];
   id: number;
   user: User;
-
+  levelControl = new FormControl(null, [Validators.required]);
+  sectionLevels?: SectionLevel[] = [];
   sections?: Section[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   roles?: Role[] = [];
@@ -63,6 +87,7 @@ export class UserUpdateComponent implements OnInit {
   constructor(
     protected userService: UserService,
     protected sectionService: SectionService,
+    protected sectionLevelService: SectionLevelService,
     protected roleService: RoleService,
     protected adminHierarchyService: AdminHierarchyService,
     protected facilityService: FacilityService,
@@ -76,10 +101,15 @@ export class UserUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+<<<<<<< HEAD
     this.sectionService
       .query({ columns: ['id', 'name'] })
+=======
+    this.sectionLevelService
+      .query({columns: ['id', 'name', 'code', 'position']})
+>>>>>>> 6a28b36191f840c110998b2037a136d910df9a3e
       .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+        (resp: CustomResponse<SectionLevel[]>) => (this.sectionLevels = resp.data)
       );
     this.facilityService
       .query({ columns: ['id', 'name'] })
@@ -104,6 +134,13 @@ export class UserUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const user = this.createFromForm();
+    let roles = [];
+    const roleId = this.editForm.get('roles')?.value as number;
+    const role = {
+      id: roleId
+    } as Role;
+    roles.push(role)
+    user.roles = roles;
     if (this.id !== undefined) {
       user.id = this.id;
       this.subscribeToSaveResponse(this.userService.update(user));
@@ -202,10 +239,33 @@ export class UserUpdateComponent implements OnInit {
   onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
     this.editForm.get('admin_hierarchy_id')?.setValue(adminHierarchy.id);
     this.roleService
+<<<<<<< HEAD
       .query({
         columns: ['id', 'name'],
         admin_hierarchy_position: adminHierarchy.admin_hierarchy_position,
       })
       .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));
+=======
+      .query(
+        {
+          columns: ['id', 'name'],
+          admin_hierarchy_position: adminHierarchy.admin_hierarchy_position
+        })
+      .subscribe(
+        (resp: CustomResponse<Role[]>) => (this.roles = resp.data)
+      );
+>>>>>>> 6a28b36191f840c110998b2037a136d910df9a3e
+  }
+
+  loadSections(): void {
+    const position = this.levelControl.value as number;
+    console.log(position);
+    if (position > 0) {
+      this.sectionService
+        .query({columns: ['id', 'name', 'code'], position: position})
+        .subscribe(
+          (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+        );
+    }
   }
 }

@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { AssessmentCriteria } from "./assessment-criteria.model";
+import {User} from "../../setup/user/user.model";
 
 @Injectable({ providedIn: "root" })
 export class AssessmentCriteriaService {
@@ -20,7 +21,7 @@ export class AssessmentCriteriaService {
   public commentUrl = "api/cas_sub_criteria_comments";
   public baseUrl = "api/assessor_hierarchies";
   public reportUrl = "api/assessment_criteria";
-  public criteriaScore = "api/assessment_criteria_score";
+  public update_plan = "api/update-plan";
 
   constructor(protected http: HttpClient) {}
 
@@ -60,6 +61,15 @@ createComment(
     );
   }
 
+  updatePlan(
+    assessmentCriteria: AssessmentCriteria
+  ): Observable<CustomResponse<AssessmentCriteria>> {
+    return this.http.post<CustomResponse<AssessmentCriteria>>(
+      this.update_plan,
+      assessmentCriteria
+    );
+  }
+
   find(id: number): Observable<CustomResponse<AssessmentCriteria[]>> {
     return this.http.get<CustomResponse<AssessmentCriteria[]>>(
       `${this.resourceUrl}/${id}`
@@ -78,9 +88,9 @@ createComment(
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  getDataByUser(round_id: number, fy_id: number, version_id: number): Observable<CustomResponse<any>> {
+  getDataByUser(round_id: number, fy_id: number, version_id: number, user_id: number | undefined, admin_position: number | undefined): Observable<CustomResponse<any>> {
     return this.http.get<CustomResponse<any>>(
-      `${this.baseUrl}/${round_id}/${fy_id}/${version_id}`
+      `${this.baseUrl}/${round_id}/${fy_id}/${version_id}/${user_id}/${admin_position}`
     );
   }
 

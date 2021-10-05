@@ -36,6 +36,9 @@ export class ConfigurationSettingComponent implements OnInit {
   configurationSettings?: ConfigurationSetting[] = [];
 
   valueTypes?: PlanrepEnum[] = [];
+  activeIndex: number = 0;
+  groupData : any[]=[];
+
 
   cols = [
     {
@@ -83,6 +86,8 @@ export class ConfigurationSettingComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  items: MenuItem[] = [];
+  activeItem: MenuItem | undefined;
 
   //Mandatory filter
 
@@ -99,7 +104,14 @@ export class ConfigurationSettingComponent implements OnInit {
 
   ngOnInit(): void {
     this.valueTypes = this.enumService.get("valueTypes");
-    this.handleNavigation();
+    this.configurationSettingService
+      .groups()
+      .subscribe(
+        (res: CustomResponse<any[]>) => {
+          this.items = res.data!;
+          this.handleChange(0);
+        }
+      );
   }
 
   /**
@@ -282,5 +294,16 @@ export class ConfigurationSettingComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Configuration Setting");
+  }
+
+   handleChange(index:number) : void{
+    const groupName = this.items[index].label;
+     this.configurationSettingService
+       .query({group_name:groupName})
+       .subscribe(
+         (res: CustomResponse<ConfigurationSetting[]>) => {
+           this.groupData = res.data!;
+         }
+       );
   }
 }

@@ -70,8 +70,8 @@
           <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
             {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'admin_hierarchy_level_id'">
-            Level <p-sortIcon [field]="'admin_hierarchy_level_id'"></p-sortIcon>
+          <th [pSortableColumn]="'admin_hierarchy_position'">
+            Level <p-sortIcon [field]="'admin_hierarchy_position'"></p-sortIcon>
           </th>
 <!--          <th>Rights</th>-->
           <th style="flex: 0 0 2 rem">Action</th>

@@ -12,9 +12,11 @@ import { ConfigurationSettingRoutingModule } from "./configuration-setting-routi
 import { SharedModule } from "../../shared/shared.module";
 import { ConfigurationSettingComponent } from "./configuration-setting.component";
 import { ConfigurationSettingUpdateComponent } from "./update/configuration-setting-update.component";
+import {TabMenuModule} from 'primeng/tabmenu';
+import {TabViewModule} from "primeng/tabview";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, ConfigurationSettingRoutingModule],
+  imports: [SharedModule, TabMenuModule, CommonModule, ConfigurationSettingRoutingModule, TabViewModule],
   declarations: [
     ConfigurationSettingComponent,
     ConfigurationSettingUpdateComponent,

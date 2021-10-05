@@ -5,38 +5,39 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {combineLatest, Observable} from 'rxjs';
+import {ConfirmationService, LazyLoadEvent, MenuItem} from 'primeng/api';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Paginator} from 'primeng/paginator';
+import {Table} from 'primeng/table';
 
-import { CustomResponse } from '../../utils/custom-response';
+import {CustomResponse} from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import {HelperService} from 'src/app/utils/helper.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {Section} from 'src/app/setup/section/section.model';
+import {SectionService} from 'src/app/setup/section/section.service';
+import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 
-import { User } from './user.model';
-import { UserService } from './user.service';
-import { UserUpdateComponent } from './update/user-update.component';
-import { FormControl, Validators } from '@angular/forms';
-import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
-import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
-import { Role } from '../role/role.model';
-import { RolePermissionComponent } from '../role/role-permission/role-permission.component';
-import { UserRoleComponent } from './user-role/user-role.component';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { finalize } from 'rxjs/operators';
-import { UserGroupComponent } from './user-group/user-group.component';
+import {User} from './user.model';
+import {UserService} from './user.service';
+import {UserUpdateComponent} from './update/user-update.component';
+import {FormControl, Validators} from '@angular/forms';
+import {AdminHierarchyLevelService} from '../admin-hierarchy-level/admin-hierarchy-level.service';
+import {AdminHierarchyLevel} from '../admin-hierarchy-level/admin-hierarchy-level.model';
+import {Role} from '../role/role.model';
+import {RolePermissionComponent} from '../role/role-permission/role-permission.component';
+import {UserRoleComponent} from './user-role/user-role.component';
+import {MatCheckboxChange} from '@angular/material/checkbox';
+import {finalize} from 'rxjs/operators';
+import {UserGroupComponent} from './user-group/user-group.component';
+import {PasswordResetComponent} from "./password-reset/password-reset.component";
 
 @Component({
   selector: 'app-user',
@@ -133,16 +134,17 @@ export class UserComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.sectionService
-      .query({ columns: ['id', 'name'] })
+      .query({columns: ['id', 'name']})
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
     this.adminHierarchyService
-      .query({ columns: ['id', 'name'] })
+      .query({columns: ['id', 'name']})
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
@@ -420,9 +422,26 @@ export class UserComponent implements OnInit {
     this.toastService.info(result.message);
   }
 
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
+  }
+
+  passwordReset(rowData: User): void {
+    const data = {
+      user: rowData,
+    };
+    const ref = this.dialogService.open(PasswordResetComponent, {
+      data,
+      width: '40%',
+      header: 'Password Reset | ' + rowData.first_name + ' ' + rowData.last_name
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

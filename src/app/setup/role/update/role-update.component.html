@@ -28,31 +28,31 @@
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="admin_hierarchy_level_id"
-            optionValue="id"
+            id="admin_hierarchy_position"
+            optionValue="position"
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="adminHierarchyLevels!"
-            formControlName="admin_hierarchy_level_id"
+            formControlName="admin_hierarchy_position"
           ></p-dropdown>
-          <label for="admin_hierarchy_level_id"
+          <label for="admin_hierarchy_position"
           >Level
           </label>
         </span>
         <span
           *ngIf="
-            editForm.get('admin_hierarchy_level_id')!.invalid &&
-            (editForm.get('admin_hierarchy_level_id')!.dirty ||
-              editForm.get('admin_hierarchy_level_id')!.touched ||
+            editForm.get('admin_hierarchy_position')!.invalid &&
+            (editForm.get('admin_hierarchy_position')!.dirty ||
+              editForm.get('admin_hierarchy_position')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_level_id')?.errors?.required"
+            *ngIf="editForm.get('admin_hierarchy_position')?.errors?.required"
           >Level is required.</small
           >
         </span>

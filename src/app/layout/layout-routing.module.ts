@@ -1011,7 +1011,8 @@ const routes: Routes = [
         path: 'admin-hierarchy-ceiling',
         loadChildren: () =>
           import(
-            '../budgeting/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module'
+
+            "../budgeting/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module"
           ).then((m) => m.AdminHierarchyCeilingModule),
         canLoad: [NgxPermissionsGuard],
         data: {
@@ -1135,6 +1136,13 @@ const routes: Routes = [
             only: 'setup.user_management',
           },
         },
+      },
+      {
+        path: "scrutinization",
+        loadChildren: () =>
+          import("../planning/scrutinization/scrutinization.module").then(
+            (m) => m.ScrutinizationModule
+          ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {

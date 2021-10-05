@@ -20,40 +20,32 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import { Section } from "src/app/setup/section/section.model";
+import { SectionService } from "src/app/setup/section/section.service";
 
-import { ReceivedAssessment } from "./received-assessment.model";
-import { ReceivedAssessmentService } from "./received-assessment.service";
-import { ReceivedAssessmentUpdateComponent } from "./update/received-assessment-update.component";
-import {CasAssessmentRound} from "../../setup/cas-assessment-round/cas-assessment-round.model";
-import {User} from "../../setup/user/user.model";
-import {UserService} from "../../setup/user/user.service";
-import {AssessmentCriteriaService} from "../assessment-criteria/assessment-criteria.service";
-import {AdminHierarchy} from "../../setup/admin-hierarchy/admin-hierarchy.model";
-import {MyAssessmentService} from "../my-assessment/my-assessment.service";
+import { Scrutinization } from "./scrutinization.model";
+import { ScrutinizationService } from "./scrutinization.service";
+import { ScrutinizationUpdateComponent } from "./update/scrutinization-update.component";
+import {ActivityService} from "../activity/activity.service";
+import {Activity} from "../activity/activity.model";
 
 @Component({
-  selector: "app-received-assessment",
-  templateUrl: "./received-assessment.component.html",
+  selector: "app-scrutinization",
+  templateUrl: "./scrutinization.component.html",
 })
-export class ReceivedAssessmentComponent implements OnInit {
+export class ScrutinizationComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  receivedAssessments?: ReceivedAssessment[] = [];
+  scrutinizations?: Scrutinization[] = [];
 
-  financialYears?: FinancialYear[] = [];
-  casAssessmentRounds?: CasAssessmentRound[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
-  cols = [
-    { field: 'council', header: 'Council' },
-    { field: 'round', header: 'Round' },
-    { field: 'category', header: 'Category' },
-    { field: 'minimum_passmark', header: 'Minimum Passmark' },
-    { field: 'highest_score', header: 'Highest Score' },
-    { field: 'score', header: 'Score' },
-    { field: 'pct', header: '%' }
-  ]; //Table display columns
+  sections?: Section[] = [];
+  departments?: Section[] = [];
+  activities: Activity[] | undefined = [];
+
+  cols = []; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -66,41 +58,35 @@ export class ReceivedAssessmentComponent implements OnInit {
 
   //Mandatory filter
   admin_hierarchy_id!: number;
-  financial_year_id!: number;
-  cas_assessment_round_id!: number;
-  cas_assessment_category_version_id: number;
-  admin_hierarchy_position!:number;
-  admin_hierarchy_level_id!: number | undefined;
-  currentUser: User;
+  section_id!: number;
+  parent_id!: number;
+  admin_hierarchy_position!: number;
 
   constructor(
-    protected assessmentCriteriaService: AssessmentCriteriaService,
-    protected receivedAssessmentService: ReceivedAssessmentService,
-    protected financialYearService: FinancialYearService,
-    protected actRoute: ActivatedRoute,
+    protected scrutinizationService: ScrutinizationService,
+    protected adminHierarchyService: AdminHierarchyService,
+    protected sectionService: SectionService,
+    protected activatedRoute: ActivatedRoute,
+    protected activityService: ActivityService,
     protected router: Router,
-    protected myAssessmentService: MyAssessmentService,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected userService: UserService,
     protected toastService: ToastService
-  ) {
-    this.cas_assessment_category_version_id = this.actRoute.snapshot.params.id;
-    this.cas_assessment_round_id = this.actRoute.snapshot.params.round_id;
-    this.financial_year_id = this.actRoute.snapshot.params.fy_id;
-    this.currentUser = userService.getCurrentUser();
-    this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;  }
+  ) {}
 
   ngOnInit(): void {
-
-    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id,
-      this.financial_year_id,this.cas_assessment_category_version_id,this.currentUser.id,this.currentUser.admin_hierarchy?.admin_hierarchy_position)
-      .subscribe((resp) => {
-        this.adminHierarchies = resp.data.adminHierarchies;
-        this.financialYears = resp.data.financialYears;
-        this.casAssessmentRounds = resp.data.casRounds;
-      });
+    this.adminHierarchyService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.adminHierarchies = resp.data)
+      );
+    this.sectionService
+      .query({ position: 3 })
+      .subscribe(
+        (resp: CustomResponse<Section[]>) => (this.departments = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -110,22 +96,24 @@ export class ReceivedAssessmentComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.financial_year_id) {
+    if (!this.admin_hierarchy_id || !this.parent_id || !this.section_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.receivedAssessmentService
+    this.scrutinizationService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        financial_year_id: this.financial_year_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        section_id: this.section_id,
+        parent_id: this.parent_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReceivedAssessment[]>) => {
+        (res: CustomResponse<Scrutinization[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -142,8 +130,8 @@ export class ReceivedAssessmentComponent implements OnInit {
    */
   protected handleNavigation(): void {
     combineLatest([
-      this.actRoute.data,
-      this.actRoute.queryParamMap,
+      this.activatedRoute.data,
+      this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
       const page = params.get("page");
       const perPage = params.get("per_page");
@@ -171,7 +159,10 @@ export class ReceivedAssessmentComponent implements OnInit {
       this.loadPage(1);
     }
   }
-
+  onAdminHierarchySelection(event: any): void {
+    this.admin_hierarchy_id = event.id;
+    this.admin_hierarchy_position =event.admin_hierarchy_position;
+  }
   /**
    * search items by @var search params
    */
@@ -230,17 +221,18 @@ export class ReceivedAssessmentComponent implements OnInit {
   }
 
   /**
-   * Creating or updating ReceivedAssessment
-   * @param receivedAssessment ; If undefined initize new model to create else edit existing model
+   * Creating or updating Scrutinization
+   * @param scrutinization ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(receivedAssessment?: ReceivedAssessment): void {
-    const data: ReceivedAssessment = receivedAssessment ?? {
-      ...new ReceivedAssessment(),
-      financial_year_id: this.financial_year_id,
+  createOrUpdate(scrutinization?: Scrutinization): void {
+    const data: Scrutinization = scrutinization ?? {
+      ...new Scrutinization(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      section_id: this.section_id,
     };
-    const ref = this.dialogService.open(ReceivedAssessmentUpdateComponent, {
+    const ref = this.dialogService.open(ScrutinizationUpdateComponent, {
       data,
-      header: "Create/Update ReceivedAssessment",
+      header: "Create/Update Scrutinization",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -250,15 +242,15 @@ export class ReceivedAssessmentComponent implements OnInit {
   }
 
   /**
-   * Delete ReceivedAssessment
-   * @param receivedAssessment
+   * Delete Scrutinization
+   * @param scrutinization
    */
-  delete(receivedAssessment: ReceivedAssessment): void {
+  delete(scrutinization: Scrutinization): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReceivedAssessment?",
+      message: "Are you sure that you want to delete this Scrutinization?",
       accept: () => {
-        this.receivedAssessmentService
-          .delete(receivedAssessment.id!)
+        this.scrutinizationService
+          .delete(scrutinization.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -274,14 +266,14 @@ export class ReceivedAssessmentComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReceivedAssessment[]> | null,
+    resp: CustomResponse<Scrutinization[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/received-assessment"], {
+      this.router.navigate(["/scrutinization"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -290,7 +282,7 @@ export class ReceivedAssessmentComponent implements OnInit {
         },
       });
     }
-    this.receivedAssessments = resp?.data ?? [];
+    this.scrutinizations = resp?.data ?? [];
   }
 
   /**
@@ -299,25 +291,22 @@ export class ReceivedAssessmentComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Received Assessment");
+    this.toastService.error("Error loading Scrutinization");
   }
 
-  finishAndQuit() {
-    this.router.navigate(["/assessment-home"])
-  }
-  loadCouncils(adm: any) {
-    this.myAssessmentService.getCouncils(adm.id,this.financial_year_id,this.cas_assessment_round_id,this.cas_assessment_category_version_id)
-      .subscribe(resp => {
-        this.receivedAssessments = resp.data;
-      });
-  }
+  filterSections() {
+    this.sectionService
+      .query({ parent_id: this.parent_id })
+      .subscribe(
+        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+      );
 
-  getReport(rowData: any) {
-    this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,rowData.financial_year_id,rowData.round_id,rowData.version_id)
-      .subscribe(resp =>{
-        let file = new Blob([resp], { type: 'application/pdf'});
-        let fileURL = URL.createObjectURL(file);
-        window.open(fileURL,"_blank");
-      })
+  }
+  loadActivities() {
+    console.log(this.admin_hierarchy_id)
+    this.activityService.query({section_id: this.section_id, admin_hierarchy_id: this.admin_hierarchy_id})
+      .subscribe(
+        (resp: CustomResponse<Activity[]>) => ( this.activities = resp.data)
+      );
   }
 }

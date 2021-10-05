@@ -81,9 +81,9 @@ export class MainComponent implements OnInit {
           icon: 'pi pi-fw pi-angle-down',
           items: [
             {
-              label: 'Financial Years',
-              icon: 'pi pi-fw pi-link',
-              routerLink: 'financial-year',
+              label: "Financial Years",
+              icon: "pi pi-fw pi-link",
+              routerLink: "financial-year",
             },
             {
               label: 'Periods',
@@ -631,6 +631,11 @@ export class MainComponent implements OnInit {
           label: 'PE Budget Submission Items',
           icon: 'pi pi-fw pi-link',
           routerLink: 'pe-item',
+        },
+        {
+          label: "Scrutinizations",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "scrutinization",
         },
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],

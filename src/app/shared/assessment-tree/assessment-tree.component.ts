@@ -39,8 +39,9 @@ export class AssessmentTreeComponent implements OnInit {
     this.financial_year_id = this.actRoute.snapshot.params.fy_id;
   }
   ngOnInit(): void {
-    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,this.cas_assessment_category_version_id)
-      .subscribe((resp) => {
+    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,
+      this.cas_assessment_category_version_id,this.currentUser.id,this.currentUser.admin_hierarchy?.admin_hierarchy_position)
+        .subscribe((resp) => {
         this.adminHierarchies = resp.data.adminHierarchies;
         if (this.adminHierarchies.length > 0){
           for (let i = 0; i < this.adminHierarchies.length; i++) {
@@ -53,21 +54,6 @@ export class AssessmentTreeComponent implements OnInit {
           }
           this.selectedValue = this.nodes[0];
           this.onSelectionChange();
-        }else {
-          // this.toastService.info(resp.message);
-         const adminHierarchies = this.currentUser.admin_hierarchy;
-          if (adminHierarchies) {
-            this.nodes = [
-              {
-                label: adminHierarchies.name,
-                data:  adminHierarchies,
-                children: [],
-                leaf: false,
-              },
-            ];
-            this.selectedValue = this.nodes[0];
-            this.onSelectionChange();
-          }
         }
       });
   }

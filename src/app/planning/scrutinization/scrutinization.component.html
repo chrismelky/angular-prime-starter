@@ -17,24 +17,43 @@
         >
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
-                                        (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
+              <app-admin-hierarchy-tree
+                (onSelect)="onAdminHierarchySelection($event)"
+                [returnType]="'object'"
+              ></app-admin-hierarchy-tree>
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="parent_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="departments!"
+                (onChange)="filterSections()"
+                [(ngModel)]="parent_id"
+              ></p-dropdown>
+              <label for="parent_id">Department </label>
             </span>
           </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="levelId"
-                optionValue="position"
+                id="section_id"
+                optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="adminHierarchyLevels!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_position"
+                [options]="sections!"
+                (onChange)="loadActivities()"
+                [(ngModel)]="section_id"
               ></p-dropdown>
-              <label for="levelId">Level</label>
+              <label for="section_id">Section </label>
             </span>
           </div>
         </div>
@@ -46,7 +65,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -64,7 +82,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -94,7 +111,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -119,35 +135,27 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="users!"
+      [value]="scrutinizations!"
+      [scrollable]="true"
+      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Users</span>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-plus"
-            class="p-button-raised"
-            (click)="create()"
-            label="Add User"
-          ></button>
+          <span class="card-header-text">MTEF Scrutinization</span>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="users?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}}
-            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+        <tr *ngIf="scrutinizations?.length">
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'section_id'">
-            Allocation
-            <p-sortIcon [field]="'section_id'"></p-sortIcon>
-          </th>
-          <th>Status</th>
-          <th></th>
+          <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -155,52 +163,11 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>
-            {{ rowData.section?.name }}
-          </td>
-          <td>
-            <mat-checkbox color="primary" (change)="toggleActive(rowData, $event)" [checked]="rowData.active">
-              <span *ngIf="rowData.active">Active</span>
-              <span *ngIf="!rowData.active">Deactivated</span>
-            </mat-checkbox>
-          </td>
-          <td>
+          <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pTooltip="Roles"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-check"
-                  (click)="roles(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pTooltip="Password Reset"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-lock"
-                  (click)="passwordReset(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pTooltip="Groups"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-users
-              "
-                  (click)="groups(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -208,11 +175,10 @@
                   "
                   icon="pi pi-pencil
               "
-                  (click)="edit(rowData.id)"
+                  (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -227,26 +193,26 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found</ng-template>
+      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="footer">
+        <p-paginator
+          #paginator
+          [alwaysShow]="scrutinizations?.length! > 0"
+          [rows]="per_page"
+          dropdownAppendTo="body"
+          [showCurrentPageReport]="true"
+          [totalRecords]="totalItems"
+          [rowsPerPageOptions]="perPageOptions"
+          (onPageChange)="pageChanged($event)"
+        ></p-paginator>
+      </ng-template>
     </p-table>
-    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
-      <p-paginator
-        #paginator
-        [alwaysShow]="users?.length! > 0"
-        [rows]="per_page"
-        dropdownAppendTo="body"
-        [showCurrentPageReport]="true"
-        [totalRecords]="totalItems"
-        [rowsPerPageOptions]="perPageOptions"
-        (onPageChange)="pageChanged($event)"
-      ></p-paginator>
-    </div>
   </p-card>
 </div>
 
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete User"
+  header="Confirmation Delete Scrutinization"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

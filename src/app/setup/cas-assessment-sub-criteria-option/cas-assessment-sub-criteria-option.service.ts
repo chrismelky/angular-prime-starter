@@ -17,6 +17,7 @@ import {AssessmentCriteria} from "../../planning/assessment-criteria/assessment-
 @Injectable({ providedIn: "root" })
 export class CasAssessmentSubCriteriaOptionService {
   public resourceUrl = "api/cas_sub_criteria_options";
+  public url = "api/cas_sub_criteria";
   public baseUrl = "api/get_sub_criteria_by_criteria_id";
   public commentUrl = "api/cas_general_comments";
 
@@ -56,9 +57,10 @@ export class CasAssessmentSubCriteriaOptionService {
     );
   }
 
-  getSubCriteriaWithScores(criteria_id: number,admin_id: number,fy_id: number,round_id: number,): Observable<CustomResponse<CasAssessmentSubCriteriaOption[]>> {
+  getSubCriteriaWithScores(criteria_id: number, admin_id: number, fy_id: number, round_id: number, level_id: number | undefined, version_id: number): Observable<CustomResponse<CasAssessmentSubCriteriaOption[]>> {
+
     return this.http.get<CustomResponse<CasAssessmentSubCriteriaOption[]>>(
-      `${this.resourceUrl}/${criteria_id}/${admin_id}/${fy_id}/${round_id}`
+      `${this.url}/${criteria_id}/${admin_id}/${fy_id}/${round_id}/${level_id}/${version_id}`
     )
   }
 

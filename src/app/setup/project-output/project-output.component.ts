@@ -5,76 +5,48 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import { CustomResponse } from '../../utils/custom-response';
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+} from "../../config/pagination.constants";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+import { Project } from "src/app/setup/project/project.model";
+import { ProjectService } from "src/app/setup/project/project.service";
 
-import { ResponsiblePerson } from './responsible-person.model';
-import { ResponsiblePersonService } from './responsible-person.service';
-import { ResponsiblePersonUpdateComponent } from './update/responsible-person-update.component';
-import { UserService } from 'src/app/setup/user/user.service';
-import { Sector } from 'src/app/setup/sector/sector.model';
-import { User } from 'src/app/setup/user/user.model';
-import { SectorService } from 'src/app/setup/sector/sector.service';
+import { ProjectOutput } from "./project-output.model";
+import { ProjectOutputService } from "./project-output.service";
+import { ProjectOutputUpdateComponent } from "./update/project-output-update.component";
 
 @Component({
-  selector: 'app-responsible-person',
-  templateUrl: './responsible-person.component.html',
+  selector: "app-project-output",
+  templateUrl: "./project-output.component.html",
 })
-export class ResponsiblePersonComponent implements OnInit {
-  @ViewChild('paginator') paginator!: Paginator;
-  @ViewChild('table') table!: Table;
-  responsiblePeople?: ResponsiblePerson[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
-  sectors?: Sector[] = [];
+export class ProjectOutputComponent implements OnInit {
+  @ViewChild("paginator") paginator!: Paginator;
+  @ViewChild("table") table!: Table;
+  projectOutputs?: ProjectOutput[] = [];
+
+  projects?: Project[] = [];
 
   cols = [
     {
-      field: 'name',
-      header: 'Name',
+      field: "name",
+      header: "Name",
       sort: true,
     },
     {
-      field: 'mobile',
-      header: 'Mobile',
-      sort: true,
-    },
-    {
-      field: 'email',
-      header: 'Email',
-      sort: false,
-    },
-    {
-      field: 'cheque_number',
-      header: 'Cheque Number',
-      sort: true,
-    },
-    {
-      field: 'title',
-      header: 'Title',
-      sort: true,
-    },
-    {
-      field: 'facility_id',
-      header: 'Facility ',
-      sort: false,
-    },
-    {
-      field: 'is_active',
-      header: 'Is Active',
+      field: "is_active",
+      header: "Is Active",
       sort: false,
     },
   ]; //Table display columns
@@ -87,35 +59,27 @@ export class ResponsiblePersonComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-  currentUser?: User;
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
-  sector_id!: number;
+  project_id!: number;
 
   constructor(
-    protected responsiblePersonService: ResponsiblePersonService,
+    protected projectOutputService: ProjectOutputService,
+    protected projectService: ProjectService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected userService: UserService,
-    protected sectorService: SectorService
-  ) {
-    this.currentUser = userService.getCurrentUser();
-    if (this.currentUser.admin_hierarchy) {
-      this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
-      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
-    }
-    if (this.currentUser?.section) {
-      this.sector_id = this.currentUser.section?.sector_id!;
-    }
-  }
+    protected toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
-    this.sectorService.query().subscribe((resp) => (this.sectors = resp.data));
+    this.projectService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -125,23 +89,22 @@ export class ResponsiblePersonComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_id || !this.sector_id) {
+    if (!this.project_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.responsiblePersonService
+    this.projectOutputService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        sector_id: this.sector_id,
+        project_id: this.project_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ResponsiblePerson[]>) => {
+        (res: CustomResponse<ProjectOutput[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -161,11 +124,11 @@ export class ResponsiblePersonComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+      const page = params.get("page");
+      const perPage = params.get("per_page");
+      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
       const predicate = sort[0];
-      const ascending = sort[1] === 'asc';
+      const ascending = sort[1] === "asc";
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -186,11 +149,6 @@ export class ResponsiblePersonComponent implements OnInit {
     } else {
       this.loadPage(1);
     }
-  }
-
-  onAdminHierarchySelection(adminHierarcyId: number): void {
-    this.admin_hierarchy_id = adminHierarcyId;
-    this.filterChanged();
   }
 
   /**
@@ -245,25 +203,23 @@ export class ResponsiblePersonComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : 'id';
-    const direction = this.ascending ? 'asc' : 'desc';
+    const predicate = this.predicate ? this.predicate : "id";
+    const direction = this.ascending ? "asc" : "desc";
     return [`${predicate}:${direction}`];
   }
 
   /**
-   * Creating or updating ResponsiblePerson
-   * @param responsiblePerson ; If undefined initize new model to create else edit existing model
+   * Creating or updating ProjectOutput
+   * @param projectOutput ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(responsiblePerson?: ResponsiblePerson): void {
-    const data: ResponsiblePerson = responsiblePerson ?? {
-      ...new ResponsiblePerson(),
-      admin_hierarchy_id: this.admin_hierarchy_id,
-      sector_id: this.sector_id,
-      is_active: true,
+  createOrUpdate(projectOutput?: ProjectOutput): void {
+    const data: ProjectOutput = projectOutput ?? {
+      ...new ProjectOutput(),
+      project_id: this.project_id,
     };
-    const ref = this.dialogService.open(ResponsiblePersonUpdateComponent, {
+    const ref = this.dialogService.open(ProjectOutputUpdateComponent, {
       data,
-      header: 'Create/Update ResponsiblePerson',
+      header: "Create/Update ProjectOutput",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -273,15 +229,15 @@ export class ResponsiblePersonComponent implements OnInit {
   }
 
   /**
-   * Delete ResponsiblePerson
-   * @param responsiblePerson
+   * Delete ProjectOutput
+   * @param projectOutput
    */
-  delete(responsiblePerson: ResponsiblePerson): void {
+  delete(projectOutput: ProjectOutput): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this ResponsiblePerson?',
+      message: "Are you sure that you want to delete this ProjectOutput?",
       accept: () => {
-        this.responsiblePersonService
-          .delete(responsiblePerson.id!)
+        this.projectOutputService
+          .delete(projectOutput.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -297,23 +253,23 @@ export class ResponsiblePersonComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ResponsiblePerson[]> | null,
+    resp: CustomResponse<ProjectOutput[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/responsible-person'], {
+      this.router.navigate(["/project-output"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
         },
       });
     }
-    this.responsiblePeople = resp?.data ?? [];
+    this.projectOutputs = resp?.data ?? [];
   }
 
   /**
@@ -322,6 +278,6 @@ export class ResponsiblePersonComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error('Error loading Responsible Person');
+    this.toastService.error("Error loading Project Output");
   }
 }

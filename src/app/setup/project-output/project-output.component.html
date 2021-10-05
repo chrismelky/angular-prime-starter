@@ -15,24 +15,20 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <app-admin-hierarchy-tree
-            fxFlex
-            (onSelect)="onAdminHierarchySelection($event)"
-          ></app-admin-hierarchy-tree>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="sector_id"
+                id="project_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="sectors!"
+                [options]="projects!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="sector_id"
+                [(ngModel)]="project_id"
               ></p-dropdown>
-              <label for="sector_id">Sector </label>
+              <label for="project_id">Project </label>
             </span>
           </div>
         </div>
@@ -98,54 +94,6 @@
                   ></i>
                 </span>
               </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="mobile"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['mobile']"
-                  />
-                  <label for="mobile">Mobile </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['mobile'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="cheque_number"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['cheque_number']"
-                  />
-                  <label for="cheque_number">Cheque Number </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['cheque_number'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="title"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['title']"
-                  />
-                  <label for="title">Title </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['title'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
             </div>
             <div
               fxLayout="row"
@@ -179,25 +127,25 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="responsiblePeople!"
+      [value]="projectOutputs!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Responsible People</span>
+          <span class="card-header-text">Project Outputs</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!admin_hierarchy_id || !sector_id"
+            [disabled]="!project_id"
             (click)="createOrUpdate()"
-            label="Add Responsible Person"
+            label="Add Project Output"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="responsiblePeople?.length">
+        <tr *ngIf="projectOutputs?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -248,7 +196,7 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="responsiblePeople?.length! > 0"
+        [alwaysShow]="projectOutputs?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -263,6 +211,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Responsible Person"
+  header="Confirmation Delete Project Output"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

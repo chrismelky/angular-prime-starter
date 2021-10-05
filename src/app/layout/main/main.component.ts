@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalStorageService } from 'ngx-webstorage';
 import { AuthService } from '../../core/auth.service';
-import { Router } from '@angular/router';
+import {
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+} from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MenuItem } from 'primeng/api';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -18,6 +24,16 @@ export class MainComponent implements OnInit {
   user: any = this.localStorage.retrieve('user');
   avator: string = 'U';
   currentUserMenuItems: MenuItem[] = [];
+  loading$ = this.router.events.pipe(
+    filter(
+      (event) =>
+        event instanceof NavigationEnd ||
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError ||
+        event instanceof NavigationStart
+    ),
+    map((event) => (event instanceof NavigationStart ? true : false))
+  );
 
   constructor(
     private breakPointObsever: BreakpointObserver,
@@ -81,9 +97,9 @@ export class MainComponent implements OnInit {
           icon: 'pi pi-fw pi-angle-down',
           items: [
             {
-              label: "Financial Years",
-              icon: "pi pi-fw pi-link",
-              routerLink: "financial-year",
+              label: 'Financial Years',
+              icon: 'pi pi-fw pi-link',
+              routerLink: 'financial-year',
             },
             {
               label: 'Periods',
@@ -557,6 +573,11 @@ export class MainComponent implements OnInit {
         },
       ],
     },
+    {
+      label: 'Project Outputs',
+      icon: 'pi pi-fw pi-arrow-right',
+      routerLink: 'project-output',
+    },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {
       label: 'Planning',
@@ -633,9 +654,9 @@ export class MainComponent implements OnInit {
           routerLink: 'pe-item',
         },
         {
-          label: "Scrutinizations",
-          icon: "pi pi-fw pi-arrow-right",
-          routerLink: "scrutinization",
+          label: 'Scrutinizations',
+          icon: 'pi pi-fw pi-arrow-right',
+          routerLink: 'scrutinization',
         },
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],

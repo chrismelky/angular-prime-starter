@@ -1,4 +1,6 @@
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
+import { Facility } from 'src/app/setup/facility/facility.model';
+import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 
 export class Activity {
   constructor(
@@ -23,11 +25,13 @@ export class Activity {
     public generic_activity_id?: number,
     public responsible_person_id?: number,
     public period_type?: string,
-    public period_one?: string,
-    public period_two?: string,
-    public period_three?: string,
-    public period_four?: string,
-    public is_active?: string,
-    public budget_class?: BudgetClass
+    public period_one?: boolean,
+    public period_two?: boolean,
+    public period_three?: boolean,
+    public period_four?: boolean,
+    public is_active?: boolean,
+    public budget_class?: BudgetClass,
+    public fund_sources?: FundSource[],
+    public activity_facilities?: any[]
   ) {}
 }

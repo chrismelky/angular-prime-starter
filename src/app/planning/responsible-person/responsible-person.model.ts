@@ -7,8 +7,8 @@ export class ResponsiblePerson {
     public cheque_number?: string,
     public title?: string,
     public admin_hierarchy_id?: number,
-    public section_id?: number,
+    public sector_id?: number,
     public facility_id?: number,
-    public is_active?: string
+    public is_active?: boolean
   ) {}
 }

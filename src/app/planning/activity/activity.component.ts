@@ -27,11 +27,9 @@ import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
 import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
 import { ActivityType } from 'src/app/setup/activity-type/activity-type.model';
 import { ActivityTypeService } from 'src/app/setup/activity-type/activity-type.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { Section } from 'src/app/setup/section/section.model';
 import { SectionService } from 'src/app/setup/section/section.service';
-import { Facility, FacilityView } from 'src/app/setup/facility/facility.model';
+import { FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
 import { ActivityTaskNature } from 'src/app/setup/activity-task-nature/activity-task-nature.model';
 import { ActivityTaskNatureService } from 'src/app/setup/activity-task-nature/activity-task-nature.service';
@@ -111,8 +109,7 @@ export class ActivityComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  financial_year_target_id!: number;
-  facility_id!: number;
+  financialYearTarget?: FinancialYearTarget; /** Selected Target object to diaplay target info wheen creating activity */
   budget_type!: string;
 
   constructor(
@@ -175,10 +172,9 @@ export class ActivityComponent implements OnInit {
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
-      !this.financial_year_target_id ||
+      !this.financialYearTarget ||
       !this.financialYear ||
       !this.adminHierarchyCostCentre ||
-      !this.facility_id ||
       !this.budget_type
     ) {
       return;
@@ -191,11 +187,10 @@ export class ActivityComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        financial_year_target_id: this.financial_year_target_id,
+        financial_year_target_id: this.financialYearTarget.id,
         financial_year_id: this.financialYear.id!,
         admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
         section_id: this.adminHierarchyCostCentre.section_id,
-        facility_id: this.facility_id,
         budget_type: this.budget_type,
         ...this.helper.buildFilter(this.search),
       })
@@ -255,7 +250,10 @@ export class ActivityComponent implements OnInit {
    */
   loadTargets(objectiveId: number): void {
     this.financialYearTargetService
-      .query({ objective_id: objectiveId, columns: ['id', 'description'] })
+      .query({
+        objective_id: objectiveId,
+        columns: ['id', 'description', 'code', 'long_term_target_id'],
+      })
       .subscribe(
         (resp: CustomResponse<FinancialYearTarget[]>) =>
           (this.financialYearTargets = resp.data)
@@ -350,15 +348,23 @@ export class ActivityComponent implements OnInit {
   createOrUpdate(activity?: Activity): void {
     const data: Activity = activity ?? {
       ...new Activity(),
-      financial_year_target_id: this.financial_year_target_id,
+      financial_year_target_id: this.financialYearTarget?.id,
+      long_term_target_id: this.financialYearTarget?.long_term_target_id,
       financial_year_id: this.financialYear?.id,
       admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
       section_id: this.adminHierarchyCostCentre?.section_id,
-      facility_id: this.facility_id,
       budget_type: this.budget_type,
+      period_one: false,
+      period_two: false,
+      period_three: false,
+      period_four: false,
     };
     const ref = this.dialogService.open(ActivityUpdateComponent, {
-      data,
+      data: {
+        activity: data,
+        facilities: this.facilities,
+        adminHierarchyCostCentre: this.adminHierarchyCostCentre,
+      },
       header: 'Create/Update Activity',
       width: '900px',
     });

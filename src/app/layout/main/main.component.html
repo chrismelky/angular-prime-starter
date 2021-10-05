@@ -49,6 +49,13 @@
     </div>
   </mat-drawer>
   <mat-drawer-content style="flex: 1 1 auto">
+    <div class="route-loader" *ngIf="{ loading: loading$ | async } as route">
+      <mat-progress-bar
+        *ngIf="route.loading"
+        color="primary"
+        mode="indeterminate"
+      ></mat-progress-bar>
+    </div>
     <mat-toolbar class="mat-elevation-z2">
       <button
         pButton

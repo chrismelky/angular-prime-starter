@@ -138,7 +138,53 @@
     <div class="card">
       <p-tabView (onChange)="handleChange($event.index)" [(activeIndex)]="activeIndex">
         <p-tabPanel header="{{item.label}}" *ngFor="let item of items; index as i;">
-          {{groupData | json}}
+          <p-table [value]="groupData!" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width:50%">Name</th>
+                <th>Value</th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td style="width:50%">{{item.name}}</td>
+                <td>
+                  <input *ngIf="item.value_type === 'TEXT'" type="text" pInputText [(ngModel)]="item.value">
+                  <p-dropdown  *ngIf="item.value_type === 'SELECT'" [filter]="true"  optionValue="value" [options]="item.options" [(ngModel)]="item.value" placeholder="Select Option" optionLabel="name" [showClear]="true"></p-dropdown>
+                  <p-multiSelect appendTo="body" *ngIf="item.value_type === 'MULT_SELECT'" [options]="item.options" [(ngModel)]="item.arrayvalue"  optionValue="value"  defaultLabel="Select Options" optionLabel="name" selectedItemsLabel="{0} items selected"></p-multiSelect>
+                </td>
+                <td>
+                              <div fxLayout="row" fxLayoutAlign="end">
+                                <div fxLayout="row" fxLayoutGap="2px">
+                                  <button
+                                    pButton
+                                    pTooltip="Edit"
+                                    tooltipPosition="bottom"
+                                    class="
+                                      p-button-text p-button-plain p-button-rounded p-button-icon
+                                    "
+                                    icon="pi pi-pencil
+                                "
+                                    (click)="createOrUpdate(item)"
+                                  ></button>
+                                  <button
+                                    pButton
+                                    pTooltip="Delete"
+                                    tooltipPosition="bottom"
+                                    class="
+                                      p-button-text p-button-plain p-button-rounded p-button-icon
+                                    "
+                                    icon="pi pi-trash
+                                "
+                                    (click)="delete(item)"
+                                  ></button>
+                                </div>
+                              </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
         </p-tabPanel>
       </p-tabView>
     </div>

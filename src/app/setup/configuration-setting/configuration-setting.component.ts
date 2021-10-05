@@ -38,6 +38,7 @@ export class ConfigurationSettingComponent implements OnInit {
   valueTypes?: PlanrepEnum[] = [];
   activeIndex: number = 0;
   groupData : any[]=[];
+  value: any[] = [];
 
 
   cols = [
@@ -299,11 +300,15 @@ export class ConfigurationSettingComponent implements OnInit {
    handleChange(index:number) : void{
     const groupName = this.items[index].label;
      this.configurationSettingService
-       .query({group_name:groupName})
+       .config_setting({group_name:groupName})
        .subscribe(
          (res: CustomResponse<ConfigurationSetting[]>) => {
            this.groupData = res.data!;
          }
        );
+  }
+
+  getArray(string:string) {
+    return string.split(',');
   }
 }

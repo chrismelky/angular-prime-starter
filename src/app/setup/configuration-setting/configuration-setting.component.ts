@@ -36,6 +36,8 @@ export class ConfigurationSettingComponent implements OnInit {
   configurationSettings?: ConfigurationSetting[] = [];
 
   valueTypes?: PlanrepEnum[] = [];
+  activeIndex: number = 0;
+  groupData : any[]=[];
 
 
   cols = [
@@ -102,21 +104,12 @@ export class ConfigurationSettingComponent implements OnInit {
 
   ngOnInit(): void {
     this.valueTypes = this.enumService.get("valueTypes");
-    this.handleNavigation();
-    // this.items = [
-    //   {label: 'Home', icon: 'pi pi-fw pi-home'},
-    //   {label: 'Calendar', icon: 'pi pi-fw pi-calendar'},
-    //   {label: 'Edit', icon: 'pi pi-fw pi-pencil'},
-    //   {label: 'Documentation', icon: 'pi pi-fw pi-file'},
-    //   {label: 'Settings', icon: 'pi pi-fw pi-cog'}
-    // ];
-    this.activeItem = this.items[0];
     this.configurationSettingService
       .groups()
       .subscribe(
         (res: CustomResponse<any[]>) => {
           this.items = res.data!;
-          console.log(this.items);
+          this.handleChange(0);
         }
       );
   }
@@ -301,5 +294,16 @@ export class ConfigurationSettingComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Configuration Setting");
+  }
+
+   handleChange(index:number) : void{
+    const groupName = this.items[index].label;
+     this.configurationSettingService
+       .query({group_name:groupName})
+       .subscribe(
+         (res: CustomResponse<ConfigurationSetting[]>) => {
+           this.groupData = res.data!;
+         }
+       );
   }
 }

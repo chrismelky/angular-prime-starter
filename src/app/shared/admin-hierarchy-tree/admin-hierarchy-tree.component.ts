@@ -1,6 +1,7 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, ViewChild } from '@angular/core';
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
+import { OverlayPanel } from 'primeng/overlaypanel';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { User } from 'src/app/setup/user/user.model';
@@ -19,6 +20,7 @@ export class AdminHierarchyTreeComponent implements OnInit {
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  @ViewChild('op') panel!: OverlayPanel;
 
   constructor(
     protected userService: UserService,
@@ -79,5 +81,6 @@ export class AdminHierarchyTreeComponent implements OnInit {
             return this.returnType === 'object' ? d : d.id;
           });
     this.onSelect.next(selection);
+    this.panel.hide();
   }
 }

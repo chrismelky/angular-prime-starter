@@ -462,6 +462,23 @@ i.clear {
 
 }
 
+.p-tree {
+  max-height: 400px;
+  overflow: scroll;
+  .p-tree-container .p-treenode{
+    padding: 0.1rem;
+    .p-treenode-content{
+      padding: 0.1rem;
+      .p-tree-toggler {
+        height: 2rem;
+        .pi {
+            font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
 .p-dialog-mask {
   align-items:flex-start !important;
   padding-top: 64px;

@@ -62,22 +62,6 @@
             fxFlex
             fxLayoutAlign="start center"
           >
-            <div class="p-field" fxFlex="230px">
-              <span class="p-float-label">
-                <p-dropdown
-                  id="facility_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="facilities!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="facility_id"
-                ></p-dropdown>
-                <label for="facility_id">Facility </label>
-              </span>
-            </div>
             <!-- Objective filter -->
             <app-objective-tree
               [selectionMode]="'single'"
@@ -90,14 +74,13 @@
               <span class="p-float-label">
                 <p-dropdown
                   id="financial_year_target_id"
-                  optionValue="id"
                   optionLabel="description"
                   [autoDisplayFirst]="false"
                   [filter]="true"
                   class="p-inputtext-sm"
                   [options]="financialYearTargets!"
                   (onChange)="filterChanged()"
-                  [(ngModel)]="financial_year_target_id"
+                  [(ngModel)]="financialYearTarget"
                 ></p-dropdown>
                 <label for="financial_year_target_id">Target </label>
               </span>
@@ -250,10 +233,9 @@
               icon="pi pi-plus"
               class="p-button-raised"
               [disabled]="
-                !financial_year_target_id ||
+                !financialYearTarget ||
                 !financialYear ||
                 !adminHierarchyCostCentre ||
-                !facility_id ||
                 !budget_type
               "
               (click)="createOrUpdate()"

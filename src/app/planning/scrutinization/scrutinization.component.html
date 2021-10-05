@@ -17,7 +17,10 @@
         >
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <app-admin-hierarchy-tree></app-admin-hierarchy-tree>
+              <app-admin-hierarchy-tree
+                (onSelect)="onAdminHierarchySelection($event)"
+                [returnType]="'object'"
+              ></app-admin-hierarchy-tree>
             </span>
           </div>
 
@@ -140,15 +143,7 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Scrutinizations</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!admin_hierarchy_id || !section_id || !section_id"
-            (click)="createOrUpdate()"
-            label="Add Scrutinization"
-          ></button>
+          <span class="card-header-text">MTEF Scrutinization</span>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

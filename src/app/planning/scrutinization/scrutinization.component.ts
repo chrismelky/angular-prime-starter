@@ -28,6 +28,8 @@ import { SectionService } from "src/app/setup/section/section.service";
 import { Scrutinization } from "./scrutinization.model";
 import { ScrutinizationService } from "./scrutinization.service";
 import { ScrutinizationUpdateComponent } from "./update/scrutinization-update.component";
+import {ActivityService} from "../activity/activity.service";
+import {Activity} from "../activity/activity.model";
 
 @Component({
   selector: "app-scrutinization",
@@ -41,6 +43,7 @@ export class ScrutinizationComponent implements OnInit {
   adminHierarchies?: AdminHierarchy[] = [];
   sections?: Section[] = [];
   departments?: Section[] = [];
+  activities: Activity[] | undefined = [];
 
   cols = []; //Table display columns
 
@@ -64,6 +67,7 @@ export class ScrutinizationComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService,
     protected sectionService: SectionService,
     protected activatedRoute: ActivatedRoute,
+    protected activityService: ActivityService,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
@@ -156,7 +160,6 @@ export class ScrutinizationComponent implements OnInit {
     }
   }
   onAdminHierarchySelection(event: any): void {
-    console.log(event);
     this.admin_hierarchy_id = event.id;
     this.admin_hierarchy_position =event.admin_hierarchy_position;
   }
@@ -299,8 +302,11 @@ export class ScrutinizationComponent implements OnInit {
       );
 
   }
-
   loadActivities() {
-    console.log(this.section_id)
+    console.log(this.admin_hierarchy_id)
+    this.activityService.query({section_id: this.section_id, admin_hierarchy_id: this.admin_hierarchy_id})
+      .subscribe(
+        (resp: CustomResponse<Activity[]>) => ( this.activities = resp.data)
+      );
   }
 }

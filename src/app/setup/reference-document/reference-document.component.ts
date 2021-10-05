@@ -5,39 +5,39 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { ReferenceDocumentType } from "src/app/setup/reference-document-type/reference-document-type.model";
-import { ReferenceDocumentTypeService } from "src/app/setup/reference-document-type/reference-document-type.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { ReferenceDocumentType } from 'src/app/setup/reference-document-type/reference-document-type.model';
+import { ReferenceDocumentTypeService } from 'src/app/setup/reference-document-type/reference-document-type.service';
 
-import { ReferenceDocument } from "./reference-document.model";
-import { ReferenceDocumentService } from "./reference-document.service";
-import { ReferenceDocumentUpdateComponent } from "./update/reference-document-update.component";
-import {FinancialYear} from "../financial-year/financial-year.model";
-import {FinancialYearService} from "../financial-year/financial-year.service";
+import { ReferenceDocument } from './reference-document.model';
+import { ReferenceDocumentService } from './reference-document.service';
+import { ReferenceDocumentUpdateComponent } from './update/reference-document-update.component';
+import { FinancialYear } from '../financial-year/financial-year.model';
+import { FinancialYearService } from '../financial-year/financial-year.service';
 
 @Component({
-  selector: "app-reference-document",
-  templateUrl: "./reference-document.component.html",
+  selector: 'app-reference-document',
+  templateUrl: './reference-document.component.html',
 })
 export class ReferenceDocumentComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   referenceDocuments?: ReferenceDocument[] = [];
 
   startFinancialYears?: FinancialYear[] = [];
@@ -47,23 +47,23 @@ export class ReferenceDocumentComponent implements OnInit {
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "url",
-      header: "Url",
+      field: 'url',
+      header: 'Url',
       sort: true,
     },
     {
-      field: "start_financial_year_id",
-      header: "Start Financial Year ",
+      field: 'start_financial_year_id',
+      header: 'Start Financial Year ',
       sort: true,
     },
     {
-      field: "end_financial_year_id",
-      header: "End Financial Year ",
+      field: 'end_financial_year_id',
+      header: 'End Financial Year ',
       sort: true,
     },
   ]; //Table display columns
@@ -96,25 +96,13 @@ export class ReferenceDocumentComponent implements OnInit {
 
   ngOnInit(): void {
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.startFinancialYears = resp.data)
       );
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.endFinancialYears = resp.data)
-      );
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.referenceDocumentTypeService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<ReferenceDocumentType[]>) =>
           (this.referenceDocumentTypes = resp.data)
@@ -164,11 +152,11 @@ export class ReferenceDocumentComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -243,8 +231,8 @@ export class ReferenceDocumentComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -260,7 +248,7 @@ export class ReferenceDocumentComponent implements OnInit {
     };
     const ref = this.dialogService.open(ReferenceDocumentUpdateComponent, {
       data,
-      header: "Create/Update ReferenceDocument",
+      header: 'Create/Update ReferenceDocument',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -275,7 +263,7 @@ export class ReferenceDocumentComponent implements OnInit {
    */
   delete(referenceDocument: ReferenceDocument): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ReferenceDocument?",
+      message: 'Are you sure that you want to delete this ReferenceDocument?',
       accept: () => {
         this.referenceDocumentService
           .delete(referenceDocument.id!)
@@ -301,12 +289,12 @@ export class ReferenceDocumentComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-document"], {
+      this.router.navigate(['/reference-document'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -319,6 +307,6 @@ export class ReferenceDocumentComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Reference Document");
+    this.toastService.error('Error loading Reference Document');
   }
 }

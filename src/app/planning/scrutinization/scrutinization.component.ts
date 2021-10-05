@@ -5,39 +5,39 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
 
-import { Scrutinization } from "./scrutinization.model";
-import { ScrutinizationService } from "./scrutinization.service";
-import { ScrutinizationUpdateComponent } from "./update/scrutinization-update.component";
-import {ActivityService} from "../activity/activity.service";
-import {Activity} from "../activity/activity.model";
+import { Scrutinization } from './scrutinization.model';
+import { ScrutinizationService } from './scrutinization.service';
+import { ScrutinizationUpdateComponent } from './update/scrutinization-update.component';
+import { ActivityService } from '../activity/activity.service';
+import { Activity } from '../activity/activity.model';
 
 @Component({
-  selector: "app-scrutinization",
-  templateUrl: "./scrutinization.component.html",
+  selector: 'app-scrutinization',
+  templateUrl: './scrutinization.component.html',
 })
 export class ScrutinizationComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   scrutinizations?: Scrutinization[] = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
@@ -76,12 +76,6 @@ export class ScrutinizationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.sectionService
       .query({ position: 3 })
       .subscribe(
@@ -133,11 +127,11 @@ export class ScrutinizationComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -161,7 +155,7 @@ export class ScrutinizationComponent implements OnInit {
   }
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
-    this.admin_hierarchy_position =event.admin_hierarchy_position;
+    this.admin_hierarchy_position = event.admin_hierarchy_position;
   }
   /**
    * search items by @var search params
@@ -215,8 +209,8 @@ export class ScrutinizationComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -232,7 +226,7 @@ export class ScrutinizationComponent implements OnInit {
     };
     const ref = this.dialogService.open(ScrutinizationUpdateComponent, {
       data,
-      header: "Create/Update Scrutinization",
+      header: 'Create/Update Scrutinization',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -247,7 +241,7 @@ export class ScrutinizationComponent implements OnInit {
    */
   delete(scrutinization: Scrutinization): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Scrutinization?",
+      message: 'Are you sure that you want to delete this Scrutinization?',
       accept: () => {
         this.scrutinizationService
           .delete(scrutinization.id!)
@@ -273,12 +267,12 @@ export class ScrutinizationComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/scrutinization"], {
+      this.router.navigate(['/scrutinization'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -291,7 +285,7 @@ export class ScrutinizationComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Scrutinization");
+    this.toastService.error('Error loading Scrutinization');
   }
 
   filterSections() {
@@ -300,13 +294,16 @@ export class ScrutinizationComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
-
   }
   loadActivities() {
-    console.log(this.admin_hierarchy_id)
-    this.activityService.query({section_id: this.section_id, admin_hierarchy_id: this.admin_hierarchy_id})
+    console.log(this.admin_hierarchy_id);
+    this.activityService
+      .query({
+        section_id: this.section_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
+      })
       .subscribe(
-        (resp: CustomResponse<Activity[]>) => ( this.activities = resp.data)
+        (resp: CustomResponse<Activity[]>) => (this.activities = resp.data)
       );
   }
 }

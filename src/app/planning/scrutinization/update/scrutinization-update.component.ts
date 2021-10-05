@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
-import { Scrutinization } from "../scrutinization.model";
-import { ScrutinizationService } from "../scrutinization.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
+import { Scrutinization } from '../scrutinization.model';
+import { ScrutinizationService } from '../scrutinization.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-scrutinization-update",
-  templateUrl: "./scrutinization-update.component.html",
+  selector: 'app-scrutinization-update',
+  templateUrl: './scrutinization-update.component.html',
 })
 export class ScrutinizationUpdateComponent implements OnInit {
   isSaving = false;
@@ -52,19 +52,13 @@ export class ScrutinizationUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.sectionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
     this.sectionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
@@ -141,9 +135,9 @@ export class ScrutinizationUpdateComponent implements OnInit {
   protected createFromForm(): Scrutinization {
     return {
       ...new Scrutinization(),
-      id: this.editForm.get(["id"])!.value,
-      admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
-      section_id: this.editForm.get(["section_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      section_id: this.editForm.get(['section_id'])!.value,
     };
   }
 }

@@ -20,8 +20,8 @@ import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-h
 import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
 import { CasAssessmentRound } from 'src/app/setup/cas-assessment-round/cas-assessment-round.model';
 import { CasAssessmentRoundService } from 'src/app/setup/cas-assessment-round/cas-assessment-round.service';
-import { Period } from "src/app/setup/period/period.model";
-import { PeriodService } from "src/app/setup/period/period.service";
+import { Period } from 'src/app/setup/period/period.model';
+import { PeriodService } from 'src/app/setup/period/period.service';
 import { CasAssessmentCategoryVersion } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model';
 import { CasAssessmentCategoryVersionService } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service';
 import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
@@ -81,12 +81,6 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
     this.userService
       .query({ columns: ['id', 'first_name', 'last_name', 'username'] })
       .subscribe((resp: CustomResponse<User[]>) => (this.users = resp.data));
-    this.adminHierarchyService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.adminHierarchyLevelService
       .query({ columns: ['id', 'name'] })
       .subscribe(

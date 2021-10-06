@@ -24,9 +24,11 @@ import { ToastService } from "src/app/shared/toast.service";
 export class ConfigurationSettingUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
+  editing = false;
   errors = [];
 
   valueTypes?: PlanrepEnum[] = [];
+  htmlInputTypes?: PlanrepEnum[] = [];
 
   /**
    * Declare form
@@ -38,6 +40,7 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     group_name: [null, [Validators.required]],
     value_type: [null, [Validators.required]],
+    html_input_type: [null, [Validators.required]],
     value_options: [null, []],
     value_option_query: [null, []],
   });
@@ -53,6 +56,10 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.valueTypes = this.enumService.get("valueTypes");
+    if(this.dialogConfig.data.id !==undefined){
+      this.editing = true;
+    }
+    this.htmlInputTypes = this.enumService.get("htmlInputTypes");
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -119,6 +126,7 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
       name: configurationSetting.name,
       group_name: configurationSetting.group_name,
       value_type: configurationSetting.value_type,
+      html_type:configurationSetting.html_type,
       value_options: configurationSetting.value_options,
       value_option_query: configurationSetting.value_option_query,
     });
@@ -137,6 +145,7 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
       name: this.editForm.get(["name"])!.value,
       group_name: this.editForm.get(["group_name"])!.value,
       value_type: this.editForm.get(["value_type"])!.value,
+      html_type:this.editForm.get(["html_input_type"])!.value,
       value_options: this.editForm.get(["value_options"])!.value,
       value_option_query: this.editForm.get(["value_option_query"])!.value,
     };

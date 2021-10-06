@@ -64,6 +64,12 @@ export class EnumService {
         value: "DATA FORM",
       },
     ],
+    htmlInputTypes:[
+      { display: "Text", value: "TEXT" },
+      { display: "Number", value: "NUMBER" },
+      { display: "Select", value: "SELECT" },
+      { display: "Mult Select", value: "MULT_SELECT" }
+    ],
     valueTypes: [
       { display: "Number", value: "NUMBER" },
       { display: "Username", value: "USERNAME" },

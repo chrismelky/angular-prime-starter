@@ -5,17 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { Activity } from "./activity.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import {
+  Activity,
+  ActivityFacility,
+  ActivityFundSource,
+} from './activity.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ActivityService {
-  public resourceUrl = "api/activities";
+  public resourceUrl = 'api/activities';
 
   constructor(protected http: HttpClient) {}
 
@@ -43,5 +47,23 @@ export class ActivityService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  activityFacilities(
+    financialYearId: number,
+    activityId: number
+  ): Observable<CustomResponse<ActivityFacility[]>> {
+    return this.http.get<CustomResponse<ActivityFacility[]>>(
+      `${this.resourceUrl}/facilities/${financialYearId}/${activityId}`
+    );
+  }
+
+  activityFundSources(
+    financialYearId: number,
+    activityId: number
+  ): Observable<CustomResponse<ActivityFundSource[]>> {
+    return this.http.get<CustomResponse<ActivityFundSource[]>>(
+      `${this.resourceUrl}/fund_sources/${financialYearId}/${activityId}`
+    );
   }
 }

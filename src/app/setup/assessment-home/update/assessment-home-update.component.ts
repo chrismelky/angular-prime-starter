@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { AssessmentHome } from "../assessment-home.model";
-import { AssessmentHomeService } from "../assessment-home.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { AssessmentHome } from '../assessment-home.model';
+import { AssessmentHomeService } from '../assessment-home.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-assessment-home-update",
-  templateUrl: "./assessment-home-update.component.html",
+  selector: 'app-assessment-home-update',
+  templateUrl: './assessment-home-update.component.html',
 })
 export class AssessmentHomeUpdateComponent implements OnInit {
   isSaving = false;
@@ -47,12 +47,6 @@ export class AssessmentHomeUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -125,8 +119,8 @@ export class AssessmentHomeUpdateComponent implements OnInit {
   protected createFromForm(): AssessmentHome {
     return {
       ...new AssessmentHome(),
-      id: this.editForm.get(["id"])!.value,
-      financial_year_id: this.editForm.get(["financial_year_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
     };
   }
 }

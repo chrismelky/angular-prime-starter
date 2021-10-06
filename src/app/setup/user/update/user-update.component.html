@@ -184,7 +184,25 @@
               >
         </span>
             </div>
+          </div>
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field  p-col-12 p-md-4" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="position"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  optionValue="position"
+                  optionLabel="name"
+                  class="p-inputtext-sm"
+                  appendTo="body"
+                  (onChange)="loadSections()"
+                  [formControl]="levelControl"
+                  [options]="sectionLevels!"></p-dropdown>
+                <label for="position">Level</label>
+              </span>
+            </div>
+            <div class="p-field p-col-12 p-md-4" *ngIf="levelControl.value" fxFlex>
               <span class="p-float-label">
                 <p-dropdown
                   id="section_id"
@@ -195,9 +213,10 @@
                   class="p-inputtext-sm"
                   appendTo="body"
                   [options]="sections!"
+                  (onChange)="loadFacilities()"
                   formControlName="section_id"
                 ></p-dropdown>
-                <label for="section_id">Section </label>
+                <label for="section_id">Section</label>
               </span>
               <span
                 *ngIf="
@@ -239,24 +258,24 @@
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-multiSelect
+              <p-dropdown
                 id="roles"
-                [options]="roles!"
-                formControlName="roles"
+                optionValue="id"
                 optionLabel="name"
-                [dataKey]="'id'"
+                [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
                 appendTo="body"
-              >
-              </p-multiSelect>
+                [options]="roles!"
+                formControlName="roles"
+              ></p-dropdown>
               <label for="roles">Roles</label>
             </span>
               <span
                 *ngIf="
-            editForm.get('facilities')!.invalid &&
-            (editForm.get('facilities')!.dirty ||
-              editForm.get('facilities')!.touched ||
+            editForm.get('roles')!.invalid &&
+            (editForm.get('roles')!.dirty ||
+              editForm.get('roles')!.touched ||
               formError)
           "
               >

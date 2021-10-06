@@ -462,10 +462,26 @@ i.clear {
 
 }
 
+.p-tree {
+  max-height: 400px;
+  overflow: scroll;
+  .p-tree-container .p-treenode{
+    padding: 0.1rem;
+    .p-treenode-content{
+      padding: 0.1rem;
+      .p-tree-toggler {
+        height: 2rem;
+        .pi {
+            font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
 .p-dialog-mask {
   align-items:flex-start !important;
   padding-top: 64px;
-  padding-left: 256px;
 }
 
 .mat-card-header {
@@ -486,7 +502,8 @@ i.clear {
 }
 
 .p-inputtext-sm .p-inputtext,
-.p-cascadeselect .p-cascadeselect-label {
+.p-cascadeselect .p-cascadeselect-label,
+.p-multiselect .p-multiselect-label {
   padding: 0.65625rem 0.65625rem;
 }
 

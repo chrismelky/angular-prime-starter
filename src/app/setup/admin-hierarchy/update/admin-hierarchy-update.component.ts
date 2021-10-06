@@ -74,8 +74,6 @@ export class AdminHierarchyUpdateComponent implements OnInit {
       );
     const data: AdminHierarchy = this.dialogConfig.data;
     this.parents?.push(data.parent!);
-    console.log(data);
-    console.log(this.parents);
     this.updateForm(data); //Initialize form with data from dialog
   }
 

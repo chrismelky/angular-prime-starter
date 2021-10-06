@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -32,9 +32,13 @@ import { ProjectService } from 'src/app/setup/project/project.service';
 import { Activity } from '../activity.model';
 import { ActivityService } from '../activity.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { TreeNode } from 'primeng/api';
 import { ResponsiblePersonService } from '../../responsible-person/responsible-person.service';
 import { ResponsiblePerson } from '../../responsible-person/responsible-person.model';
+import { AdminHierarchyCostCentre } from '../../admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
+import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
+import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
+import { ProjectOutputService } from 'src/app/setup/project-output/project-output.service';
+import { ProjectOutput } from 'src/app/setup/project-output/project-output.model';
 
 @Component({
   selector: 'app-activity-update',
@@ -50,8 +54,10 @@ export class ActivityUpdateComponent implements OnInit {
   adminHierarchies?: AdminHierarchy[] = [];
   sections?: Section[] = [];
   facilities?: Facility[] = [];
+  fundSources?: FundSource[] = [];
   activityTaskNatures?: ActivityTaskNature[] = [];
   projects?: Project[] = [];
+  projectOutputs?: ProjectOutput[] = [];
   // interventions?: Intervention[] = [];
   // sectorProblems?: SectorProblem[] = [];
   // genericActivities?: GenericActivity[] = [];
@@ -60,7 +66,9 @@ export class ActivityUpdateComponent implements OnInit {
   periodTypes?: PlanrepEnum[] = [];
   budgetClassTree?: any[] = [];
   budgetClasses?: BudgetClass[] = [];
-  budgetClass?: TreeNode;
+  mainBudgetClass?: BudgetClass;
+  mainBudgetClasses?: BudgetClass[] = [];
+  adminHierarchyCostCentre?: AdminHierarchyCostCentre;
 
   /**
    * Declare form
@@ -75,23 +83,26 @@ export class ActivityUpdateComponent implements OnInit {
     financial_year_target_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
     budget_class_id: [null, [Validators.required]], //Budget class will be binded to tree node of Type @TreeNode
+    main_budget_class_id: [null, [Validators.required]], //Budget class will be binded to tree node of Type @TreeNode
     activity_type_id: [null, [Validators.required]],
     admin_hierarchy_id: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
-    facility_id: [null, [Validators.required]],
     activity_task_nature_id: [null, [Validators.required]],
     budget_type: [null, [Validators.required]],
     project_id: [null, [Validators.required]],
+    project_output_id: [null, []],
     intervention_id: [null, []],
     sector_problem_id: [null, []],
     generic_activity_id: [null, []],
     responsible_person_id: [null, [Validators.required]],
-    period_type: [null, [Validators.required]],
-    period_one: [false, []],
-    period_two: [false, []],
-    period_three: [false, []],
-    period_four: [false, []],
-    is_active: [false, []],
+    period_type: [null, []],
+    period_one: [null, []],
+    period_two: [null, []],
+    period_three: [null, []],
+    period_four: [null, []],
+    is_active: [null, []],
+    activity_facilities: this.fb.array([], [Validators.required]),
+    fund_sources: [[], [Validators.required]],
   });
 
   constructor(
@@ -104,6 +115,8 @@ export class ActivityUpdateComponent implements OnInit {
     protected facilityService: FacilityService,
     protected activityTaskNatureService: ActivityTaskNatureService,
     protected projectService: ProjectService,
+    protected projectOutputService: ProjectOutputService,
+    protected fundSourceService: FundSourceService,
     // protected interventionService: InterventionService,
     // protected sectorProblemService: SectorProblemService,
     // protected genericActivityService: GenericActivityService,
@@ -116,11 +129,6 @@ export class ActivityUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    /** fetch budget class tree ie parent array with children array**/
-    this.budgetClassService.tree().subscribe((resp) => {
-      this.budgetClasses = resp.data;
-    });
-
     /** fetch activity types */
     this.activityTypeService
       .query({
@@ -128,18 +136,130 @@ export class ActivityUpdateComponent implements OnInit {
       })
       .subscribe((resp) => (this.activityTypes = resp.data));
 
+    /** get perio type from enums */
     this.periodTypes = this.enumService.get('periodTypes');
 
-    this.loadResponsiblePeople();
-    this.loadProjects();
-
+    /** Get dialog data set from activity component */
     const dialogData = this.dialogConfig.data;
-    const activity: Activity = dialogData;
+
+    /** set admin hierarchy cost centre */
+    this.adminHierarchyCostCentre = dialogData.adminHierarchyCostCentre;
+
+    /** get activity to edit or create  from dialog   */
+    const activity: Activity = dialogData.activity;
+
+    this.facilities = [...dialogData.facilities];
+
     /** fetch activity task nature by selected activity_type_id if edit mode */
-    activity.id && this.loadActivityTaskNature(activity.activity_type_id!);
+    if (activity.id) {
+      this.loadFundSources(activity.budget_class_id!);
+      this.loadActivityTaskNature(activity.activity_type_id!);
+      this.loadActivityFundSource(activity.financial_year_id!, activity.id);
+      this.loadActivityFacilities(activity.financial_year_id!, activity.id);
+    }
+
+    /** fetch budget class tree ie parent array with children array**/
+    this.loadMainBudgetClassesWithChildren(activity.budget_class?.parent_id);
+
+    /** Load responsible person by admin hiearch and sector */
+    this.loadResponsiblePeople();
+
+    /** Load project by sector */
+    this.loadProjects();
 
     //Initialize form with data from dialog
     this.updateForm(activity);
+  }
+
+  /** Load main budget classess with children budget classes */
+  loadMainBudgetClassesWithChildren(selectedMainBudgetClassId?: number): void {
+    this.budgetClassService.tree().subscribe((resp) => {
+      this.mainBudgetClasses = resp.data;
+      if (selectedMainBudgetClassId) {
+        this.loadBudgetClasses(selectedMainBudgetClassId);
+      }
+    });
+  }
+
+  /** load budget classes from main budget clasess by finding one in main budget class and get children
+   * note: Main Budget classed is loaded with children properties
+   */
+  loadBudgetClasses(mainBudgetClassId: number): void {
+    this.budgetClasses = this.mainBudgetClasses?.find(
+      (mbc) => mbc.id === mainBudgetClassId
+    )?.children;
+  }
+
+  /** Load fund sources by budget classes */
+  loadFundSources(budgetClassId: number): void {
+    this.fundSourceService.getByBudgetClass(budgetClassId).subscribe((resp) => {
+      this.fundSources = resp.data;
+    });
+  }
+
+  /** Load activity facility if activity id exist */
+  loadActivityFundSource(financialYearId: number, activityId: number): void {
+    this.activityService
+      .activityFundSources(financialYearId, activityId)
+      .subscribe((resp) => {
+        const f = resp.data?.map((af) => {
+          return {
+            id: af.fund_source_id,
+          };
+        });
+        this.editForm.patchValue({
+          fund_sources: f,
+        });
+      });
+  }
+  /** Load activity Fund sources if activity id exist */
+  loadActivityFacilities(financialYearId: number, activityId: number): void {
+    this.activityService
+      .activityFacilities(financialYearId, activityId)
+      .subscribe((resp) => {
+        resp.data?.forEach((af) => {
+          const facilityName = this.facilities?.find(
+            (f) => f.id === af.facility_id
+          )?.name;
+          const fg = this.fb.group({
+            id: af.id,
+            facility_id: [af.facility_id],
+            indicator_value: [af.indicator_value, [Validators.required]],
+            project_output_value: [af.project_output_value, []],
+            facility_name: [facilityName],
+          });
+          this.facilityForm.insert(0, fg);
+          this.facilities = this.facilities?.filter(
+            (f0) => f0.id !== af.facility_id
+          );
+        });
+      });
+  }
+
+  get facilityForm(): FormArray {
+    return this.editForm.get('activity_facilities') as FormArray;
+  }
+
+  /** Add facility to editForm */
+  addFacility(
+    facilitiesToAdd: any,
+    indicatorValueToAdd?: any,
+    projectOutputValueToAdd?: any
+  ): void {
+    facilitiesToAdd.value.forEach((f: Facility) => {
+      const fg = this.fb.group({
+        facility_id: [f.id],
+        indicator_value: [indicatorValueToAdd?.value, [Validators.required]],
+        project_output_value: [projectOutputValueToAdd?.value, []],
+        facility_name: [f.name],
+      });
+      this.facilityForm.insert(0, fg);
+      this.facilities = this.facilities?.filter((f0) => f0.id !== f.id);
+    });
+    facilitiesToAdd.value = [];
+    indicatorValueToAdd.value = '';
+    projectOutputValueToAdd.value = '';
+    console.log(this.facilityForm.controls);
   }
 
   /**
@@ -163,13 +283,29 @@ export class ActivityUpdateComponent implements OnInit {
       .subscribe((resp) => (this.projects = resp.data));
   }
 
+  /** Load project output by project*/
+  loadProjectOutput(projectId: number): void {
+    if (!projectId) {
+      return;
+    }
+    this.projectOutputService
+      .query({
+        project_id: projectId,
+      })
+      .subscribe((resp) => (this.projectOutputs = resp.data));
+  }
+
   /**
    * Load responsible people
    */
   loadResponsiblePeople(): void {
+    if (!this.adminHierarchyCostCentre?.section) {
+      return;
+    }
     this.responsiblePersonService
       .query({
-        //TODO filter by admin area and section
+        admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
+        sector_id: this.adminHierarchyCostCentre?.section?.sector_id,
       })
       .subscribe((resp) => (this.responsiblePeople = resp.data));
   }
@@ -180,6 +316,7 @@ export class ActivityUpdateComponent implements OnInit {
    */
   save(): void {
     if (this.editForm.invalid) {
+      console.log(this.editForm.errors);
       this.formError = true;
       return;
     }
@@ -236,13 +373,14 @@ export class ActivityUpdateComponent implements OnInit {
       financial_year_target_id: activity.financial_year_target_id,
       financial_year_id: activity.financial_year_id,
       budget_class_id: activity.budget_class_id,
+      main_budget_class_id: activity.budget_class?.parent_id,
       activity_type_id: activity.activity_type_id,
       admin_hierarchy_id: activity.admin_hierarchy_id,
       section_id: activity.section_id,
-      facility_id: activity.facility_id,
       activity_task_nature_id: activity.activity_task_nature_id,
       budget_type: activity.budget_type,
       project_id: activity.project_id,
+      project_output_id: activity.project_output_id,
       intervention_id: activity.intervention_id,
       sector_problem_id: activity.sector_problem_id,
       generic_activity_id: activity.generic_activity_id,
@@ -253,6 +391,8 @@ export class ActivityUpdateComponent implements OnInit {
       period_three: activity.period_three,
       period_four: activity.period_four,
       is_active: activity.is_active,
+      fund_sources: activity.fund_sources,
+      activity_facilities: activity.activity_facilities,
     });
   }
 
@@ -276,11 +416,11 @@ export class ActivityUpdateComponent implements OnInit {
       activity_type_id: this.editForm.get(['activity_type_id'])!.value,
       admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
-      facility_id: this.editForm.get(['facility_id'])!.value,
       activity_task_nature_id: this.editForm.get(['activity_task_nature_id'])!
         .value,
       budget_type: this.editForm.get(['budget_type'])!.value,
       project_id: this.editForm.get(['project_id'])!.value,
+      project_output_id: this.editForm.get(['project_output_id'])!.value,
       intervention_id: this.editForm.get(['intervention_id'])!.value,
       sector_problem_id: this.editForm.get(['sector_problem_id'])!.value,
       generic_activity_id: this.editForm.get(['generic_activity_id'])!.value,
@@ -292,6 +432,8 @@ export class ActivityUpdateComponent implements OnInit {
       period_three: this.editForm.get(['period_three'])!.value,
       period_four: this.editForm.get(['period_four'])!.value,
       is_active: this.editForm.get(['is_active'])!.value,
+      fund_sources: this.editForm.get(['fund_sources'])!.value,
+      activity_facilities: this.editForm.get(['activity_facilities'])!.value,
     };
   }
 }

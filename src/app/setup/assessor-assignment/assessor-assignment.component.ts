@@ -5,48 +5,47 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
+} from '../../config/pagination.constants';
 
-
-import { AssessorAssignment } from "./assessor-assignment.model";
-import { AssessorAssignmentService } from "./assessor-assignment.service";
-import { AssessorAssignmentUpdateComponent } from "./update/assessor-assignment-update.component";
-import {CasAssessmentCategoryVersion} from "../cas-assessment-category-version/cas-assessment-category-version.model";
-import {User} from "../user/user.model";
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchy} from "../admin-hierarchy/admin-hierarchy.model";
-import {ToastService} from "../../shared/toast.service";
-import {UserService} from "../user/user.service";
-import {HelperService} from "../../utils/helper.service";
-import {Period} from "../period/period.model";
-import {PeriodService} from "../period/period.service";
-import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
-import {CasAssessmentCategoryVersionService} from "../cas-assessment-category-version/cas-assessment-category-version.service";
-import {CasAssessmentRound} from "../cas-assessment-round/cas-assessment-round.model";
-import {FinancialYear} from "../financial-year/financial-year.model";
-import {CasAssessmentRoundService} from "../cas-assessment-round/cas-assessment-round.service";
-import {FinancialYearService} from "../financial-year/financial-year.service";
-import {AdminHierarchyService} from "../admin-hierarchy/admin-hierarchy.service";
+import { AssessorAssignment } from './assessor-assignment.model';
+import { AssessorAssignmentService } from './assessor-assignment.service';
+import { AssessorAssignmentUpdateComponent } from './update/assessor-assignment-update.component';
+import { CasAssessmentCategoryVersion } from '../cas-assessment-category-version/cas-assessment-category-version.model';
+import { User } from '../user/user.model';
+import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchy } from '../admin-hierarchy/admin-hierarchy.model';
+import { ToastService } from '../../shared/toast.service';
+import { UserService } from '../user/user.service';
+import { HelperService } from '../../utils/helper.service';
+import { Period } from '../period/period.model';
+import { PeriodService } from '../period/period.service';
+import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
+import { CasAssessmentCategoryVersionService } from '../cas-assessment-category-version/cas-assessment-category-version.service';
+import { CasAssessmentRound } from '../cas-assessment-round/cas-assessment-round.model';
+import { FinancialYear } from '../financial-year/financial-year.model';
+import { CasAssessmentRoundService } from '../cas-assessment-round/cas-assessment-round.service';
+import { FinancialYearService } from '../financial-year/financial-year.service';
+import { AdminHierarchyService } from '../admin-hierarchy/admin-hierarchy.service';
 
 @Component({
-  selector: "app-assessor-assignment",
-  templateUrl: "./assessor-assignment.component.html",
+  selector: 'app-assessor-assignment',
+  templateUrl: './assessor-assignment.component.html',
 })
 export class AssessorAssignmentComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   assessorAssignments?: AssessorAssignment[] = [];
 
   users?: User[] = [];
@@ -59,43 +58,43 @@ export class AssessorAssignmentComponent implements OnInit {
 
   cols = [
     {
-      field: "user_id",
-      header: "User ",
+      field: 'user_id',
+      header: 'User ',
       sort: true,
     },
     {
-      field: "admin_hierarchy_id",
-      header: "Admin Hierarchy ",
+      field: 'admin_hierarchy_id',
+      header: 'Admin Hierarchy ',
       sort: true,
     },
     {
-      field: "admin_hierarchy_level_id",
-      header: "Admin Hierarchy Level ",
+      field: 'admin_hierarchy_level_id',
+      header: 'Admin Hierarchy Level ',
       sort: true,
     },
     {
-      field: "cas_assessment_round_id",
-      header: "Cas Assessment Round ",
+      field: 'cas_assessment_round_id',
+      header: 'Cas Assessment Round ',
       sort: true,
     },
     {
-      field: "period_id",
-      header: "Period ",
+      field: 'period_id',
+      header: 'Period ',
       sort: true,
     },
     {
-      field: "cas_assessment_category_version_id",
-      header: "Cas Assessment Category Version ",
+      field: 'cas_assessment_category_version_id',
+      header: 'Cas Assessment Category Version ',
       sort: true,
     },
     {
-      field: "financial_year_id",
-      header: "Financial Year ",
+      field: 'financial_year_id',
+      header: 'Financial Year ',
       sort: true,
     },
     {
-      field: "active",
-      header: "Active",
+      field: 'active',
+      header: 'Active',
       sort: false,
     },
   ]; //Table display columns
@@ -130,39 +129,33 @@ export class AssessorAssignmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService
-      .query({ columns: ["id", 'first_name', 'last_name', 'username'] })
+      .query({ columns: ['id', 'first_name', 'last_name', 'username'] })
       .subscribe((resp: CustomResponse<User[]>) => (this.users = resp.data));
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.adminHierarchyLevelService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
     this.casAssessmentRoundService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentRound[]>) =>
           (this.casAssessmentRounds = resp.data)
       );
     this.periodService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
       );
     this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "cas_assessment_category_id"] })
+      .query({ columns: ['id', 'cas_assessment_category_id'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)
       );
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
@@ -207,11 +200,11 @@ export class AssessorAssignmentComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -274,8 +267,8 @@ export class AssessorAssignmentComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -289,7 +282,7 @@ export class AssessorAssignmentComponent implements OnInit {
     };
     const ref = this.dialogService.open(AssessorAssignmentUpdateComponent, {
       data,
-      header: "Create/Update AssessorAssignment",
+      header: 'Create/Update AssessorAssignment',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -304,7 +297,7 @@ export class AssessorAssignmentComponent implements OnInit {
    */
   delete(assessorAssignment: AssessorAssignment): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this AssessorAssignment?",
+      message: 'Are you sure that you want to delete this AssessorAssignment?',
       accept: () => {
         this.assessorAssignmentService
           .delete(assessorAssignment.id!)
@@ -330,12 +323,12 @@ export class AssessorAssignmentComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/assessor-assignment"], {
+      this.router.navigate(['/assessor-assignment'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -348,6 +341,6 @@ export class AssessorAssignmentComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Assessor Assignment");
+    this.toastService.error('Error loading Assessor Assignment');
   }
 }

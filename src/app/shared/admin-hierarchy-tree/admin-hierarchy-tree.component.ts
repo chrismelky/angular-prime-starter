@@ -1,6 +1,7 @@
-import { EventEmitter } from '@angular/core';
+import { AfterViewInit, EventEmitter, ViewChild } from '@angular/core';
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
+import { OverlayPanel } from 'primeng/overlaypanel';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { User } from 'src/app/setup/user/user.model';
@@ -11,7 +12,7 @@ import { UserService } from 'src/app/setup/user/user.service';
   templateUrl: './admin-hierarchy-tree.component.html',
   styleUrls: ['./admin-hierarchy-tree.component.scss'],
 })
-export class AdminHierarchyTreeComponent implements OnInit {
+export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
   currentUser!: User;
   treeLoading: boolean = false;
   nodes: TreeNode[] = [];
@@ -19,6 +20,7 @@ export class AdminHierarchyTreeComponent implements OnInit {
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  @ViewChild('op') panel!: OverlayPanel;
 
   constructor(
     protected userService: UserService,
@@ -39,8 +41,11 @@ export class AdminHierarchyTreeComponent implements OnInit {
         },
       ];
       this.selectedValue = this.nodes[0];
-      this.onSelectionChange();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.onSelectionChange();
   }
 
   nodeExpand(event: any): any {
@@ -79,5 +84,6 @@ export class AdminHierarchyTreeComponent implements OnInit {
             return this.returnType === 'object' ? d : d.id;
           });
     this.onSelect.next(selection);
+    this.panel.hide();
   }
 }

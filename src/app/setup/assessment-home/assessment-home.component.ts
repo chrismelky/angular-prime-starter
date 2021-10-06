@@ -5,41 +5,41 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 
-import { AssessmentHome } from "./assessment-home.model";
-import { AssessmentHomeUpdateComponent } from "./update/assessment-home-update.component";
-import {CasAssessmentCategoryVersionService} from "../cas-assessment-category-version/cas-assessment-category-version.service";
-import {CasAssessmentRound} from "../cas-assessment-round/cas-assessment-round.model";
-import {CasAssessmentRoundService} from "../cas-assessment-round/cas-assessment-round.service";
+import { AssessmentHome } from './assessment-home.model';
+import { AssessmentHomeUpdateComponent } from './update/assessment-home-update.component';
+import { CasAssessmentCategoryVersionService } from '../cas-assessment-category-version/cas-assessment-category-version.service';
+import { CasAssessmentRound } from '../cas-assessment-round/cas-assessment-round.model';
+import { CasAssessmentRoundService } from '../cas-assessment-round/cas-assessment-round.service';
 
 @Component({
-  selector: "app-assessment-home",
-  templateUrl: "./assessment-home.component.html",
+  selector: 'app-assessment-home',
+  templateUrl: './assessment-home.component.html',
 })
 export class AssessmentHomeComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   assessmentHomes?: AssessmentHome[] = [];
 
   financialYears?: FinancialYear[] = [];
-  casAssessmentRounds: CasAssessmentRound[] | undefined  = [];
+  casAssessmentRounds: CasAssessmentRound[] | undefined = [];
 
   cols = []; //Table display columns
 
@@ -69,14 +69,8 @@ export class AssessmentHomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
     this.casAssessmentRondService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentRound[]>) =>
           (this.casAssessmentRounds = resp.data)
@@ -126,11 +120,11 @@ export class AssessmentHomeComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -205,8 +199,8 @@ export class AssessmentHomeComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -221,7 +215,7 @@ export class AssessmentHomeComponent implements OnInit {
     };
     const ref = this.dialogService.open(AssessmentHomeUpdateComponent, {
       data,
-      header: "Create/Update AssessmentHome",
+      header: 'Create/Update AssessmentHome',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -262,12 +256,12 @@ export class AssessmentHomeComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/assessment-home"], {
+      this.router.navigate(['/assessment-home'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -280,26 +274,29 @@ export class AssessmentHomeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Assessment Home");
+    this.toastService.error('Error loading Assessment Home');
   }
 
   /**
    * Load received Assessments for assessment based on Assessor assignment
    */
   receivedAssessment(rowData: any) {
-    this.router.navigate(['received-assessment'],{ state: rowData });
+    this.router.navigate(['received-assessment'], { state: rowData });
   }
 
   /**
    * Load assigned assessments
    */
   myAssessment(rowData: any) {
-    this.router.navigate(['my-assessment'],{ state: rowData });
+    this.router.navigate(['my-assessment'], { state: rowData });
   }
   /**
    *
    */
   assess(rowData: any) {
-    this.router.navigate(['assessment-criteria?financialYearId=',rowData.financial_year_id]);
+    this.router.navigate([
+      'assessment-criteria?financialYearId=',
+      rowData.financial_year_id,
+    ]);
   }
 }

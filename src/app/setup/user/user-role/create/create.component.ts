@@ -10,6 +10,7 @@ import {Role} from "../../../role/role.model";
 import {UserRoleService} from "../user-role.service";
 import {User} from "../../user.model";
 import {CreateUserRole} from "../user-role.model";
+import {AdminHierarchy} from "../../../admin-hierarchy/admin-hierarchy.model";
 
 @Component({
   selector: 'app-create',
@@ -29,6 +30,8 @@ export class CreateComponent implements OnInit {
     roles: [null, [Validators.required]],
   });
 
+  admin_hierarchy_position: number | undefined;
+
   constructor(
     protected userRoleService: UserRoleService,
     protected roleService: RoleService,
@@ -41,15 +44,6 @@ export class CreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadRoles();
-  }
-
-  loadRoles() {
-    this.roleService
-      .query({columns: ["id", "name"]})
-      .subscribe(
-        (resp: CustomResponse<Role[]>) => (this.roles = resp.data)
-      );
   }
 
   /**
@@ -59,6 +53,13 @@ export class CreateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const data = this.createFromForm();
+    let roles = [];
+    const roleId = this.editForm.get('roles')?.value as number;
+    const role = {
+      id: roleId
+    } as Role;
+    roles.push(role)
+    data.roles = roles;
     data.user_id = this.user?.id;
     this.subscribeToSaveResponse(this.userRoleService.assignMultipleRoles(data));
   }
@@ -105,5 +106,20 @@ export class CreateComponent implements OnInit {
       ...new CreateUserRole(),
       roles: this.editForm.get(["roles"])!.value,
     };
+  }
+
+  onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
+    this.editForm.get('roles')?.reset();
+    this.editForm.get('roles')?.updateValueAndValidity();
+    this.admin_hierarchy_position = adminHierarchy.admin_hierarchy_position;
+    this.roleService
+      .query(
+        {
+          columns: ['id', 'name'],
+          admin_hierarchy_position: adminHierarchy.admin_hierarchy_position
+        })
+      .subscribe(
+        (resp: CustomResponse<Role[]>) => (this.roles = resp.data)
+      );
   }
 }

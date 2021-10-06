@@ -8,7 +8,6 @@
 import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
-import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
 import { AdminHierarchyUpdateComponent } from './update/admin-hierarchy-update.component';
 import { AdminHierarchy } from './admin-hierarchy.model';
 import { ToastService } from '../../shared/toast.service';
@@ -19,12 +18,9 @@ import {
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HelperService } from '../../utils/helper.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
 import { Paginator } from 'primeng/paginator';
 import { combineLatest } from 'rxjs';
-import { DecisionLevelService } from '../decision-level/decision-level.service';
 import { CustomResponse } from '../../utils/custom-response';
-import { DecisionLevel } from '../decision-level/decision-level.model';
 import { AdminHierarchyService } from './admin-hierarchy.service';
 
 @Component({
@@ -38,10 +34,6 @@ export class AdminHierarchyComponent implements OnInit {
   title = 'Administration Hierarchies';
 
   parents?: AdminHierarchy[] = [];
-  adminHierarchyPositions?: AdminHierarchyLevel[] = [];
-  currentBudgetDecisionLevels?: DecisionLevel[] = [];
-  carryoverBudgetDecisionLevels?: DecisionLevel[] = [];
-  supplementaryBudgetDecisionLevels?: DecisionLevel[] = [];
 
   cols = [
     {
@@ -72,8 +64,6 @@ export class AdminHierarchyComponent implements OnInit {
 
   constructor(
     protected adminHierarchyService: AdminHierarchyService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
-    protected decisionLevelService: DecisionLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -83,35 +73,6 @@ export class AdminHierarchyComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) => (this.parents = resp.data)
-      );
-    this.adminHierarchyLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyPositions = resp.data)
-      );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.currentBudgetDecisionLevels = resp.data)
-      );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.carryoverBudgetDecisionLevels = resp.data)
-      );
-    this.decisionLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<DecisionLevel[]>) =>
-          (this.supplementaryBudgetDecisionLevels = resp.data)
-      );
     this.handleNavigation();
   }
 

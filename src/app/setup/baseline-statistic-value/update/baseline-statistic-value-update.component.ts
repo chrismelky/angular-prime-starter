@@ -68,12 +68,6 @@ export class BaselineStatisticValueUpdateComponent implements OnInit {
         (resp: CustomResponse<BaselineStatistic[]>) =>
           (this.baselineStatistics = resp.data)
       );
-    this.adminHierarchyService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.financialYearService
       .query({ columns: ['id', 'name'] })
       .subscribe(

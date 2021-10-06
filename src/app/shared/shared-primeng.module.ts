@@ -40,6 +40,7 @@ import { FocusTrapModule } from 'primeng/focustrap';
 import { TagModule } from 'primeng/tag';
 import { ListboxModule } from 'primeng/listbox';
 import { CascadeSelectModule } from 'primeng/cascadeselect';
+import { FieldsetModule } from 'primeng/fieldset';
 
 @NgModule({
   declarations: [],
@@ -85,6 +86,7 @@ import { CascadeSelectModule } from 'primeng/cascadeselect';
     TagModule,
     ListboxModule,
     CascadeSelectModule,
+    FieldsetModule,
   ],
 })
 export class SharedPrimengModule {}

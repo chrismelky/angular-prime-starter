@@ -37,6 +37,8 @@ import { ResponsiblePerson } from '../../responsible-person/responsible-person.m
 import { AdminHierarchyCostCentre } from '../../admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
 import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
+import { ProjectOutputService } from 'src/app/setup/project-output/project-output.service';
+import { ProjectOutput } from 'src/app/setup/project-output/project-output.model';
 
 @Component({
   selector: 'app-activity-update',
@@ -55,6 +57,7 @@ export class ActivityUpdateComponent implements OnInit {
   fundSources?: FundSource[] = [];
   activityTaskNatures?: ActivityTaskNature[] = [];
   projects?: Project[] = [];
+  projectOutputs?: ProjectOutput[] = [];
   // interventions?: Intervention[] = [];
   // sectorProblems?: SectorProblem[] = [];
   // genericActivities?: GenericActivity[] = [];
@@ -87,6 +90,7 @@ export class ActivityUpdateComponent implements OnInit {
     activity_task_nature_id: [null, [Validators.required]],
     budget_type: [null, [Validators.required]],
     project_id: [null, [Validators.required]],
+    project_output_id: [null, []],
     intervention_id: [null, []],
     sector_problem_id: [null, []],
     generic_activity_id: [null, []],
@@ -111,6 +115,7 @@ export class ActivityUpdateComponent implements OnInit {
     protected facilityService: FacilityService,
     protected activityTaskNatureService: ActivityTaskNatureService,
     protected projectService: ProjectService,
+    protected projectOutputService: ProjectOutputService,
     protected fundSourceService: FundSourceService,
     // protected interventionService: InterventionService,
     // protected sectorProblemService: SectorProblemService,
@@ -146,7 +151,12 @@ export class ActivityUpdateComponent implements OnInit {
     this.facilities = [...dialogData.facilities];
 
     /** fetch activity task nature by selected activity_type_id if edit mode */
-    activity.id && this.loadActivityTaskNature(activity.activity_type_id!);
+    if (activity.id) {
+      this.loadFundSources(activity.budget_class_id!);
+      this.loadActivityTaskNature(activity.activity_type_id!);
+      this.loadActivityFundSource(activity.financial_year_id!, activity.id);
+      this.loadActivityFacilities(activity.financial_year_id!, activity.id);
+    }
 
     /** fetch budget class tree ie parent array with children array**/
     this.loadMainBudgetClassesWithChildren(activity.budget_class?.parent_id);
@@ -187,23 +197,69 @@ export class ActivityUpdateComponent implements OnInit {
     });
   }
 
+  /** Load activity facility if activity id exist */
+  loadActivityFundSource(financialYearId: number, activityId: number): void {
+    this.activityService
+      .activityFundSources(financialYearId, activityId)
+      .subscribe((resp) => {
+        const f = resp.data?.map((af) => {
+          return {
+            id: af.fund_source_id,
+          };
+        });
+        this.editForm.patchValue({
+          fund_sources: f,
+        });
+      });
+  }
+  /** Load activity Fund sources if activity id exist */
+  loadActivityFacilities(financialYearId: number, activityId: number): void {
+    this.activityService
+      .activityFacilities(financialYearId, activityId)
+      .subscribe((resp) => {
+        resp.data?.forEach((af) => {
+          const facilityName = this.facilities?.find(
+            (f) => f.id === af.facility_id
+          )?.name;
+          const fg = this.fb.group({
+            id: af.id,
+            facility_id: [af.facility_id],
+            indicator_value: [af.indicator_value, [Validators.required]],
+            project_output_value: [af.project_output_value, []],
+            facility_name: [facilityName],
+          });
+          this.facilityForm.insert(0, fg);
+          this.facilities = this.facilities?.filter(
+            (f0) => f0.id !== af.facility_id
+          );
+        });
+      });
+  }
+
   get facilityForm(): FormArray {
     return this.editForm.get('activity_facilities') as FormArray;
   }
 
   /** Add facility to editForm */
-  addFacility(facilitiesToAdd: any): void {
+  addFacility(
+    facilitiesToAdd: any,
+    indicatorValueToAdd?: any,
+    projectOutputValueToAdd?: any
+  ): void {
     facilitiesToAdd.value.forEach((f: Facility) => {
       const fg = this.fb.group({
         facility_id: [f.id],
-        indicator_value: [null, [Validators.required]],
-        value: [null, []],
+        indicator_value: [indicatorValueToAdd?.value, [Validators.required]],
+        project_output_value: [projectOutputValueToAdd?.value, []],
         facility_name: [f.name],
       });
-      this.facilityForm.push(fg);
+      this.facilityForm.insert(0, fg);
       this.facilities = this.facilities?.filter((f0) => f0.id !== f.id);
     });
     facilitiesToAdd.value = [];
+    indicatorValueToAdd.value = '';
+    projectOutputValueToAdd.value = '';
+    console.log(this.facilityForm.controls);
   }
 
   /**
@@ -225,6 +281,18 @@ export class ActivityUpdateComponent implements OnInit {
         columns: ['id', 'name', 'code'],
       })
       .subscribe((resp) => (this.projects = resp.data));
+  }
+
+  /** Load project output by project*/
+  loadProjectOutput(projectId: number): void {
+    if (!projectId) {
+      return;
+    }
+    this.projectOutputService
+      .query({
+        project_id: projectId,
+      })
+      .subscribe((resp) => (this.projectOutputs = resp.data));
   }
 
   /**
@@ -312,6 +380,7 @@ export class ActivityUpdateComponent implements OnInit {
       activity_task_nature_id: activity.activity_task_nature_id,
       budget_type: activity.budget_type,
       project_id: activity.project_id,
+      project_output_id: activity.project_output_id,
       intervention_id: activity.intervention_id,
       sector_problem_id: activity.sector_problem_id,
       generic_activity_id: activity.generic_activity_id,
@@ -351,6 +420,7 @@ export class ActivityUpdateComponent implements OnInit {
         .value,
       budget_type: this.editForm.get(['budget_type'])!.value,
       project_id: this.editForm.get(['project_id'])!.value,
+      project_output_id: this.editForm.get(['project_output_id'])!.value,
       intervention_id: this.editForm.get(['intervention_id'])!.value,
       sector_problem_id: this.editForm.get(['sector_problem_id'])!.value,
       generic_activity_id: this.editForm.get(['generic_activity_id'])!.value,

@@ -398,7 +398,7 @@ export class AssessmentCriteriaComponent implements OnInit {
   }
 
   getAssessmentReport() {
-    this.assessmentCriteriaService.getAssessmentReport(this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id,this.cas_assessment_category_version_id).subscribe(resp =>{
+    this.assessmentCriteriaService.getAssessmentReport(this.admin_hierarchy_id,this.admin_hierarchy_level_id!,this.financial_year_id,this.cas_assessment_round_id,this.cas_assessment_category_version_id).subscribe(resp =>{
       let file = new Blob([resp], { type: 'application/pdf'});
       let fileURL = URL.createObjectURL(file);
       window.open(fileURL,"_blank");

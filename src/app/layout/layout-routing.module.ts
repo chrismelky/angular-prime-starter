@@ -247,7 +247,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -260,7 +260,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -273,7 +273,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -286,7 +286,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -299,7 +299,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -1030,7 +1030,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'assessment',
+            only: 'WRITE_ASSESSMENT_SCORE',
           },
         },
       },

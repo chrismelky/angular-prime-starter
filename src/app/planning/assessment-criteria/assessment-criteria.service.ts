@@ -94,12 +94,12 @@ createComment(
     );
   }
 
-  getAssessmentReport(admin_hierarchy_id: number, financial_year_id: number,round_id: number, version_id: number){
+  getAssessmentReport(admin_hierarchy_id: number,level_id: number, financial_year_id: number,round_id: number, version_id: number){
     const httpOptions = {
       'responseType'  : 'arraybuffer' as 'json'
     };
     return this.http.get<any>(
-      `${this.reportUrl}/${admin_hierarchy_id}/${financial_year_id}/${round_id}/${version_id}`,httpOptions
+      `${this.reportUrl}/${admin_hierarchy_id}/${level_id}/${financial_year_id}/${round_id}/${version_id}`,httpOptions
     );
   }
 

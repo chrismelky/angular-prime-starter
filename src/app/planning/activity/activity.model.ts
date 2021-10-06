@@ -20,6 +20,7 @@ export class Activity {
     public activity_task_nature_id?: number,
     public budget_type?: string,
     public project_id?: number,
+    public project_output_id?: number,
     public intervention_id?: number,
     public sector_problem_id?: number,
     public generic_activity_id?: number,
@@ -33,5 +34,25 @@ export class Activity {
     public budget_class?: BudgetClass,
     public fund_sources?: FundSource[],
     public activity_facilities?: any[]
+  ) {}
+}
+
+export class ActivityFacility {
+  constructor(
+    public id?: number,
+    public activity_id?: number,
+    public facility_id?: number,
+    public financial_year_id?: number,
+    public project_output_value?: string,
+    public indicator_value?: string
+  ) {}
+}
+
+export class ActivityFundSource {
+  constructor(
+    public id?: number,
+    public activity_id?: number,
+    public fund_source_id?: number,
+    public financial_year_id?: number
   ) {}
 }

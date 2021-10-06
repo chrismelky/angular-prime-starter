@@ -223,7 +223,6 @@ export class UserUpdateComponent implements OnInit {
 
   loadSections(): void {
     const position = this.levelControl.value as number;
-    console.log(position);
     if (position > 0) {
       this.sectionService
         .query({ columns: ['id', 'name', 'code'], position: position })

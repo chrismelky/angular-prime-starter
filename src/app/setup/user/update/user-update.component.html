@@ -213,6 +213,7 @@
                   class="p-inputtext-sm"
                   appendTo="body"
                   [options]="sections!"
+                  (onChange)="loadFacilities()"
                   formControlName="section_id"
                 ></p-dropdown>
                 <label for="section_id">Section</label>

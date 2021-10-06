@@ -48,9 +48,9 @@ export class MyAssessmentComponent implements OnInit {
 
   cols = [
     { field: 'council', header: 'Council' },
-    { field: 'round', header: 'Round' },
-    { field: 'category', header: 'Category' },
-    { field: 'minimum_passmark', header: 'Minimum Passmark' },
+    { field: 'round', header: 'Round'},
+    { field: 'category', header: 'Category'},
+    { field: 'minimum_passmark', header: 'Minimum Passmark'},
     { field: 'highest_score', header: 'Highest Score' },
     { field: 'score', header: 'Score' },
     { field: 'pct', header: '%' }
@@ -90,7 +90,8 @@ export class MyAssessmentComponent implements OnInit {
     this.cas_assessment_round_id = this.actRoute.snapshot.params.round_id;
     this.financial_year_id = this.actRoute.snapshot.params.fy_id;
     this.currentUser = userService.getCurrentUser();
-    this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;  }
+    this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;
+  }
 
   ngOnInit(): void {
     this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id, this.financial_year_id,
@@ -312,7 +313,7 @@ export class MyAssessmentComponent implements OnInit {
   }
 
   getReport(rowData: any) {
-   this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,rowData.financial_year_id,rowData.round_id,rowData.version_id)
+   this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,this.admin_hierarchy_level_id!,rowData.financial_year_id,rowData.round_id,rowData.version_id)
      .subscribe(resp =>{
        let file = new Blob([resp], { type: 'application/pdf'});
        let fileURL = URL.createObjectURL(file);

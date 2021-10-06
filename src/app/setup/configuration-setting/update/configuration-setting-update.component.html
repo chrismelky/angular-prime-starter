@@ -148,7 +148,7 @@
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="html_input_type"
+            id="html_type"
             optionValue="value"
             optionLabel="display"
             [autoDisplayFirst]="false"
@@ -156,21 +156,21 @@
             class="p-inputtext-sm"
             appendTo="body"
             [options]="htmlInputTypes!"
-            formControlName="html_input_type"
+            formControlName="html_type"
           ></p-dropdown>
-          <label for="html_input_type">HTML Type </label>
+          <label for="html_type">HTML Type </label>
         </span>
         <span
           *ngIf="
-            editForm.get('html_input_type')!.invalid &&
-            (editForm.get('html_input_type')!.dirty ||
-              editForm.get('html_input_type')!.touched ||
+            editForm.get('html_type')!.invalid &&
+            (editForm.get('html_type')!.dirty ||
+              editForm.get('html_type')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('html_input_type')?.errors?.required"
+            *ngIf="editForm.get('html_type')?.errors?.required"
           >HTML Type is required.</small
           >
         </span>

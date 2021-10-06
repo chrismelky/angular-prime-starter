@@ -40,7 +40,7 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     group_name: [null, [Validators.required]],
     value_type: [null, [Validators.required]],
-    html_input_type: [null, [Validators.required]],
+    html_type: [null, [Validators.required]],
     value_options: [null, []],
     value_option_query: [null, []],
   });
@@ -145,7 +145,7 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
       name: this.editForm.get(["name"])!.value,
       group_name: this.editForm.get(["group_name"])!.value,
       value_type: this.editForm.get(["value_type"])!.value,
-      html_type:this.editForm.get(["html_input_type"])!.value,
+      html_type:this.editForm.get(["html_type"])!.value,
       value_options: this.editForm.get(["value_options"])!.value,
       value_option_query: this.editForm.get(["value_option_query"])!.value,
     };

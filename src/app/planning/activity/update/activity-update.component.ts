@@ -154,6 +154,7 @@ export class ActivityUpdateComponent implements OnInit {
     if (activity.id) {
       this.loadFundSources(activity.budget_class_id!);
       this.loadActivityTaskNature(activity.activity_type_id!);
+      this.loadProjectOutput(activity.project_id!);
       this.loadActivityFundSource(activity.financial_year_id!, activity.id);
       this.loadActivityFacilities(activity.financial_year_id!, activity.id);
     }

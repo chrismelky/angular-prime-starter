@@ -313,7 +313,7 @@ export class ReceivedAssessmentComponent implements OnInit {
   }
 
   getReport(rowData: any) {
-    this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,rowData.financial_year_id,rowData.round_id,rowData.version_id)
+    this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,this.admin_hierarchy_level_id!,rowData.financial_year_id,rowData.round_id,rowData.version_id)
       .subscribe(resp =>{
         let file = new Blob([resp], { type: 'application/pdf'});
         let fileURL = URL.createObjectURL(file);

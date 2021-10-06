@@ -28,15 +28,13 @@ import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hiera
 import { User } from './user.model';
 import { UserService } from './user.service';
 import { UserUpdateComponent } from './update/user-update.component';
-import { FormControl, Validators } from '@angular/forms';
 import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
 import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
-import { Role } from '../role/role.model';
-import { RolePermissionComponent } from '../role/role-permission/role-permission.component';
 import { UserRoleComponent } from './user-role/user-role.component';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { finalize } from 'rxjs/operators';
 import { UserGroupComponent } from './user-group/user-group.component';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
 
 @Component({
   selector: 'app-user',
@@ -87,26 +85,6 @@ export class UserComponent implements OnInit {
       header: 'Mobile Number',
       sort: false,
     },
-    /*{
-      field: "section_id",
-      header: "Section ",
-      sort: false,
-    },
-    {
-      field: 'facilities',
-      header: 'Facilities',
-      sort: false,
-    },
-    {
-      field: "is_facility_user",
-      header: "Facility User",
-      sort: false,
-    },
-    {
-      field: "is_super_user",
-      header: "Super User",
-      sort: false,
-    },*/
   ]; //Table display columns
 
   isLoading = false;
@@ -136,17 +114,6 @@ export class UserComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.adminHierarchyService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.handleNavigation();
   }
 
@@ -424,5 +391,22 @@ export class UserComponent implements OnInit {
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
+  }
+
+  passwordReset(rowData: User): void {
+    const data = {
+      user: rowData,
+    };
+    const ref = this.dialogService.open(PasswordResetComponent, {
+      data,
+      width: '40%',
+      header:
+        'Password Reset | ' + rowData.first_name + ' ' + rowData.last_name,
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

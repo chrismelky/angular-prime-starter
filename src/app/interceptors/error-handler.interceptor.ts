@@ -23,7 +23,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
         error: (error: HttpErrorResponse) => {
           if (error.status !== 401) {
             const summary = `[${error.status}] ${error.statusText}`;
-            const detail = error.error.message || error.error.errors;
+            const detail = error.error.errors || error.error.message;
             this.toastService.error(summary, detail);
           }
         },

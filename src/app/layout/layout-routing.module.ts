@@ -10,11 +10,7 @@ const routes: Routes = [
     path: '',
     component: MainComponent,
     children: [
-      {
-        path: '',
-        redirectTo: '/dashboard',
-        pathMatch: 'full',
-      },
+      { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
         loadChildren: () =>
@@ -31,7 +27,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -44,7 +40,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCE_SETTING',
           },
         },
       },
@@ -57,7 +53,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -70,7 +66,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_GFS_CODE_SETTING',
           },
         },
       },
@@ -83,21 +79,20 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
-      },
-      {
-        path: 'admin-hierarchy_level',
-        loadChildren: () =>
-          import(
-            '../setup/admin-hierarchy-level/admin-hierarchy-level.module'
-          ).then((m) => m.AdminHierarchyLevelModule),
       },
       {
         path: 'sector',
         loadChildren: () =>
           import('../setup/sector/sector.module').then((m) => m.SectorModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'READ_ADMIN_AREA_SETTING',
+          },
+        },
       },
       {
         path: 'section-level',
@@ -108,7 +103,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'READ_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -121,7 +116,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'READ_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -134,7 +129,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -147,30 +142,9 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'READ_ADMIN_AREA_SETTING',
           },
         },
-      },
-      {
-        path: 'reference-document_type',
-        loadChildren: () =>
-          import(
-            '../setup/reference-document-type/reference-document-type.module'
-          ).then((m) => m.ReferenceDocumentTypeModule),
-      },
-      {
-        path: 'reference-type',
-        loadChildren: () =>
-          import('../setup/reference-type/reference-type.module').then(
-            (m) => m.ReferenceTypeModule
-          ),
-      },
-      {
-        path: 'financial-year',
-        loadChildren: () =>
-          import('../setup/financial-year/financial-year.module').then(
-            (m) => m.FinancialYearModule
-          ),
       },
       {
         path: 'reference-type',
@@ -181,7 +155,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_NATIONAL_REFERENCE',
           },
         },
       },
@@ -194,7 +168,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCIAL_YEAR_SETTING',
           },
         },
       },
@@ -207,7 +181,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'READ_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -219,13 +193,6 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'reference-document-type',
-        loadChildren: () =>
-          import(
-            '../setup/reference-document-type/reference-document-type.module'
-          ).then((m) => m.ReferenceDocumentTypeModule),
-      },
-      {
         path: 'admin-hierarchy',
         loadChildren: () =>
           import('../setup/admin-hierarchy/admin-hierarchy.module').then(
@@ -234,7 +201,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'READ_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -312,7 +279,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'READ_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -325,7 +292,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'READ_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -351,7 +318,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -364,7 +331,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -390,7 +357,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ASSESSMENT_SETTINGS',
           },
         },
       },
@@ -403,7 +370,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ASSESSMENT_SETTINGS',
           },
         },
       },
@@ -416,7 +383,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ASSESSMENT_SETTINGS',
           },
         },
       },
@@ -429,7 +396,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ASSESSMENT_SETTINGS',
           },
         },
       },
@@ -442,7 +409,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -455,7 +422,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCIAL_YEAR_SETTING',
           },
         },
       },
@@ -468,7 +435,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -481,7 +448,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -494,7 +461,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -507,7 +474,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -520,7 +487,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -533,16 +500,9 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
-      },
-      {
-        path: 'calendar',
-        loadChildren: () =>
-          import('../setup/calendar/calendar.module').then(
-            (m) => m.CalendarModule
-          ),
       },
       {
         path: 'category-category-combination',
@@ -553,7 +513,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -566,7 +526,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -579,7 +539,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -592,7 +552,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -605,7 +565,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ASSESSMENT_SETTINGS',
           },
         },
       },
@@ -616,14 +576,9 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management',
+            only: 'WRITE_USER',
           },
         },
-      },
-      {
-        path: 'user',
-        loadChildren: () =>
-          import('../setup/user/user.module').then((m) => m.UserModule),
       },
       {
         path: 'menu',
@@ -632,7 +587,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management',
+            only: 'WRITE_USER',
           },
         },
       },
@@ -645,7 +600,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -658,7 +613,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning',
+            only: 'WRITE_COMPREHESIVE_PLAN_DATA_VALUES',
           },
         },
       },
@@ -671,7 +626,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.advertisement',
+            only: 'WRITE_ADVERTISEMENT',
           },
         },
       },
@@ -684,7 +639,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_BUDGETING_SETTING',
           },
         },
       },
@@ -697,7 +652,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCE_SETTING',
           },
         },
       },
@@ -710,7 +665,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCE_SETTING',
           },
         },
       },
@@ -723,7 +678,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_GFS_CODE_SETTING',
           },
         },
       },
@@ -736,7 +691,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_GFS_CODE_SETTING',
           },
         },
       },
@@ -747,7 +702,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_BUDGETING_SETTING',
           },
         },
       },
@@ -760,7 +715,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_BUDGETING_SETTING',
           },
         },
       },
@@ -773,7 +728,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_BUDGETING_SETTING',
           },
         },
       },
@@ -786,7 +741,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ASSESSMENT_SETTINGS',
           },
         },
       },
@@ -799,7 +754,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ASSESSMENT_SETTINGS',
           },
         },
       },
@@ -812,7 +767,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_BUDGETING_SETTING',
           },
         },
       },
@@ -823,7 +778,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management',
+            only: 'WRITE_ROLE',
           },
         },
       },
@@ -836,7 +791,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCE_SETTING',
           },
         },
       },
@@ -849,7 +804,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -862,7 +817,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCE_SETTING',
           },
         },
       },
@@ -875,7 +830,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCE_SETTING',
           },
         },
       },
@@ -888,7 +843,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -901,7 +856,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -914,7 +869,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning',
+            only: 'WRITE_COMPREHESIVE_PLAN_DATA_VALUES',
           },
         },
       },
@@ -927,7 +882,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_NATIONAL_REFERENCE',
           },
         },
       },
@@ -940,7 +895,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning.ceiling',
+            only: 'WRITE_FINANCE_SETTING',
           },
         },
       },
@@ -953,7 +908,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -966,7 +921,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -979,7 +934,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PE_VALUES',
           },
         },
       },
@@ -990,7 +945,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_FINANCIAL_YEAR_SETTING',
           },
         },
       },
@@ -1003,7 +958,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'assessment',
+            only: 'WRITE_ASSESSMENT_SCORE',
           },
         },
       },
@@ -1011,13 +966,51 @@ const routes: Routes = [
         path: 'admin-hierarchy-ceiling',
         loadChildren: () =>
           import(
-
-            "../budgeting/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module"
+            '../budgeting/admin-hierarchy-ceiling/admin-hierarchy-ceiling.module'
           ).then((m) => m.AdminHierarchyCeilingModule),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'planning.ceiling',
+            only: 'WRITE_CEILING_AMOUNT',
+          },
+        },
+      },
+      {
+        path: 'admin-hierarchy-cost-centres',
+        loadChildren: () =>
+          import(
+            '../planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.module'
+          ).then((m) => m.AdminHierarchyCostCentreModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'WRITE_ACTIVITY',
+          },
+        },
+      },
+      {
+        path: 'activity',
+        loadChildren: () =>
+          import('../planning/activity/activity.module').then(
+            (m) => m.ActivityModule
+          ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'WRITE_ACTIVITY',
+          },
+        },
+      },
+      {
+        path: 'responsible-person',
+        loadChildren: () =>
+          import(
+            '../planning/responsible-person/responsible-person.module'
+          ).then((m) => m.ResponsiblePersonModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'WRITE_ACTIVITY',
           },
         },
       },
@@ -1043,7 +1036,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'assessment',
+            only: 'WRITE_ASSESSMENT_SCORE',
           },
         },
       },
@@ -1056,7 +1049,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'assessment',
+            only: 'WRITE_ASSESSMENT_SCORE',
           },
         },
       },
@@ -1069,7 +1062,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
           },
         },
       },
@@ -1082,7 +1075,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_CONFIGURATION',
           },
         },
       },
@@ -1095,7 +1088,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },
@@ -1108,7 +1101,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup',
+            only: 'WRITE_ASSESSMENT_SETTINGS',
           },
         },
       },
@@ -1121,8 +1114,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management',
-            redirectTo: '/',
+            only: 'WRITE_ROLE',
           },
         },
       },
@@ -1133,14 +1125,14 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'setup.user_management',
+            only: 'WRITE_USER',
           },
         },
       },
       {
-        path: "scrutinization",
+        path: 'scrutinization',
         loadChildren: () =>
-          import("../planning/scrutinization/scrutinization.module").then(
+          import('../planning/scrutinization/scrutinization.module').then(
             (m) => m.ScrutinizationModule
           ),
       },

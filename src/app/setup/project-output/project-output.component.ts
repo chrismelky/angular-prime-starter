@@ -5,66 +5,49 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import { CustomResponse } from '../../utils/custom-response';
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { ReferenceDocumentType } from 'src/app/setup/reference-document-type/reference-document-type.model';
-import { ReferenceDocumentTypeService } from 'src/app/setup/reference-document-type/reference-document-type.service';
+} from "../../config/pagination.constants";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+import { Project } from "src/app/setup/project/project.model";
+import { ProjectService } from "src/app/setup/project/project.service";
 
-import { ReferenceDocument } from './reference-document.model';
-import { ReferenceDocumentService } from './reference-document.service';
-import { ReferenceDocumentUpdateComponent } from './update/reference-document-update.component';
-import { FinancialYear } from '../financial-year/financial-year.model';
-import { FinancialYearService } from '../financial-year/financial-year.service';
+import { ProjectOutput } from "./project-output.model";
+import { ProjectOutputService } from "./project-output.service";
+import { ProjectOutputUpdateComponent } from "./update/project-output-update.component";
 
 @Component({
-  selector: 'app-reference-document',
-  templateUrl: './reference-document.component.html',
+  selector: "app-project-output",
+  templateUrl: "./project-output.component.html",
 })
-export class ReferenceDocumentComponent implements OnInit {
-  @ViewChild('paginator') paginator!: Paginator;
-  @ViewChild('table') table!: Table;
-  referenceDocuments?: ReferenceDocument[] = [];
+export class ProjectOutputComponent implements OnInit {
+  @ViewChild("paginator") paginator!: Paginator;
+  @ViewChild("table") table!: Table;
+  projectOutputs?: ProjectOutput[] = [];
 
-  startFinancialYears?: FinancialYear[] = [];
-  endFinancialYears?: FinancialYear[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
-  referenceDocumentTypes?: ReferenceDocumentType[] = [];
+  projects?: Project[] = [];
 
   cols = [
     {
-      field: 'name',
-      header: 'Name',
+      field: "name",
+      header: "Name",
       sort: true,
     },
     {
-      field: 'url',
-      header: 'Url',
-      sort: true,
-    },
-    {
-      field: 'start_financial_year_id',
-      header: 'Start Financial Year ',
-      sort: true,
-    },
-    {
-      field: 'end_financial_year_id',
-      header: 'End Financial Year ',
-      sort: true,
+      field: "is_active",
+      header: "Is Active",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -78,14 +61,11 @@ export class ReferenceDocumentComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  admin_hierarchy_id!: number;
-  reference_document_type_id!: number;
+  project_id!: number;
 
   constructor(
-    protected referenceDocumentService: ReferenceDocumentService,
-    protected financialYearService: FinancialYearService,
-    protected adminHierarchyService: AdminHierarchyService,
-    protected referenceDocumentTypeService: ReferenceDocumentTypeService,
+    protected projectOutputService: ProjectOutputService,
+    protected projectService: ProjectService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -95,17 +75,10 @@ export class ReferenceDocumentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.financialYearService
-      .query({ columns: ['id', 'name'] })
+    this.projectService
+      .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.startFinancialYears = resp.data)
-      );
-    this.referenceDocumentTypeService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<ReferenceDocumentType[]>) =>
-          (this.referenceDocumentTypes = resp.data)
+        (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
       );
     this.handleNavigation();
   }
@@ -116,23 +89,22 @@ export class ReferenceDocumentComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_id || !this.reference_document_type_id) {
+    if (!this.project_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.referenceDocumentService
+    this.projectOutputService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        reference_document_type_id: this.reference_document_type_id,
+        project_id: this.project_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<ReferenceDocument[]>) => {
+        (res: CustomResponse<ProjectOutput[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -152,11 +124,11 @@ export class ReferenceDocumentComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+      const page = params.get("page");
+      const perPage = params.get("per_page");
+      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
       const predicate = sort[0];
-      const ascending = sort[1] === 'asc';
+      const ascending = sort[1] === "asc";
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -231,24 +203,23 @@ export class ReferenceDocumentComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : 'id';
-    const direction = this.ascending ? 'asc' : 'desc';
+    const predicate = this.predicate ? this.predicate : "id";
+    const direction = this.ascending ? "asc" : "desc";
     return [`${predicate}:${direction}`];
   }
 
   /**
-   * Creating or updating ReferenceDocument
-   * @param referenceDocument ; If undefined initize new model to create else edit existing model
+   * Creating or updating ProjectOutput
+   * @param projectOutput ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(referenceDocument?: ReferenceDocument): void {
-    const data: ReferenceDocument = referenceDocument ?? {
-      ...new ReferenceDocument(),
-      admin_hierarchy_id: this.admin_hierarchy_id,
-      reference_document_type_id: this.reference_document_type_id,
+  createOrUpdate(projectOutput?: ProjectOutput): void {
+    const data: ProjectOutput = projectOutput ?? {
+      ...new ProjectOutput(),
+      project_id: this.project_id,
     };
-    const ref = this.dialogService.open(ReferenceDocumentUpdateComponent, {
+    const ref = this.dialogService.open(ProjectOutputUpdateComponent, {
       data,
-      header: 'Create/Update ReferenceDocument',
+      header: "Create/Update ProjectOutput",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -258,15 +229,15 @@ export class ReferenceDocumentComponent implements OnInit {
   }
 
   /**
-   * Delete ReferenceDocument
-   * @param referenceDocument
+   * Delete ProjectOutput
+   * @param projectOutput
    */
-  delete(referenceDocument: ReferenceDocument): void {
+  delete(projectOutput: ProjectOutput): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this ReferenceDocument?',
+      message: "Are you sure that you want to delete this ProjectOutput?",
       accept: () => {
-        this.referenceDocumentService
-          .delete(referenceDocument.id!)
+        this.projectOutputService
+          .delete(projectOutput.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -282,23 +253,23 @@ export class ReferenceDocumentComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<ReferenceDocument[]> | null,
+    resp: CustomResponse<ProjectOutput[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/reference-document'], {
+      this.router.navigate(["/project-output"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
         },
       });
     }
-    this.referenceDocuments = resp?.data ?? [];
+    this.projectOutputs = resp?.data ?? [];
   }
 
   /**
@@ -307,6 +278,6 @@ export class ReferenceDocumentComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error('Error loading Reference Document');
+    this.toastService.error("Error loading Project Output");
   }
 }

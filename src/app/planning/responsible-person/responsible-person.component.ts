@@ -5,79 +5,76 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
-import { Facility } from "src/app/setup/facility/facility.model";
-import { FacilityService } from "src/app/setup/facility/facility.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 
-import { ResponsiblePerson } from "./responsible-person.model";
-import { ResponsiblePersonService } from "./responsible-person.service";
-import { ResponsiblePersonUpdateComponent } from "./update/responsible-person-update.component";
+import { ResponsiblePerson } from './responsible-person.model';
+import { ResponsiblePersonService } from './responsible-person.service';
+import { ResponsiblePersonUpdateComponent } from './update/responsible-person-update.component';
+import { UserService } from 'src/app/setup/user/user.service';
+import { Sector } from 'src/app/setup/sector/sector.model';
+import { User } from 'src/app/setup/user/user.model';
+import { SectorService } from 'src/app/setup/sector/sector.service';
 
 @Component({
-  selector: "app-responsible-person",
-  templateUrl: "./responsible-person.component.html",
+  selector: 'app-responsible-person',
+  templateUrl: './responsible-person.component.html',
 })
 export class ResponsiblePersonComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   responsiblePeople?: ResponsiblePerson[] = [];
-
   adminHierarchies?: AdminHierarchy[] = [];
-  sections?: Section[] = [];
-  facilities?: Facility[] = [];
+  sectors?: Sector[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "mobile",
-      header: "Mobile",
+      field: 'mobile',
+      header: 'Mobile',
       sort: true,
     },
     {
-      field: "email",
-      header: "Email",
+      field: 'email',
+      header: 'Email',
       sort: false,
     },
     {
-      field: "cheque_number",
-      header: "Cheque Number",
+      field: 'cheque_number',
+      header: 'Cheque Number',
       sort: true,
     },
     {
-      field: "title",
-      header: "Title",
+      field: 'title',
+      header: 'Title',
       sort: true,
     },
     {
-      field: "facility_id",
-      header: "Facility ",
+      field: 'facility_id',
+      header: 'Facility ',
       sort: false,
     },
     {
-      field: "is_active",
-      header: "Is Active",
+      field: 'is_active',
+      header: 'Is Active',
       sort: false,
     },
   ]; //Table display columns
@@ -90,41 +87,35 @@ export class ResponsiblePersonComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  currentUser?: User;
 
   //Mandatory filter
   admin_hierarchy_id!: number;
-  section_id!: number;
+  sector_id!: number;
 
   constructor(
     protected responsiblePersonService: ResponsiblePersonService,
-    protected adminHierarchyService: AdminHierarchyService,
-    protected sectionService: SectionService,
-    protected facilityService: FacilityService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
-  ) {}
+    protected toastService: ToastService,
+    protected userService: UserService,
+    protected sectorService: SectorService
+  ) {
+    this.currentUser = userService.getCurrentUser();
+    if (this.currentUser.admin_hierarchy) {
+      this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
+      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
+    }
+    if (this.currentUser?.section) {
+      this.sector_id = this.currentUser.section?.sector_id!;
+    }
+  }
 
   ngOnInit(): void {
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.sectionService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.facilityService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
+    this.sectorService.query().subscribe((resp) => (this.sectors = resp.data));
     this.handleNavigation();
   }
 
@@ -134,7 +125,7 @@ export class ResponsiblePersonComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_id || !this.section_id) {
+    if (!this.admin_hierarchy_id || !this.sector_id) {
       return;
     }
     this.isLoading = true;
@@ -146,7 +137,7 @@ export class ResponsiblePersonComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         admin_hierarchy_id: this.admin_hierarchy_id,
-        section_id: this.section_id,
+        sector_id: this.sector_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -170,11 +161,11 @@ export class ResponsiblePersonComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -195,6 +186,11 @@ export class ResponsiblePersonComponent implements OnInit {
     } else {
       this.loadPage(1);
     }
+  }
+
+  onAdminHierarchySelection(adminHierarcyId: number): void {
+    this.admin_hierarchy_id = adminHierarcyId;
+    this.filterChanged();
   }
 
   /**
@@ -249,8 +245,8 @@ export class ResponsiblePersonComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -262,11 +258,12 @@ export class ResponsiblePersonComponent implements OnInit {
     const data: ResponsiblePerson = responsiblePerson ?? {
       ...new ResponsiblePerson(),
       admin_hierarchy_id: this.admin_hierarchy_id,
-      section_id: this.section_id,
+      sector_id: this.sector_id,
+      is_active: true,
     };
     const ref = this.dialogService.open(ResponsiblePersonUpdateComponent, {
       data,
-      header: "Create/Update ResponsiblePerson",
+      header: 'Create/Update ResponsiblePerson',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -281,7 +278,7 @@ export class ResponsiblePersonComponent implements OnInit {
    */
   delete(responsiblePerson: ResponsiblePerson): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ResponsiblePerson?",
+      message: 'Are you sure that you want to delete this ResponsiblePerson?',
       accept: () => {
         this.responsiblePersonService
           .delete(responsiblePerson.id!)
@@ -307,12 +304,12 @@ export class ResponsiblePersonComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/responsible-person"], {
+      this.router.navigate(['/responsible-person'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -325,6 +322,6 @@ export class ResponsiblePersonComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Responsible Person");
+    this.toastService.error('Error loading Responsible Person');
   }
 }

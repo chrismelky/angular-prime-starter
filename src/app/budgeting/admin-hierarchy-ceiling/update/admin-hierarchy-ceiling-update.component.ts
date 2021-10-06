@@ -5,29 +5,29 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { FundSourceBudgetClass } from "src/app/setup/fund-source-budget-class/fund-source-budget-class.model";
-import { FundSourceBudgetClassService } from "src/app/setup/fund-source-budget-class/fund-source-budget-class.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { Section } from "src/app/setup/section/section.model";
-import { SectionService } from "src/app/setup/section/section.service";
-import { AdminHierarchyCeiling } from "../admin-hierarchy-ceiling.model";
-import { AdminHierarchyCeilingService } from "../admin-hierarchy-ceiling.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { FundSourceBudgetClass } from 'src/app/setup/fund-source-budget-class/fund-source-budget-class.model';
+import { FundSourceBudgetClassService } from 'src/app/setup/fund-source-budget-class/fund-source-budget-class.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
+import { AdminHierarchyCeiling } from '../admin-hierarchy-ceiling.model';
+import { AdminHierarchyCeilingService } from '../admin-hierarchy-ceiling.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-admin-hierarchy-ceiling-update",
-  templateUrl: "./admin-hierarchy-ceiling-update.component.html",
+  selector: 'app-admin-hierarchy-ceiling-update',
+  templateUrl: './admin-hierarchy-ceiling-update.component.html',
 })
 export class AdminHierarchyCeilingUpdateComponent implements OnInit {
   isSaving = false;
@@ -75,33 +75,23 @@ export class AdminHierarchyCeilingUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.ceilingService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
-        (resp: CustomResponse<FundSourceBudgetClass[]>) => (this.ceilings = resp.data)
-      );
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
+        (resp: CustomResponse<FundSourceBudgetClass[]>) =>
+          (this.ceilings = resp.data)
       );
     this.parentService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
-        (resp: CustomResponse<AdminHierarchyCeiling[]>) => (this.parents = resp.data)
+        (resp: CustomResponse<AdminHierarchyCeiling[]>) =>
+          (this.parents = resp.data)
       );
     this.sectionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
-    this.budgetTypes = this.enumService.get("budgetTypes");
+    this.budgetTypes = this.enumService.get('budgetTypes');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -184,18 +174,18 @@ export class AdminHierarchyCeilingUpdateComponent implements OnInit {
   protected createFromForm(): AdminHierarchyCeiling {
     return {
       ...new AdminHierarchyCeiling(),
-      id: this.editForm.get(["id"])!.value,
-      ceiling_id: this.editForm.get(["ceiling_id"])!.value,
-      admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
-      financial_year_id: this.editForm.get(["financial_year_id"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      section_id: this.editForm.get(["section_id"])!.value,
-      active: this.editForm.get(["active"])!.value,
-      is_locked: this.editForm.get(["is_locked"])!.value,
-      is_approved: this.editForm.get(["is_approved"])!.value,
-      budget_type: this.editForm.get(["budget_type"])!.value,
-      amount: this.editForm.get(["amount"])!.value,
-      deleted: this.editForm.get(["deleted"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      ceiling_id: this.editForm.get(['ceiling_id'])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      section_id: this.editForm.get(['section_id'])!.value,
+      active: this.editForm.get(['active'])!.value,
+      is_locked: this.editForm.get(['is_locked'])!.value,
+      is_approved: this.editForm.get(['is_approved'])!.value,
+      budget_type: this.editForm.get(['budget_type'])!.value,
+      amount: this.editForm.get(['amount'])!.value,
+      deleted: this.editForm.get(['deleted'])!.value,
     };
   }
 }

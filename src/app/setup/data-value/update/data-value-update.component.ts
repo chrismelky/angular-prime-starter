@@ -5,30 +5,30 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { DataElement } from "src/app/setup/data-element/data-element.model";
-import { DataElementService } from "src/app/setup/data-element/data-element.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { Facility } from "src/app/setup/facility/facility.model";
-import { FacilityService } from "src/app/setup/facility/facility.service";
-import { CategoryOptionCombination } from "src/app/setup/category-option-combination/category-option-combination.model";
-import { CategoryOptionCombinationService } from "src/app/setup/category-option-combination/category-option-combination.service";
-import { DataValue } from "../data-value.model";
-import { DataValueService } from "../data-value.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { DataElement } from 'src/app/setup/data-element/data-element.model';
+import { DataElementService } from 'src/app/setup/data-element/data-element.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { Facility } from 'src/app/setup/facility/facility.model';
+import { FacilityService } from 'src/app/setup/facility/facility.service';
+import { CategoryOptionCombination } from 'src/app/setup/category-option-combination/category-option-combination.model';
+import { CategoryOptionCombinationService } from 'src/app/setup/category-option-combination/category-option-combination.service';
+import { DataValue } from '../data-value.model';
+import { DataValueService } from '../data-value.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-data-value-update",
-  templateUrl: "./data-value-update.component.html",
+  selector: 'app-data-value-update',
+  templateUrl: './data-value-update.component.html',
 })
 export class DataValueUpdateComponent implements OnInit {
   isSaving = false;
@@ -69,29 +69,24 @@ export class DataValueUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataElementService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<DataElement[]>) => (this.dataElements = resp.data)
       );
     this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
       );
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
       );
-    this.facilityService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
     this.categoryOptionCombinationService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CategoryOptionCombination[]>) =>
           (this.categoryOptionCombinations = resp.data)
@@ -169,15 +164,15 @@ export class DataValueUpdateComponent implements OnInit {
   protected createFromForm(): DataValue {
     return {
       ...new DataValue(),
-      id: this.editForm.get(["id"])!.value,
-      data_element_id: this.editForm.get(["data_element_id"])!.value,
-      admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
-      financial_year_id: this.editForm.get(["financial_year_id"])!.value,
-      facility_id: this.editForm.get(["facility_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      data_element_id: this.editForm.get(['data_element_id'])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
+      facility_id: this.editForm.get(['facility_id'])!.value,
       category_option_combination_id: this.editForm.get([
-        "category_option_combination_id",
+        'category_option_combination_id',
       ])!.value,
-      value: this.editForm.get(["value"])!.value,
+      value: this.editForm.get(['value'])!.value,
     };
   }
 }

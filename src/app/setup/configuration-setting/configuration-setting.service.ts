@@ -51,6 +51,12 @@ export class ConfigurationSettingService {
     );
   }
 
+  groups(): Observable<CustomResponse<any[]>> {
+    const url = "api/configuration_settings_groups";
+    return this.http.get<CustomResponse<any[]>>(url
+    );
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

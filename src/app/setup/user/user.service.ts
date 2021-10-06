@@ -13,6 +13,7 @@ import {createRequestOption} from '../../utils/request-util';
 import {CustomResponse} from '../../utils/custom-response';
 import {User} from './user.model';
 import {LocalStorageService} from 'ngx-webstorage';
+import {PasswordReset} from "./password-reset/password-reset";
 
 @Injectable({providedIn: 'root'})
 export class UserService {
@@ -34,6 +35,11 @@ export class UserService {
       user
     );
   }
+
+  public passwordReset(passwordReset: PasswordReset): Observable<CustomResponse<User>> {
+    return this.http.post(this.resourceUrl + '/passwordReset', passwordReset) as Observable<CustomResponse<User>>;
+  }
+
 
   find(id: number): Observable<CustomResponse<User>> {
     return this.http.get<CustomResponse<User>>(`${this.resourceUrl}/${id}`);

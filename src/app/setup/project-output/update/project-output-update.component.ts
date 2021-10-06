@@ -12,21 +12,22 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { Role } from "../role.model";
-import { RoleService } from "../role.service";
+import { Project } from "src/app/setup/project/project.model";
+import { ProjectService } from "src/app/setup/project/project.service";
+import { ProjectOutput } from "../project-output.model";
+import { ProjectOutputService } from "../project-output.service";
 import { ToastService } from "src/app/shared/toast.service";
-import {AdminHierarchyLevel} from "../../admin-hierarchy-level/admin-hierarchy-level.model";
-import {AdminHierarchyLevelService} from "../../admin-hierarchy-level/admin-hierarchy-level.service";
 
 @Component({
-  selector: "app-role-update",
-  templateUrl: "./role-update.component.html",
+  selector: "app-project-output-update",
+  templateUrl: "./project-output-update.component.html",
 })
-export class RoleUpdateComponent implements OnInit {
+export class ProjectOutputUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
+
+  projects?: Project[] = [];
 
   /**
    * Declare form
@@ -34,30 +35,30 @@ export class RoleUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    admin_hierarchy_position: [null, [Validators.required]],
+    project_id: [null, [Validators.required]],
+    is_active: [false, []],
   });
 
   constructor(
-    protected roleService: RoleService,
+    protected projectOutputService: ProjectOutputService,
+    protected projectService: ProjectService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.adminHierarchyLevelService
-      .query()
+    this.projectService
+      .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
+        (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create Role or Update Facility type if exist else set form has error and return
+   * When form is valid Create ProjectOutput or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -66,16 +67,20 @@ export class RoleUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const role = this.createFromForm();
-    if (role.id !== undefined) {
-      this.subscribeToSaveResponse(this.roleService.update(role));
+    const projectOutput = this.createFromForm();
+    if (projectOutput.id !== undefined) {
+      this.subscribeToSaveResponse(
+        this.projectOutputService.update(projectOutput)
+      );
     } else {
-      this.subscribeToSaveResponse(this.roleService.create(role));
+      this.subscribeToSaveResponse(
+        this.projectOutputService.create(projectOutput)
+      );
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<Role>>
+    result: Observable<CustomResponse<ProjectOutput>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -105,26 +110,28 @@ export class RoleUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param role
+   * @param projectOutput
    */
-  protected updateForm(role: Role): void {
+  protected updateForm(projectOutput: ProjectOutput): void {
     this.editForm.patchValue({
-      id: role.id,
-      name: role.name,
-      admin_hierarchy_position: role.admin_hierarchy_position,
+      id: projectOutput.id,
+      name: projectOutput.name,
+      project_id: projectOutput.project_id,
+      is_active: projectOutput.is_active,
     });
   }
 
   /**
-   * Return form values as object of type Role
-   * @returns Role
+   * Return form values as object of type ProjectOutput
+   * @returns ProjectOutput
    */
-  protected createFromForm(): Role {
+  protected createFromForm(): ProjectOutput {
     return {
-      ...new Role(),
+      ...new ProjectOutput(),
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
-      admin_hierarchy_position: this.editForm.get(["admin_hierarchy_position"])!.value,
+      project_id: this.editForm.get(["project_id"])!.value,
+      is_active: this.editForm.get(["is_active"])!.value,
     };
   }
 }

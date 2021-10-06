@@ -14,6 +14,28 @@
       <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
         <div fxLayout="column" fxLayoutGap="1rem">
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+            <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
+                                    (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
+        </span>
+              <span
+                *ngIf="
+            editForm.get('admin_hierarchy_id')!.invalid &&
+            (editForm.get('admin_hierarchy_id')!.dirty ||
+              editForm.get('admin_hierarchy_id')!.touched ||
+              formError)
+          "
+              >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
+          >Admin Hierarchy is required.</small
+          >
+        </span>
+            </div>
+          </div>
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input
@@ -162,7 +184,25 @@
               >
         </span>
             </div>
+          </div>
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field  p-col-12 p-md-4" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="position"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  optionValue="position"
+                  optionLabel="name"
+                  class="p-inputtext-sm"
+                  appendTo="body"
+                  (onChange)="loadSections()"
+                  [formControl]="levelControl"
+                  [options]="sectionLevels!"></p-dropdown>
+                <label for="position">Level</label>
+              </span>
+            </div>
+            <div class="p-field p-col-12 p-md-4" *ngIf="levelControl.value" fxFlex>
               <span class="p-float-label">
                 <p-dropdown
                   id="section_id"
@@ -175,7 +215,7 @@
                   [options]="sections!"
                   formControlName="section_id"
                 ></p-dropdown>
-                <label for="section_id">Section </label>
+                <label for="section_id">Section</label>
               </span>
               <span
                 *ngIf="
@@ -213,49 +253,28 @@
               >
         </span>
             </div>
-
-            <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
-                                    (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('admin_hierarchy_id')!.invalid &&
-            (editForm.get('admin_hierarchy_id')!.dirty ||
-              editForm.get('admin_hierarchy_id')!.touched ||
-              formError)
-          "
-              >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
-          >Admin Hierarchy is required.</small
-          >
-        </span>
-            </div>
           </div>
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-multiSelect
+              <p-dropdown
                 id="roles"
-                [options]="roles!"
-                formControlName="roles"
+                optionValue="id"
                 optionLabel="name"
-                [dataKey]="'id'"
+                [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
                 appendTo="body"
-              >
-              </p-multiSelect>
+                [options]="roles!"
+                formControlName="roles"
+              ></p-dropdown>
               <label for="roles">Roles</label>
             </span>
               <span
                 *ngIf="
-            editForm.get('facilities')!.invalid &&
-            (editForm.get('facilities')!.dirty ||
-              editForm.get('facilities')!.touched ||
+            editForm.get('roles')!.invalid &&
+            (editForm.get('roles')!.dirty ||
+              editForm.get('roles')!.touched ||
               formError)
           "
               >

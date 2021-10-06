@@ -15,11 +15,22 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <app-admin-hierarchy-tree
-            fxFlex
-            [returnType]="'object'"
-            (onSelect)="onAdminHierarchySelection($event)"
-          ></app-admin-hierarchy-tree>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="project_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="projects!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="project_id"
+              ></p-dropdown>
+              <label for="project_id">Project </label>
+            </span>
+          </div>
         </div>
         <div
           fxLayout="row wrap"
@@ -29,7 +40,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -47,7 +57,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -85,22 +94,6 @@
                   ></i>
                 </span>
               </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="code"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['code']"
-                  />
-                  <label for="code">Code </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['code'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
             </div>
             <div
               fxLayout="row"
@@ -110,7 +103,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -135,32 +127,31 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="adminHierarchies!"
+      [value]="projectOutputs!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">{{ title }}</span>
+          <span class="card-header-text">Project Outputs</span>
           <button
             pButton
-            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!parent_id || !admin_hierarchy_position"
+            [disabled]="!project_id"
             (click)="createOrUpdate()"
-            label="Add Admin Hierarchy"
+            label="Add Project Output"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="adminHierarchies?.length">
+        <tr *ngIf="projectOutputs?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
           >
-            {{ col.header }}
-            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -175,7 +166,6 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -187,7 +177,6 @@
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -202,12 +191,12 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found</ng-template>
+      <ng-template pTemplate="emptymessage"> No data found </ng-template>
     </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="adminHierarchies?.length! > 0"
+        [alwaysShow]="projectOutputs?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -222,6 +211,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Admin Hierarchy"
+  header="Confirmation Delete Project Output"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

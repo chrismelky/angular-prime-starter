@@ -1,0 +1,73 @@
+<div class="ui-dialog-content">
+  <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
+  <p-card class="filter">
+    <ng-template pTemplate="header">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+        <span class="card-header-text">Revenue Source : {{this.ceiling?.ceiling?.fund_source?.gfs_code?.name}}</span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="body">
+      <div fxLayout="column" fxLayoutGap="10px">
+        <div fxLayout="row wrap" fxLayoutGap="10px">
+          <div
+            fxLayout="row"
+            fxLayoutGap="0.75rem"
+            fxFlex
+            fxLayoutAlign="start center"
+          >
+            <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="department_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                [options]="department![0]"
+                class="p-inputtext-sm"
+              ></p-dropdown>
+              <label for="department_id">Department</label>
+            </span>
+            </div>
+            <div class="p-field" fxFlex>
+            <span class="p-float-label">
+<p-inputNumber
+  id="department_amount"
+  mode="decimal"
+  [minFractionDigits]="2"
+  [maxFractionDigits]="2"
+></p-inputNumber>
+          <label for="department_amount">Total Amount </label>
+            </span>
+            </div>
+              <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="cost_center_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+              ></p-dropdown>
+              <label for="cost_center_id">Cost Center</label>
+            </span>
+              </div>
+            <div class="p-field" fxFlex>
+            <span class="p-float-label">
+<p-inputNumber
+  id="cost_center_amount"
+  mode="decimal"
+  [minFractionDigits]="2"
+  [maxFractionDigits]="2"
+></p-inputNumber>
+          <label for="cost_center_amount">Total Amount </label>
+            </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-card>
+  </div>
+</div>

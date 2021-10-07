@@ -5,21 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {Component, Inject, OnInit} from '@angular/core';
+import {FormBuilder, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {finalize} from 'rxjs/operators';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
-import { CustomResponse } from '../../../utils/custom-response';
-import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
-import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { Facility } from '../facility.model';
-import { FacilityService } from '../facility.service';
-import { ToastService } from 'src/app/shared/toast.service';
+import {CustomResponse} from '../../../utils/custom-response';
+import {EnumService, PlanrepEnum} from 'src/app/shared/enum.service';
+import {FacilityType} from 'src/app/setup/facility-type/facility-type.model';
+import {FacilityTypeService} from 'src/app/setup/facility-type/facility-type.service';
+import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import {Facility} from '../facility.model';
+import {FacilityService} from '../facility.service';
+import {ToastService} from 'src/app/shared/toast.service';
 
 @Component({
   selector: 'app-facility-update',
@@ -29,12 +29,12 @@ export class FacilityUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-
-  facilityTypes?: FacilityType[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   ownerships?: PlanrepEnum[] = [];
   physicalStates?: PlanrepEnum[] = [];
   starRatings?: PlanrepEnum[] = [];
+  facilityTypes?: FacilityType[] = [];
+  facility: Facility = {};
 
   /**
    * Declare form
@@ -59,13 +59,24 @@ export class FacilityUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected enumService: EnumService
-  ) {}
+  ) {
+    if(this.dialogConfig.data.facility !== undefined){
+      const facility = this.dialogConfig.data.facility as Facility;
+      facility.facility_type_id = this.dialogConfig.data.facility_type_id;
+      facility.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+      this.facility = facility;
+    } else{
+      this.facility.facility_type_id = this.dialogConfig.data.facility_type_id;
+      this.facility.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+    }
+    this.facilityTypes = this.dialogConfig.data.facilityTypes;
+  }
 
   ngOnInit(): void {
     this.ownerships = this.enumService.get('ownerships');
     this.physicalStates = this.enumService.get('physicalStates');
     this.starRatings = this.enumService.get('starRatings');
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.updateForm(this.facility); //Initialize form with data from dialog
   }
 
   /**
@@ -109,7 +120,8 @@ export class FacilityUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

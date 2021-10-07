@@ -21,7 +21,8 @@ export class AssessmentCriteriaService {
   public commentUrl = "api/cas_sub_criteria_comments";
   public baseUrl = "api/assessor_hierarchies";
   public reportUrl = "api/assessment_criteria";
-  public update_plan = "api/update-plan";
+  public update_plan = "api/update_plan";
+  public confirm_round = "api/confirm_round";
 
   constructor(protected http: HttpClient) {}
 
@@ -69,7 +70,12 @@ createComment(
       assessmentCriteria
     );
   }
-
+  confirmRound(assessmentCriteria: AssessmentCriteria): Observable<CustomResponse<AssessmentCriteria>>  {
+    return this.http.post<CustomResponse<AssessmentCriteria>>(
+      this.confirm_round,
+      assessmentCriteria
+    );
+  }
   find(id: number): Observable<CustomResponse<AssessmentCriteria[]>> {
     return this.http.get<CustomResponse<AssessmentCriteria[]>>(
       `${this.resourceUrl}/${id}`

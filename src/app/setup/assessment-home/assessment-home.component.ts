@@ -66,7 +66,8 @@ export class AssessmentHomeComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.casAssessmentRondService
@@ -74,6 +75,14 @@ export class AssessmentHomeComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<CasAssessmentRound[]>) =>
           (this.casAssessmentRounds = resp.data)
+      );
+    this.financialYearService
+      .query({ columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (
+            this.financialYears = resp.data
+          )
       );
     this.handleNavigation();
   }
@@ -224,23 +233,6 @@ export class AssessmentHomeComponent implements OnInit {
     });
   }
 
-  /**
-   * Delete AssessmentHome
-   * @param assessmentHome
-   */
-  delete(assessmentHome: AssessmentHome): void {
-    // this.confirmationService.confirm({
-    //   message: "Are you sure that you want to delete this AssessmentHome?",
-    //   accept: () => {
-    //     this.casAssessmentCategoryVersionService
-    //       .delete(assessmentHome.id!)
-    //       .subscribe((resp) => {
-    //         this.loadPage(this.page);
-    //         this.toastService.info(resp.message);
-    //       });
-    //   },
-    // });
-  }
 
   /**
    * When successfully data loaded
@@ -275,28 +267,5 @@ export class AssessmentHomeComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Assessment Home');
-  }
-
-  /**
-   * Load received Assessments for assessment based on Assessor assignment
-   */
-  receivedAssessment(rowData: any) {
-    this.router.navigate(['received-assessment'], { state: rowData });
-  }
-
-  /**
-   * Load assigned assessments
-   */
-  myAssessment(rowData: any) {
-    this.router.navigate(['my-assessment'], { state: rowData });
-  }
-  /**
-   *
-   */
-  assess(rowData: any) {
-    this.router.navigate([
-      'assessment-criteria?financialYearId=',
-      rowData.financial_year_id,
-    ]);
   }
 }

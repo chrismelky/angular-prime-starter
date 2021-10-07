@@ -7,36 +7,37 @@
  */
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {ConfirmationService, LazyLoadEvent} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {Paginator} from "primeng/paginator";
 import {Table} from "primeng/table";
-
+import {FundSource} from "../../fund-source/fund-source.model";
+import {ToastService} from "../../../shared/toast.service";
+import {ITEMS_PER_PAGE, PER_PAGE_OPTIONS} from "../../../config/pagination.constants";
+import {HelperService} from "../../../utils/helper.service";
+import {ProjectService} from "../project.service";
+import {ProjectFundSource} from "../../project-fund-source/project-fund-source.model";
+import {Project} from "../project.model";
+import {ProjectFundSourceService} from "../../project-fund-source/project-fund-source.service";
+import {FundSourceService} from "../../fund-source/fund-source.service";
 import {CustomResponse} from "../../../utils/custom-response";
-import {
-  ITEMS_PER_PAGE,
-  PER_PAGE_OPTIONS,
-} from "../../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {Group} from "src/app/setup/group/group.model";
-import {RoleService} from "src/app/setup/role/role.service";
-
-import {GroupRole} from "./group-role.model";
-import {GroupRoleService} from "./group-role.service";
-import {GroupRoleUpdateComponent} from "./update/group-role-update.component";
 import {CreateComponent} from "./create/create.component";
+import {ProjectFundSourceUpdateComponent} from "./update/project-fund-source-update.component";
 
 @Component({
-  selector: "app-group-role",
-  templateUrl: "./group-role.component.html",
+  selector: "app-project-fund-source",
+  templateUrl: "./project-fund-source.component.html",
 })
-export class GroupRoleComponent implements OnInit {
+export class ProjectFundSourceComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  groupRoles?: GroupRole[] = [];
+  projectFundSources?: ProjectFundSource[] = [];
+
+  projects?: Project[] = [];
+  fundSources?: FundSource[] = [];
+
   cols = []; //Table display columns
-  group: Group | undefined;
+
   isLoading = false;
   page: number = 1;
   perPage: number = 15;
@@ -46,9 +47,13 @@ export class GroupRoleComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
 
+  //Mandatory filter
+  project!: Project;
+
   constructor(
-    protected groupRoleService: GroupRoleService,
-    protected roleService: RoleService,
+    protected projectFundSourceService: ProjectFundSourceService,
+    protected projectService: ProjectService,
+    protected fundSourceService: FundSourceService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -58,32 +63,45 @@ export class GroupRoleComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected toastService: ToastService
   ) {
-    this.group = this.dialogConfig.data.group;
+    this.project = this.dialogConfig.data.project;
   }
 
   ngOnInit(): void {
+    this.projectService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
+      );
+    this.fundSourceService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
+      );
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.project.id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.perPage = this.perPage ?? ITEMS_PER_PAGE;
-    this.groupRoleService
+    this.projectFundSourceService
       .query({
         page: pageToLoad,
-        group_id: this.group?.id,
         per_page: this.perPage,
         sort: this.sort(),
+        project_id: this.project.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<GroupRole[]>) => {
+        (res: CustomResponse<ProjectFundSource[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -104,6 +122,19 @@ export class GroupRoleComponent implements OnInit {
     this.perPage = perPage !== null ? perPage : ITEMS_PER_PAGE;
     this.page = page !== null ? page : 1;
     this.loadPage(this.page, true);
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -155,7 +186,7 @@ export class GroupRoleComponent implements OnInit {
 
   /**
    * Impletement sorting Set/Reurn the sorting option for data
-   * @returns dfefault ot id sorting
+   * @returns default ot id sorting
    */
   protected sort(): string[] {
     const predicate = this.predicate ? this.predicate : "id";
@@ -165,11 +196,11 @@ export class GroupRoleComponent implements OnInit {
 
   create(): void {
     const data = {
-      group: this.group
+      project: this.project
     }
     const ref = this.dialogService.open(CreateComponent, {
       data,
-      header: "Create Group Role",
+      header: this.project.name + ' Fund Source Mapping Form',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -178,14 +209,14 @@ export class GroupRoleComponent implements OnInit {
     });
   }
 
-  edit(row?: GroupRole): void {
+  edit(row: ProjectFundSource): void {
     const data = {
-      groupRole: row,
-      group: this.group
+      projectFundSource: row,
+      project: this.project
     }
-    const ref = this.dialogService.open(GroupRoleUpdateComponent, {
+    const ref = this.dialogService.open(ProjectFundSourceUpdateComponent, {
       data,
-      header: "Update Group Role",
+      header: "Update Project Fund Source",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -193,20 +224,21 @@ export class GroupRoleComponent implements OnInit {
       }
     });
   }
-
 
   /**
-   * Delete GroupRole
-   * @param groupRole
+   * Delete ProjectFundSource
+   * @param projectFundSource
    */
-  delete(groupRole: GroupRole): void {
+  delete(projectFundSource: ProjectFundSource): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this GroupRole?",
+      message: "Are you sure that you want to delete this ProjectFundSource?",
       accept: () => {
-        this.groupRoleService.delete(groupRole.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.projectFundSourceService
+          .delete(projectFundSource.id!)
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }
@@ -218,13 +250,13 @@ export class GroupRoleComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<GroupRole[]> | null,
+    resp: CustomResponse<ProjectFundSource[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
-    this.groupRoles = resp?.data ?? [];
+    this.projectFundSources = resp?.data ?? [];
   }
 
   /**
@@ -233,6 +265,6 @@ export class GroupRoleComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Group Role");
+    this.toastService.error("Error loading Project Fund Source");
   }
 }

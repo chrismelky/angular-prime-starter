@@ -437,29 +437,10 @@ export class AssessmentCriteriaComponent implements OnInit {
           this.toastService.error('Please write your remarks before confirming assessment plan');
           return;
         }
+        this.confirmRound(data);
         this.saveOrUpdateComment(data);
       }
     });
-  }
-  returnPlan() {
-    this.confirmationService.confirm({
-      header: 'Return Plan',
-      message: 'Are you sure that you want to perform this action?. This action cannot be undone',
-      accept: () => {
-        //Actual logic to perform a confirmation
-        let data = {
-          return_from: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
-          return_to:this.currentUser.admin_hierarchy?.admin_hierarchy_position! + 1,
-          admin_hierarchy_id: this.admin_hierarchy_id,
-          cas_assessment_category_version_id:this.cas_assessment_category_version_id,
-          cas_assessment_round_id: this.cas_assessment_round_id,
-          financial_year_id: this.financial_year_id,
-          admin_hierarchy_level_id: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
-        }
-        this.updatePlan(data);
-      }
-    });
-
   }
 
   finishAndQuit() {
@@ -482,28 +463,13 @@ export class AssessmentCriteriaComponent implements OnInit {
     cas_assessment_round_id: this.cas_assessment_round_id,
     financial_year_id: this.financial_year_id,
     admin_hierarchy_level_id: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+    remarks : this.commentForm.value.remarks,
   }
   this.updatePlan(data);
+    this.saveOrUpdateComment(data);
   }
 
   saveOrUpdateComment(data: any){
-
-    // if(this.dialogConfig.data.data.cas_assessment_result_comment_id){
-    //   this.isSaving = true;
-    //   this.casAssessmentResultsService.updateComment(data).subscribe(resp => {
-    //     this.toastService.info(resp.message);
-    //     this.dialogRef.close(true);
-    //     this.isSaving = false;
-    //   });
-    // } else {
-    //   this.isSaving = true;
-    //   this.casAssessmentResultsService.createComment(data).subscribe(resp => {
-    //     this.toastService.info(resp.message);
-    //     this.dialogRef.close(true);
-    //     this.isSaving = false;
-    //   });
-    // }
-
     this.casAssessmentSubCriteriaService.createGeneralComment(data).subscribe(resp => {
       this.toastService.info(resp.message);
     });
@@ -511,6 +477,13 @@ export class AssessmentCriteriaComponent implements OnInit {
 
   updatePlan(data : any) {
     this.casAssessmentResultsService.updatePlan(data).subscribe(resp => {
+      this.toastService.info(resp.message);
+      this.router.navigate(["/assessment-home"])
+    });
+  }
+
+ confirmRound(data: {}) {
+    this.casAssessmentResultsService.confirmRound(data).subscribe(resp => {
       this.toastService.info(resp.message);
       this.router.navigate(["/assessment-home"])
     });

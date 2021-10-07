@@ -5,52 +5,47 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+import { Project } from "src/app/setup/project/project.model";
+import { ProjectService } from "src/app/setup/project/project.service";
+import { FundSource } from "src/app/setup/fund-source/fund-source.model";
+import { FundSourceService } from "src/app/setup/fund-source/fund-source.service";
 
-import {Project} from "./project.model";
-import {ProjectService} from "./project.service";
-import {ProjectUpdateComponent} from "./update/project-update.component";
-import {ProjectSectorComponent} from "./project-sector/project-sector.component";
-import {ProjectFundSourceComponent} from "./project-fund-source/project-fund-source.component";
+import { ProjectFundSource } from "./project-fund-source.model";
+import { ProjectFundSourceService } from "./project-fund-source.service";
+import { ProjectFundSourceUpdateComponent } from "./update/project-fund-source-update.component";
 
 @Component({
-  selector: "app-project",
-  templateUrl: "./project.component.html",
+  selector: "app-project-fund-source",
+  templateUrl: "./project-fund-source.component.html",
 })
-export class ProjectComponent implements OnInit {
+export class ProjectFundSourceComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
+  projectFundSources?: ProjectFundSource[] = [];
+
   projects?: Project[] = [];
+  fundSources?: FundSource[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: "fund_source_id",
+      header: "Fund Source ",
       sort: true,
-    },
-    {
-      field: "code",
-      header: "Code",
-      sort: true,
-    },
-    {
-      field: "is_active",
-      header: "Is Active",
-      sort: false,
     },
   ]; //Table display columns
 
@@ -64,19 +59,31 @@ export class ProjectComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  project_id!: number;
 
   constructor(
+    protected projectFundSourceService: ProjectFundSourceService,
     protected projectService: ProjectService,
+    protected fundSourceService: FundSourceService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
+    this.projectService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
+      );
+    this.fundSourceService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -86,18 +93,22 @@ export class ProjectComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.project_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.projectService
+    this.projectFundSourceService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        project_id: this.project_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<Project[]>) => {
+        (res: CustomResponse<ProjectFundSource[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -128,8 +139,20 @@ export class ProjectComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -190,16 +213,17 @@ export class ProjectComponent implements OnInit {
   }
 
   /**
-   * Creating or updating Project
-   * @param project ; If undefined initize new model to create else edit existing model
+   * Creating or updating ProjectFundSource
+   * @param projectFundSource ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(project?: Project): void {
-    const data: Project = project ?? {
-      ...new Project(),
+  createOrUpdate(projectFundSource?: ProjectFundSource): void {
+    const data: ProjectFundSource = projectFundSource ?? {
+      ...new ProjectFundSource(),
+      project_id: this.project_id,
     };
-    const ref = this.dialogService.open(ProjectUpdateComponent, {
+    const ref = this.dialogService.open(ProjectFundSourceUpdateComponent, {
       data,
-      header: "Create/Update Project",
+      header: "Create/Update ProjectFundSource",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -209,17 +233,19 @@ export class ProjectComponent implements OnInit {
   }
 
   /**
-   * Delete Project
-   * @param project
+   * Delete ProjectFundSource
+   * @param projectFundSource
    */
-  delete(project: Project): void {
+  delete(projectFundSource: ProjectFundSource): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Project?",
+      message: "Are you sure that you want to delete this ProjectFundSource?",
       accept: () => {
-        this.projectService.delete(project.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.projectFundSourceService
+          .delete(projectFundSource.id!)
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }
@@ -231,14 +257,14 @@ export class ProjectComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<Project[]> | null,
+    resp: CustomResponse<ProjectFundSource[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/project"], {
+      this.router.navigate(["/project-fund-source"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -247,7 +273,7 @@ export class ProjectComponent implements OnInit {
         },
       });
     }
-    this.projects = resp?.data ?? [];
+    this.projectFundSources = resp?.data ?? [];
   }
 
   /**
@@ -256,38 +282,6 @@ export class ProjectComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Project");
-  }
-
-  sectors(row: Project): void {
-    const data = {
-      project: row
-    }
-    const ref = this.dialogService.open(ProjectSectorComponent, {
-      data,
-      /*header: row.name + ' Sectors',*/
-      width: '60%'
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
-  }
-
-  fundSources(row: Project): void {
-    const data = {
-      project: row
-    }
-    const ref = this.dialogService.open(ProjectFundSourceComponent, {
-      data,
-     /* header: row.name + ' Fund Sources',*/
-      width: '60%'
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
+    this.toastService.error("Error loading Project Fund Source");
   }
 }

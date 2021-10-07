@@ -95,7 +95,8 @@ export class PeItemComponent implements OnInit {
 
   //Mandatory filter
   admin_hierarchy_id!: number;
-  financial_year_id!: number;
+  //financial_year_id!: number;
+  financial_year_id: number = 1;
   pe_sub_form_id!: number;
   budget_class_id!: number;
   fund_source_id!: number;
@@ -134,6 +135,8 @@ export class PeItemComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log("Current User")
+    console.log(this.currentUser)
     this.peSubFormService
       .getParentChildren()
       .subscribe(

@@ -1143,6 +1143,13 @@ const routes: Routes = [
             "../setup/intervention-category/intervention-category.module"
           ).then((m) => m.InterventionCategoryModule),
       },
+      {
+        path: "intervention",
+        loadChildren: () =>
+          import("../setup/intervention/intervention.module").then(
+            (m) => m.InterventionModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

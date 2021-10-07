@@ -583,6 +583,11 @@ export class MainComponent implements OnInit {
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "intervention-category",
     },
+    {
+      label: "Interventions",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "intervention",
+    },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {
       label: "Planning",

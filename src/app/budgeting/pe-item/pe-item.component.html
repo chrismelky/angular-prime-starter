@@ -17,39 +17,6 @@
         >
           <div fxLayout="column" fxLayoutGap="10px" fxFlex>
             <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-
-            <div class="p-field" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="admin_hierarchy_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="adminHierarchies!"
-                  [(ngModel)]="admin_hierarchy_id"
-                ></p-dropdown>
-                <label for="admin_hierarchy_id">Admin Hierarchy </label>
-              </span>
-            </div>
-            <div class="p-field" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="financial_year_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="financialYears!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="financial_year_id"
-                ></p-dropdown>
-                <label for="financial_year_id">Financial Year </label>
-              </span>
-            </div>
-
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <p-dropdown
@@ -60,8 +27,6 @@
                     (onChange)="getPeForm($event)"
                     [autoDisplayFirst]=false
                     [filter]="true"
-                    scrollHeight="150px"
-                    [itemSize]="5"
                     [(ngModel)]="parent_sub_budget_class"
                   >
                   <ng-template let-group pTemplate="group">
@@ -75,7 +40,6 @@
                 </span>
               </div>
           </div>
-
 
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
             <div class="p-field" fxFlex>
@@ -120,7 +84,6 @@
                   optionGroupLabel="name"
                   appendTo="body"
                   optionGroupChildren="children"
-                  [autoDisplayFirst]="false"
                   [options]="sections!"
                   [group]="true"
                   (onChange)="filterChanged()"

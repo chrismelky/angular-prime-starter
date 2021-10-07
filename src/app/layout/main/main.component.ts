@@ -578,6 +578,16 @@ export class MainComponent implements OnInit {
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "project-output",
     },
+    {
+      label: "Project Fund Sources",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "project-fund-source",
+    },
+    {
+      label: "Project Sectors",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "project-sector",
+    },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {
       label: "Planning",

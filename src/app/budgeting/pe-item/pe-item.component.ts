@@ -96,6 +96,7 @@ export class PeItemComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
+  is_current_budget_locked!:boolean;
   pe_sub_form_id!: number;
   budget_class_id!: number;
   fund_source_id!: number;
@@ -128,12 +129,16 @@ export class PeItemComponent implements OnInit {
     this.currentUser = userService.getCurrentUser();
     if (this.currentUser.admin_hierarchy) {
       this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
-      // @ts-ignore
-      this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+      this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
+      this.financial_year_id = this.currentUser.admin_hierarchy?.current_financial_year_id!
+      //this.is_current_budget_locked = this.currentUser.admin_hierarchy?.is_current_budget_locked!
     }
   }
 
   ngOnInit(): void {
+    console.log("Current User")
+    // @ts-ignore
+    console.log(this.currentUser!.admin_hierarchy.current_financial_year_id)
     this.peSubFormService
       .getParentChildren()
       .subscribe(

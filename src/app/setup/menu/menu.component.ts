@@ -63,6 +63,11 @@ export class MenuComponent implements OnInit {
       header: "Sort Order",
       sort: true,
     },
+    {
+      field: "code",
+      header: "Code",
+      sort: true,
+    },
   ]; //Table display columns
 
   isLoading = false;

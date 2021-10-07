@@ -7,7 +7,7 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
@@ -25,10 +25,12 @@ import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
 import { ConfigurationSetting } from "./configuration-setting.model";
 import { ConfigurationSettingService } from "./configuration-setting.service";
 import { ConfigurationSettingUpdateComponent } from "./update/configuration-setting-update.component";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: "app-configuration-setting",
   templateUrl: "./configuration-setting.component.html",
+  styleUrls: ['./configuration-setting.component.scss']
 })
 export class ConfigurationSettingComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
@@ -38,6 +40,7 @@ export class ConfigurationSettingComponent implements OnInit {
   valueTypes?: PlanrepEnum[] = [];
   activeIndex: number = 0;
   groupData : any[]=[];
+  value: any[] = [];
 
 
   cols = [
@@ -104,14 +107,7 @@ export class ConfigurationSettingComponent implements OnInit {
 
   ngOnInit(): void {
     this.valueTypes = this.enumService.get("valueTypes");
-    this.configurationSettingService
-      .groups()
-      .subscribe(
-        (res: CustomResponse<any[]>) => {
-          this.items = res.data!;
-          this.handleChange(0);
-        }
-      );
+    this.loadPage();
   }
 
   /**
@@ -119,25 +115,13 @@ export class ConfigurationSettingComponent implements OnInit {
    * @param page = page number
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    this.isLoading = true;
-    const pageToLoad: number = page ?? this.page ?? 1;
-    this.per_page = this.per_page ?? ITEMS_PER_PAGE;
+  loadPage(): void {
     this.configurationSettingService
-      .query({
-        page: pageToLoad,
-        per_page: this.per_page,
-        sort: this.sort(),
-        ...this.helper.buildFilter(this.search),
-      })
+      .groups()
       .subscribe(
-        (res: CustomResponse<ConfigurationSetting[]>) => {
-          this.isLoading = false;
-          this.onSuccess(res, pageToLoad, !dontNavigate);
-        },
-        () => {
-          this.isLoading = false;
-          this.onError();
+        (res: CustomResponse<any[]>) => {
+          this.items = res.data!;
+          this.handleChange(0);
         }
       );
   }
@@ -162,7 +146,7 @@ export class ConfigurationSettingComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
+      this.loadPage();
     });
   }
 
@@ -173,7 +157,7 @@ export class ConfigurationSettingComponent implements OnInit {
     if (this.page !== 1) {
       this.paginator.changePage(0);
     } else {
-      this.loadPage();
+      this.handleChange(this.activeIndex);
     }
   }
 
@@ -185,7 +169,7 @@ export class ConfigurationSettingComponent implements OnInit {
     if (this.page !== 1) {
       this.paginator.changePage(0);
     } else {
-      this.loadPage();
+      this.handleChange(this.activeIndex);
     }
   }
 
@@ -199,7 +183,7 @@ export class ConfigurationSettingComponent implements OnInit {
     if ($event.sortField) {
       this.predicate = $event.sortField!;
       this.ascending = $event.sortOrder === 1;
-      this.loadPage();
+      this.handleChange(this.activeIndex);
     }
   }
 
@@ -210,7 +194,7 @@ export class ConfigurationSettingComponent implements OnInit {
   pageChanged(event: any): void {
     this.page = event.page + 1;
     this.per_page = event.rows!;
-    this.loadPage();
+    this.handleChange(this.activeIndex);
   }
 
   /**
@@ -237,7 +221,7 @@ export class ConfigurationSettingComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadPage(this.page);
+        this.handleChange(this.activeIndex);
       }
     });
   }
@@ -254,7 +238,7 @@ export class ConfigurationSettingComponent implements OnInit {
         this.configurationSettingService
           .delete(configurationSetting.id!)
           .subscribe((resp) => {
-            this.loadPage(this.page);
+            this.loadPage();
             this.toastService.info(resp.message);
           });
       },
@@ -297,13 +281,84 @@ export class ConfigurationSettingComponent implements OnInit {
   }
 
    handleChange(index:number) : void{
+    this.activeIndex = index;
     const groupName = this.items[index].label;
      this.configurationSettingService
-       .query({group_name:groupName})
+       .config_setting({group_name:groupName})
        .subscribe(
          (res: CustomResponse<ConfigurationSetting[]>) => {
            this.groupData = res.data!;
+           this.groupData = this.groupData.filter(function(data) {
+             if(data.options){
+               let options  = data.options!.map((option: { value: any; name: any; }) => {
+                 return {value:String(option.value),name:String(option.name)}
+               });
+                data.options = options;
+                return data;
+             }else{
+               return data ;
+             }
+           });
          }
        );
+  }
+
+  updateValue(item:any){
+    item.value = item.value_type=='MULT_SELECT'?item.arrayvalue.map((x: any)=>x).join(","):item.value;
+    const configurationSetting = this.createFromForm(item);
+    this.subscribeToSaveResponse(
+      this.configurationSettingService.update(configurationSetting)
+    );
+  }
+
+  clear(table: Table) {
+    table.clear();
+  }
+
+  /**
+   * Return form values as object of type ConfigurationSetting
+   * @returns ConfigurationSetting
+   */
+  protected createFromForm(configurationSetting:ConfigurationSetting): ConfigurationSetting {
+    return {
+      ...new ConfigurationSetting(),
+      id: configurationSetting.id,
+      key: configurationSetting.key,
+      value: configurationSetting.value,
+      name: configurationSetting.name,
+      group_name: configurationSetting.group_name,
+      value_type: configurationSetting.value_type,
+      html_type:configurationSetting.html_type,
+      value_options: configurationSetting.value_options,
+      value_option_query: configurationSetting.value_option_query,
+    };
+  }
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<ConfigurationSetting>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+    this.handleChange(this.activeIndex);
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
   }
 }

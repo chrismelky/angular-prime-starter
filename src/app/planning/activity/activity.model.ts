@@ -1,6 +1,7 @@
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
 import { Facility } from 'src/app/setup/facility/facility.model';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
+import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
 
 export class Activity {
   constructor(
@@ -33,7 +34,8 @@ export class Activity {
     public is_active?: boolean,
     public budget_class?: BudgetClass,
     public fund_sources?: FundSource[],
-    public activity_facilities?: any[]
+    public activity_facilities?: any[],
+    public references?: NationalReference[]
   ) {}
 }
 

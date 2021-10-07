@@ -42,6 +42,8 @@ import { ProjectOutput } from 'src/app/setup/project-output/project-output.model
 import { ReferenceTypeService } from 'src/app/setup/reference-type/reference-type.service';
 import { ReferenceType } from 'src/app/setup/reference-type/reference-type.model';
 import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
+import { PriorityAreaService } from 'src/app/setup/priority-area/priority-area.service';
+import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
 
 @Component({
   selector: 'app-activity-update',
@@ -74,6 +76,7 @@ export class ActivityUpdateComponent implements OnInit {
   adminHierarchyCostCentre?: AdminHierarchyCostCentre;
   referenceLoading = false;
   referenceTypes?: ReferenceType[] = [];
+  priorityAreas: PriorityArea[] = [];
 
   /**
    * Declare form
@@ -123,8 +126,7 @@ export class ActivityUpdateComponent implements OnInit {
     protected projectService: ProjectService,
     protected projectOutputService: ProjectOutputService,
     protected fundSourceService: FundSourceService,
-    // protected interventionService: InterventionService,
-    // protected sectorProblemService: SectorProblemService,
+    protected priorityAreaService: PriorityAreaService,
     // protected genericActivityService: GenericActivityService,
     protected responsiblePersonService: ResponsiblePersonService,
     public dialogRef: DynamicDialogRef,
@@ -206,6 +208,16 @@ export class ActivityUpdateComponent implements OnInit {
     this.fundSourceService.getByBudgetClass(budgetClassId).subscribe((resp) => {
       this.fundSources = resp.data;
     });
+  }
+
+  loadPriorityAreas(
+    sectorId: number,
+    objectiveId: number,
+    adminHierarchyId: number
+  ): void {
+    this.priorityAreaService
+      .bySectorOrObjective(sectorId, objectiveId, adminHierarchyId)
+      .subscribe((resp) => this.priorityAreas === resp.data);
   }
 
   /**

@@ -262,11 +262,12 @@ export class FacilityComponent implements OnInit {
    * @param facility ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(facility?: Facility): void {
-    const data: Facility = facility ?? {
-      ...new Facility(),
+    const data = {
+      facility: facility ? facility : undefined,
       facility_type_id: this.facility_type_id,
       admin_hierarchy_id: this.admin_hierarchy_id,
-    };
+      facilityTypes: this.facilityTypes
+    }
     const ref = this.dialogService.open(FacilityUpdateComponent, {
       data,
       header: 'Create/Update Facility',
@@ -335,7 +336,7 @@ export class FacilityComponent implements OnInit {
     };
     const ref = this.dialogService.open(FacilityCustomDetailValueComponent, {
       data,
-      width:'60%',
+      width: '60%',
       header: "Custom Details",
     });
     ref.onClose.subscribe((result) => {

@@ -5,3 +5,11 @@ export class Permission {
     public description?: string
   ) {}
 }
+
+export class AllPermissionAndAssigned {
+  constructor(
+    public all?: Permission[],
+    public assigned?: Permission[],
+  ) {}
+}
+

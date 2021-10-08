@@ -7,6 +7,7 @@ export class ConfigurationSetting {
     public group_name?: string,
     public value_type?: string,
     public value_options?: string,
-    public value_option_query?: string
+    public value_option_query?: string,
+    public html_type?: string
   ) {}
 }

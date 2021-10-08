@@ -33,11 +33,11 @@ export class MenuUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     label: [null, [Validators.required]],
-    icon: [null, []],
+    icon: ['pi pi-fw pi-link', []],
     separator: [false, []],
-    router_link: [null],
+    router_link: [''],
     parent_id: [null, []],
-    sort_order: [null, [Validators.required]],
+    sort_order: [0, [Validators.required]],
   });
 
   constructor(
@@ -69,10 +69,20 @@ export class MenuUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const menu = this.createFromForm();
+    const payload = {
+      id: menu.id,
+      label: menu.label,
+      icon: menu.icon,
+      code: menu.label + '_' + menu.parent_id,
+      parent_id: menu.parent_id,
+      sort_order: menu.sort_order,
+      router_link: menu.router_link,
+      separator: menu.separator,
+    } as Menu;
     if (menu.id !== undefined) {
-      this.subscribeToSaveResponse(this.menuService.update(menu));
+      this.subscribeToSaveResponse(this.menuService.update(payload));
     } else {
-      this.subscribeToSaveResponse(this.menuService.create(menu));
+      this.subscribeToSaveResponse(this.menuService.create(payload));
     }
   }
 
@@ -118,7 +128,7 @@ export class MenuUpdateComponent implements OnInit {
       separator: menu.separator,
       router_link: menu.router_link,
       parent_id: menu.parent_id,
-      sort_order: menu.sort_order,
+      sort_order: menu.sort_order
     });
   }
 
@@ -135,7 +145,7 @@ export class MenuUpdateComponent implements OnInit {
       separator: this.editForm.get(["separator"])!.value,
       router_link: this.editForm.get(["router_link"])!.value,
       parent_id: this.editForm.get(["parent_id"])!.value,
-      sort_order: this.editForm.get(["sort_order"])!.value,
+      sort_order: this.editForm.get(["sort_order"])!.value
     };
   }
 }

@@ -1135,6 +1135,45 @@ const routes: Routes = [
           import("../planning/scrutinization/scrutinization.module").then(
             (m) => m.ScrutinizationModule
           ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: "WRITE_FINANCE_SETTING",
+          },
+        },
+      },
+      {
+        path: "project-fund-source",
+        loadChildren: () =>
+          import(
+            "../setup/project-fund-source/project-fund-source.module"
+          ).then((m) => m.ProjectFundSourceModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: "WRITE_FINANCE_SETTING",
+          },
+        },
+      },
+      {
+        path: "project-sector",
+        loadChildren: () =>
+          import("../setup/project-sector/project-sector.module").then(
+            (m) => m.ProjectSectorModule
+          ),
+      },
+      {
+        path: "activity-implementation",
+        loadChildren: () =>
+          import(
+            "../execution/activity-implementation/activity-implementation.module"
+          ).then((m) => m.ActivityImplementationModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: "WRITE_ACTIVITY_IMPLEMENTATION",
+          },
+        },
       },
       {
         path: "intervention-category",

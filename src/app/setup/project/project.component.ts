@@ -5,25 +5,27 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
 
-import { Project } from "./project.model";
-import { ProjectService } from "./project.service";
-import { ProjectUpdateComponent } from "./update/project-update.component";
+import {Project} from "./project.model";
+import {ProjectService} from "./project.service";
+import {ProjectUpdateComponent} from "./update/project-update.component";
+import {ProjectSectorComponent} from "./project-sector/project-sector.component";
+import {ProjectFundSourceComponent} from "./project-fund-source/project-fund-source.component";
 
 @Component({
   selector: "app-project",
@@ -71,7 +73,8 @@ export class ProjectComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.handleNavigation();
@@ -254,5 +257,37 @@ export class ProjectComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Project");
+  }
+
+  sectors(row: Project): void {
+    const data = {
+      project: row
+    }
+    const ref = this.dialogService.open(ProjectSectorComponent, {
+      data,
+      /*header: row.name + ' Sectors',*/
+      width: '60%'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  fundSources(row: Project): void {
+    const data = {
+      project: row
+    }
+    const ref = this.dialogService.open(ProjectFundSourceComponent, {
+      data,
+     /* header: row.name + ' Fund Sources',*/
+      width: '60%'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

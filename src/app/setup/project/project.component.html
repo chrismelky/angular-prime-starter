@@ -118,6 +118,28 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pTooltip="Fund Sources"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-table
+              "
+                  (click)="fundSources(rowData)"
+                ></button>
+                <button
+                  pButton
+                  pTooltip="Sectors"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-table
+              "
+                  (click)="sectors(rowData)"
+                ></button>
+                <button
+                  pButton
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="

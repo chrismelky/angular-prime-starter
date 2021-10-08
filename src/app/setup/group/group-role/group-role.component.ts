@@ -224,16 +224,6 @@ export class GroupRoleComponent implements OnInit {
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
-    if (navigate) {
-      this.router.navigate(["/group"], {
-        queryParams: {
-          page: this.page,
-          per_page: this.perPage,
-          sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
-        },
-      });
-    }
     this.groupRoles = resp?.data ?? [];
   }
 

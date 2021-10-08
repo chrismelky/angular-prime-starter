@@ -22,6 +22,8 @@ export class PeItemService {
 
 
   create(payload: any): Observable<CustomResponse<any>> {
+    console.log("B")
+    console.log(payload)
     return this.http.post<CustomResponse<any>>(this.resourceUrl, payload);
   }
 
@@ -55,9 +57,9 @@ export class PeItemService {
     });
   }
 
-  deletePeLineValues(req?: any): Observable<CustomResponse<any>> {
+  deletePeLineValues(req?: any): Observable<CustomResponse<null>> {
     const url ='api/pe_line_values';
-    return this.http.post<CustomResponse<any>>(`${url}/delete-pe-line-values`, req);
+    return this.http.post<CustomResponse<null>>(`${url}/delete-pe-line-values`, req);
   }
 
 

@@ -5,19 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import {Injectable} from "@angular/core";
+import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
 
-import { createRequestOption } from "../../../utils/request-util";
-import { CustomResponse } from "../../../utils/custom-response";
+import {createRequestOption} from "../../../utils/request-util";
+import {CustomResponse} from "../../../utils/custom-response";
 import {CreateRolePermission, RolePermission} from "./role-permission.model";
 
-@Injectable({ providedIn: "root" })
+@Injectable({providedIn: "root"})
 export class RolePermissionService {
   public resourceUrl = "api/role_permissions";
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient) {
+  }
 
   create(
     rolePermission: RolePermission
@@ -56,5 +57,17 @@ export class RolePermissionService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  deleteAllPermissions(roleId: number | undefined): Observable<CustomResponse<null>> {
+    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/deleteAllPermissions/${roleId}`);
+  }
+
+  deleteByRoleAndPermission(roleId: number | undefined, permissionId: number | undefined): Observable<CustomResponse<null>> {
+    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/deleteByRoleAndPermission/${roleId}/${permissionId}`);
+  }
+
+  addAllPermissions(roleId: number | undefined): Observable<CustomResponse<null>> {
+    return this.http.get<CustomResponse<null>>(`${this.resourceUrl}/addAllPermissions/${roleId}`);
   }
 }

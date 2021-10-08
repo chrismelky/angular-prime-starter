@@ -7,7 +7,7 @@
     [formGroup]="editForm"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div *ngIf="!editing" class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input id="key" type="text" pInputText formControlName="key" />
           <label for="key">Key </label>
@@ -23,22 +23,6 @@
           <small class="p-error" *ngIf="editForm.get('key')?.errors?.required"
             >Key is required.</small
           >
-        </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="value" type="text" pInputText formControlName="value" />
-          <label for="value">Value </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('value')!.invalid &&
-            (editForm.get('value')!.dirty ||
-              editForm.get('value')!.touched ||
-              formError)
-          "
-        >
         </span>
       </div>
 
@@ -158,6 +142,36 @@
             class="p-error"
             *ngIf="editForm.get('value_type')?.errors?.required"
             >Value Type is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="html_type"
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="htmlInputTypes!"
+            formControlName="html_type"
+          ></p-dropdown>
+          <label for="html_type">HTML Type </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('html_type')!.invalid &&
+            (editForm.get('html_type')!.dirty ||
+              editForm.get('html_type')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('html_type')?.errors?.required"
+          >HTML Type is required.</small
           >
         </span>
       </div>

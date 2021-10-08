@@ -588,6 +588,16 @@ export class MainComponent implements OnInit {
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "intervention",
     },
+    {
+      label: "Planning Matrices",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "planning-matrix",
+    },
+    {
+      label: "Generic Sector Problems",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "generic-sector-problem",
+    },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {
       label: "Planning",
@@ -645,6 +655,11 @@ export class MainComponent implements OnInit {
           label: "Responsible People",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "responsible-person",
+        },
+        {
+          label: "Sector Problems",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "sector-problem",
         },
         /**====Planrep planning Menu Generator Hook: Dont Delete====*/
       ],

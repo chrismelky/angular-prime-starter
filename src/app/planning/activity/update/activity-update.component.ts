@@ -44,6 +44,8 @@ import { ReferenceType } from 'src/app/setup/reference-type/reference-type.model
 import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
 import { PriorityAreaService } from 'src/app/setup/priority-area/priority-area.service';
 import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
+import { Intervention } from 'src/app/setup/intervention/intervention.model';
+import { SectorProblem } from '../../sector-problem/sector-problem.model';
 
 @Component({
   selector: 'app-activity-update',
@@ -63,8 +65,8 @@ export class ActivityUpdateComponent implements OnInit {
   activityTaskNatures?: ActivityTaskNature[] = [];
   projects?: Project[] = [];
   projectOutputs?: ProjectOutput[] = [];
-  // interventions?: Intervention[] = [];
-  // sectorProblems?: SectorProblem[] = [];
+  interventions?: Intervention[] = [];
+  sectorProblems?: SectorProblem[] = [];
   // genericActivities?: GenericActivity[] = [];
   responsiblePeople?: ResponsiblePerson[] = [];
   budgetTypes?: PlanrepEnum[] = [];
@@ -76,7 +78,7 @@ export class ActivityUpdateComponent implements OnInit {
   adminHierarchyCostCentre?: AdminHierarchyCostCentre;
   referenceLoading = false;
   referenceTypes?: ReferenceType[] = [];
-  priorityAreas: PriorityArea[] = [];
+  priorityAreas?: PriorityArea[] = [];
 
   /**
    * Declare form
@@ -99,6 +101,7 @@ export class ActivityUpdateComponent implements OnInit {
     budget_type: [null, [Validators.required]],
     project_id: [null, [Validators.required]],
     project_output_id: [null, []],
+    priority_area_id: [null, []],
     intervention_id: [null, []],
     sector_problem_id: [null, []],
     generic_activity_id: [null, []],
@@ -182,6 +185,12 @@ export class ActivityUpdateComponent implements OnInit {
 
     /** Load National references  */
     this.loadReferences(activity.id, activity.financial_year_id);
+
+    this.loadPriorityAreas(
+      dialogData.objectiveId,
+      activity.admin_hierarchy_id!,
+      activity.priority_area_id
+    );
   }
 
   /** Load main budget classess with children budget classes */
@@ -210,14 +219,32 @@ export class ActivityUpdateComponent implements OnInit {
     });
   }
 
+  /**
+   * Load priority areas by sector or objective with inteventions and sector problem filtered by admin hierarchy id
+   *
+   * @param objectiveId filter priority area mapped by objective
+   * @param adminHierarchyId adminarea id to filter sector problem
+   * @param selectedPriorityAreaId if activity has priority area id load interventions and problem by selected id
+   */
   loadPriorityAreas(
-    sectorId: number,
     objectiveId: number,
-    adminHierarchyId: number
+    adminHierarchyId: number,
+    selectedPriorityAreaId?: number
   ): void {
+    /** get sector id from this activity cost centre */
+    const sectorId = this.adminHierarchyCostCentre?.section?.sector_id;
+
     this.priorityAreaService
-      .bySectorOrObjective(sectorId, objectiveId, adminHierarchyId)
-      .subscribe((resp) => this.priorityAreas === resp.data);
+      .bySectorOrObjective(sectorId!, objectiveId, adminHierarchyId)
+      .subscribe((resp) => {
+        this.priorityAreas = resp.data;
+        if (this.priorityAreas?.length) {
+        }
+        /** load intervention and sector problems from selected priority area */
+        if (selectedPriorityAreaId) {
+          this.loadInterventionAndSectorProblem(selectedPriorityAreaId);
+        }
+      });
   }
 
   /**
@@ -330,6 +357,20 @@ export class ActivityUpdateComponent implements OnInit {
           );
         });
       });
+  }
+
+  /**
+   * Load intevention and sector proble form priority area
+   * note. Interventions and sector problem are children of priority area object which are eager loaded with priority area
+   *
+   * @param priorityAreaId selected prioruy area id
+   */
+  loadInterventionAndSectorProblem(priorityAreaId: number): void {
+    const priorityArea = this.priorityAreas?.find(
+      (pa) => pa.id === priorityAreaId
+    );
+    this.interventions = priorityArea?.interventions;
+    this.sectorProblems = priorityArea?.sector_problems;
   }
 
   get facilityForm(): FormArray {
@@ -477,6 +518,7 @@ export class ActivityUpdateComponent implements OnInit {
       budget_type: activity.budget_type,
       project_id: activity.project_id,
       project_output_id: activity.project_output_id,
+      priority_area_id: activity.priority_area_id,
       intervention_id: activity.intervention_id,
       sector_problem_id: activity.sector_problem_id,
       generic_activity_id: activity.generic_activity_id,
@@ -518,6 +560,7 @@ export class ActivityUpdateComponent implements OnInit {
       project_id: this.editForm.get(['project_id'])!.value,
       project_output_id: this.editForm.get(['project_output_id'])!.value,
       intervention_id: this.editForm.get(['intervention_id'])!.value,
+      priority_area_id: this.editForm.get(['priority_area_id'])!.value,
       sector_problem_id: this.editForm.get(['sector_problem_id'])!.value,
       generic_activity_id: this.editForm.get(['generic_activity_id'])!.value,
       responsible_person_id: this.editForm.get(['responsible_person_id'])!

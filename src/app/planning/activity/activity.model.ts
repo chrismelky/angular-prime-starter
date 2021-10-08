@@ -22,6 +22,7 @@ export class Activity {
     public budget_type?: string,
     public project_id?: number,
     public project_output_id?: number,
+    public priority_area_id?: number,
     public intervention_id?: number,
     public sector_problem_id?: number,
     public generic_activity_id?: number,

@@ -1162,6 +1162,19 @@ const routes: Routes = [
             (m) => m.ProjectSectorModule
           ),
       },
+      {
+        path: "activity-implementation",
+        loadChildren: () =>
+          import(
+            "../execution/activity-implementation/activity-implementation.module"
+          ).then((m) => m.ActivityImplementationModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: "WRITE_ACTIVITY_IMPLEMENTATION",
+          },
+        },
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

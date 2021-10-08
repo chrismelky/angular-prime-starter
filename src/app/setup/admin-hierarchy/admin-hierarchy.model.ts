@@ -14,6 +14,7 @@ export class AdminHierarchy {
     public current_budget_decision_level_id?: number,
     public carryover_budget_decision_level_id?: number,
     public supplementary_budget_decision_level_id?: number,
+    public current_financial_year_id?: number,
     public parent?: AdminHierarchy
   ) {}
 }

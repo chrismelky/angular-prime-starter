@@ -675,6 +675,27 @@ export class MainComponent implements OnInit {
       label: "Execution",
       icon: "pi pi-pw pi-play",
       items: [
+        {
+          label: "Activity Implementation",
+          icon: "pi pi-fw pi-arrow-right",
+          items: [
+            {
+              label: "Approved",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "activity-implementation/APPROVED",
+            },
+            {
+              label: "Carry Over",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "activity-implementation/CARRYOVER",
+            },
+            {
+              label: "Vote Reallocation",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "activity-implementation/SUPPLEMENTARY",
+            },
+          ]
+        },
         /**====Planrep execution Menu Generator Hook: Dont Delete====*/
       ],
     },

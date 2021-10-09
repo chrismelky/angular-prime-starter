@@ -16,6 +16,7 @@ import {
   ActivityFacility,
   ActivityFundSource,
 } from './activity.model';
+import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
 
 @Injectable({ providedIn: 'root' })
 export class ActivityService {
@@ -58,12 +59,33 @@ export class ActivityService {
     );
   }
 
+  deleteActivityFacility(id: number): Observable<CustomResponse<null>> {
+    return this.http.delete<CustomResponse<null>>(
+      `${this.resourceUrl}/facilities/${id}`
+    );
+  }
+
+  deleteActivityFundSource(id: number): Observable<CustomResponse<null>> {
+    return this.http.delete<CustomResponse<null>>(
+      `${this.resourceUrl}/fund_sources/${id}`
+    );
+  }
+
   activityFundSources(
     financialYearId: number,
     activityId: number
   ): Observable<CustomResponse<ActivityFundSource[]>> {
     return this.http.get<CustomResponse<ActivityFundSource[]>>(
       `${this.resourceUrl}/fund_sources/${financialYearId}/${activityId}`
+    );
+  }
+
+  activityReferences(
+    financialYearId: number,
+    activityId: number
+  ): Observable<CustomResponse<NationalReference[]>> {
+    return this.http.get<CustomResponse<NationalReference[]>>(
+      `${this.resourceUrl}/references/${financialYearId}/${activityId}`
     );
   }
 }

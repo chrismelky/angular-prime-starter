@@ -39,6 +39,13 @@ import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { ProjectOutputService } from 'src/app/setup/project-output/project-output.service';
 import { ProjectOutput } from 'src/app/setup/project-output/project-output.model';
+import { ReferenceTypeService } from 'src/app/setup/reference-type/reference-type.service';
+import { ReferenceType } from 'src/app/setup/reference-type/reference-type.model';
+import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
+import { PriorityAreaService } from 'src/app/setup/priority-area/priority-area.service';
+import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
+import { Intervention } from 'src/app/setup/intervention/intervention.model';
+import { SectorProblem } from '../../sector-problem/sector-problem.model';
 
 @Component({
   selector: 'app-activity-update',
@@ -58,8 +65,8 @@ export class ActivityUpdateComponent implements OnInit {
   activityTaskNatures?: ActivityTaskNature[] = [];
   projects?: Project[] = [];
   projectOutputs?: ProjectOutput[] = [];
-  // interventions?: Intervention[] = [];
-  // sectorProblems?: SectorProblem[] = [];
+  interventions?: Intervention[] = [];
+  sectorProblems?: SectorProblem[] = [];
   // genericActivities?: GenericActivity[] = [];
   responsiblePeople?: ResponsiblePerson[] = [];
   budgetTypes?: PlanrepEnum[] = [];
@@ -69,6 +76,9 @@ export class ActivityUpdateComponent implements OnInit {
   mainBudgetClass?: BudgetClass;
   mainBudgetClasses?: BudgetClass[] = [];
   adminHierarchyCostCentre?: AdminHierarchyCostCentre;
+  referenceLoading = false;
+  referenceTypes?: ReferenceType[] = [];
+  priorityAreas?: PriorityArea[] = [];
 
   /**
    * Declare form
@@ -91,6 +101,7 @@ export class ActivityUpdateComponent implements OnInit {
     budget_type: [null, [Validators.required]],
     project_id: [null, [Validators.required]],
     project_output_id: [null, []],
+    priority_area_id: [null, []],
     intervention_id: [null, []],
     sector_problem_id: [null, []],
     generic_activity_id: [null, []],
@@ -102,6 +113,7 @@ export class ActivityUpdateComponent implements OnInit {
     period_four: [null, []],
     is_active: [null, []],
     activity_facilities: this.fb.array([], [Validators.required]),
+    references: this.fb.array([]),
     fund_sources: [[], [Validators.required]],
   });
 
@@ -117,15 +129,15 @@ export class ActivityUpdateComponent implements OnInit {
     protected projectService: ProjectService,
     protected projectOutputService: ProjectOutputService,
     protected fundSourceService: FundSourceService,
-    // protected interventionService: InterventionService,
-    // protected sectorProblemService: SectorProblemService,
+    protected priorityAreaService: PriorityAreaService,
     // protected genericActivityService: GenericActivityService,
     protected responsiblePersonService: ResponsiblePersonService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected enumService: EnumService
+    protected enumService: EnumService,
+    protected referenceTypeService: ReferenceTypeService
   ) {}
 
   ngOnInit(): void {
@@ -154,6 +166,7 @@ export class ActivityUpdateComponent implements OnInit {
     if (activity.id) {
       this.loadFundSources(activity.budget_class_id!);
       this.loadActivityTaskNature(activity.activity_type_id!);
+      this.loadProjectOutput(activity.project_id!);
       this.loadActivityFundSource(activity.financial_year_id!, activity.id);
       this.loadActivityFacilities(activity.financial_year_id!, activity.id);
     }
@@ -169,6 +182,15 @@ export class ActivityUpdateComponent implements OnInit {
 
     //Initialize form with data from dialog
     this.updateForm(activity);
+
+    /** Load National references  */
+    this.loadReferences(activity.id, activity.financial_year_id);
+
+    this.loadPriorityAreas(
+      dialogData.objectiveId,
+      activity.admin_hierarchy_id!,
+      activity.priority_area_id
+    );
   }
 
   /** Load main budget classess with children budget classes */
@@ -194,6 +216,107 @@ export class ActivityUpdateComponent implements OnInit {
   loadFundSources(budgetClassId: number): void {
     this.fundSourceService.getByBudgetClass(budgetClassId).subscribe((resp) => {
       this.fundSources = resp.data;
+    });
+  }
+
+  /**
+   * Load priority areas by sector or objective with inteventions and sector problem filtered by admin hierarchy id
+   *
+   * @param objectiveId filter priority area mapped by objective
+   * @param adminHierarchyId adminarea id to filter sector problem
+   * @param selectedPriorityAreaId if activity has priority area id load interventions and problem by selected id
+   */
+  loadPriorityAreas(
+    objectiveId: number,
+    adminHierarchyId: number,
+    selectedPriorityAreaId?: number
+  ): void {
+    /** get sector id from this activity cost centre */
+    const sectorId = this.adminHierarchyCostCentre?.section?.sector_id;
+
+    this.priorityAreaService
+      .bySectorOrObjective(sectorId!, objectiveId, adminHierarchyId)
+      .subscribe((resp) => {
+        this.priorityAreas = resp.data;
+        if (this.priorityAreas?.length) {
+        }
+        /** load intervention and sector problems from selected priority area */
+        if (selectedPriorityAreaId) {
+          this.loadInterventionAndSectorProblem(selectedPriorityAreaId);
+        }
+      });
+  }
+
+  /**
+   * Load reference type filtered by this cost centre sectorId
+   */
+  loadReferences(activityId?: number, financialYearId?: number): void {
+    const sectorId = this.adminHierarchyCostCentre?.section?.sector_id;
+    if (!sectorId) {
+      this.toastService.warn(
+        'Could not load reference; Selected section has no sector mapped'
+      );
+      return;
+    }
+    this.referenceLoading = true;
+    this.referenceTypeService
+      .byLinkLevelWithReferences('Activity', sectorId!)
+      .subscribe(
+        (resp) => {
+          this.referenceTypes = resp.data;
+          /** If activity has id load it selected reference first before prepare reference controlls else prepare controlls */
+          if (activityId) {
+            this.loadExistingReference(financialYearId!, activityId);
+          } else {
+            this.prepareReferenceControls([]);
+          }
+        },
+        (error) => {
+          this.referenceLoading = false;
+        }
+      );
+  }
+
+  loadExistingReference(financialYearId: number, activityId: number): void {
+    this.activityService
+      .activityReferences(financialYearId, activityId)
+      .subscribe((resp) => {
+        this.prepareReferenceControls(resp.data!);
+      });
+  }
+
+  /**
+   * Get reference form array control
+   */
+  get referenceControls(): FormArray {
+    return this.editForm.controls['references'] as FormArray;
+  }
+
+  /**
+   * Prepare reference type component by
+   * for each reference type create form group with
+   * 1. name control for display purpose
+   * 2. value control for binding selected value
+   * 3. options control for select component
+   * 4. isMultiple control dispaly mult or single select
+   * @param selectedReferences
+   */
+  prepareReferenceControls(selectedReferences: NationalReference[]): void {
+    this.referenceLoading = false;
+    const ref = this.referenceControls;
+    this.referenceTypes?.forEach((type) => {
+      const value = type.multi_select
+        ? selectedReferences.filter((r) => r.reference_type_id === type.id)
+        : selectedReferences.find((r) => r.reference_type_id === type.id);
+
+      ref.push(
+        this.fb.group({
+          options: [type.references],
+          isMultiple: [type.multi_select],
+          name: [type.name],
+          value: [value, [Validators.required]],
+        })
+      );
     });
   }
 
@@ -234,6 +357,20 @@ export class ActivityUpdateComponent implements OnInit {
           );
         });
       });
+  }
+
+  /**
+   * Load intevention and sector proble form priority area
+   * note. Interventions and sector problem are children of priority area object which are eager loaded with priority area
+   *
+   * @param priorityAreaId selected prioruy area id
+   */
+  loadInterventionAndSectorProblem(priorityAreaId: number): void {
+    const priorityArea = this.priorityAreas?.find(
+      (pa) => pa.id === priorityAreaId
+    );
+    this.interventions = priorityArea?.interventions;
+    this.sectorProblems = priorityArea?.sector_problems;
   }
 
   get facilityForm(): FormArray {
@@ -381,6 +518,7 @@ export class ActivityUpdateComponent implements OnInit {
       budget_type: activity.budget_type,
       project_id: activity.project_id,
       project_output_id: activity.project_output_id,
+      priority_area_id: activity.priority_area_id,
       intervention_id: activity.intervention_id,
       sector_problem_id: activity.sector_problem_id,
       generic_activity_id: activity.generic_activity_id,
@@ -422,6 +560,7 @@ export class ActivityUpdateComponent implements OnInit {
       project_id: this.editForm.get(['project_id'])!.value,
       project_output_id: this.editForm.get(['project_output_id'])!.value,
       intervention_id: this.editForm.get(['intervention_id'])!.value,
+      priority_area_id: this.editForm.get(['priority_area_id'])!.value,
       sector_problem_id: this.editForm.get(['sector_problem_id'])!.value,
       generic_activity_id: this.editForm.get(['generic_activity_id'])!.value,
       responsible_person_id: this.editForm.get(['responsible_person_id'])!
@@ -434,6 +573,12 @@ export class ActivityUpdateComponent implements OnInit {
       is_active: this.editForm.get(['is_active'])!.value,
       fund_sources: this.editForm.get(['fund_sources'])!.value,
       activity_facilities: this.editForm.get(['activity_facilities'])!.value,
+      references: this.editForm
+        .get(['references'])!
+        .value.map((ref: any) => {
+          return ref.value;
+        })
+        .flat(),
     };
   }
 }

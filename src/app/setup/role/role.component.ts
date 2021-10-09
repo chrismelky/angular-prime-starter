@@ -256,6 +256,7 @@ export class RoleComponent implements OnInit {
     const ref = this.dialogService.open(RolePermissionComponent, {
       data,
       width: '60%',
+      header: rowData.name + ' Permissions'
     });
     ref.onClose.subscribe((result) => {
       if (result) {

@@ -166,49 +166,61 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-table
-      #table
-      [lazy]="true"
-      [resizableColumns]="true"
-      [responsive]="true"
-      [autoLayout]="true"
-      [loading]="isLoading"
-      [columns]="cols"
-      [value]="activityImplementations!"
-      [scrollable]="true"
-      scrollHeight="500px"
-      (onLazyLoad)="onSortChange($event)"
-      [customSort]="true"
-    >
-      <ng-template pTemplate="caption">
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Activity Implementation</span>
-        </div>
-      </ng-template>
-      <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="activityImplementations?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th style="flex: 0 0 2rem"></th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
-          </td>
-          <td style="flex: 0 0 2rem">
-            <div fxLayout="row" fxLayoutAlign="end">
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+<!--    <p-table-->
+<!--      #table-->
+<!--      [lazy]="true"-->
+<!--      [resizableColumns]="true"-->
+<!--      [responsive]="true"-->
+<!--      [autoLayout]="true"-->
+<!--      [loading]="isLoading"-->
+<!--      [columns]="cols"-->
+<!--      [value]="activityImplementations!"-->
+<!--      [scrollable]="true"-->
+<!--      scrollHeight="500px"-->
+<!--      (onLazyLoad)="onSortChange($event)"-->
+<!--      [customSort]="true"-->
+<!--    >-->
+
+
+      <p-table [value]="activityImplementations!" responsiveLayout="scroll">
+        <ng-template pTemplate="caption">
+          <div fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="card-header-text">Activity Implementation</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr *ngIf="activityImplementations?.length">
+            <th>Code</th>
+            <th>Activity</th>
+            <th>Facility</th>
+            <th>Budget</th>
+            <th>Expenditure</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-activityImplementation>
+          <tr>
+            <td>{{ activityImplementation.code}}</td>
+            <td>{{ activityImplementation.description}}</td>
+            <td></td>
+            <td>{{ activityImplementation.budget}}</td>
+            <td>{{ activityImplementation.expenditure}}</td>
+            <td>{{ activityImplementation.balance}}</td>
+            <td></td>
+            <td style="flex: 0 0 1rem">
+              <div fxLayout="row" fxLayoutAlign="end">
+                <button pButton type="button" class="p-button-outlined" label="Track" style="margin-left: 16px" icon="pi pi-edit" pTooltip="Track this activity" (click)="track(activityImplementation)"></button>
+                <button pButton type="button" class="p-button-outlined" label="History" style="margin-left: 16px" icon="pi pi-list" pTooltip="View history for this activity" (click)="history(activityImplementation)"></button>
+                <button pButton type="button" class="p-button-outlined" label="" style="margin-left: 16px" icon="pi pi-file" pTooltip="View attached evidence for this activity" (click)="attachments(activityImplementation)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+<!--      <ng-template pTemplate="emptymessage"> No data found </ng-template>-->
       <ng-template pTemplate="footer">
         <p-paginator
           #paginator
@@ -221,7 +233,7 @@
           (onPageChange)="pageChanged($event)"
         ></p-paginator>
       </ng-template>
-    </p-table>
+<!--    </p-table>-->
   </p-card>
 </div>
 

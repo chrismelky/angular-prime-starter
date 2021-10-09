@@ -76,6 +76,79 @@ export class ScrutinizationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.scrutinizations = [
+      {
+        id: 1,
+        code: 'C01S01',
+        description: 'To conduct annual training to 1health care provider from Soya dispensary on proper  use of patograph by June 2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 2,
+        code: 'D01S02',
+        description: 'To provide Capitation Grant to 691 students at Sogesca Secondary School',
+        budget: 1000000,
+        expenditure: 500000,
+        balance: 500000
+      },{
+        id: 3,
+        code: 'C01S22',
+        description: 'To provide monthly employees benefits for 1 casual labourers in Kidoka Dispensary  by June 2020',
+        budget: 2000000,
+        expenditure: 1000000,
+        balance: 1000000
+      },{
+        id: 4,
+        code: 'C01S12',
+        description: 'To facilitate good working environment to 5 staffs by June 2020',
+        budget: 200000,
+        expenditure: 50000,
+        balance: 150000
+      },{
+        id: 5,
+        code: 'C01S05',
+        description: 'To facilitate Construction of Samazi Health Centre at Samazi Ward by, June 2019',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 6,
+        code: 'C01S06',
+        description: 'To facilitate quarterly Economics, and infrastructure committee meeting by june  2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 7,
+        code: 'C01S11',
+        description: 'To conduct mothly QIT meeting to 12 Health care providers at Hamai RHC by june 2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 8,
+        code: 'C01S91',
+        description: 'To provide Capitation Grant to 1166 students at Ngasamo Secondary School',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 9,
+        code: 'C01S09',
+        description: 'To purchase 1 kit of supplementary drugs and medical supplies for RCH  services   by june 2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 10,
+        code: 'C01S10',
+        description: 'To provide Responsibility Allowance to 68 Head Teachers  by June 2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },
+    ];
     this.sectionService
       .query({ position: 3 })
       .subscribe(

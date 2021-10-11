@@ -1,0 +1,43 @@
+.planrepDialog .ui-dialog-titlebar.ui-widget-header {
+  background: green !important;
+}
+.displayField{
+  padding: 0.9em;
+  text-align: right;
+  border: 1px solid green;
+  border-radius: 5px;
+  width: 100%;
+}
+.success{
+  background-color: green;
+}
+.badge-custom{
+  cursor: pointer !important;
+}
+
+.error{
+  background-color: red;
+}
+.ceiling::ng-deep {
+  background-color: red !important;
+  th{
+    background-color: #F3F3F3  !important;
+    min-width: 200px !important;
+    border: none !important;
+  }
+  td{
+    border: none !important;
+    min-width: 200px !important;
+    text-align: end;
+    input{
+      text-align: end !important;
+      float: right !important;
+    }
+    .end{
+      text-align: end !important;
+      width: 100% !important;
+    }
+  }
+}
+
+

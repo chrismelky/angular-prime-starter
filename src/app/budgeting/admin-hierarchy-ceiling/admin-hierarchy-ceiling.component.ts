@@ -44,9 +44,7 @@ import { SectionLevel } from '../../setup/section-level/section-level.model';
 import { finalize } from 'rxjs/operators';
 import { User } from '../../setup/user/user.model';
 import { UserService } from '../../setup/user/user.service';
-import { CeilingDisseminationComponent } from './update/ceiling-dissemination.component';
 import { CeilingChainService } from '../../setup/ceiling-chain/ceiling-chain.service';
-import { CeilingChain } from '../../setup/ceiling-chain/ceiling-chain.model';
 import { saveAs } from 'file-saver';
 import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
@@ -108,7 +106,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected sectionLevelService: SectionLevelService,
-    protected ceilingChainService: CeilingChainService,
     protected userService: UserService
   ) {
     this.currentUser = userService.getCurrentUser();

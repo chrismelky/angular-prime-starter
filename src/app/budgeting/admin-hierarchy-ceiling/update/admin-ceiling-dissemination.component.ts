@@ -363,7 +363,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
       is_locked: row.is_locked,
       budget_type:this.costCenterCeiling!.budget_type,
       amount:row.amount,
-      facility_id:row.id
+      facility_id:row.id,
+      ceiling_id:this.costCenterCeiling!.ceiling_id
     };
   }
   /**
@@ -372,7 +373,6 @@ export class AdminCeilingDisseminationComponent implements OnInit {
    */
   public updateFromForm(ceiling:any): AdminHierarchyCeiling {
     let ceilingChain = this.ceilingChain!.filter(chain => chain.section_level_position.position === ceiling!.section!.position!)[0];
-    console.log(ceilingChain)
     return {
       ...new AdminHierarchyCeiling(),
       id:ceiling.id,
@@ -406,8 +406,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     if ('facility' in ceiling){
       const index = this.facilityCeiling!.findIndex(item => item.id === ceiling.id);
       this.clonedCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
+      this.facilityCeiling![index].ceilingId = result.data.id
     }else{
-      const index = this.ceilingToDisseminate!.findIndex(item => item.id === ceiling.id);
+      // const index = this.ceilingToDisseminate!.findIndex(item => item.id === ceiling.id);
       this.clonedCeiling = this.ceilingToDisseminate!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
     }
     this.toastService.info(result.message);

@@ -892,12 +892,12 @@ export class PeItemComponent implements OnInit {
       const object = {
         admin_hierarchy_id: this.admin_hierarchy_id,
         financial_year_id: this.financial_year_id,
-        section_id: this.section_id,
         budget_class_id: this.budget_class_id,
         fund_source_id: this.fund_source_id,
         pe_form_id: this.pe_form_id,
         pe_sub_form_id: this.pe_sub_form_id,
         facility_id: this.facilities[0]?.id,
+        peTableFields: JSON.stringify(this.peTableFields),
       };
       this.peItemService.printPeFormStatus(object).subscribe((resp) => {
         let file = new Blob([resp], { type: 'application/pdf' });

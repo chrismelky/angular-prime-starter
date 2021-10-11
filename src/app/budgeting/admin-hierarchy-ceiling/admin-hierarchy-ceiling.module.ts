@@ -19,6 +19,7 @@ import { CeilingDisseminationComponent } from './update/ceiling-dissemination.co
 import { FinalizeCeilingComponent } from './update/finalize-ceiling.component';
 import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
+import { AdminCeilingDisseminationComponent } from './update/admin-ceiling-dissemination.component';
 
 @NgModule({
     imports: [SharedModule, CommonModule, AdminHierarchyCeilingRoutingModule, BadgeModule, SplitButtonModule],
@@ -30,6 +31,7 @@ import { LockCeilingComponent } from './update/lock-ceiling.component';
     FinalizeCeilingComponent,
     UploadCeilingComponent,
     LockCeilingComponent,
+    AdminCeilingDisseminationComponent,
   ],
   entryComponents: [AdminHierarchyCeilingUpdateComponent],
 })

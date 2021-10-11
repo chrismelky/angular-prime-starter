@@ -5,25 +5,31 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { PriorityArea } from "../priority-area.model";
-import { PriorityAreaService } from "../priority-area.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { PriorityArea } from '../priority-area.model';
+import { PriorityAreaService } from '../priority-area.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { SectorService } from '../../sector/sector.service';
+import { ObjectiveService } from '../../objective/objective.service';
+import { Sector } from '../../sector/sector.model';
+import { Objective } from '../../objective/objective.model';
 
 @Component({
-  selector: "app-priority-area-update",
-  templateUrl: "./priority-area-update.component.html",
+  selector: 'app-priority-area-update',
+  templateUrl: './priority-area-update.component.html',
 })
 export class PriorityAreaUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  sectors?: Sector[] = [];
+  objectives?: Objective[] = [];
 
   /**
    * Declare form
@@ -32,6 +38,8 @@ export class PriorityAreaUpdateComponent implements OnInit {
     id: [null, []],
     description: [null, [Validators.required]],
     number: [null, [Validators.required]],
+    objectives: [[], []],
+    sectors: [[], [Validators.required]],
   });
 
   constructor(
@@ -39,11 +47,24 @@ export class PriorityAreaUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected sectorService: SectorService,
+    protected objectiveService: ObjectiveService
   ) {}
 
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.sectorService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe((resp) => (this.sectors = resp.data));
+
+    this.objectiveService
+      .query({
+        columns: ['id', 'description', 'code'],
+      })
+      .subscribe((resp) => (this.objectives = resp.data));
   }
 
   /**
@@ -106,6 +127,8 @@ export class PriorityAreaUpdateComponent implements OnInit {
       id: priorityArea.id,
       description: priorityArea.description,
       number: priorityArea.number,
+      sectors: priorityArea.sectors,
+      objectives: priorityArea.objectives,
     });
   }
 
@@ -116,9 +139,11 @@ export class PriorityAreaUpdateComponent implements OnInit {
   protected createFromForm(): PriorityArea {
     return {
       ...new PriorityArea(),
-      id: this.editForm.get(["id"])!.value,
-      description: this.editForm.get(["description"])!.value,
-      number: this.editForm.get(["number"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      description: this.editForm.get(['description'])!.value,
+      number: this.editForm.get(['number'])!.value,
+      sectors: this.editForm.get(['sectors'])!.value,
+      objectives: this.editForm.get(['objectives'])!.value,
     };
   }
 }

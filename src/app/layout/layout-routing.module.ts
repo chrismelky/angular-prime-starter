@@ -1162,6 +1162,54 @@ const routes: Routes = [
             (m) => m.ProjectSectorModule
           ),
       },
+      {
+        path: "activity-implementation",
+        loadChildren: () =>
+          import(
+            "../execution/activity-implementation/activity-implementation.module"
+          ).then((m) => m.ActivityImplementationModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: "WRITE_ACTIVITY_IMPLEMENTATION",
+          },
+        },
+      },
+      {
+        path: "intervention-category",
+        loadChildren: () =>
+          import(
+            "../setup/intervention-category/intervention-category.module"
+          ).then((m) => m.InterventionCategoryModule),
+      },
+      {
+        path: "intervention",
+        loadChildren: () =>
+          import("../setup/intervention/intervention.module").then(
+            (m) => m.InterventionModule
+          ),
+      },
+      {
+        path: "sector-problem",
+        loadChildren: () =>
+          import("../planning/sector-problem/sector-problem.module").then(
+            (m) => m.SectorProblemModule
+          ),
+      },
+      {
+        path: "planning-matrix",
+        loadChildren: () =>
+          import("../setup/planning-matrix/planning-matrix.module").then(
+            (m) => m.PlanningMatrixModule
+          ),
+      },
+      {
+        path: "generic-sector-problem",
+        loadChildren: () =>
+          import(
+            "../setup/generic-sector-problem/generic-sector-problem.module"
+          ).then((m) => m.GenericSectorProblemModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

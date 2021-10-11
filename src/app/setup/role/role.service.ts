@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { Role } from "./role.model";
+import {AllPermissionAndAssigned} from "../permission/permission.model";
 
 @Injectable({ providedIn: "root" })
 export class RoleService {
@@ -38,6 +39,14 @@ export class RoleService {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<Role[]>>(this.resourceUrl, {
       params: options,
+    });
+  }
+
+  allPermissionsAndAssignedPermissions(roleId: number | undefined): Observable<CustomResponse<AllPermissionAndAssigned>> {
+    return this.http.get<CustomResponse<AllPermissionAndAssigned>>(`${this.resourceUrl}/allPermissionsAndAssignedPermissions`, {
+      params: {
+        roleId: `${roleId}`
+      },
     });
   }
 

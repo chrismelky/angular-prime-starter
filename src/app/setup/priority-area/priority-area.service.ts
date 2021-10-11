@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { PriorityArea } from "./priority-area.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { PriorityArea } from './priority-area.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class PriorityAreaService {
-  public resourceUrl = "api/priority_areas";
+  public resourceUrl = 'api/priority_areas';
 
   constructor(protected http: HttpClient) {}
 
@@ -44,6 +44,16 @@ export class PriorityAreaService {
     return this.http.get<CustomResponse<PriorityArea[]>>(this.resourceUrl, {
       params: options,
     });
+  }
+
+  bySectorOrObjective(
+    sectorId: number,
+    objectiveId: number,
+    adminHierarchyId: number
+  ): Observable<CustomResponse<PriorityArea[]>> {
+    return this.http.get<CustomResponse<PriorityArea[]>>(
+      `${this.resourceUrl}/by_sector_or_objective/${sectorId}/${objectiveId}/${adminHierarchyId}`
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

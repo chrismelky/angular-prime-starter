@@ -363,6 +363,7 @@ export class ActivityComponent implements OnInit {
       data: {
         activity: data,
         facilities: this.facilities,
+        objectiveId: this.objective?.id,
         adminHierarchyCostCentre: this.adminHierarchyCostCentre,
       },
       header: 'Create/Update Activity',

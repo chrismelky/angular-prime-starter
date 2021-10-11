@@ -9,14 +9,7 @@
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <textarea
-            id="description"
-            formControlName="description"
-            [rows]="5"
-            [cols]="30"
-            pInputTextarea
-            [autoResize]="true"
-          ></textarea>
+          <input id="description" formControlName="description" pInputText />
           <label for="description">Description </label>
         </span>
         <span
@@ -53,6 +46,52 @@
             *ngIf="editForm.get('number')?.errors?.required"
             >Number is required.</small
           >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-multiSelect
+            id="sectors"
+            optionLabel="name"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            dataKey="id"
+            [options]="sectors!"
+            formControlName="sectors"
+          ></p-multiSelect>
+          <label for="sectors">Sectors </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sectors')!.invalid &&
+            (editForm.get('sectors')!.dirty ||
+              editForm.get('sectors')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('sectors')?.errors?.required"
+            >Sectors is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-multiSelect
+            id="objectives"
+            optionLabel="description"
+            [filter]="true"
+            dataKey="id"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="objectives!"
+            formControlName="objectives"
+          ></p-multiSelect>
+          <label for="objectives">Objective </label>
         </span>
       </div>
 

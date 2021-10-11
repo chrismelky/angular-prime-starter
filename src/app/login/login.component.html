@@ -4,13 +4,35 @@
   fxLayoutAlign="center center"
   style="height: 100%; width: 100%; background-color: #f8f9fa"
 >
-  <p-card fxFlex="70%">
+  <p-card
+    fxFlex="70%"
+    fxFlex.lt-md="90%"
+    fxFlex.md="40%"
+    style="max-height: 430px"
+  >
     <div fxLayout="row" fxLayoutGap="0px">
-      <div fxLayout="column" fxLayoutGap="10px" fxFlex="60%">
-        <img src="../../../assets/images/advart.jpeg" />
+      <div
+        fxLayout="column"
+        fxLayoutGap="10px"
+        fxFlex="60%"
+        fxHide.lt-md="true"
+        fxHide.md="true"
+      >
+        <img src="../../../assets/images/advart.jpeg" height="420px" />
       </div>
-      <p-divider layout="vertical"></p-divider>
-      <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="center" fxFlex>
+      <p-divider
+        fxHide.lt-md="true"
+        fxHide.md="true"
+        layout="vertical"
+      ></p-divider>
+      <div
+        fxLayout="column"
+        fxLayoutGap="10px"
+        fxLayoutAlign="center"
+        fxFlex
+        fxFlex.lt-md="100%"
+        fxFlex.md="100%"
+      >
         <form
           name="loginForm"
           role="form"

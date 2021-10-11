@@ -92,6 +92,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   position!: number | undefined;
   section_id!: number | undefined;
   admin_hierarchy_position!: number;
+  ceilingStartSectionPosition!: number;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -136,6 +137,13 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<any>) => {
           this.ceilingStartPosition = +resp.data;
+        }
+      );
+    this.adminHierarchyCeilingService
+      .ceilingStartSectionPosition()
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.ceilingStartSectionPosition = +resp.data;
         }
       );
     this.sectionLevelService
@@ -599,11 +607,12 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       position: this.admin_hierarchy_position,
       section_level_position: this.position,
       ceilingStartPosition:this.ceilingStartPosition,
+      ceilingStartSectionPosition:this.ceilingStartSectionPosition,
       section_id: this.section_id,
     };
     const ref = this.dialogService.open(AdminCeilingDisseminationComponent, {
       header: 'Ceiling Dissemination',
-      width: '80%',
+      width: '60%',
       styleClass:'planrep-dialogy',
       data,
     });

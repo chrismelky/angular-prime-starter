@@ -65,6 +65,13 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  ceilingStartSectionPosition(): Observable<CustomResponse<any>> {
+    const url = 'api/ceiling_start_section_position';
+    return this.http.get<CustomResponse<any>>(
+      url
+    );
+  }
+
   update(
     adminHierarchyCeiling: AdminHierarchyCeiling
   ): Observable<CustomResponse<AdminHierarchyCeiling>> {

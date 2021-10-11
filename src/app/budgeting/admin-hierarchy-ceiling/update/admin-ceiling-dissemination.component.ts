@@ -30,6 +30,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   selectedCostCenter?: number;
   selectedDepartment?: number;
   ceilingStartPosition?:number;
+  ceilingStartSectionPosition?:number;
   filterValue: string = '';
   facilityFilterValue?: string = '';
   ceiling?: AdminHierarchyCeiling={};
@@ -79,7 +80,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     this.position = this.config.data.position;
     this.ceilingStartPosition = this.config.data.ceilingStartPosition;
     this.section_id = this.config.data.section_id;
-    this.section_level_position = this.config.data.section_level_position
+    this.section_level_position = this.config.data.section_level_position;
+    this.ceilingStartSectionPosition = this.config.data.ceilingStartSectionPosition;
 
   }
 
@@ -88,7 +90,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
       .queryWithChild({for_admin_hierarchy_level_position:this.ceilingStartPosition})
       .subscribe(
         (resp: CustomResponse<CeilingChain[]>) =>{
-          this.ceilingChain = (resp.data??[]).filter(chain => chain.section_level_position.position !== 1);
+          this.ceilingChain = (resp.data??[]).filter(chain => chain.section_level_position.position !== this.ceilingStartSectionPosition);
           this.allChain = (resp.data??[]);
           if(this.ceilingChain!.length <= 0){
             this.toastService.info("Please Set Ceiling Chain to Proceed ...");

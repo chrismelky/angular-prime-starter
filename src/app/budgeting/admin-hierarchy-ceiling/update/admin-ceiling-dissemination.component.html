@@ -7,7 +7,7 @@
       </div>
     </ng-template>
     <ng-template pTemplate="body">
-      <div fxLayout="column" fxLayoutGap="10px" *ngIf="section_level_position === 1">
+      <div fxLayout="column" fxLayoutGap="10px" *ngIf="section_level_position === ceilingStartSectionPosition">
         <div fxLayout="row wrap" fxLayoutGap="10px">
           <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
             <div class="p-field" fxFlex>
@@ -19,12 +19,12 @@
           </div>
         </div>
       </div>
-      <br *ngIf="section_level_position === 1">
+      <br *ngIf="section_level_position === ceilingStartSectionPosition">
       <div fxLayout="column" fxLayoutGap="10px">
         <div fxLayout="row wrap" fxLayoutGap="10px">
           <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
             <div class="p-field" fxFlex >
-              <span class="p-float-label" *ngIf="ceiling!.section!.section_level!.is_cost_centre!">
+              <span class="p-float-label" *ngIf="this.ceiling!.section!.position !== this.costCenterCeiling?.section?.position">
                 <b>{{department!.name}}</b> Total  Allocated Amount : <b>{{totalAllocatedDepartmentAmount | currency:"TZS":"TSH"}}</b>
                 (<b>{{ departmentCeiling!.amount! >0.00?((totalAllocatedDepartmentAmount/departmentCeiling!.amount!)*100):0.00 | number : '1.2-2'}} %</b>)
                  <p-badge severity="success" *ngIf="departmentCeiling!.amount!>0" [value]="'Allocate'" (click)="openDialog(op,departmentCeiling!.section!.position!,$event,departmentCeiling!)" class="badge-custom"  styleClass="p-mr-2"></p-badge>

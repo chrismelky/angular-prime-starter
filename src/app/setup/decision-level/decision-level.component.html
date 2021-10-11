@@ -119,12 +119,11 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="decisionLevels?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'next_decision_level_ids'">
+            Next Decision Levels <p-sortIcon [field]="'next_decision_level_ids'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -133,6 +132,12 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            <mat-chip-list aria-label="Next Decision Level">
+              <mat-chip *ngFor="let row of nextDecisionLevels(rowData.next_decision_level_ids|json)">{{row.name}}</mat-chip>
+            </mat-chip-list>
+            <!--{{nextDecisionLevels(rowData.next_decision_level_ids|json)}}-->
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

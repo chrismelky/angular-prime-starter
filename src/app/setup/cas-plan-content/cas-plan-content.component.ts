@@ -320,7 +320,7 @@ export class CasPlanContentComponent implements OnInit {
   }
 
   /**
-   * When error on loading data set data to empt and resert page to load
+   * When error on loading data set data to empty and reset page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));

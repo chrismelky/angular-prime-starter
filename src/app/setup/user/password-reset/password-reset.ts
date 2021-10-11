@@ -5,6 +5,7 @@ export class PasswordReset {
     public id?: number,
     public password?: string,
     public passwordConfirmation?: string,
+    public oldPassword?: string,
   ) {
   }
 }

@@ -14,7 +14,8 @@ import {ErrorHandlerInterceptor} from './interceptors/error-handler.interceptor'
 import {AuthExpiredInterceptor} from './interceptors/auth-expired.interceptor';
 import {RippleModule} from 'primeng/ripple';
 import {LoaderInterceptor} from "./shared/loader-interceptor";
-import { NgxPermissionsModule } from 'ngx-permissions';
+import {NgxPermissionsModule} from 'ngx-permissions';
+import {DialogService} from "primeng/dynamicdialog";
 
 @NgModule({
   declarations: [AppComponent],
@@ -34,6 +35,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
     NgxPermissionsModule.forRoot(),
   ],
   providers: [
+    DialogService,
     MessageService,
     {
       provide: HTTP_INTERCEPTORS,
@@ -52,7 +54,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
     },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: LoaderInterceptor ,
+      useClass: LoaderInterceptor,
       multi: true
     },
   ],

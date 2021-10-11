@@ -47,7 +47,6 @@ import { UserService } from '../../setup/user/user.service';
 import { CeilingDisseminationComponent } from './update/ceiling-dissemination.component';
 import { CeilingChainService } from '../../setup/ceiling-chain/ceiling-chain.service';
 import { CeilingChain } from '../../setup/ceiling-chain/ceiling-chain.model';
-import { FinalizeCeilingComponent } from './update/finalize-ceiling.component';
 import { saveAs } from 'file-saver';
 import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
@@ -619,38 +618,4 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     ref.onClose.subscribe((result) => {});
   }
 
-  allocate(row: AdminHierarchyCeiling) {
-    //get next ceiling Chain
-    this.ceilingChainService
-      .query({ section_level_position: this.position, active: true, page: 1 })
-      .subscribe((resp: CustomResponse<CeilingChain[]>) => {
-        let ceilingChain = resp.data ?? [];
-        if (ceilingChain.length > 0) {
-          const data: any = {
-            ceiling: row,
-            position: this.admin_hierarchy_position,
-            ceilingChain: ceilingChain[0],
-          };
-          if (ceilingChain[0].next !== null) {
-            const ref = this.dialogService.open(CeilingDisseminationComponent, {
-              header: 'Ceiling Dissemination',
-              width: '60%',
-              data,
-            });
-            ref.onClose.subscribe((result) => {});
-          } else {
-            const ref = this.dialogService.open(FinalizeCeilingComponent, {
-              header: 'Ceiling Dissemination',
-              width: '60%',
-              data,
-            });
-            ref.onClose.subscribe((result) => {});
-          }
-        } else {
-          this.toastService.info(
-            'Please Set The Ceiling Chain Before This Process'
-          );
-        }
-      });
-  }
 }

@@ -10,6 +10,7 @@ export class BudgetCeiling{
     public is_locked?: boolean,
     public is_approved?: boolean,
     public budget_type?: string,
-    public amount?: number
+    public amount?: number,
+    public ceiling_id?:number,
   ) {}
 }

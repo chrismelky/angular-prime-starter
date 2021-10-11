@@ -16,7 +16,6 @@ import { InitiateCeilingComponent } from './update/initiate-ceiling.component';
 import {BadgeModule} from "primeng/badge";
 import {SplitButtonModule} from "primeng/splitbutton";
 import { CeilingDisseminationComponent } from './update/ceiling-dissemination.component';
-import { FinalizeCeilingComponent } from './update/finalize-ceiling.component';
 import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
 import { AdminCeilingDisseminationComponent } from './update/admin-ceiling-dissemination.component';
@@ -28,7 +27,6 @@ import { AdminCeilingDisseminationComponent } from './update/admin-ceiling-disse
     AdminHierarchyCeilingUpdateComponent,
     InitiateCeilingComponent,
     CeilingDisseminationComponent,
-    FinalizeCeilingComponent,
     UploadCeilingComponent,
     LockCeilingComponent,
     AdminCeilingDisseminationComponent,

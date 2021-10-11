@@ -17,6 +17,7 @@ import { BlockUIModule } from 'primeng/blockui';
 import { RippleModule } from 'primeng/ripple';
 import { PermissionDeniedComponent } from './permission-denied/permission-denied.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import {ChangePasswordModule} from "./change-password/change-password.module";
 
 @NgModule({
   declarations: [MainComponent, NotFoundComponent, PermissionDeniedComponent],
@@ -34,6 +35,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     BlockUIModule,
     RippleModule,
     MatProgressBarModule,
+    ChangePasswordModule
   ],
 })
 export class LayoutModule {}

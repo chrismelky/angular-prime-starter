@@ -9,25 +9,6 @@
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="value" type="text" pInputText formControlName="value" />
-          <label for="value">Value </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('value')!.invalid &&
-            (editForm.get('value')!.dirty ||
-              editForm.get('value')!.touched ||
-              formError)
-          "
-        >
-          <small class="p-error" *ngIf="editForm.get('value')?.errors?.required"
-            >Value is required.</small
-          >
-        </span>
-      </div>
-
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
           <p-dropdown
             id="facility_custom_detail_id"
             optionValue="id"
@@ -53,6 +34,24 @@
             class="p-error"
             *ngIf="editForm.get('facility_custom_detail_id')?.errors?.required"
             >Facility Custom Detail is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <input id="value" type="text" pInputText formControlName="value" />
+          <label for="value">Value </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('value')!.invalid &&
+            (editForm.get('value')!.dirty ||
+              editForm.get('value')!.touched ||
+              formError)
+          "
+        >
+          <small class="p-error" *ngIf="editForm.get('value')?.errors?.required"
+          >Value is required.</small
           >
         </span>
       </div>

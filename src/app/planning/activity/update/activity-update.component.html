@@ -10,6 +10,7 @@
       <ng-template matStepperIcon="edit">
         <i class="pi pi-pencil" style="font-size: 11px; line-height: 11px"></i>
       </ng-template>
+
       <mat-step [stepControl]="editForm">
         <ng-template matStepLabel>General</ng-template>
 
@@ -278,39 +279,320 @@
           </div>
 
           <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
-            <!-- Fund source -->
-            <div class="p-field" fxFlex>
+            <div class="p-field p-col-12 p-md-4" fxFlex>
               <span class="p-float-label">
-                <p-multiSelect
-                  id="budget_class_id"
-                  [filter]="true"
-                  display="chip"
-                  dataKey="id"
-                  formControlName="fund_sources"
-                  [options]="fundSources!"
-                  optionLabel="name"
-                  class="p-inputtext-sm"
-                  appendTo="body"
-                ></p-multiSelect>
-                <label for="budget_class_id">Fund Source </label>
+                <input id="indicator" formControlName="indicator" pInputText />
+                <label for="indicator">Indicator </label>
               </span>
               <span
                 *ngIf="
-                  editForm.get('fund_sources')!.invalid &&
-                  (editForm.get('fund_sources')!.dirty ||
-                    editForm.get('fund_sources')!.touched ||
+                  editForm.get('indicator')!.invalid &&
+                  (editForm.get('indicator')!.dirty ||
+                    editForm.get('indicator')!.touched ||
+                    formError)
+                "
+              >
+              </span>
+            </div>
+            <!-- Project output-->
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="project_output_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  appendTo="body"
+                  [options]="projectOutputs!"
+                  formControlName="project_output_id"
+                ></p-dropdown>
+                <label for="project_output_id">Project Output</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('project_output_id')!.invalid &&
+                  (editForm.get('project_output_id')!.dirty ||
+                    editForm.get('project_output_id')!.touched ||
                     formError)
                 "
               >
                 <small
                   class="p-error"
-                  *ngIf="editForm.get('fund_sources')?.errors?.required"
-                  >Fund Sources are required.</small
+                  *ngIf="editForm.get('project_output_id')?.errors?.required"
+                  >Project output is required.</small
                 >
               </span>
             </div>
           </div>
 
+          <div fxLayout="row" fxLayoutGap="0.75rem">
+            <span fxFlex></span>
+            <button
+              matStepperNext
+              class="p-button-raised"
+              icon="pi pi-check"
+              label="Next"
+              pButton
+              type="button"
+            ></button>
+          </div>
+        </div>
+      </mat-step>
+      <!-- Fund Source Faclity Tab -->
+      <mat-step>
+        <ng-template matStepLabel>Fund Sources</ng-template>
+        <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
+          <!-- Fund source -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-multiSelect
+                id="budget_class_id"
+                [filter]="true"
+                display="chip"
+                dataKey="id"
+                formControlName="fund_sources"
+                [options]="fundSources!"
+                (onChange)="fundSourceChange($event)"
+                optionLabel="name"
+                class="p-inputtext-sm"
+                appendTo="body"
+              ></p-multiSelect>
+              <label for="budget_class_id">Fund Source </label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('fund_sources')!.invalid &&
+                (editForm.get('fund_sources')!.dirty ||
+                  editForm.get('fund_sources')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('fund_sources')?.errors?.required"
+                >Fund Sources are required.</small
+              >
+            </span>
+          </div>
+        </div>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Facilities</ng-template>
+        <!-- Indicator and project out put -->
+        <div fxLayout="column" fxLayoutGap="20px" fxLayoutAlign="start">
+          <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start">
+            <p-table
+              [value]="facilityForm.controls"
+              dataKey="controls.facility_id.value"
+              editMode="row"
+              responsiveLayout="scroll"
+              styleClass="p-datatable-gridlines"
+              formArrayName="activity_facilities"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Facility</th>
+                  <th>Indicator Value</th>
+                  <th>Project Output Value</th>
+                  <th style="width: 8rem"></th>
+                </tr>
+                <tr class="add-table-row">
+                  <th>
+                    <p-multiSelect
+                      #facilitiesToAdd
+                      fxFlex
+                      id="facilities"
+                      [filter]="true"
+                      [maxSelectedLabels]="1"
+                      [options]="facilities!"
+                      optionLabel="name"
+                      class="p-inputtext-sm"
+                      [selectedItemsLabel]="'{0} facilities selected'"
+                      appendTo="body"
+                    ></p-multiSelect>
+                  </th>
+                  <th>
+                    <input
+                      #indicatorValueToAdd
+                      id="indicatorValueToAdd"
+                      type="text"
+                      pInputText
+                    />
+                  </th>
+                  <th>
+                    <input
+                      #projectOutputValueToAdd
+                      id="projectOutputValueToAdd"
+                      type="text"
+                      pInputText
+                    />
+                  </th>
+                  <th style="width: 8rem">
+                    <div
+                      fxFlex
+                      fxLayout="row"
+                      fxLayoutGap="2px"
+                      fxLayoutAlign="end"
+                    >
+                      <button
+                        type="button"
+                        icon="pi pi-plus"
+                        label="Add"
+                        pButton
+                        class="p-button-text p-button-rounded p-button-icon"
+                        (click)="
+                          addFacility(
+                            facilitiesToAdd,
+                            indicatorValueToAdd,
+                            projectOutputValueToAdd
+                          )
+                        "
+                      ></button>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template
+                pTemplate="body"
+                let-activityFacility
+                let-editing="editing"
+                let-ri="rowIndex"
+              >
+                <tr [pEditableRow]="activityFacility" [formGroupName]="ri">
+                  <td>
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        {{ activityFacility.get("facility_name")?.value! }}
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{ activityFacility.get("facility_name")?.value! }}
+                      </ng-template>
+                    </p-cellEditor>
+                  </td>
+                  <td>
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <input
+                          [ngClass]="{
+                            error:
+                              activityFacility.get('indicator_value')!
+                                .invalid &&
+                              (activityFacility.get('indicator_value')!.dirty ||
+                                activityFacility.get('indicator_value')!
+                                  .touched ||
+                                formError)
+                          }"
+                          id="{{ ri }}"
+                          type="text"
+                          pInputText
+                          formControlName="indicator_value"
+                        />
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{ activityFacility.get("indicator_value")?.value! }}
+                      </ng-template>
+                    </p-cellEditor>
+                  </td>
+                  <td>
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <input
+                          [ngClass]="{
+                            error:
+                              activityFacility.get('project_output_value')!
+                                .invalid &&
+                              (activityFacility.get('project_output_value')!
+                                .dirty ||
+                                activityFacility.get('project_output_value')!
+                                  .touched ||
+                                formError)
+                          }"
+                          id="{{ ri }}"
+                          type="text"
+                          pInputText
+                          formControlName="project_output_value"
+                        />
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{
+                          activityFacility.get("project_output_value")?.value!
+                        }}
+                      </ng-template>
+                    </p-cellEditor>
+                  </td>
+
+                  <td style="text-align: center">
+                    <div fxLayout="row" fxLayoutGap="2px" fxLayoutAlign="end">
+                      <button
+                        *ngIf="!editing"
+                        pButton
+                        pRipple
+                        type="button"
+                        pInitEditableRow
+                        icon="pi pi-pencil"
+                        class="p-button-rounded p-button-text p-button-plain"
+                      ></button>
+                      <button
+                        *ngIf="!editing"
+                        pButton
+                        pRipple
+                        type="button"
+                        (click)="
+                          confirmDeleteActivity(
+                            $event,
+                            activityFacility.get('id')?.value,
+                            ri
+                          )
+                        "
+                        icon="pi pi-trash"
+                        class="p-button-rounded p-button-text p-button-plain"
+                      ></button>
+                      <button
+                        *ngIf="editing"
+                        pButton
+                        pRipple
+                        type="button"
+                        pSaveEditableRow
+                        icon="pi pi-check"
+                        class="
+                          p-button-rounded p-button-text p-button-success p-mr-2
+                        "
+                      ></button>
+                      <button
+                        *ngIf="editing"
+                        pButton
+                        pRipple
+                        type="button"
+                        pCancelEditableRow
+                        icon="pi pi-times"
+                        class="p-button-rounded p-button-text p-button-danger"
+                      ></button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+          <!-- Action  -->
+          <div fxLayout="row" fxLayoutGap="0.75rem">
+            <span fxFlex></span>
+            <button
+              matStepperNext
+              class="p-button-raised"
+              icon="pi pi-check"
+              label="Next"
+              pButton
+              type="button"
+            ></button>
+          </div>
+        </div>
+      </mat-step>
+      <!-- Reference Tab -->
+      <mat-step>
+        <ng-template matStepLabel>References</ng-template>
+        <div fxLayout="column" fxLayoutGap="20px">
           <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
             <!-- Priority area -->
             <div class="p-field" fxFlex>
@@ -412,336 +694,87 @@
               </span>
             </div>
           </div>
-          <div fxLayout="row" fxLayoutGap="0.75rem">
-            <span fxFlex></span>
-            <button
-              matStepperNext
-              class="p-button-raised"
-              icon="pi pi-check"
-              label="Next"
-              pButton
-              type="button"
-            ></button>
-          </div>
-        </div>
-      </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>Facilities</ng-template>
-        <!-- Indicator and project out put -->
-        <div fxLayout="column" fxLayoutGap="20px" fxLayoutAlign="start">
-          <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
-            <div class="p-field p-col-12 p-md-4" fxFlex>
-              <span class="p-float-label">
-                <input id="indicator" formControlName="indicator" pInputText />
-                <label for="indicator">Indicator </label>
-              </span>
-              <span
-                *ngIf="
-                  editForm.get('indicator')!.invalid &&
-                  (editForm.get('indicator')!.dirty ||
-                    editForm.get('indicator')!.touched ||
-                    formError)
-                "
-              >
-              </span>
-            </div>
-            <!-- Project output-->
-            <div class="p-field" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="project_output_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  appendTo="body"
-                  [options]="projectOutputs!"
-                  formControlName="project_output_id"
-                ></p-dropdown>
-                <label for="project_output_id">Project Output</label>
-              </span>
-              <span
-                *ngIf="
-                  editForm.get('project_output_id')!.invalid &&
-                  (editForm.get('project_output_id')!.dirty ||
-                    editForm.get('project_output_id')!.touched ||
-                    formError)
-                "
-              >
-                <small
-                  class="p-error"
-                  *ngIf="editForm.get('project_output_id')?.errors?.required"
-                  >Project output is required.</small
-                >
-              </span>
-            </div>
-          </div>
-          <!-- Facilities -->
-          <p-fieldset legend="Add facilities">
-            <div fxLayout="row" fxLayoutGap="4px" fxFlex>
-              <span fxFlex="30">
-                <p-multiSelect
-                  #facilitiesToAdd
-                  fxFlex
-                  id="facilities"
-                  [filter]="true"
-                  [maxSelectedLabels]="1"
-                  [options]="facilities!"
-                  optionLabel="name"
-                  class="p-inputtext-sm"
-                  [selectedItemsLabel]="'{0} facilities selected'"
-                  appendTo="body"
-                ></p-multiSelect>
-              </span>
-              <span fxFlex="20">
-                <input
-                  #indicatorValueToAdd
-                  id="indicatorValueToAdd"
-                  type="text"
-                  pInputText
-                />
-              </span>
-              <span fxFlex="20">
-                <input
-                  #projectOutputValueToAdd
-                  id="projectOutputValueToAdd"
-                  type="text"
-                  pInputText
-                />
-              </span>
-              <span fxFlex="10">
-                <button
-                  type="button"
-                  icon="pi pi-plus"
-                  pButton
-                  class="p-button-text p-button-rounded p-button-icon"
-                  (click)="
-                    addFacility(
-                      facilitiesToAdd,
-                      indicatorValueToAdd,
-                      projectOutputValueToAdd
-                    )
-                  "
-                ></button>
-              </span>
-            </div>
-          </p-fieldset>
-          <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start">
-            <p-table
-              [value]="facilityForm.controls"
-              dataKey="controls.facility_id.value"
-              editMode="row"
-              responsiveLayout="scroll"
-              formArrayName="activity_facilities"
-            >
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>Facility</th>
-                  <th>Indicator Value</th>
-                  <th>Project Output Valur</th>
-                  <th style="width: 8rem"></th>
-                </tr>
-              </ng-template>
-              <ng-template
-                pTemplate="body"
-                let-activityFacility
-                let-editing="editing"
-                let-ri="rowIndex"
-              >
-                <tr [pEditableRow]="activityFacility" [formGroupName]="ri">
-                  <td>
-                    <p-cellEditor>
-                      <ng-template pTemplate="input">
-                        {{ activityFacility.get("facility_name")?.value! }}
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        {{ activityFacility.get("facility_name")?.value! }}
-                      </ng-template>
-                    </p-cellEditor>
-                  </td>
-                  <td>
-                    <p-cellEditor>
-                      <ng-template pTemplate="input">
-                        <input
-                          [ngClass]="{
-                            error:
-                              activityFacility.get('indicator_value')!
-                                .invalid &&
-                              (activityFacility.get('indicator_value')!.dirty ||
-                                activityFacility.get('indicator_value')!
-                                  .touched ||
-                                formError)
-                          }"
-                          id="{{ ri }}"
-                          type="text"
-                          pInputText
-                          formControlName="indicator_value"
-                        />
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        {{ activityFacility.get("indicator_value")?.value! }}
-                      </ng-template>
-                    </p-cellEditor>
-                  </td>
-                  <td>
-                    <p-cellEditor>
-                      <ng-template pTemplate="input">
-                        <input
-                          [ngClass]="{
-                            error:
-                              activityFacility.get('project_output_value')!
-                                .invalid &&
-                              (activityFacility.get('project_output_value')!
-                                .dirty ||
-                                activityFacility.get('project_output_value')!
-                                  .touched ||
-                                formError)
-                          }"
-                          id="{{ ri }}"
-                          type="text"
-                          pInputText
-                          formControlName="project_output_value"
-                        />
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        {{
-                          activityFacility.get("project_output_value")?.value!
-                        }}
-                      </ng-template>
-                    </p-cellEditor>
-                  </td>
-
-                  <td style="text-align: center">
-                    <button
-                      *ngIf="!editing"
-                      pButton
-                      pRipple
-                      type="button"
-                      pInitEditableRow
-                      icon="pi pi-pencil"
-                      class="p-button-rounded p-button-text"
-                    ></button>
-                    <button
-                      *ngIf="editing"
-                      pButton
-                      pRipple
-                      type="button"
-                      pSaveEditableRow
-                      icon="pi pi-check"
-                      class="
-                        p-button-rounded p-button-text p-button-success p-mr-2
-                      "
-                    ></button>
-                    <button
-                      *ngIf="editing"
-                      pButton
-                      pRipple
-                      type="button"
-                      pCancelEditableRow
-                      icon="pi pi-times"
-                      class="p-button-rounded p-button-text p-button-danger"
-                    ></button>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-          <!-- Action  -->
-          <div fxLayout="row" fxLayoutGap="0.75rem">
-            <span fxFlex></span>
-            <button
-              matStepperNext
-              class="p-button-raised"
-              icon="pi pi-check"
-              label="Next"
-              pButton
-              type="button"
-            ></button>
-          </div>
-        </div>
-      </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>References</ng-template>
-        <div
-          formArrayName="references"
-          fxLayout="row"
-          fxLayoutGap="10px"
-          fxLayoutAlign="start wrap"
-        >
           <div
-            *ngIf="referenceLoading"
+            formArrayName="references"
             fxLayout="row"
-            fxLayoutGap="20px"
-            fxLayoutAlign="center center"
+            fxLayoutGap="10px"
+            fxLayoutAlign="start wrap"
           >
-            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-            <span>Loading References</span>
-          </div>
-          <div
-            *ngFor="let c of referenceControls.controls; let i = index"
-            fxFlex
-          >
-            <ng-container [formGroupName]="i">
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
-                    *ngIf="!c.get('isMultiple')?.value"
-                    id="section_id"
-                    optionLabel="description"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    class="p-inputtext-sm"
-                    appendTo="body"
-                    dataKey="id"
-                    [options]="c.get('options')?.value"
-                    formControlName="value"
-                  ></p-dropdown>
-                  <p-multiSelect
-                    *ngIf="c.get('isMultiple')?.value"
-                    id="section_id"
-                    optionLabel="description"
-                    [filter]="true"
-                    dataKey="id"
-                    class="p-inputtext-sm"
-                    appendTo="body"
-                    [options]="c.get('options')?.value"
-                    formControlName="value"
-                  >
-                  </p-multiSelect>
+            <div
+              *ngIf="referenceLoading"
+              fxLayout="row"
+              fxLayoutGap="20px"
+              fxLayoutAlign="center center"
+            >
+              <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+              <span>Loading References</span>
+            </div>
+            <div
+              *ngFor="let c of referenceControls.controls; let i = index"
+              fxFlex
+            >
+              <ng-container [formGroupName]="i">
+                <div class="p-field" fxFlex>
+                  <span class="p-float-label">
+                    <p-dropdown
+                      *ngIf="!c.get('isMultiple')?.value"
+                      id="section_id"
+                      optionLabel="description"
+                      [autoDisplayFirst]="false"
+                      [filter]="true"
+                      class="p-inputtext-sm"
+                      appendTo="body"
+                      dataKey="id"
+                      [options]="c.get('options')?.value"
+                      formControlName="value"
+                    ></p-dropdown>
+                    <p-multiSelect
+                      *ngIf="c.get('isMultiple')?.value"
+                      id="section_id"
+                      optionLabel="description"
+                      [filter]="true"
+                      dataKey="id"
+                      class="p-inputtext-sm"
+                      appendTo="body"
+                      [options]="c.get('options')?.value"
+                      formControlName="value"
+                    >
+                    </p-multiSelect>
 
-                  <label for="{{ i }}">{{ c.get("name")?.value! }}</label>
-                </span>
-                <span
-                  *ngIf="
-                    c.get('value')!.invalid &&
-                    (c.get('value')!.dirty ||
-                      c.get('value')!.touched ||
-                      formError)
-                  "
-                >
-                  <small
-                    class="p-error"
-                    *ngIf="c.get('value')?.errors?.required"
-                    >{{ c.get("name")?.value! }} Value is required.</small
+                    <label for="{{ i }}">{{ c.get("name")?.value! }}</label>
+                  </span>
+                  <span
+                    *ngIf="
+                      c.get('value')!.invalid &&
+                      (c.get('value')!.dirty ||
+                        c.get('value')!.touched ||
+                        formError)
+                    "
                   >
-                </span>
-              </div>
-            </ng-container>
+                    <small
+                      class="p-error"
+                      *ngIf="c.get('value')?.errors?.required"
+                      >{{ c.get("name")?.value! }} Value is required.</small
+                    >
+                  </span>
+                </div>
+              </ng-container>
+            </div>
           </div>
-        </div>
-        <div fxLayout="row" fxLayoutGap="0.75rem">
-          <span fxFlex></span>
-          <button
-            matStepperNext
-            class="p-button-raised"
-            icon="pi pi-check"
-            label="Save"
-            pButton
-            type="submit"
-          ></button>
+          <div fxLayout="row" fxLayoutGap="0.75rem">
+            <span fxFlex></span>
+            <button
+              matStepperNext
+              class="p-button-raised"
+              icon="pi pi-check"
+              label="Save"
+              pButton
+              type="submit"
+            ></button>
+          </div>
         </div>
       </mat-step>
     </mat-stepper>
   </form>
 </div>
+<p-confirmPopup key="deletePopup"></p-confirmPopup>

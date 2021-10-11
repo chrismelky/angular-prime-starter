@@ -382,6 +382,20 @@ i.clear {
   padding-left: 24px;
 }
 
+.p-datatable .p-datatable-thead > tr.add-table-row {
+  background-color: #f8f9fa;
+
+  box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+  th:first-of-type,
+  th {
+  padding: 4px;
+  background-color: #f8f9fa;
+  display: table-cell !important;
+}
+}
+
+
+
 .sub-table .p-datatable   {
   .p-datatable-tbody tr, .p-datatable-thead tr > th, tr > td {
     background-color: transparent;

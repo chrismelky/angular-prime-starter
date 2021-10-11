@@ -1,23 +1,23 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {UserService} from "../user.service";
-import {User} from "../user.model";
-import {ToastService} from "../../../shared/toast.service";
+import { Component, OnInit } from '@angular/core';
+import {User} from "../../setup/user/user.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import Validation, {PasswordReset} from "../../setup/user/password-reset/password-reset";
+import {UserService} from "../../setup/user/user.service";
+import {ToastService} from "../../shared/toast.service";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import Validation, {PasswordReset} from "./password-reset";
-import {finalize} from "rxjs/operators";
 import {Observable} from "rxjs";
-import {CustomResponse} from "../../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
+import {finalize} from "rxjs/operators";
+import {LocalStorageService} from "ngx-webstorage";
 
 @Component({
-  selector: 'app-password-reset',
-  templateUrl: './password-reset.component.html',
-  styleUrls: ['./password-reset.component.scss']
+  selector: 'app-change-password',
+  templateUrl: './change-password.component.html',
+  styleUrls: ['./change-password.component.scss']
 })
-export class PasswordResetComponent implements OnInit {
+export class ChangePasswordComponent implements OnInit {
   loading: boolean;
-  user: User;
-
+  user: any = this.localStorage.retrieve("user");
   formGroup = this.formBuilder.group(
     {
       password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(40)]],
@@ -31,12 +31,12 @@ export class PasswordResetComponent implements OnInit {
   constructor(
     private userService: UserService,
     private toast: ToastService,
+    private localStorage: LocalStorageService,
     private formBuilder: FormBuilder,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
   ) {
     this.loading = false;
-    this.user = this.dialogConfig.data.user;
   }
 
   ngOnInit(): void {

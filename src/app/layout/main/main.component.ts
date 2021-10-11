@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
-import { LocalStorageService } from "ngx-webstorage";
-import { AuthService } from "../../core/auth.service";
+import {Component, OnInit} from "@angular/core";
+import {LocalStorageService} from "ngx-webstorage";
+import {AuthService} from "../../core/auth.service";
 import {
   NavigationCancel,
   NavigationEnd,
@@ -8,10 +8,12 @@ import {
   NavigationStart,
   Router,
 } from "@angular/router";
-import { BreakpointObserver } from "@angular/cdk/layout";
-import { MenuItem } from "primeng/api";
-import { filter, map } from "rxjs/operators";
-import { Observable } from "rxjs";
+import {BreakpointObserver} from "@angular/cdk/layout";
+import {MenuItem} from "primeng/api";
+import {filter, map} from "rxjs/operators";
+import {Observable} from "rxjs";
+import {ChangePasswordComponent} from "../change-password/change-password.component";
+import {DialogService} from "primeng/dynamicdialog";
 
 @Component({
   selector: "app-main",
@@ -39,6 +41,7 @@ export class MainComponent implements OnInit {
     private breakPointObsever: BreakpointObserver,
     private localStorage: LocalStorageService,
     private authService: AuthService,
+    protected dialogService: DialogService,
     private router: Router
   ) {
     this.gtMd = this.breakPointObsever
@@ -63,7 +66,11 @@ export class MainComponent implements OnInit {
   }
 
   userMenus: MenuItem[] = [
-    { label: "Change password", icon: "pi pi-fw pi-lock" },
+    {
+      label: "Change password",
+      icon: "pi pi-fw pi-lock",
+      command: ($event => this.changePassword())
+    },
     {
       label: "Logout",
       icon: "pi pi-fw pi-power-off",
@@ -728,12 +735,20 @@ export class MainComponent implements OnInit {
   ];
 
   logout(): void {
-    this.authService.logout().subscribe(() => {});
+    this.authService.logout().subscribe(() => {
+    });
   }
 
   private loadMenu() {
     this.authService
       .currentUserMenu()
       .subscribe((resp: MenuItem[]) => (this.currentUserMenuItems = resp));
+  }
+
+  private changePassword() {
+    this.dialogService.open(ChangePasswordComponent, {
+      width: '40%',
+      header: 'Personal Password Change Form'
+    });
   }
 }

@@ -64,6 +64,7 @@ export class ActivityUpdateComponent implements OnInit {
   facilities?: Facility[] = [];
   allFacilities?: Facility[] = [];
   fundSources?: FundSource[] = [];
+  allFundSources?: FundSource[] = [];
   activityTaskNatures?: ActivityTaskNature[] = [];
   projects?: Project[] = [];
   projectOutputs?: ProjectOutput[] = [];
@@ -161,7 +162,7 @@ export class ActivityUpdateComponent implements OnInit {
     this.adminHierarchyCostCentre = dialogData.adminHierarchyCostCentre;
 
     /** get activity to edit or create  from dialog   */
-    const activity: Activity = dialogData.activity;
+    const activity: Activity = { ...dialogData.activity };
 
     this.allFacilities = [...dialogData.facilities];
 
@@ -169,7 +170,7 @@ export class ActivityUpdateComponent implements OnInit {
 
     /** fetch activity task nature by selected activity_type_id if edit mode */
     if (activity.id) {
-      this.loadFundSources(activity.budget_class_id!);
+      this.loadFundSources(activity.budget_class_id!, false);
       this.loadActivityTaskNature(activity.activity_type_id!);
       this.loadProjectOutput(activity.project_id!);
       this.loadActivityFundSource(activity.financial_year_id!, activity.id);
@@ -218,9 +219,12 @@ export class ActivityUpdateComponent implements OnInit {
   }
 
   /** Load fund sources by budget classes */
-  loadFundSources(budgetClassId: number): void {
+  loadFundSources(budgetClassId: number, reset?: boolean): void {
     this.fundSourceService.getByBudgetClass(budgetClassId).subscribe((resp) => {
-      this.fundSources = resp.data;
+      this.allFundSources = resp.data;
+      this.fundSources = [...this.allFundSources!];
+
+      reset && this.editForm.get('fund_sources')?.reset([]);
     });
   }
 
@@ -341,9 +345,6 @@ export class ActivityUpdateComponent implements OnInit {
       });
   }
 
-  fundSourceChange($event: any): void {
-    console.log($event);
-  }
   /** Load activity Fund sources if activity id exist */
   loadActivityFacilities(financialYearId: number, activityId: number): void {
     this.activityService

@@ -86,7 +86,7 @@
                   formControlName="budget_class_id"
                   [options]="budgetClasses!"
                   optionValue="id"
-                  (onChange)="loadFundSources(budgetClass.value)"
+                  (onChange)="loadFundSources(budgetClass.value, true)"
                   optionLabel="name"
                   class="p-inputtext-sm"
                 ></p-dropdown>
@@ -327,6 +327,42 @@
             </div>
           </div>
 
+          <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
+            <!-- Fund source -->
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-multiSelect
+                  id="budget_class_id"
+                  [filter]="true"
+                  display="chip"
+                  dataKey="id"
+                  formControlName="fund_sources"
+                  [options]="fundSources!"
+                  optionLabel="name"
+                  class="p-inputtext-sm"
+                  appendTo="body"
+                ></p-multiSelect>
+                <label for="budget_class_id">
+                  <span>Fund Sources </span>
+                </label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('fund_sources')!.invalid &&
+                  (editForm.get('fund_sources')!.dirty ||
+                    editForm.get('fund_sources')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('fund_sources')?.errors?.required"
+                  >Fund Sources are required.</small
+                >
+              </span>
+            </div>
+          </div>
+
           <div fxLayout="row" fxLayoutGap="0.75rem">
             <span fxFlex></span>
             <button
@@ -341,43 +377,6 @@
         </div>
       </mat-step>
       <!-- Fund Source Faclity Tab -->
-      <mat-step>
-        <ng-template matStepLabel>Fund Sources</ng-template>
-        <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
-          <!-- Fund source -->
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-multiSelect
-                id="budget_class_id"
-                [filter]="true"
-                display="chip"
-                dataKey="id"
-                formControlName="fund_sources"
-                [options]="fundSources!"
-                (onChange)="fundSourceChange($event)"
-                optionLabel="name"
-                class="p-inputtext-sm"
-                appendTo="body"
-              ></p-multiSelect>
-              <label for="budget_class_id">Fund Source </label>
-            </span>
-            <span
-              *ngIf="
-                editForm.get('fund_sources')!.invalid &&
-                (editForm.get('fund_sources')!.dirty ||
-                  editForm.get('fund_sources')!.touched ||
-                  formError)
-              "
-            >
-              <small
-                class="p-error"
-                *ngIf="editForm.get('fund_sources')?.errors?.required"
-                >Fund Sources are required.</small
-              >
-            </span>
-          </div>
-        </div>
-      </mat-step>
       <mat-step>
         <ng-template matStepLabel>Facilities</ng-template>
         <!-- Indicator and project out put -->

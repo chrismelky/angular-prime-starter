@@ -12,7 +12,6 @@ import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
-import { StrategicPlan } from 'src/app/setup/strategic-plan/strategic-plan.model';
 import { StrategicPlanService } from 'src/app/setup/strategic-plan/strategic-plan.service';
 import { Objective } from 'src/app/setup/objective/objective.model';
 import { ObjectiveService } from 'src/app/setup/objective/objective.service';
@@ -244,9 +243,10 @@ export class LongTermTargetUpdateComponent implements OnInit {
       section_id: this.editForm.get(['section_id'])!.value,
       references: this.editForm
         .get(['references'])!
-        .value.flatMap((ref: any) => {
+        .value.map((ref: any) => {
           return ref.value;
-        }),
+        })
+        .flat(),
     };
   }
 }

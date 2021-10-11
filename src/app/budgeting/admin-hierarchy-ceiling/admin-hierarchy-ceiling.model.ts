@@ -15,8 +15,9 @@ export class AdminHierarchyCeiling {
     public is_locked?: boolean,
     public is_approved?: boolean,
     public budget_type?: string,
+    public percent?: number,
     public amount?: number,
     public deleted?: boolean,
-    public is_facility?:boolean,
+    public is_facility?:any,
   ) {}
 }

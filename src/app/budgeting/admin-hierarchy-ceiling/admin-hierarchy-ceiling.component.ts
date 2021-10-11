@@ -51,6 +51,7 @@ import { FinalizeCeilingComponent } from './update/finalize-ceiling.component';
 import { saveAs } from 'file-saver';
 import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
+import {AdminCeilingDisseminationComponent} from "./update/admin-ceiling-dissemination.component";
 
 @Component({
   selector: 'app-admin-hierarchy-ceiling',
@@ -74,6 +75,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   isLoading = false;
   page?: number = 1;
   per_page!: number;
+  ceilingStartPosition!: any;
   totalItems = 0;
   perPageOptions = PER_PAGE_OPTIONS;
   predicate!: string; //Sort column
@@ -86,10 +88,11 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
-  budget_type!: string;
+  budget_type = 'CURRENT';
   position!: number | undefined;
   section_id!: number | undefined;
   admin_hierarchy_position!: number;
+  ceilingStartSectionPosition!: number;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -110,6 +113,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected userService: UserService
   ) {
     this.currentUser = userService.getCurrentUser();
+    this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
   }
 
   ngOnInit(): void {
@@ -121,6 +125,26 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<FundSourceBudgetClass[]>) =>
           (this.ceilings = resp.data)
+      );
+    this.financialYearService
+      .query({ columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.financialYears = resp.data)
+      );
+    this.adminHierarchyCeilingService
+      .ceilingStartPosition()
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.ceilingStartPosition = +resp.data;
+        }
+      );
+    this.adminHierarchyCeilingService
+      .ceilingStartSectionPosition()
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.ceilingStartSectionPosition = +resp.data;
+        }
       );
     this.sectionLevelService
       .query({ columns: ['id', 'name', 'position'] })
@@ -460,7 +484,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         for (let item of result.ceiling) {
           const adminHierarchyCeiling = this.createFromForm(item);
           this.subscribeToSaveResponse(
-            this.adminHierarchyCeilingService.create(adminHierarchyCeiling)
+            this.adminHierarchyCeilingService.initiateCeiling(adminHierarchyCeiling)
           );
         }
         this.loadPage(this.page);
@@ -575,6 +599,24 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         this.loadPage();
       },
     });
+  }
+
+  allocateCeiling(row: AdminHierarchyCeiling){
+    const data: any = {
+      ceiling: row,
+      position: this.admin_hierarchy_position,
+      section_level_position: this.position,
+      ceilingStartPosition:this.ceilingStartPosition,
+      ceilingStartSectionPosition:this.ceilingStartSectionPosition,
+      section_id: this.section_id,
+    };
+    const ref = this.dialogService.open(AdminCeilingDisseminationComponent, {
+      header: 'Ceiling Dissemination',
+      width: '60%',
+      styleClass:'planrep-dialogy',
+      data,
+    });
+    ref.onClose.subscribe((result) => {});
   }
 
   allocate(row: AdminHierarchyCeiling) {

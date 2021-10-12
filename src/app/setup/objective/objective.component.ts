@@ -5,35 +5,35 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { ObjectiveType } from "src/app/setup/objective-type/objective-type.model";
-import { ObjectiveTypeService } from "src/app/setup/objective-type/objective-type.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { ObjectiveType } from 'src/app/setup/objective-type/objective-type.model';
+import { ObjectiveTypeService } from 'src/app/setup/objective-type/objective-type.service';
 
-import { Objective } from "./objective.model";
-import { ObjectiveService } from "./objective.service";
-import { ObjectiveUpdateComponent } from "./update/objective-update.component";
+import { Objective } from './objective.model';
+import { ObjectiveService } from './objective.service';
+import { ObjectiveUpdateComponent } from './update/objective-update.component';
 
 @Component({
-  selector: "app-objective",
-  templateUrl: "./objective.component.html",
+  selector: 'app-objective',
+  templateUrl: './objective.component.html',
 })
 export class ObjectiveComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   objectives?: Objective[] = [];
 
   objectiveTypes?: ObjectiveType[] = [];
@@ -41,18 +41,18 @@ export class ObjectiveComponent implements OnInit {
 
   cols = [
     {
-      field: "description",
-      header: "Description",
+      field: 'code',
+      header: 'Code',
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: 'description',
+      header: 'Description',
       sort: true,
     },
     {
-      field: "parent_id",
-      header: "Parent ",
+      field: 'parent_id',
+      header: 'Parent ',
       sort: false,
     },
   ]; //Table display columns
@@ -137,11 +137,11 @@ export class ObjectiveComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -216,8 +216,8 @@ export class ObjectiveComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'asc';
     return [`${predicate}:${direction}`];
   }
 
@@ -232,7 +232,7 @@ export class ObjectiveComponent implements OnInit {
     };
     const ref = this.dialogService.open(ObjectiveUpdateComponent, {
       data,
-      header: "Create/Update Objective",
+      header: 'Create/Update Objective',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -247,7 +247,7 @@ export class ObjectiveComponent implements OnInit {
    */
   delete(objective: Objective): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Objective?",
+      message: 'Are you sure that you want to delete this Objective?',
       accept: () => {
         this.objectiveService.delete(objective.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -271,12 +271,12 @@ export class ObjectiveComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/objective"], {
+      this.router.navigate(['/objective'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -289,6 +289,6 @@ export class ObjectiveComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Objective");
+    this.toastService.error('Error loading Objective');
   }
 }

@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { AdminHierarchyCeiling } from "./admin-hierarchy-ceiling.model";
+import {first} from "rxjs/operators";
 
 @Injectable({ providedIn: "root" })
 export class AdminHierarchyCeilingService {
@@ -24,6 +25,16 @@ export class AdminHierarchyCeilingService {
   ): Observable<CustomResponse<AdminHierarchyCeiling>> {
     return this.http.post<CustomResponse<AdminHierarchyCeiling>>(
       this.resourceUrl,
+      adminHierarchyCeiling
+    );
+  }
+
+  initiateCeiling(
+    adminHierarchyCeiling: AdminHierarchyCeiling
+  ): Observable<CustomResponse<AdminHierarchyCeiling>> {
+    const url = 'api/initiate_ceiling';
+    return this.http.post<CustomResponse<AdminHierarchyCeiling>>(
+      url,
       adminHierarchyCeiling
     );
   }
@@ -44,6 +55,20 @@ export class AdminHierarchyCeilingService {
     return this.http.get<CustomResponse<any[]>>(
       url,
       { params: options }
+    );
+  }
+
+  ceilingStartPosition(): Observable<CustomResponse<any>> {
+    const url = 'api/ceiling_start_position';
+    return this.http.get<CustomResponse<any>>(
+      url
+    );
+  }
+
+  ceilingStartSectionPosition(): Observable<CustomResponse<any>> {
+    const url = 'api/ceiling_start_section_position';
+    return this.http.get<CustomResponse<any>>(
+      url
     );
   }
 
@@ -81,6 +106,7 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+
   queryDownloadTemplate(req?: any): any {
     const options = createRequestOption(req);
     const url = "api/download_template";
@@ -110,13 +136,14 @@ export class AdminHierarchyCeilingService {
     );
   }
 
-  queryTotalAllocatedAmount(req?: any): Observable<CustomResponse<AdminHierarchyCeiling[]>> {
+
+  queryTotalAllocatedAmount(req?: any){
     const options = createRequestOption(req);
     const url = 'api/admin_ceiling_allocated_amount'
-    return this.http.get<CustomResponse<AdminHierarchyCeiling[]>>(
+    return this.http.get<any>(
       url,
-      { params: options }
-    );
+      {params: options}
+    ).toPromise();
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

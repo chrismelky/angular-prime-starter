@@ -22,8 +22,6 @@ export class PeItemService {
 
 
   create(payload: any): Observable<CustomResponse<any>> {
-    console.log("B")
-    console.log(payload)
     return this.http.post<CustomResponse<any>>(this.resourceUrl, payload);
   }
 
@@ -62,14 +60,12 @@ export class PeItemService {
     return this.http.post<CustomResponse<null>>(`${url}/delete-pe-line-values`, req);
   }
 
-
-  printPeFormStatus(object: { pe_form_id: number; section_id: number; fund_source_id: number; admin_hierarchy_id: number; pe_sub_form_id: number; facility_id: any; budget_class_id: number; financial_year_id: number }) {
+  printPeFormStatus(object?:any) {
     const url ='api/pe_line_values';
-    const httpOptions = {
-      'responseType'  : 'arraybuffer' as 'json'
-    };
+    const options = createRequestOption(object);
     return this.http.get<any>(
-      `${url}/print-pe-form-status/${object.financial_year_id}/${object.admin_hierarchy_id}/${object.section_id}/${object.facility_id}/${object.budget_class_id}/${object.fund_source_id}`,httpOptions
+      `${url}/print-pe-form-status`,
+      { params: options ,  responseType: 'arraybuffer' as 'json'}
     );
   }
 }

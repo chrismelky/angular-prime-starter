@@ -46,6 +46,7 @@ import { PriorityAreaService } from 'src/app/setup/priority-area/priority-area.s
 import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
 import { Intervention } from 'src/app/setup/intervention/intervention.model';
 import { SectorProblem } from '../../sector-problem/sector-problem.model';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-activity-update',
@@ -61,7 +62,9 @@ export class ActivityUpdateComponent implements OnInit {
   adminHierarchies?: AdminHierarchy[] = [];
   sections?: Section[] = [];
   facilities?: Facility[] = [];
+  allFacilities?: Facility[] = [];
   fundSources?: FundSource[] = [];
+  allFundSources?: FundSource[] = [];
   activityTaskNatures?: ActivityTaskNature[] = [];
   projects?: Project[] = [];
   projectOutputs?: ProjectOutput[] = [];
@@ -137,7 +140,8 @@ export class ActivityUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected enumService: EnumService,
-    protected referenceTypeService: ReferenceTypeService
+    protected referenceTypeService: ReferenceTypeService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -158,13 +162,15 @@ export class ActivityUpdateComponent implements OnInit {
     this.adminHierarchyCostCentre = dialogData.adminHierarchyCostCentre;
 
     /** get activity to edit or create  from dialog   */
-    const activity: Activity = dialogData.activity;
+    const activity: Activity = { ...dialogData.activity };
 
-    this.facilities = [...dialogData.facilities];
+    this.allFacilities = [...dialogData.facilities];
+
+    this.facilities = [...this.allFacilities];
 
     /** fetch activity task nature by selected activity_type_id if edit mode */
     if (activity.id) {
-      this.loadFundSources(activity.budget_class_id!);
+      this.loadFundSources(activity.budget_class_id!, false);
       this.loadActivityTaskNature(activity.activity_type_id!);
       this.loadProjectOutput(activity.project_id!);
       this.loadActivityFundSource(activity.financial_year_id!, activity.id);
@@ -213,9 +219,12 @@ export class ActivityUpdateComponent implements OnInit {
   }
 
   /** Load fund sources by budget classes */
-  loadFundSources(budgetClassId: number): void {
+  loadFundSources(budgetClassId: number, reset?: boolean): void {
     this.fundSourceService.getByBudgetClass(budgetClassId).subscribe((resp) => {
-      this.fundSources = resp.data;
+      this.allFundSources = resp.data;
+      this.fundSources = [...this.allFundSources!];
+
+      reset && this.editForm.get('fund_sources')?.reset([]);
     });
   }
 
@@ -335,6 +344,7 @@ export class ActivityUpdateComponent implements OnInit {
         });
       });
   }
+
   /** Load activity Fund sources if activity id exist */
   loadActivityFacilities(financialYearId: number, activityId: number): void {
     this.activityService
@@ -352,10 +362,8 @@ export class ActivityUpdateComponent implements OnInit {
             facility_name: [facilityName],
           });
           this.facilityForm.insert(0, fg);
-          this.facilities = this.facilities?.filter(
-            (f0) => f0.id !== af.facility_id
-          );
         });
+        this.filterFacilities();
       });
   }
 
@@ -383,6 +391,7 @@ export class ActivityUpdateComponent implements OnInit {
     indicatorValueToAdd?: any,
     projectOutputValueToAdd?: any
   ): void {
+    const addedIds: number[] = [];
     facilitiesToAdd.value.forEach((f: Facility) => {
       const fg = this.fb.group({
         facility_id: [f.id],
@@ -391,12 +400,52 @@ export class ActivityUpdateComponent implements OnInit {
         facility_name: [f.name],
       });
       this.facilityForm.insert(0, fg);
-      this.facilities = this.facilities?.filter((f0) => f0.id !== f.id);
+      addedIds.push(f.id!);
     });
+    this.filterFacilities();
     facilitiesToAdd.value = [];
     indicatorValueToAdd.value = '';
     projectOutputValueToAdd.value = '';
     console.log(this.facilityForm.controls);
+  }
+
+  confirmDeleteActivity(event: any, id?: number, ri?: number) {
+    this.confirmationService.confirm({
+      target: event.target,
+      key: 'deletePopup',
+      message: 'Are you sure that you want to delete this facility',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        if (id) {
+          this.activityService.deleteActivityFacility(id).subscribe(
+            (resp) => {
+              this.facilityForm.removeAt(ri!);
+              this.filterFacilities();
+            },
+            (error) => {}
+          );
+        } else {
+          this.facilityForm.removeAt(ri!);
+          this.filterFacilities();
+        }
+      },
+      reject: () => {
+        //reject action
+      },
+    });
+  }
+
+  /**
+   * Filter selected facilities (facilityForm value) from all facilities
+   * and assign to facilities selection list
+   */
+  private filterFacilities(): void {
+    const selectedFacilityIds: number[] = this.facilityForm.value.map(
+      (f: any) => f.facility_id
+    );
+    this.facilities = this.allFacilities?.filter(
+      (f0) => !selectedFacilityIds.includes(f0.id!)
+    );
   }
 
   /**

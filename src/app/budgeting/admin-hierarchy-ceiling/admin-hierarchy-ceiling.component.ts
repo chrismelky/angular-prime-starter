@@ -44,13 +44,11 @@ import { SectionLevel } from '../../setup/section-level/section-level.model';
 import { finalize } from 'rxjs/operators';
 import { User } from '../../setup/user/user.model';
 import { UserService } from '../../setup/user/user.service';
-import { CeilingDisseminationComponent } from './update/ceiling-dissemination.component';
 import { CeilingChainService } from '../../setup/ceiling-chain/ceiling-chain.service';
-import { CeilingChain } from '../../setup/ceiling-chain/ceiling-chain.model';
-import { FinalizeCeilingComponent } from './update/finalize-ceiling.component';
 import { saveAs } from 'file-saver';
 import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
+import {AdminCeilingDisseminationComponent} from "./update/admin-ceiling-dissemination.component";
 
 @Component({
   selector: 'app-admin-hierarchy-ceiling',
@@ -74,6 +72,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   isLoading = false;
   page?: number = 1;
   per_page!: number;
+  ceilingStartPosition!: any;
   totalItems = 0;
   perPageOptions = PER_PAGE_OPTIONS;
   predicate!: string; //Sort column
@@ -86,10 +85,11 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
-  budget_type!: string;
+  budget_type = 'CURRENT';
   position!: number | undefined;
   section_id!: number | undefined;
   admin_hierarchy_position!: number;
+  ceilingStartSectionPosition!: number;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -106,10 +106,10 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected sectionLevelService: SectionLevelService,
-    protected ceilingChainService: CeilingChainService,
     protected userService: UserService
   ) {
     this.currentUser = userService.getCurrentUser();
+    this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
   }
 
   ngOnInit(): void {
@@ -121,6 +121,26 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<FundSourceBudgetClass[]>) =>
           (this.ceilings = resp.data)
+      );
+    this.financialYearService
+      .query({ columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.financialYears = resp.data)
+      );
+    this.adminHierarchyCeilingService
+      .ceilingStartPosition()
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.ceilingStartPosition = +resp.data;
+        }
+      );
+    this.adminHierarchyCeilingService
+      .ceilingStartSectionPosition()
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.ceilingStartSectionPosition = +resp.data;
+        }
       );
     this.sectionLevelService
       .query({ columns: ['id', 'name', 'position'] })
@@ -228,7 +248,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
@@ -427,7 +447,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   }
 
   /**
-   * When error on loading data set data to empt and resert page to load
+   * When error on loading data set data to empty and reset page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
@@ -460,7 +480,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         for (let item of result.ceiling) {
           const adminHierarchyCeiling = this.createFromForm(item);
           this.subscribeToSaveResponse(
-            this.adminHierarchyCeilingService.create(adminHierarchyCeiling)
+            this.adminHierarchyCeilingService.initiateCeiling(adminHierarchyCeiling)
           );
         }
         this.loadPage(this.page);
@@ -577,38 +597,22 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     });
   }
 
-  allocate(row: AdminHierarchyCeiling) {
-    //get next ceiling Chain
-    this.ceilingChainService
-      .query({ section_level_position: this.position, active: true, page: 1 })
-      .subscribe((resp: CustomResponse<CeilingChain[]>) => {
-        let ceilingChain = resp.data ?? [];
-        if (ceilingChain.length > 0) {
-          const data: any = {
-            ceiling: row,
-            position: this.admin_hierarchy_position,
-            ceilingChain: ceilingChain[0],
-          };
-          if (ceilingChain[0].next !== null) {
-            const ref = this.dialogService.open(CeilingDisseminationComponent, {
-              header: 'Ceiling Dissemination',
-              width: '60%',
-              data,
-            });
-            ref.onClose.subscribe((result) => {});
-          } else {
-            const ref = this.dialogService.open(FinalizeCeilingComponent, {
-              header: 'Ceiling Dissemination',
-              width: '60%',
-              data,
-            });
-            ref.onClose.subscribe((result) => {});
-          }
-        } else {
-          this.toastService.info(
-            'Please Set The Ceiling Chain Before This Process'
-          );
-        }
-      });
+  allocateCeiling(row: AdminHierarchyCeiling){
+    const data: any = {
+      ceiling: row,
+      position: this.admin_hierarchy_position,
+      section_level_position: this.position,
+      ceilingStartPosition:this.ceilingStartPosition,
+      ceilingStartSectionPosition:this.ceilingStartSectionPosition,
+      section_id: this.section_id,
+    };
+    const ref = this.dialogService.open(AdminCeilingDisseminationComponent, {
+      header: 'Ceiling Dissemination',
+      width: '60%',
+      styleClass:'planrep-dialogy',
+      data,
+    });
+    ref.onClose.subscribe((result) => {});
   }
+
 }

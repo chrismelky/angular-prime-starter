@@ -40,6 +40,10 @@ export class UserService {
     return this.http.post(this.resourceUrl + '/passwordReset', passwordReset) as Observable<CustomResponse<User>>;
   }
 
+  public changePassword(passwordReset: PasswordReset): Observable<CustomResponse<User>> {
+    return this.http.post(this.resourceUrl + '/changePassword', passwordReset) as Observable<CustomResponse<User>>;
+  }
+
 
   find(id: number): Observable<CustomResponse<User>> {
     return this.http.get<CustomResponse<User>>(`${this.resourceUrl}/${id}`);

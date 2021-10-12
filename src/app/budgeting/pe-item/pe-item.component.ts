@@ -131,14 +131,14 @@ export class PeItemComponent implements OnInit {
       this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
       this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
       this.financial_year_id = this.currentUser.admin_hierarchy?.current_financial_year_id!
-      //this.is_current_budget_locked = this.currentUser.admin_hierarchy?.is_current_budget_locked!
+      this.is_current_budget_locked = this.currentUser.admin_hierarchy?.is_current_budget_locked!
     }
   }
 
   ngOnInit(): void {
     console.log("Current User")
     // @ts-ignore
-    console.log(this.currentUser!.admin_hierarchy.current_financial_year_id)
+    console.log(this.is_current_budget_locked)
     this.peSubFormService
       .getParentChildren()
       .subscribe(
@@ -186,7 +186,7 @@ export class PeItemComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
@@ -546,7 +546,7 @@ export class PeItemComponent implements OnInit {
   }
 
   /**
-   * When error on loading data set data to empt and resert page to load
+   * When error on loading data set data to empty and reset page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
@@ -871,8 +871,8 @@ export class PeItemComponent implements OnInit {
         /** clear arrays */
         this.selectedRowsArray = [];
         this.selectedRowsIndexArray = [];
-        this.filterChanged();
         this.store();
+        this.filterChanged();
       }
     });
   }
@@ -892,12 +892,12 @@ export class PeItemComponent implements OnInit {
       const object = {
         admin_hierarchy_id: this.admin_hierarchy_id,
         financial_year_id: this.financial_year_id,
-        section_id: this.section_id,
         budget_class_id: this.budget_class_id,
         fund_source_id: this.fund_source_id,
         pe_form_id: this.pe_form_id,
         pe_sub_form_id: this.pe_sub_form_id,
         facility_id: this.facilities[0]?.id,
+        peTableFields: JSON.stringify(this.peTableFields),
       };
       this.peItemService.printPeFormStatus(object).subscribe((resp) => {
         let file = new Blob([resp], { type: 'application/pdf' });

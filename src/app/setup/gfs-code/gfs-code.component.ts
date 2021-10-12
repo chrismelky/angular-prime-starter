@@ -102,7 +102,7 @@ export class GfsCodeComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfuly update url params with pagination and sort info
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (!this.category_id) {
@@ -288,7 +288,7 @@ export class GfsCodeComponent implements OnInit {
   }
 
   /**
-   * When error on loading data set data to empt and resert page to load
+   * When error on loading data set data to empty and reset page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));

@@ -57,7 +57,7 @@ export class PeSubFormUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.parentService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "name"],parent_id:null })
       .subscribe(
         (resp: CustomResponse<PeSubForm[]>) => (this.parents = resp.data)
       );

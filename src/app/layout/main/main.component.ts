@@ -615,11 +615,6 @@ export class MainComponent implements OnInit {
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "project-sector",
     },
-    {
-      label: "Gfs Codes",
-      icon: "pi pi-fw pi-arrow-right",
-      routerLink: "gfs-code",
-    },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {
       label: "Planning",
@@ -704,6 +699,11 @@ export class MainComponent implements OnInit {
           label: "Scrutinizations",
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "scrutinization",
+        },
+        {
+          label: "Activity Inputs",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "activity-input",
         },
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],

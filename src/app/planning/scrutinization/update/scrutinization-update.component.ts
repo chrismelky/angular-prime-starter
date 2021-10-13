@@ -19,6 +19,8 @@ import { SectionService } from 'src/app/setup/section/section.service';
 import { Scrutinization } from '../scrutinization.model';
 import { ScrutinizationService } from '../scrutinization.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import {User} from "../../../setup/user/user.model";
+import {UserService} from "../../../setup/user/user.service";
 
 @Component({
   selector: 'app-scrutinization-update',
@@ -28,7 +30,7 @@ export class ScrutinizationUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-
+  currentUser!: User;
   adminHierarchies?: AdminHierarchy[] = [];
   sections?: Section[] = [];
 
@@ -39,9 +41,11 @@ export class ScrutinizationUpdateComponent implements OnInit {
     id: [null, []],
     admin_hierarchy_id: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
+    comments: [null, [Validators.required]],
   });
 
   constructor(
+    protected userService: UserService,
     protected scrutinizationService: ScrutinizationService,
     protected adminHierarchyService: AdminHierarchyService,
     protected sectionService: SectionService,
@@ -49,7 +53,9 @@ export class ScrutinizationUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {}
+  ) {
+    this.currentUser = userService.getCurrentUser();
+  }
 
   ngOnInit(): void {
     this.sectionService
@@ -70,6 +76,13 @@ export class ScrutinizationUpdateComponent implements OnInit {
    * @returns
    */
   save(): void {
+    let data = {
+      admin_hierarchy_level_id:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+      financial_year_id:this.dialogConfig.data.financial_year_id,
+      comments:this.editForm.value.comments,
+      activity_id:this.dialogConfig.data.id
+    }
+    console.log(data)
     if (this.editForm.invalid) {
       this.formError = true;
       return;
@@ -125,6 +138,7 @@ export class ScrutinizationUpdateComponent implements OnInit {
       id: scrutinization.id,
       admin_hierarchy_id: scrutinization.admin_hierarchy_id,
       section_id: scrutinization.section_id,
+      comments: scrutinization.comments,
     });
   }
 
@@ -138,6 +152,7 @@ export class ScrutinizationUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
+      comments: this.editForm.get(['comments'])!.value,
     };
   }
 }

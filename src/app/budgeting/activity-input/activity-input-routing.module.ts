@@ -6,16 +6,16 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { ObjectiveComponent } from './objective.component';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { ActivityInputComponent } from "./activity-input.component";
 
 const routes: Routes = [
   {
-    path: '',
-    component: ObjectiveComponent,
+    path: "",
+    component: ActivityInputComponent,
     data: {
-      defaultSort: 'code:asc',
+      defaultSort: "id:asc",
     },
     //canActivate: [UserRouteAccessService],
   },
@@ -25,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ObjectiveRoutingModule {}
+export class ActivityInputRoutingModule {}

@@ -15,7 +15,8 @@ import { Scrutinization } from "./scrutinization.model";
 
 @Injectable({ providedIn: "root" })
 export class ScrutinizationService {
-  public resourceUrl = "api/scrutinizations";
+  public activityCommentsUrl = "api/activity_scrutinization_comments";
+  public inputCommentsUrl = "api/input_scrutinization_comments";
 
   constructor(protected http: HttpClient) {}
 
@@ -23,7 +24,7 @@ export class ScrutinizationService {
     scrutinization: Scrutinization
   ): Observable<CustomResponse<Scrutinization>> {
     return this.http.post<CustomResponse<Scrutinization>>(
-      this.resourceUrl,
+      this.activityCommentsUrl,
       scrutinization
     );
   }
@@ -32,25 +33,25 @@ export class ScrutinizationService {
     scrutinization: Scrutinization
   ): Observable<CustomResponse<Scrutinization>> {
     return this.http.put<CustomResponse<Scrutinization>>(
-      `${this.resourceUrl}/${scrutinization.id}`,
+      `${this.activityCommentsUrl}/${scrutinization.id}`,
       scrutinization
     );
   }
 
   find(id: number): Observable<CustomResponse<Scrutinization>> {
     return this.http.get<CustomResponse<Scrutinization>>(
-      `${this.resourceUrl}/${id}`
+      `${this.activityCommentsUrl}/${id}`
     );
   }
 
   query(req?: any): Observable<CustomResponse<Scrutinization[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<Scrutinization[]>>(this.resourceUrl, {
+    return this.http.get<CustomResponse<Scrutinization[]>>(this.activityCommentsUrl, {
       params: options,
     });
   }
 
   delete(id: number): Observable<CustomResponse<null>> {
-    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+    return this.http.delete<CustomResponse<null>>(`${this.activityCommentsUrl}/${id}`);
   }
 }

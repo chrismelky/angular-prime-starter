@@ -31,6 +31,22 @@
               <label for="category_id">Category </label>
             </span>
           </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="account_type_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="accountTypes!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="account_type_id"
+              ></p-dropdown>
+              <label for="account_type_id">Account Type </label>
+            </span>
+          </div>
         </div>
         <div
           fxLayout="row wrap"
@@ -40,7 +56,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -58,7 +73,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -128,21 +142,6 @@
                   ></i>
                 </span>
               </div>
-              <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="account_type_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [(ngModel)]="search['account_type_id']"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="accountTypes!"
-              ></p-dropdown>
-              <label for="category_id">Account Types </label>
-            </span>
-              </div>
             </div>
             <div
               fxLayout="row"
@@ -152,7 +151,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -186,12 +184,19 @@
           <span class="card-header-text">Gfs Codes</span>
           <button
             pButton
-            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!category_id"
+            [disabled]="!account_type_id || !category_id"
             (click)="createOrUpdate()"
             label="Add Gfs Code"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-upload"
+            class="p-button-raised"
+            [disabled]="!account_type_id || !category_id"
+            (click)="upload()"
+            label="Upload Gfs Codes"
           ></button>
         </div>
       </ng-template>
@@ -204,9 +209,6 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th>Account Type</th>
-          <th>Is Procurement</th>
-          <th>Is Protected</th>
           <th></th>
         </tr>
       </ng-template>
@@ -216,26 +218,10 @@
             {{ rowData[col.field] }}
           </td>
           <td>
-            {{rowData['account_type']!.name}}
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['is_procurement']"
-            ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['is_protected']"
-            ></p-inputSwitch>
-          </td>
-          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -247,7 +233,6 @@
                 ></button>
                 <button
                   pButton
-                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -264,7 +249,7 @@
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
     </p-table>
-    <div fxLayoutAlign="center" fxLayout="row" fxLayoutGap="10px">
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
         [alwaysShow]="gfsCodes?.length! > 0"

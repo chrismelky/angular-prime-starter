@@ -24,6 +24,15 @@ body {
 .p-panelmenu .p-panelmenu-header > a .p-menuitem-icon {
   margin-right: 0.7rem;
 }
+.p-panelmenu .p-panelmenu-content .p-menuitem .p-menuitem-link {
+  .p-menuitem-icon {
+    order: 1; // to be the first item on right side.
+    font-weight: 400;
+   }
+   .p-menuitem-text {
+    flex-grow: 1; // to fill the whole space and push the icon to the end
+   }
+}
 
 .sidenav-item {
   padding: 0px;

@@ -109,6 +109,7 @@
         <span class="p-float-label">
           <p-multiSelect
             id="sections"
+            optionValue="id"
             optionLabel="name"
             [filter]="true"
             class="p-inputtext-sm"
@@ -116,7 +117,7 @@
             [options]="sections!"
             formControlName="sections"
           ></p-multiSelect>
-          <label for="sections">Section/Cost Centres </label>
+          <label for="sections">Section/Cost Centres</label>
         </span>
         <span
           *ngIf="

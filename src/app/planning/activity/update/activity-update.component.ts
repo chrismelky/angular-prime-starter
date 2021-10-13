@@ -54,6 +54,15 @@ import { ConfirmationService } from 'primeng/api';
 })
 export class ActivityUpdateComponent implements OnInit {
   isSaving = false;
+  fundSourceIsLoading = false;
+  taskNatureIsLoading = false;
+  projectIsLoading = false;
+  projectOutputIsLoading = false;
+  facilityIsLoading = false;
+  budgetClassIsLoading = false;
+  referenceIsLoading = false;
+  responsibleIsLoading = false;
+
   formError = false;
   errors = [];
 
@@ -220,12 +229,16 @@ export class ActivityUpdateComponent implements OnInit {
 
   /** Load fund sources by budget classes */
   loadFundSources(budgetClassId: number, reset?: boolean): void {
-    this.fundSourceService.getByBudgetClass(budgetClassId).subscribe((resp) => {
-      this.allFundSources = resp.data;
-      this.fundSources = [...this.allFundSources!];
-
-      reset && this.editForm.get('fund_sources')?.reset([]);
-    });
+    this.fundSourceIsLoading = true;
+    this.fundSourceService.getByBudgetClass(budgetClassId).subscribe(
+      (resp) => {
+        this.allFundSources = resp.data;
+        this.fundSources = [...this.allFundSources!];
+        this.fundSourceIsLoading = false;
+        reset && this.editForm.get('fund_sources')?.reset([]);
+      },
+      (error) => (this.fundSourceIsLoading = false)
+    );
   }
 
   /**
@@ -272,6 +285,7 @@ export class ActivityUpdateComponent implements OnInit {
       .byLinkLevelWithReferences('Activity', sectorId!)
       .subscribe(
         (resp) => {
+          this.referenceLoading = false;
           this.referenceTypes = resp.data;
           /** If activity has id load it selected reference first before prepare reference controlls else prepare controlls */
           if (activityId) {
@@ -361,7 +375,7 @@ export class ActivityUpdateComponent implements OnInit {
             project_output_value: [af.project_output_value, []],
             facility_name: [facilityName],
           });
-          this.facilityForm.insert(0, fg);
+          this.facilityControls.insert(0, fg);
         });
         this.filterFacilities();
       });
@@ -381,7 +395,7 @@ export class ActivityUpdateComponent implements OnInit {
     this.sectorProblems = priorityArea?.sector_problems;
   }
 
-  get facilityForm(): FormArray {
+  get facilityControls(): FormArray {
     return this.editForm.get('activity_facilities') as FormArray;
   }
 
@@ -399,14 +413,14 @@ export class ActivityUpdateComponent implements OnInit {
         project_output_value: [projectOutputValueToAdd?.value, []],
         facility_name: [f.name],
       });
-      this.facilityForm.insert(0, fg);
+      this.facilityControls.insert(0, fg);
       addedIds.push(f.id!);
     });
     this.filterFacilities();
     facilitiesToAdd.value = [];
     indicatorValueToAdd.value = '';
     projectOutputValueToAdd.value = '';
-    console.log(this.facilityForm.controls);
+    console.log(this.facilityControls.controls);
   }
 
   confirmDeleteActivity(event: any, id?: number, ri?: number) {
@@ -419,13 +433,13 @@ export class ActivityUpdateComponent implements OnInit {
         if (id) {
           this.activityService.deleteActivityFacility(id).subscribe(
             (resp) => {
-              this.facilityForm.removeAt(ri!);
+              this.facilityControls.removeAt(ri!);
               this.filterFacilities();
             },
             (error) => {}
           );
         } else {
-          this.facilityForm.removeAt(ri!);
+          this.facilityControls.removeAt(ri!);
           this.filterFacilities();
         }
       },
@@ -436,11 +450,11 @@ export class ActivityUpdateComponent implements OnInit {
   }
 
   /**
-   * Filter selected facilities (facilityForm value) from all facilities
+   * Filter selected facilities (facilityControls value) from all facilities
    * and assign to facilities selection list
    */
   private filterFacilities(): void {
-    const selectedFacilityIds: number[] = this.facilityForm.value.map(
+    const selectedFacilityIds: number[] = this.facilityControls.value.map(
       (f: any) => f.facility_id
     );
     this.facilities = this.allFacilities?.filter(
@@ -452,21 +466,37 @@ export class ActivityUpdateComponent implements OnInit {
    * Load activity task nature by activity type
    */
   loadActivityTaskNature(activityTypeId: number): void {
+    this.taskNatureIsLoading = true;
     this.activityTaskNatureService
       .query({
         activity_type_id: activityTypeId,
         columns: ['id', 'name', 'code'],
       })
-      .subscribe((resp) => (this.activityTaskNatures = resp.data));
+      .subscribe(
+        (resp) => {
+          this.activityTaskNatures = resp.data;
+          this.taskNatureIsLoading = false;
+        },
+        (error) => (this.taskNatureIsLoading = false)
+      );
   }
 
   /** Load projects */
   loadProjects(): void {
+    this.projectIsLoading = false;
     this.projectService
       .query({
         columns: ['id', 'name', 'code'],
       })
-      .subscribe((resp) => (this.projects = resp.data));
+      .subscribe(
+        (resp) => {
+          this.projects = resp.data;
+          this.projectIsLoading = false;
+        },
+        (error) => {
+          this.projectIsLoading = false;
+        }
+      );
   }
 
   /** Load project output by project*/
@@ -474,11 +504,15 @@ export class ActivityUpdateComponent implements OnInit {
     if (!projectId) {
       return;
     }
+    this.projectOutputIsLoading = true;
     this.projectOutputService
       .query({
         project_id: projectId,
       })
-      .subscribe((resp) => (this.projectOutputs = resp.data));
+      .subscribe((resp) => {
+        this.projectOutputs = resp.data;
+        this.projectOutputIsLoading = false;
+      });
   }
 
   /**
@@ -488,12 +522,16 @@ export class ActivityUpdateComponent implements OnInit {
     if (!this.adminHierarchyCostCentre?.section) {
       return;
     }
+    this.responsibleIsLoading = true;
     this.responsiblePersonService
       .query({
         admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
         sector_id: this.adminHierarchyCostCentre?.section?.sector_id,
       })
-      .subscribe((resp) => (this.responsiblePeople = resp.data));
+      .subscribe((resp) => {
+        this.responsiblePeople = resp.data;
+        this.responsibleIsLoading = false;
+      });
   }
 
   /**
@@ -529,6 +567,7 @@ export class ActivityUpdateComponent implements OnInit {
    * @param result
    */
   protected onSaveSuccess(result: any): void {
+    this.isSaving = false;
     this.toastService.info(result.message);
     this.dialogRef.close(true);
   }
@@ -538,7 +577,9 @@ export class ActivityUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+    this.isSaving = false;
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

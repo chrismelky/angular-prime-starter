@@ -62,7 +62,7 @@ export class InterventionUpdateComponent implements OnInit {
       );
     const dialogData = this.dialogConfig.data;
 
-    this.priorityAreaService = dialogData.priorityAreas;
+    this.priorityAreas = dialogData.priorityAreas;
     this.updateForm(dialogData.intervention); //Initialize form with data from dialog
   }
 

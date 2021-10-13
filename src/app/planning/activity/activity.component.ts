@@ -250,12 +250,12 @@ export class ActivityComponent implements OnInit {
    */
   loadTargets(objectiveId: number): void {
     this.financialYearTargetService
-      .query({
-        objective_id: objectiveId,
-        admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
-        financial_year_id: this.financialYear?.id,
-        columns: ['id', 'description', 'code', 'long_term_target_id'],
-      })
+      .allByObjectiveAndCostCentre(
+        this.financialYear?.id!,
+        this.adminHierarchyCostCentre?.admin_hierarchy_id!,
+        objectiveId,
+        this.adminHierarchyCostCentre?.section_id!
+      )
       .subscribe(
         (resp: CustomResponse<FinancialYearTarget[]>) =>
           (this.financialYearTargets = resp.data)

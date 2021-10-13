@@ -43,6 +43,7 @@ import { CascadeSelectModule } from 'primeng/cascadeselect';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DragDropModule } from 'primeng/dragdrop';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [],
@@ -91,6 +92,7 @@ import { DragDropModule } from 'primeng/dragdrop';
     FieldsetModule,
     ProgressBarModule,
     DragDropModule,
+    ProgressSpinnerModule,
   ],
 })
 export class SharedPrimengModule {}

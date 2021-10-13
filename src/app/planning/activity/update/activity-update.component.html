@@ -1,4 +1,17 @@
 <div class="dialog-content">
+  <app-loader
+    [isLoading]="
+      isSaving ||
+      fundSourceIsLoading ||
+      taskNatureIsLoading ||
+      projectIsLoading ||
+      projectOutputIsLoading ||
+      facilityIsLoading ||
+      budgetClassIsLoading ||
+      referenceIsLoading ||
+      responsibleIsLoading
+    "
+  ></app-loader>
   <form
     name="editForm"
     role="form"
@@ -383,7 +396,7 @@
         <div fxLayout="column" fxLayoutGap="20px" fxLayoutAlign="start">
           <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start">
             <p-table
-              [value]="facilityForm.controls"
+              [value]="facilityControls.controls"
               dataKey="controls.facility_id.value"
               editMode="row"
               responsiveLayout="scroll"

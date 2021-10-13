@@ -53,6 +53,7 @@ export class FinancialYearTargetViewComponent implements OnInit {
           section_id: this.longTermTarget?.section_id,
           financial_year_id: this.financialYearId,
           admin_hierarchy_id: this.adminHierarchyId,
+          objective_id: this.longTermTarget?.objective_id,
           code: this.longTermTarget?.code,
         },
         true
@@ -73,6 +74,7 @@ export class FinancialYearTargetViewComponent implements OnInit {
                 ...new FinancialYearTarget(),
                 long_term_target_id: this.longTermTarget?.id,
                 section_id: this.longTermTarget?.section_id,
+                objective_id: this.longTermTarget?.objective_id,
                 financial_year_id: this.financialYearId,
                 code: this.longTermTarget?.code,
                 admin_hierarchy_id: this.adminHierarchyId,
@@ -96,6 +98,7 @@ export class FinancialYearTargetViewComponent implements OnInit {
       code: [target.code, [Validators.required]],
       section_id: [target.section_id, [Validators.required]],
       admin_hierarchy_id: [target.admin_hierarchy_id, [Validators.required]],
+      objective_id: [target.objective_id, [Validators.required]],
     });
   }
 
@@ -113,6 +116,7 @@ export class FinancialYearTargetViewComponent implements OnInit {
       code: this.editForm.get(['code'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
       admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      objective_id: this.editForm.get(['objective_id'])!.value,
     };
   }
 

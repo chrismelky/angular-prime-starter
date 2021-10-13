@@ -52,6 +52,7 @@ export class FinancialYearTargetViewComponent implements OnInit {
           long_term_target_id: this.longTermTarget?.id,
           section_id: this.longTermTarget?.section_id,
           financial_year_id: this.financialYearId,
+          admin_hierarchy_id: this.adminHierarchyId,
           code: this.longTermTarget?.code,
         },
         true

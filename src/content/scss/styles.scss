@@ -25,7 +25,7 @@ body {
   margin-right: 0.7rem;
 }
 .p-panelmenu .p-panelmenu-content .p-menuitem .p-menuitem-link {
-  .p-menuitem-icon {
+  .pi-angle-down, .pi-angle-right {
     order: 1; // to be the first item on right side.
     font-weight: 400;
    }

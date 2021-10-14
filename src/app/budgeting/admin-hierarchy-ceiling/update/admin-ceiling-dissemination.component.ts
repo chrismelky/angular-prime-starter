@@ -248,7 +248,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     const i = this.toAllocate!.findIndex(item => item.id === row.id);
     this.toAllocate![i].amount=amount;
     this.toAllocate![i].percent=this.selectedCeiling[position]!.amount!>0?(amount!/this.selectedCeiling[position].amount!)*100:0.00;
-    this.totalAllocatedCeiling[position] = {...this.getTotalAllocatedAmount(this.toAllocate!)};
+    this.totalAllocatedCeiling[position] = {...{amount:this.getTotalAllocatedAmount(this.toAllocate!)}};
   }
   //Get Facility Percent
   getFacilityPercent(row: any,percent:number): void{
@@ -263,7 +263,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     const i = this.toAllocate!.findIndex(item => item.id === row.id);
     this.toAllocate![i].percent=percent;
     this.toAllocate![i].amount=(percent * this.selectedCeiling[position].amount!)/100;
-    this.totalAllocatedCeiling[position] = {...this.getTotalAllocatedAmount(this.toAllocate!)};
+    this.totalAllocatedCeiling[position] = {...{amount:this.getTotalAllocatedAmount(this.toAllocate!)}};
   }
 
   //Get Allocated Amount

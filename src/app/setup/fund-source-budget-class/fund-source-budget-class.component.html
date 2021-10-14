@@ -146,47 +146,47 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="fundSourceBudgetClasses?.length">
-          <th>Budget Class</th>
           <th>Fund Source</th>
+          <th>Budget Class</th>
           <th>GFS Code</th>
-          <th>Date Created</th>
-          <th>Fund Type</th>
-          <th>Bank Account </th>
-          <th>Active</th>
+<!--          <th>Date Created</th>-->
+<!--          <th>Fund Type</th>-->
+<!--          <th>Bank Account </th>-->
+<!--          <th>Active</th>-->
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td>{{rowData?.budget_class?.name}}</td>
           <td>{{rowData?.fund_source?.name}} </td>
+          <td>{{rowData?.budget_class?.name}}</td>
           <td>
             [{{rowData?.fund_source?.gfs_code?.code}}] {{rowData?.fund_source?.gfs_code?.name}}
           </td>
-          <td>{{rowData?.created_at |date:'mediumDate'}}</td>
-          <td>
-            <app-ceiling-fund-type-update
-              [ceiling]="rowData"
-            ></app-ceiling-fund-type-update>
-          </td>
-          <td>
-            <app-ceiling-bank-account-update
-              [ceiling]="rowData"
-            ></app-ceiling-bank-account-update>
-          </td>
-          <td>
-            <p-inputSwitch
-              [(ngModel)]="rowData['is_active']"
-              (onChange)="toggleActivation(rowData)"
-            ></p-inputSwitch>
-          </td>
-          <td>
-            <app-ceiling-facility-type
-              [ceiling]="rowData">
-            </app-ceiling-facility-type>
+<!--          <td>{{rowData?.created_at |date:'mediumDate'}}</td>-->
+<!--          <td>-->
+<!--            <app-ceiling-fund-type-update-->
+<!--              [ceiling]="rowData"-->
+<!--            ></app-ceiling-fund-type-update>-->
+<!--          </td>-->
+<!--          <td>-->
+<!--            <app-ceiling-bank-account-update-->
+<!--              [ceiling]="rowData"-->
+<!--            ></app-ceiling-bank-account-update>-->
+<!--          </td>-->
+<!--          <td>-->
+<!--            <p-inputSwitch-->
+<!--              [(ngModel)]="rowData['is_active']"-->
+<!--              (onChange)="toggleActivation(rowData)"-->
+<!--            ></p-inputSwitch>-->
+<!--          </td>-->
+          <td style="text-align: end">
             <app-ceinings-sector
               [ceiling_id]="rowData.id"
             ></app-ceinings-sector>
+            <app-ceiling-facility-type
+              [ceiling]="rowData">
+            </app-ceiling-facility-type>
             <button
               pButton
               pTooltip="Delete"
@@ -197,6 +197,17 @@
               icon="pi pi-trash
               "
               (click)="delete(rowData)"
+            ></button>
+            <button
+              pButton
+              pTooltip="Edit"
+              tooltipPosition="bottom"
+              class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+              icon="pi pi-pencil
+              "
+              (click)="createOrUpdate(rowData)"
             ></button>
           </td>
         </tr>

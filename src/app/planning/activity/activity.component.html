@@ -1,4 +1,6 @@
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
+  <app-loader [isLoading]="facilityIsLoading || targetIsLoading"></app-loader>
+
   <!-- Filter Panel -->
   <p-card class="filter">
     <ng-template pTemplate="header">
@@ -54,8 +56,8 @@
       </div>
     </ng-template>
     <ng-template pTemplate="content">
-      <div fxLayout="column" fxLayoutGap="4px">
-        <div fxLayout="row wrap" fxLayoutGap="10px">
+      <div fxLayout="column" fxLayoutGap="20px">
+        <div fxLayout="row wrap" fxLayoutGap="0px">
           <div
             fxLayout="row wrap"
             fxLayoutGap="20px"
@@ -85,56 +87,62 @@
                 <label for="financial_year_target_id">Target </label>
               </span>
             </div>
-            <!-- Toggle advance search -->
-            <button
-              pButton
-              type="button"
-              [pTooltip]="
-                advFilter.selected
-                  ? 'Hide Advanced Search'
-                  : 'Show Advanced Search'
-              "
-              tooltipPosition="bottom"
-              [icon]="
-                advFilter.selected
-                  ? 'pi pi-angle-double-up'
-                  : 'pi pi-angle-double-down'
-              "
-              class="p-button-rounded p-button-text p-button-plain"
-              (click)="advFilter.selected = !advFilter.selected"
-            ></button>
           </div>
-          <!-- <div
-            fxLayout="row wrap"
-            fxFlex="140px"
-            fxLayoutGap="4px"
-            fxLayoutAlign="end center"
-          >
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="20px">
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start" fxFlex>
+            <span fxLayout="row" fxLayoutGap="20px">
+              <p-radioButton
+                *ngFor="let ft of facilityGroupByType"
+                (onClick)="facilityTypeChange()"
+                name="facilityType"
+                [value]="ft.name"
+                [(ngModel)]="facilityType"
+                [label]="ft.name"
+              ></p-radioButton>
+            </span>
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="facility_id"
+                  optionLabel="name"
+                  optionValue="id"
+                  [showClear]="true"
+                  [autoDisplayFirst]="false"
+                  class="p-inputtext-sm"
+                  [options]="facilities!"
+                  (onChange)="filterChanged()"
+                  [(ngModel)]="facility_id"
+                ></p-dropdown>
+                <label for="facility_id">Facility</label>
+              </span>
+            </div>
+          </div>
+          <div class="p-inputgroup" fxFlex>
+            <div class="p-field" fxFlex>
+              <span class="p-float-label p-input-icon-right">
+                <input
+                  id="code"
+                  type="text"
+                  class="p-inputtext-sm"
+                  pInputText
+                  [(ngModel)]="search['description']"
+                />
+                <label for="description">Description </label>
+                <i
+                  class="pi pi-times clear"
+                  (click)="search['description'] = undefined; onSearch()"
+                ></i>
+              </span>
+            </div>
             <button
               pButton
-              type="button"
-              [pTooltip]="
-                advFilter.selected
-                  ? 'Hide Advanced Search'
-                  : 'Show Advanced Search'
-              "
-              tooltipPosition="bottom"
-              [icon]="
-                advFilter.selected
-                  ? 'pi pi-angle-double-up'
-                  : 'pi pi-angle-double-down'
-              "
-              class="p-button-rounded p-button-text p-button-plain"
-              (click)="advFilter.selected = !advFilter.selected"
-            ></button>
-            <button
-              pButton
-              class="p-button-primary p-button-raised"
+              class="p-inputgroup-addon p-button-primary p-button-text"
               icon="pi pi-search"
               label="Search"
               (click)="onSearch()"
             ></button>
-          </div> -->
+          </div>
         </div>
         <p-accordion>
           <p-accordionTab
@@ -151,22 +159,7 @@
                 fxLayoutAlign="start center"
               >
                 <!-- Decription search -->
-                <div class="p-field" fxFlex>
-                  <span class="p-float-label p-input-icon-right">
-                    <input
-                      id="code"
-                      type="text"
-                      class="p-inputtext-sm"
-                      pInputText
-                      [(ngModel)]="search['description']"
-                    />
-                    <label for="description">Description </label>
-                    <i
-                      class="pi pi-times clear"
-                      (click)="search['description'] = undefined; onSearch()"
-                    ></i>
-                  </span>
-                </div>
+
                 <!-- Code search -->
                 <div class="p-field" fxFlex>
                   <span class="p-float-label p-input-icon-right">
@@ -194,13 +187,6 @@
                   icon="pi pi-times"
                   label="Clear"
                   (click)="clearSearch()"
-                ></button>
-                <button
-                  pButton
-                  class="p-button-primary p-button-text"
-                  icon="pi pi-search"
-                  label="Search"
-                  (click)="onSearch()"
                 ></button>
               </div>
             </div>
@@ -252,6 +238,7 @@
               {{ col.header
               }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
             </th>
+            <th>Budget Class</th>
             <th></th>
           </tr>
         </ng-template>
@@ -259,6 +246,9 @@
           <tr>
             <td *ngFor="let col of columns">
               {{ rowData[col.field] }}
+            </td>
+            <td>
+              {{ rowData?.budget_class?.name }}
             </td>
             <td>
               <div fxLayout="row" fxLayoutAlign="end">

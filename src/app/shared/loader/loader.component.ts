@@ -17,7 +17,8 @@ import { Component, Input, OnInit } from '@angular/core';
 
   "
     >
-      <p-progressSpinner animationDuration="0.5s"></p-progressSpinner>
+      <!-- <p-progressSpinner animationDuration="0.5s"></p-progressSpinner> -->
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
     </span>
   `,
   styles: [],

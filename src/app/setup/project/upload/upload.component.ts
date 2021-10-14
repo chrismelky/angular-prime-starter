@@ -6,6 +6,7 @@ import {Observable} from "rxjs";
 import {CustomResponse} from "../../../utils/custom-response";
 import {finalize} from "rxjs/operators";
 import {ProjectService} from "../project.service";
+import {saveAs} from "file-saver";
 
 @Component({
   selector: 'app-upload',
@@ -92,5 +93,18 @@ export class UploadComponent implements OnInit {
     const fd = new FormData();
     fd.append('file', this.editForm.get(['file'])!.value);
     return fd;
+  }
+
+  downloadTemplate() {
+    this.projectService
+      .downloadTemplate()
+      .subscribe((response: BlobPart) => {
+        saveAs(
+          new Blob([response], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          }),
+          'project-upload-template.xlsx'
+        );
+      });
   }
 }

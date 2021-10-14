@@ -5,11 +5,11 @@
       icon="pi pi-download"
       class="p-button-raised"
       (click)="downloadTemplate()"
-      label="Download Gfs Codes Upload Template"
+      label="Download Fund Source Upload Template"
     ></button>
     <br>
     <br>
-    <p-fileUpload name="fundSourceCategories[]" [customUpload]="true" (onSelect)="onSelect($event)"
+    <p-fileUpload name="gfsCodes[]" [customUpload]="true" (onSelect)="onSelect($event)"
                   (uploadHandler)="onUpload($event)"
                   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
       <ng-template pTemplate="content">

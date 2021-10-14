@@ -5,19 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
-import { createRequestOption } from '../../utils/request-util';
-import { CustomResponse } from '../../utils/custom-response';
-import { FundSource } from './fund-source.model';
+import {createRequestOption} from '../../utils/request-util';
+import {CustomResponse} from '../../utils/custom-response';
+import {FundSource} from './fund-source.model';
+import {FundSourceCategory} from "../fund-source-category/fund-source-category.model";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class FundSourceService {
   public resourceUrl = 'api/fund_sources';
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient) {
+  }
 
   create(fundSource: FundSource): Observable<CustomResponse<FundSource>> {
     return this.http.post<CustomResponse<FundSource>>(
@@ -45,6 +47,7 @@ export class FundSourceService {
       params: options,
     });
   }
+
   queryCeilingSector(req?: any): Observable<CustomResponse<any[]>> {
     const options = createRequestOption(req);
     const url = 'api/ceiling_sectors';
@@ -78,6 +81,17 @@ export class FundSourceService {
   ): Observable<CustomResponse<FundSource[]>> {
     return this.http.get<CustomResponse<FundSource[]>>(
       `${this.resourceUrl}/by_budget_class/${budgetClassId}`
+    );
+  }
+
+  upload(data: any): Observable<CustomResponse<FundSource[]>> {
+    return this.http.post<CustomResponse<FundSource[]>>(this.resourceUrl + '/upload', data);
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
     );
   }
 }

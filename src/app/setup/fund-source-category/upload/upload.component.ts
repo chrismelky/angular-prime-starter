@@ -5,7 +5,7 @@ import {ToastService} from "../../../shared/toast.service";
 import {Observable} from "rxjs";
 import {CustomResponse} from "../../../utils/custom-response";
 import {finalize} from "rxjs/operators";
-import {GfsCodeService} from "../gfs-code.service";
+import {FundSourceCategoryService} from "../fund-source-category.service";
 import {saveAs} from "file-saver";
 
 @Component({
@@ -23,15 +23,13 @@ export class UploadComponent implements OnInit {
   editForm: FormGroup;
 
   constructor(
-    protected gfsCodeService: GfsCodeService,
+    protected fundSourceCategoryService: FundSourceCategoryService,
     public dialogRef: DynamicDialogRef,
     public config: DynamicDialogConfig,
     public fb: FormBuilder,
     private toastService: ToastService,
   ) {
     this.editForm = this.fb.group({
-      category_id: [this.config.data.category_id, [Validators.required]],
-      account_type_id: [this.config.data.account_type_id, [Validators.required]],
       file: []
     })
   }
@@ -44,9 +42,9 @@ export class UploadComponent implements OnInit {
       this.formError = true;
       return;
     }
-    const gfsCodes = this.createFromForm();
+    const items = this.createFromForm();
     this.subscribeToSaveResponse(
-      this.gfsCodeService.upload(gfsCodes)
+      this.fundSourceCategoryService.upload(items)
     );
   }
 
@@ -93,26 +91,19 @@ export class UploadComponent implements OnInit {
    */
   protected createFromForm(): FormData {
     const fd = new FormData();
-    fd.append('category_id',
-      this.editForm.get(['category_id'])!.value
-    );
-    fd.append(
-      'account_type_id',
-      this.editForm.get(['account_type_id'])!.value
-    );
     fd.append('file', this.editForm.get(['file'])!.value);
     return fd;
   }
 
   downloadTemplate() {
-    this.gfsCodeService
+    this.fundSourceCategoryService
       .downloadTemplate()
       .subscribe((response: BlobPart) => {
         saveAs(
           new Blob([response], {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           }),
-          'gfs-code-upload-template.xlsx'
+          'fund-source-category-upload-template.xlsx'
         );
       });
   }

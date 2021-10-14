@@ -57,4 +57,11 @@ export class GfsCodeService {
   upload(data: any): Observable<CustomResponse<GfsCode[]>> {
     return this.http.post<CustomResponse<GfsCode[]>>(this.resourceUrl + '/upload', data);
   }
+
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
+    );
+  }
 }

@@ -1,11 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup} from "@angular/forms";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {ToastService} from "../../../shared/toast.service";
 import {Observable} from "rxjs";
 import {CustomResponse} from "../../../utils/custom-response";
 import {finalize} from "rxjs/operators";
-import {GfsCodeService} from "../gfs-code.service";
+import {FundSourceService} from "../fund-source.service";
+import {Router} from "@angular/router";
+import {environment} from "../../../../environments/environment";
+import {LocalStorageService, SessionStorageService} from "ngx-webstorage";
 import {saveAs} from "file-saver";
 
 @Component({
@@ -23,15 +26,16 @@ export class UploadComponent implements OnInit {
   editForm: FormGroup;
 
   constructor(
-    protected gfsCodeService: GfsCodeService,
+    protected fundSourceService: FundSourceService,
     public dialogRef: DynamicDialogRef,
     public config: DynamicDialogConfig,
     public fb: FormBuilder,
+    protected router: Router,
+    private localStorage: LocalStorageService,
+    private sessionStorage: SessionStorageService,
     private toastService: ToastService,
   ) {
     this.editForm = this.fb.group({
-      category_id: [this.config.data.category_id, [Validators.required]],
-      account_type_id: [this.config.data.account_type_id, [Validators.required]],
       file: []
     })
   }
@@ -44,9 +48,9 @@ export class UploadComponent implements OnInit {
       this.formError = true;
       return;
     }
-    const gfsCodes = this.createFromForm();
+    const items = this.createFromForm();
     this.subscribeToSaveResponse(
-      this.gfsCodeService.upload(gfsCodes)
+      this.fundSourceService.upload(items)
     );
   }
 
@@ -93,26 +97,19 @@ export class UploadComponent implements OnInit {
    */
   protected createFromForm(): FormData {
     const fd = new FormData();
-    fd.append('category_id',
-      this.editForm.get(['category_id'])!.value
-    );
-    fd.append(
-      'account_type_id',
-      this.editForm.get(['account_type_id'])!.value
-    );
     fd.append('file', this.editForm.get(['file'])!.value);
     return fd;
   }
 
   downloadTemplate() {
-    this.gfsCodeService
+    this.fundSourceService
       .downloadTemplate()
       .subscribe((response: BlobPart) => {
         saveAs(
           new Blob([response], {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           }),
-          'gfs-code-upload-template.xlsx'
+          'fund-source-upload-template.xlsx'
         );
       });
   }

@@ -9,6 +9,24 @@
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
+          <input id="name" type="text" pInputText formControlName="name" />
+          <label for="name">Name </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('name')!.invalid &&
+            (editForm.get('name')!.dirty ||
+              editForm.get('name')!.touched ||
+              formError)
+          "
+        >
+          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
+          >Name is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
           <input id="code" type="text" pInputText formControlName="code" />
           <label for="code">Code </label>
         </span>
@@ -25,26 +43,6 @@
           >
         </span>
       </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="name" type="text" pInputText formControlName="name" />
-          <label for="name">Name </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('name')!.invalid &&
-            (editForm.get('name')!.dirty ||
-              editForm.get('name')!.touched ||
-              formError)
-          "
-        >
-          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
-            >Name is required.</small
-          >
-        </span>
-      </div>
-
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
@@ -109,6 +107,7 @@
         <span class="p-float-label">
           <p-multiSelect
             id="sections"
+            optionValue="id"
             optionLabel="name"
             [filter]="true"
             class="p-inputtext-sm"
@@ -116,7 +115,7 @@
             [options]="sections!"
             formControlName="sections"
           ></p-multiSelect>
-          <label for="sections">Section/Cost Centres </label>
+          <label for="sections">Section/Cost Centres</label>
         </span>
         <span
           *ngIf="

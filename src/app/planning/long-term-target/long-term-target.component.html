@@ -204,6 +204,7 @@
             <app-financial-year-target-view
               [longTermTarget]="rowData"
               [financialYearId]="y.id"
+              [adminHierarchyId]="strategicPlan.admin_hierarchy_id"
               [currentFinancialYear]="currentFinancialYear"
               (onSave)="fyTargetSaved($event)"
             ></app-financial-year-target-view>

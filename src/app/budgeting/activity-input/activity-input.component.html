@@ -18,33 +18,113 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="category_id"
+                id="activity_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="categories!"
+                [options]="activities!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="category_id"
+                [(ngModel)]="activity_id"
               ></p-dropdown>
-              <label for="category_id">Category </label>
+              <label for="activity_id">Activity </label>
             </span>
           </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="account_type_id"
+                id="fund_source_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="accountTypes!"
+                [options]="fundSources!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="account_type_id"
+                [(ngModel)]="fund_source_id"
               ></p-dropdown>
-              <label for="account_type_id">Account Type </label>
+              <label for="fund_source_id">Fund Source </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="financial_year_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="financialYears!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="financial_year_id"
+              ></p-dropdown>
+              <label for="financial_year_id">Financial Year </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="admin_hierarchy_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="adminHierarchies!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="admin_hierarchy_id"
+              ></p-dropdown>
+              <label for="admin_hierarchy_id">Admin Hierarchy </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="facility_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="facilities!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="facility_id"
+              ></p-dropdown>
+              <label for="facility_id">Facility </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="section_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="sections!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="section_id"
+              ></p-dropdown>
+              <label for="section_id">Section </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="budget_class_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="budgetClasses!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="budget_class_id"
+              ></p-dropdown>
+              <label for="budget_class_id">Budget Class </label>
             </span>
           </div>
         </div>
@@ -97,49 +177,32 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
-                    id="name"
+                    id="chart_of_account"
                     type="text"
                     class="p-inputtext-sm"
                     pInputText
-                    [(ngModel)]="search['name']"
+                    [(ngModel)]="search['chart_of_account']"
                   />
-                  <label for="name">Name </label>
+                  <label for="chart_of_account">Chart Of Account </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="search['name'] = undefined; onSearch()"
+                    (click)="search['chart_of_account'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>
               <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="code"
-                    type="text"
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="unit"
+                    optionValue="value"
+                    optionLabel="display"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
                     class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['code']"
-                  />
-                  <label for="code">Code </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['code'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="aggregated_code"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['aggregated_code']"
-                  />
-                  <label for="aggregated_code">Aggregated Code </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['aggregated_code'] = undefined; onSearch()"
-                  ></i>
+                    [options]="units!"
+                    [(ngModel)]="search['unit']"
+                  ></p-dropdown>
+                  <label for="unit">Unit </label>
                 </span>
               </div>
             </div>
@@ -175,33 +238,33 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="gfsCodes!"
+      [value]="activityInputs!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Gfs Codes</span>
+          <span class="card-header-text">Activity Inputs</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!account_type_id || !category_id"
+            [disabled]="
+              !activity_id ||
+              !fund_source_id ||
+              !financial_year_id ||
+              !admin_hierarchy_id ||
+              !facility_id ||
+              !section_id ||
+              !budget_class_id
+            "
             (click)="createOrUpdate()"
-            label="Add Gfs Code"
-          ></button>
-          <button
-            pButton
-            icon="pi pi-upload"
-            class="p-button-raised"
-            [disabled]="!account_type_id || !category_id"
-            (click)="upload()"
-            label="Upload Gfs Codes"
+            label="Add Activity Input"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="gfsCodes?.length">
+        <tr *ngIf="activityInputs?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
@@ -252,7 +315,7 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="gfsCodes?.length! > 0"
+        [alwaysShow]="activityInputs?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -267,6 +330,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Gfs Code"
+  header="Confirmation Delete Activity Input"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

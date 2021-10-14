@@ -252,6 +252,8 @@ export class ActivityComponent implements OnInit {
     this.financialYearTargetService
       .query({
         objective_id: objectiveId,
+        admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
+        financial_year_id: this.financialYear?.id,
         columns: ['id', 'description', 'code', 'long_term_target_id'],
       })
       .subscribe(

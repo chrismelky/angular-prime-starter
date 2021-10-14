@@ -97,6 +97,14 @@
             (click)="createOrUpdate()"
             label="Add Fund Source Category"
           ></button>
+          <button
+            pButton
+            icon="pi pi-upload"
+            class="p-button-raised"
+            [disabled]=""
+            (click)="upload()"
+            label="Upload Fund Source Categories"
+          ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

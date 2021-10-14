@@ -41,7 +41,7 @@ export class FacilityUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    code: [null, [Validators.required]],
+    code: [null, [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
     name: [null, [Validators.required]],
     facility_type_id: [null, [Validators.required]],
     admin_hierarchy_id: [null, [Validators.required]],
@@ -60,12 +60,12 @@ export class FacilityUpdateComponent implements OnInit {
     private toastService: ToastService,
     protected enumService: EnumService
   ) {
-    if(this.dialogConfig.data.facility !== undefined){
+    if (this.dialogConfig.data.facility !== undefined) {
       const facility = this.dialogConfig.data.facility as Facility;
       facility.facility_type_id = this.dialogConfig.data.facility_type_id;
       facility.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
       this.facility = facility;
-    } else{
+    } else {
       this.facility.facility_type_id = this.dialogConfig.data.facility_type_id;
       this.facility.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
     }

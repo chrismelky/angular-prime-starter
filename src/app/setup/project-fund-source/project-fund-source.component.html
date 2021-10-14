@@ -129,20 +129,16 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="projectFundSources?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th [pSortableColumn]="'fund_source_id'">
+            Fund Source <p-sortIcon [field]="'fund_source_id'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+          <td>
+            {{ rowData.fund_source?.code }} - {{ rowData.fund_source.name }}
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

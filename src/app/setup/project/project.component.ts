@@ -26,6 +26,7 @@ import {ProjectService} from "./project.service";
 import {ProjectUpdateComponent} from "./update/project-update.component";
 import {ProjectSectorComponent} from "./project-sector/project-sector.component";
 import {ProjectFundSourceComponent} from "./project-fund-source/project-fund-source.component";
+import {UploadComponent} from "./upload/upload.component";
 
 @Component({
   selector: "app-project",
@@ -283,6 +284,18 @@ export class ProjectComponent implements OnInit {
       data,
      /* header: row.name + ' Fund Sources',*/
       width: '60%'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  upload(): void {
+    const ref = this.dialogService.open(UploadComponent, {
+      width: '60%',
+      header: 'Projects Upload Form'
     });
     ref.onClose.subscribe((result) => {
       if (result) {

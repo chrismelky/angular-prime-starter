@@ -5,29 +5,29 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {AccountType} from "src/app/setup/account-type/account-type.model";
-import {AccountTypeService} from "src/app/setup/account-type/account-type.service";
-
-import {GfsCode} from "./gfs-code.model";
-import {GfsCodeService} from "./gfs-code.service";
-import {GfsCodeUpdateComponent} from "./update/gfs-code-update.component";
-import {GfsCodeCategory} from "../gfs-code-category/gfs-code-category.model";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+import { AccountType } from "src/app/setup/account-type/account-type.model";
+import { AccountTypeService } from "src/app/setup/account-type/account-type.service";
+import { GfsCode } from "./gfs-code.model";
+import { GfsCodeService } from "./gfs-code.service";
+import { GfsCodeUpdateComponent } from "./update/gfs-code-update.component";
+import {UploadComponent} from "./upload/upload.component";
 import {GfsCodeCategoryService} from "../gfs-code-category/gfs-code-category.service";
+import {GfsCodeCategory} from "../gfs-code-category/gfs-code-category.model";
 
 @Component({
   selector: "app-gfs-code",
@@ -57,6 +57,16 @@ export class GfsCodeComponent implements OnInit {
       header: "Aggregated Code",
       sort: true,
     },
+    {
+      field: "is_procurement",
+      header: "Is Procurement",
+      sort: false,
+    },
+    {
+      field: "is_protected",
+      header: "Is Protected",
+      sort: false,
+    },
   ]; //Table display columns
 
   isLoading = false;
@@ -75,24 +85,23 @@ export class GfsCodeComponent implements OnInit {
   constructor(
     protected gfsCodeService: GfsCodeService,
     protected accountTypeService: AccountTypeService,
-    protected gfsCodeCategoryService: GfsCodeCategoryService,
+    protected categoryService: GfsCodeCategoryService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.accountTypeService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<AccountType[]>) => (this.accountTypes = resp.data)
       );
-    this.gfsCodeCategoryService
-      .query({columns: ["id", "name"]})
+    this.categoryService
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<GfsCodeCategory[]>) => (this.categories = resp.data)
       );
@@ -102,10 +111,10 @@ export class GfsCodeComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.category_id) {
+    if (!this.account_type_id || !this.category_id) {
       return;
     }
     this.isLoading = true;
@@ -116,6 +125,7 @@ export class GfsCodeComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        account_type_id: this.account_type_id,
         category_id: this.category_id,
         ...this.helper.buildFilter(this.search),
       })
@@ -288,11 +298,28 @@ export class GfsCodeComponent implements OnInit {
   }
 
   /**
-   * When error on loading data set data to empty and reset page to load
+   * When error on loading data set data to empt and resert page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Gfs Code");
+  }
+
+  upload(): void {
+    const data = {
+      account_type_id: this.account_type_id,
+      category_id: this.category_id
+    }
+    const ref = this.dialogService.open(UploadComponent, {
+      data,
+      width: '60%',
+      header: 'Gfs Codes Upload Form'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

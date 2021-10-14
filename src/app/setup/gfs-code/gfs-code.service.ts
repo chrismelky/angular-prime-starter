@@ -17,7 +17,8 @@ import { GfsCode } from "./gfs-code.model";
 export class GfsCodeService {
   public resourceUrl = "api/gfs_codes";
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient) {
+  }
 
   create(gfsCode: GfsCode): Observable<CustomResponse<GfsCode>> {
     return this.http.post<CustomResponse<GfsCode>>(this.resourceUrl, gfsCode);
@@ -41,15 +42,26 @@ export class GfsCodeService {
     });
   }
 
+  delete(id: number): Observable<CustomResponse<null>> {
+    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
   queryRev(req?: any): Observable<CustomResponse<GfsCode[]>> {
     const options = createRequestOption(req);
     const url = '/api/gfs_codes/revenue';
     return this.http.get<CustomResponse<GfsCode[]>>(url, {
-       params: options,
+      params: options,
     });
   }
 
-  delete(id: number): Observable<CustomResponse<null>> {
-    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  upload(data: any): Observable<CustomResponse<GfsCode[]>> {
+    return this.http.post<CustomResponse<GfsCode[]>>(this.resourceUrl + '/upload', data);
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
+    );
   }
 }

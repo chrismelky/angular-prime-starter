@@ -28,6 +28,14 @@ export class ScrutinizationService {
       scrutinization
     );
   }
+  createInputComment(
+    scrutinization: Scrutinization
+  ): Observable<CustomResponse<Scrutinization>> {
+    return this.http.post<CustomResponse<Scrutinization>>(
+      this.inputCommentsUrl,
+      scrutinization
+    );
+  }
 
   update(
     scrutinization: Scrutinization

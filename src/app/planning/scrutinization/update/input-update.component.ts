@@ -1,32 +1,24 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-
-import { CustomResponse } from '../../../utils/custom-response';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
-import { Scrutinization } from '../scrutinization.model';
-import { ScrutinizationService } from '../scrutinization.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import {User} from "../../../setup/user/user.model";
+import {Component, OnInit} from "@angular/core";
 import {UserService} from "../../../setup/user/user.service";
+import {ScrutinizationService} from "../scrutinization.service";
+import {AdminHierarchyService} from "../../../setup/admin-hierarchy/admin-hierarchy.service";
+import {SectionService} from "../../../setup/section/section.service";
+import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import {FormBuilder, Validators} from "@angular/forms";
+import {ToastService} from "../../../shared/toast.service";
+import {User} from "../../../setup/user/user.model";
+import {AdminHierarchy} from "../../../setup/admin-hierarchy/admin-hierarchy.model";
+import {Section} from "../../../setup/section/section.model";
+import {Observable} from "rxjs";
+import {CustomResponse} from "../../../utils/custom-response";
+import {Scrutinization} from "../scrutinization.model";
+import {finalize} from "rxjs/operators";
 
 @Component({
-  selector: 'app-scrutinization-update',
-  templateUrl: './scrutinization-update.component.html',
+  selector: 'app-input-update',
+  templateUrl: './input-update.component.html',
 })
-export class ScrutinizationUpdateComponent implements OnInit {
+export class InputUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
@@ -41,7 +33,6 @@ export class ScrutinizationUpdateComponent implements OnInit {
     id: [null, []],
     comments: [null, [Validators.required]],
   });
-
   constructor(
     protected userService: UserService,
     protected scrutinizationService: ScrutinizationService,
@@ -54,22 +45,10 @@ export class ScrutinizationUpdateComponent implements OnInit {
   ) {
     this.currentUser = userService.getCurrentUser();
   }
-
   ngOnInit(): void {
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.updateForm(this.dialogConfig.data);
   }
-
-  saveOrUpdateActivityComment(): void {
+  saveOrUpdateInputComment(): void {
     if (this.editForm.invalid) {
       this.formError = true;
       return;
@@ -78,10 +57,10 @@ export class ScrutinizationUpdateComponent implements OnInit {
       admin_hierarchy_level_id:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
       financial_year_id:this.currentUser.admin_hierarchy?.current_financial_year_id,
       comments:this.editForm.value.comments,
-      activity_id:this.dialogConfig.data.id
+      activity_input_id:this.dialogConfig.data.id
     }
     this.isSaving = true;
-    this.scrutinizationService.create(data).subscribe(resp => {
+    this.scrutinizationService.createInputComment(data).subscribe(resp => {
       this.toastService.info(resp.message);
       this.dialogRef.close(true);
       this.isSaving = false;

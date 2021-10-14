@@ -31,6 +31,7 @@ import { ActivityService } from '../activity/activity.service';
 import { Activity } from '../activity/activity.model';
 import {Scrutinization} from "./scrutinization.model";
 import {SetCommentComponent} from "../assessment-criteria/update/set-comment.component";
+import {InputUpdateComponent} from "./update/input-update.component";
 
 @Component({
   selector: 'app-scrutinization',
@@ -89,11 +90,13 @@ export class ScrutinizationComponent implements OnInit {
         name: 'To conduct annual training to 1health care provider from Soya dispensary on proper  use of patograph by June 2020',
         budget: 2000000,
         expenditure: 500000,
+        status: 1,
         balance: 1500000,
         inputs: [
           {
             id: 21,
             code:'12345678',
+            status: 1,
             name: 'nunua dawa',
             amount: 5000
           }
@@ -104,11 +107,13 @@ export class ScrutinizationComponent implements OnInit {
         name: 'To provide Capitation Grant to 691 students at Sogesca Secondary School',
         budget: 1000000,
         expenditure: 500000,
+         status: 1,
         balance: 500000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 0,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -119,11 +124,13 @@ export class ScrutinizationComponent implements OnInit {
         name: 'To provide monthly employees benefits for 1 casual labourers in Kidoka Dispensary  by June 2020',
         budget: 2000000,
         expenditure: 1000000,
+         status: 0,
         balance: 1000000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 0,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -134,11 +141,13 @@ export class ScrutinizationComponent implements OnInit {
         name: 'To facilitate good working environment to 5 staffs by June 2020',
         budget: 200000,
         expenditure: 50000,
+         status: 1,
         balance: 150000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 1,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -149,11 +158,13 @@ export class ScrutinizationComponent implements OnInit {
         name: 'To facilitate Construction of Samazi Health Centre at Samazi Ward by, June 2019',
         budget: 2000000,
         expenditure: 500000,
+         status: 1,
         balance: 1500000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 1,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -164,11 +175,13 @@ export class ScrutinizationComponent implements OnInit {
         name: 'To facilitate quarterly Economics, and infrastructure committee meeting by june  2020',
         budget: 2000000,
         expenditure: 500000,
+         status: 0,
         balance: 1500000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 0,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -179,11 +192,13 @@ export class ScrutinizationComponent implements OnInit {
         name: 'To conduct mothly QIT meeting to 12 Health care providers at Hamai RHC by june 2020',
         budget: 2000000,
         expenditure: 500000,
+         status: 1,
         balance: 1500000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 1,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -194,11 +209,13 @@ export class ScrutinizationComponent implements OnInit {
         name: 'To provide Capitation Grant to 1166 students at Ngasamo Secondary School',
         budget: 2000000,
         expenditure: 500000,
+         status: 1,
         balance: 1500000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 1,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -208,12 +225,14 @@ export class ScrutinizationComponent implements OnInit {
         code: 'C01S09',
         name: 'To purchase 1 kit of supplementary drugs and medical supplies for RCH  services   by june 2020',
         budget: 2000000,
+         status: 1,
         expenditure: 500000,
         balance: 1500000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 1,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -223,12 +242,14 @@ export class ScrutinizationComponent implements OnInit {
         code: 'C01S10',
         name: 'To provide Responsibility Allowance to 68 Head Teachers  by June 2020',
         budget: 2000000,
+         status: 1,
         expenditure: 500000,
         balance: 1500000,
          inputs: [
            {
              id: 21,
              code:'12345678',
+             status: 1,
              name: 'nunua dawa',
              amount: 5000
            }
@@ -483,7 +504,7 @@ export class ScrutinizationComponent implements OnInit {
 
   setInputComments(input: any) {
     let data = input;
-    const ref = this.dialogService.open(ScrutinizationUpdateComponent, {
+    const ref = this.dialogService.open(InputUpdateComponent, {
       data,
       header: "Input Comments",
     });

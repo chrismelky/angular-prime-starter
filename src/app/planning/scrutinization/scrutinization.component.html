@@ -146,7 +146,9 @@
           <td>{{activity.code}}</td>
           <td>{{activity.name}}</td>
           <td></td>
-          <td></td>
+          <td>
+            <p-badge [value]="activity.status?'Scrutinized':'Not Scrutinized'"  severity="{{activity.status == 1?'success':'warning'}}"></p-badge>
+          </td>
           <td>
             <button pButton type="button" class="p-button-outlined p-button-rounded p-button-icon" label="Comments"
                     style="margin-left: 16px" icon="pi pi-comment" (click)="setActivityComments(activity)"
@@ -175,7 +177,7 @@
           <td></td>
           <td>{{input.amount | currency:'TZS  '}}</td>
           <td></td>
-          <td></td>
+          <td><p-badge [value]="input.status?'Scrutinized':'Not Scrutinized'"  severity="{{input.status == 1?'success':'warning'}}"></p-badge></td>
           <td>
             <button pButton type="button" class="p-button-outlined  p-button-rounded p-button-icon" label="Comments"
                     style="margin-left: 16px" icon="pi pi-comment" (click)="setInputComments(input)"

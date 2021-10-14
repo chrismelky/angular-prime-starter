@@ -1,0 +1,47 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+  >
+    <p-divider></p-divider>
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Activity: {{activity?.code}} - {{activity?.description}}
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Facility: {{activity?.code}}
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Quarter: {{activity?.quarter}}
+        </span>
+      </div><div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Budget: {{activity?.budget}}
+        </span>
+    </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Expenditure: {{activity?.expenditure}}
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Balance: {{activity?.balance}}
+        </span>
+      </div>
+      <p-divider></p-divider>
+    </div>
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div fxLayout="row" fxLayoutGap="1rem">
+
+      </div>
+    </div>
+
+  </form>
+</div>

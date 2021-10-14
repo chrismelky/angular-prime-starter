@@ -8,12 +8,14 @@ export class Scrutinization {
     public code?: string,
     public name?: string,
     public budget?: number,
+    public status?: number,
     public expenditure?: number,
     public balance?: number,
     public comments?: string,
     public inputs? : [{
       id: number,
       name: string,
+      status: number,
       code: string,
       amount: number
     }]

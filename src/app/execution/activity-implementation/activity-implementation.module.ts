@@ -12,13 +12,17 @@ import { ActivityImplementationRoutingModule } from "./activity-implementation-r
 import { SharedModule } from "../../shared/shared.module";
 import { ActivityImplementationComponent } from "./activity-implementation.component";
 import { ActivityImplementationUpdateComponent } from "./update/activity-implementation-update.component";
+import {ActivityImplementationEvidenceComponent} from "./update/activity-implementation-evidence.component";
+import {ActivityImplementationHistoryComponent} from "./update/activity-implementation-history.component";
 
 @NgModule({
   imports: [SharedModule, CommonModule, ActivityImplementationRoutingModule],
   declarations: [
     ActivityImplementationComponent,
     ActivityImplementationUpdateComponent,
+    ActivityImplementationHistoryComponent,
+    ActivityImplementationEvidenceComponent
   ],
-  entryComponents: [ActivityImplementationUpdateComponent],
+  entryComponents: [ActivityImplementationUpdateComponent,ActivityImplementationEvidenceComponent,ActivityImplementationHistoryComponent],
 })
 export class ActivityImplementationModule {}

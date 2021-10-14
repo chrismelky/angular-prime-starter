@@ -36,6 +36,8 @@ import { ActivityImplementationService } from "./activity-implementation.service
 import { ActivityImplementationUpdateComponent } from "./update/activity-implementation-update.component";
 import {FundSource} from "../../setup/fund-source/fund-source.model";
 import {FundSourceService} from "../../setup/fund-source/fund-source.service";
+import {ActivityImplementationHistoryComponent} from "./update/activity-implementation-history.component";
+import {ActivityImplementationEvidenceComponent} from "./update/activity-implementation-evidence.component";
 
 @Component({
   selector: "app-activity-implementation",
@@ -451,9 +453,10 @@ export class ActivityImplementationComponent implements OnInit {
       facility_type_id: this.facility_type_id,
       facility_id: this.facility_id,
     };
-    const ref = this.dialogService.open(ActivityImplementationUpdateComponent, {
+    const ref = this.dialogService.open(ActivityImplementationHistoryComponent, {
       data,
-      header: "Activity Implementation",
+      header: "Activity Implementation History",
+      width:"65%",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -471,9 +474,10 @@ export class ActivityImplementationComponent implements OnInit {
       facility_type_id: this.facility_type_id,
       facility_id: this.facility_id,
     };
-    const ref = this.dialogService.open(ActivityImplementationUpdateComponent, {
+    const ref = this.dialogService.open(ActivityImplementationEvidenceComponent, {
       data,
-      header: "Activity Implementation",
+      header: "Activity Implementation Evidence",
+      width:"50%",
     });
     ref.onClose.subscribe((result) => {
       if (result) {

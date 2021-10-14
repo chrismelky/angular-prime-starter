@@ -149,10 +149,6 @@
           <th>Fund Source</th>
           <th>Budget Class</th>
           <th>GFS Code</th>
-<!--          <th>Date Created</th>-->
-<!--          <th>Fund Type</th>-->
-<!--          <th>Bank Account </th>-->
-<!--          <th>Active</th>-->
           <th></th>
         </tr>
       </ng-template>
@@ -163,23 +159,6 @@
           <td>
             [{{rowData?.fund_source?.gfs_code?.code}}] {{rowData?.fund_source?.gfs_code?.name}}
           </td>
-<!--          <td>{{rowData?.created_at |date:'mediumDate'}}</td>-->
-<!--          <td>-->
-<!--            <app-ceiling-fund-type-update-->
-<!--              [ceiling]="rowData"-->
-<!--            ></app-ceiling-fund-type-update>-->
-<!--          </td>-->
-<!--          <td>-->
-<!--            <app-ceiling-bank-account-update-->
-<!--              [ceiling]="rowData"-->
-<!--            ></app-ceiling-bank-account-update>-->
-<!--          </td>-->
-<!--          <td>-->
-<!--            <p-inputSwitch-->
-<!--              [(ngModel)]="rowData['is_active']"-->
-<!--              (onChange)="toggleActivation(rowData)"-->
-<!--            ></p-inputSwitch>-->
-<!--          </td>-->
           <td style="text-align: end">
             <app-ceinings-sector
               [ceiling_id]="rowData.id"

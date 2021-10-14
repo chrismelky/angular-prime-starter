@@ -14,10 +14,11 @@ import {ProjectComponent} from "./project.component";
 import {ProjectUpdateComponent} from "./update/project-update.component";
 import {ProjectSectorModule} from "./project-sector/project-sector.module";
 import {ProjectFundSourceModule} from "./project-fund-source/project-fund-source.module";
+import {UploadComponent} from "./upload/upload.component";
 
 @NgModule({
   imports: [SharedModule, CommonModule, ProjectRoutingModule, ProjectFundSourceModule, ProjectSectorModule],
-  declarations: [ProjectComponent, ProjectUpdateComponent],
+  declarations: [ProjectComponent, ProjectUpdateComponent, UploadComponent],
   entryComponents: [ProjectUpdateComponent],
 })
 export class ProjectModule {

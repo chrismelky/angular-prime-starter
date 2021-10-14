@@ -18,8 +18,10 @@ import {LocalStorageService} from "ngx-webstorage";
 export class ChangePasswordComponent implements OnInit {
   loading: boolean;
   user: any = this.localStorage.retrieve("user");
+
   formGroup = this.formBuilder.group(
     {
+      oldPassword: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(40)]],
       passwordConfirmation: ['', Validators.required]
     },
@@ -47,7 +49,8 @@ export class ChangePasswordComponent implements OnInit {
     return this.formBuilder.group(
       {
         password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(40)]],
-        passwordConfirmation: ['', Validators.required]
+        passwordConfirmation: ['', Validators.required],
+        oldPassword: ['', Validators.required],
       },
       {
         validators: [Validation.match('password', 'passwordConfirmation')]
@@ -59,7 +62,7 @@ export class ChangePasswordComponent implements OnInit {
     this.loading = true;
     const data = this.createFromForm();
     data.id = this.user?.id;
-    this.subscribeToSaveResponse(this.userService.passwordReset(data));
+    this.subscribeToSaveResponse(this.userService.changePassword(data));
   }
 
   protected subscribeToSaveResponse(result: Observable<CustomResponse<User>>): void {
@@ -99,6 +102,7 @@ export class ChangePasswordComponent implements OnInit {
       ...new PasswordReset(),
       password: this.formGroup.get(["password"])!.value,
       passwordConfirmation: this.formGroup.get(["passwordConfirmation"])!.value,
+      oldPassword: this.formGroup.get(["oldPassword"])!.value,
     };
   }
 }

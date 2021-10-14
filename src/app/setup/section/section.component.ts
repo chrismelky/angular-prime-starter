@@ -224,7 +224,7 @@ export class SectionComponent implements OnInit {
    */
   protected sort(): string[] {
     const predicate = this.predicate ? this.predicate : 'id';
-    const direction = this.ascending ? 'asc' : 'desc';
+    const direction = this.ascending ? 'asc' : 'asc';
     return [`${predicate}:${direction}`];
   }
 

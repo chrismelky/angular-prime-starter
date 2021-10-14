@@ -24,6 +24,8 @@ import { ToastService } from "src/app/shared/toast.service";
 import { FundSourceCategory } from "./fund-source-category.model";
 import { FundSourceCategoryService } from "./fund-source-category.service";
 import { FundSourceCategoryUpdateComponent } from "./update/fund-source-category-update.component";
+import {UploadComponent} from "./upload/upload.component";
+import {saveAs} from "file-saver";
 
 @Component({
   selector: "app-fund-source-category",
@@ -251,5 +253,17 @@ export class FundSourceCategoryComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Fund Source Category");
+  }
+
+  upload(): void {
+    const ref = this.dialogService.open(UploadComponent, {
+      width: '60%',
+      header: 'Fund Source Category Upload Form'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

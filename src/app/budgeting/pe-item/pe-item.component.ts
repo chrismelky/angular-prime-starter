@@ -131,14 +131,14 @@ export class PeItemComponent implements OnInit {
       this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
       this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
       this.financial_year_id = this.currentUser.admin_hierarchy?.current_financial_year_id!
-      //this.is_current_budget_locked = this.currentUser.admin_hierarchy?.is_current_budget_locked!
+      this.is_current_budget_locked = this.currentUser.admin_hierarchy?.is_current_budget_locked!
     }
   }
 
   ngOnInit(): void {
     console.log("Current User")
     // @ts-ignore
-    console.log(this.currentUser!.admin_hierarchy.current_financial_year_id)
+    console.log(this.is_current_budget_locked)
     this.peSubFormService
       .getParentChildren()
       .subscribe(
@@ -871,8 +871,8 @@ export class PeItemComponent implements OnInit {
         /** clear arrays */
         this.selectedRowsArray = [];
         this.selectedRowsIndexArray = [];
-        this.filterChanged();
         this.store();
+        this.filterChanged();
       }
     });
   }

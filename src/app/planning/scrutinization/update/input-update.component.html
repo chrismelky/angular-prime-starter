@@ -1,0 +1,27 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="saveOrUpdateInputComment()"
+    [formGroup]="editForm"
+  >
+
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+        <textarea rows="2" id="id" formControlName="comments"
+                  cols="30" placeholder="Put your comments here" pInputTextarea [autoResize]="true"></textarea>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

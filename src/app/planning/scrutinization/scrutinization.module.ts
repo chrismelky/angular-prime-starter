@@ -12,10 +12,12 @@ import { ScrutinizationRoutingModule } from "./scrutinization-routing.module";
 import { SharedModule } from "../../shared/shared.module";
 import { ScrutinizationComponent } from "./scrutinization.component";
 import { ScrutinizationUpdateComponent } from "./update/scrutinization-update.component";
+import {InputUpdateComponent} from "./update/input-update.component";
+import {BadgeModule} from "primeng/badge";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, ScrutinizationRoutingModule],
-  declarations: [ScrutinizationComponent, ScrutinizationUpdateComponent],
-  entryComponents: [ScrutinizationUpdateComponent],
+    imports: [SharedModule, CommonModule, ScrutinizationRoutingModule, BadgeModule],
+  declarations: [ScrutinizationComponent, ScrutinizationUpdateComponent, InputUpdateComponent],
+  entryComponents: [ScrutinizationUpdateComponent, InputUpdateComponent],
 })
 export class ScrutinizationModule {}

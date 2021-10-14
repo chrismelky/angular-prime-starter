@@ -1,13 +1,13 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { SectionComponent } from "./section.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { SectionComponent } from './section.component';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: SectionComponent,
     data: {
-      defaultSort: "id:asc",
+      defaultSort: 'position:asc',
     },
     //canActivate: [UserRouteAccessService],
   },

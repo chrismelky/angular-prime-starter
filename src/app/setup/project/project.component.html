@@ -94,6 +94,14 @@
             (click)="createOrUpdate()"
             label="Add Project"
           ></button>
+          <button
+            pButton
+            icon="pi pi-upload"
+            class="p-button-raised"
+            [disabled]=""
+            (click)="upload()"
+            label="Upload Projects"
+          ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

@@ -6,167 +6,335 @@
     (ngSubmit)="save()"
     [formGroup]="editForm"
   >
+    <p-divider></p-divider>
     <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Activity: {{activity?.code}} - {{activity?.description}}
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Facility: {{activity?.code}}
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Quarter: {{activity?.quarter}}
+        </span>
+      </div><div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Budget: {{activity?.budget}}
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Expenditure: {{activity?.expenditure}}
+        </span>
+      </div>
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Balance: {{activity?.balance}}
+        </span>
+      </div>
+      <p-divider></p-divider>
+      </div>
+
+    <div fxLayout="column" fxLayoutGap="1rem">
+    <div fxLayout="row" fxLayoutGap="1rem">
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="admin_hierarchy_id"
-            optionValue="id"
+            id="status_id"
+            optionValue="name"
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
-            [options]="adminHierarchies!"
-            formControlName="admin_hierarchy_id"
+            [options]="implementationStatus!"
+            formControlName="status_id"
           ></p-dropdown>
-          <label for="admin_hierarchy_id">Admin Hierarchy </label>
+          <label for="status_id">Status</label>
         </span>
         <span
           *ngIf="
-            editForm.get('admin_hierarchy_id')!.invalid &&
-            (editForm.get('admin_hierarchy_id')!.dirty ||
-              editForm.get('admin_hierarchy_id')!.touched ||
+            editForm.get('status_id')!.invalid &&
+            (editForm.get('status_id')!.dirty ||
+              editForm.get('status_id')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
-            >Admin Hierarchy is required.</small
+            *ngIf="editForm.get('status_id')?.errors?.required"
+          >Status is required.</small
           >
         </span>
       </div>
+
       <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="financial_year_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="financialYears!"
-            formControlName="financial_year_id"
-          ></p-dropdown>
-          <label for="financial_year_id">Financial Year </label>
-        </span>
+          <span class="p-float-label">
+            <p-dropdown
+              id="procurement_method_id"
+              optionValue="name"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="procurementMethods!"
+              formControlName="procurement_method_id"
+            ></p-dropdown>
+            <label for="procurement_method_id">Procurement Method </label>
+          </span>
         <span
           *ngIf="
-            editForm.get('financial_year_id')!.invalid &&
-            (editForm.get('financial_year_id')!.dirty ||
-              editForm.get('financial_year_id')!.touched ||
-              formError)
-          "
+              editForm.get('procurement_method_id')!.invalid &&
+              (editForm.get('procurement_method_id')!.dirty ||
+                editForm.get('procurement_method_id')!.touched ||
+                formError)
+            "
         >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('financial_year_id')?.errors?.required"
-            >Financial Year is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="period_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="periods!"
-            formControlName="period_id"
-          ></p-dropdown>
-          <label for="period_id">Period </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('period_id')!.invalid &&
-            (editForm.get('period_id')!.dirty ||
-              editForm.get('period_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('period_id')?.errors?.required"
-            >Period is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="facility_type_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="facilityTypes!"
-            formControlName="facility_type_id"
-          ></p-dropdown>
-          <label for="facility_type_id">Facility Type </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('facility_type_id')!.invalid &&
-            (editForm.get('facility_type_id')!.dirty ||
-              editForm.get('facility_type_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('facility_type_id')?.errors?.required"
-            >Facility Type is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="facility_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="facilities!"
-            formControlName="facility_id"
-          ></p-dropdown>
-          <label for="facility_id">Facility </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('facility_id')!.invalid &&
-            (editForm.get('facility_id')!.dirty ||
-              editForm.get('facility_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('facility_id')?.errors?.required"
-            >Facility is required.</small
-          >
-        </span>
-      </div>
-      <div fxLayout="row" fxLayoutGap="0.75rem">
-        <span fxFlex></span>
-        <button
-          class="p-button-raised"
-          icon="pi pi-check"
-          label="Save"
-          pButton
-          type="submit"
-        ></button>
+            <small
+              class="p-error"
+              *ngIf="editForm.get('procurement_method_id')?.errors?.required"
+            >Procurement Method is required.</small
+            >
+          </span>
       </div>
     </div>
+    <div fxLayout="row" fxLayoutGap="10px">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="indicator" type="text" pInputText formControlName="indicator" readonly/>
+            <label for="indicator">Indicator </label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('indicator')!.invalid &&
+              (editForm.get('indicator')!.dirty ||
+                editForm.get('indicator')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('indicator')?.errors?.required"
+            >Indicator is required.</small
+            >
+          </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="indicator_value" type="text" pInputText formControlName="indicator_value" readonly/>
+            <label for="indicator_value">Indicator Value </label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('indicator_value')!.invalid &&
+              (editForm.get('indicator_value')!.dirty ||
+                editForm.get('indicator_value')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('indicator_value')?.errors?.required"
+            >Indicator Value is required.</small
+            >
+          </span>
+      </div>
+    </div>
+
+      <div fxLayout="row" fxLayoutGap="10px">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="project_output" type="text" pInputText formControlName="project_output" readonly/>
+            <label for="project_output">Project Output </label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('project_output')!.invalid &&
+              (editForm.get('project_output')!.dirty ||
+                editForm.get('project_output')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('project_output')?.errors?.required"
+            >Project Output is required.</small
+            >
+          </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="planned_value" type="text" pInputText formControlName="planned_value" readonly/>
+            <label for="planned_value">Planned Value </label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('planned_value')!.invalid &&
+              (editForm.get('planned_value')!.dirty ||
+                editForm.get('planned_value')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('planned_value')?.errors?.required"
+            >Planned Value is required.</small
+            >
+          </span>
+      </div>
+    </div>
+
+      <div fxLayout="row" fxLayoutGap="10px">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="project_output_implemented" type="number" pInputText formControlName="project_output_implemented" />
+            <label for="project_output_implemented">Project output implemented value this quarter </label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('project_output_implemented')!.invalid &&
+              (editForm.get('project_output_implemented')!.dirty ||
+                editForm.get('project_output_implemented')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('project_output_implemented')?.errors?.required"
+            >Project Output implemented is required.</small
+            >
+          </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="actual_implementation" type="text" pInputText formControlName="actual_implementation" />
+            <label for="actual_implementation">Actual Implementation </label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('actual_implementation')!.invalid &&
+              (editForm.get('actual_implementation')!.dirty ||
+                editForm.get('actual_implementation')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('actual_implementation')?.errors?.required"
+            >Actual Implementation is required.</small
+            >
+          </span>
+      </div>
+    </div>
+
+      <div fxLayout="row" fxLayoutGap="10px">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="physical_actual_implementation" type="number" pInputText formControlName="physical_actual_implementation" />
+            <label for="physical_actual_implementation">Physical Actual Implementation(%) </label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('physical_actual_implementation')!.invalid &&
+              (editForm.get('physical_actual_implementation')!.dirty ||
+                editForm.get('physical_actual_implementation')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('physical_actual_implementation')?.errors?.required"
+            >Physical Actual Implementation is required.</small
+            >
+          </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input id="financial_actual_implementation" type="number" value="{{activity?.expenditure!/activity?.budget!*100}}" pInputText readonly/>
+            <label for="financial_actual_implementation">Financial Actual Implementation(%)</label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('financial_actual_implementation')!.invalid &&
+              (editForm.get('financial_actual_implementation')!.dirty ||
+                editForm.get('financial_actual_implementation')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('financial_actual_implementation')?.errors?.required"
+            >Actual Implementation is required.</small
+            >
+          </span>
+      </div>
+    </div>
+
+      <div fxLayout="row" fxLayoutGap="10px">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+        <textarea
+          id="remarks"
+          formControlName="remarks"
+          [rows]="5"
+          [cols]="30"
+          pInputTextarea
+          [autoResize]="true"
+        ></textarea>
+            <label for="remarks">Remarks on Physical Progress </label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('remarks')!.invalid &&
+              (editForm.get('remarks')!.dirty ||
+                editForm.get('remarks')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('remarks')?.errors?.required"
+            >Remarks on Physical Progress is required.</small
+            >
+          </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+<textarea
+  id="achievement"
+  formControlName="achievement"
+  [rows]="5"
+  [cols]="30"
+  pInputTextarea
+  [autoResize]="true"
+></textarea>
+            <label for="achievement">Overall Achievement</label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('achievement')!.invalid &&
+              (editForm.get('achievement')!.dirty ||
+                editForm.get('achievement')!.touched ||
+                formError)
+            "
+        >
+            <small class="p-error" *ngIf="editForm.get('achievement')?.errors?.required"
+            >Overall Achievement is required.</small
+            >
+          </span>
+      </div>
+    </div>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <p-fileUpload [showUploadButton]="false" name="url" id="url" url="" [maxFileSize]="4000000"  (onSelect)="onSelect($event)" accept="application/pdf" >
+        </p-fileUpload>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayoutGap="0.75rem">
+      <span fxFlex></span>
+      <button
+        class="p-button-raised"
+        icon="pi pi-check"
+        label="Save"
+        pButton
+        type="submit"
+      ></button>
+    </div>
+
   </form>
 </div>

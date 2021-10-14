@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { Project } from "./project.model";
+import {GfsCode} from "../gfs-code/gfs-code.model";
 
 @Injectable({ providedIn: "root" })
 export class ProjectService {
@@ -43,5 +44,16 @@ export class ProjectService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  upload(data: any): Observable<CustomResponse<Project[]>> {
+    return this.http.post<CustomResponse<Project[]>>(this.resourceUrl + '/upload', data);
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
+    );
   }
 }

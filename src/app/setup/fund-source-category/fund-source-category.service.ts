@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { FundSourceCategory } from "./fund-source-category.model";
+import {Project} from "../project/project.model";
 
 @Injectable({ providedIn: "root" })
 export class FundSourceCategoryService {
@@ -53,5 +54,16 @@ export class FundSourceCategoryService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  upload(data: any): Observable<CustomResponse<FundSourceCategory[]>> {
+    return this.http.post<CustomResponse<FundSourceCategory[]>>(this.resourceUrl + '/upload', data);
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
+    );
   }
 }

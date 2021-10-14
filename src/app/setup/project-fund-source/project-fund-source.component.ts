@@ -41,13 +41,7 @@ export class ProjectFundSourceComponent implements OnInit {
   projects?: Project[] = [];
   fundSources?: FundSource[] = [];
 
-  cols = [
-    {
-      field: "fund_source_id",
-      header: "Fund Source ",
-      sort: true,
-    },
-  ]; //Table display columns
+  cols = []; //Table display columns
 
   isLoading = false;
   page?: number = 1;

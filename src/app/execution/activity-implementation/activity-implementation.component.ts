@@ -36,6 +36,8 @@ import { ActivityImplementationService } from "./activity-implementation.service
 import { ActivityImplementationUpdateComponent } from "./update/activity-implementation-update.component";
 import {FundSource} from "../../setup/fund-source/fund-source.model";
 import {FundSourceService} from "../../setup/fund-source/fund-source.service";
+import {ActivityImplementationHistoryComponent} from "./update/activity-implementation-history.component";
+import {ActivityImplementationEvidenceComponent} from "./update/activity-implementation-evidence.component";
 
 @Component({
   selector: "app-activity-implementation",
@@ -44,7 +46,8 @@ import {FundSourceService} from "../../setup/fund-source/fund-source.service";
 export class ActivityImplementationComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  activityImplementations?: ActivityImplementation[] = [];
+
+  activityImplementations?: ActivityImplementation[];
 
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: any;
@@ -54,7 +57,7 @@ export class ActivityImplementationComponent implements OnInit {
 
   fundSources?: FundSource[] = [];
 
-  cols = []; //Table display columns
+  cols = [ ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -72,6 +75,7 @@ export class ActivityImplementationComponent implements OnInit {
   facility_type_id!: number;
   facility_id!: number;
   fund_source_id!: number;
+
 
   constructor(
     protected activityImplementationService: ActivityImplementationService,
@@ -92,6 +96,80 @@ export class ActivityImplementationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.activityImplementations = [
+      {
+        id: 1,
+        code: 'C01S01',
+        description: 'To conduct annual training to 1health care provider from Soya dispensary on proper  use of patograph by June 2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 2,
+        code: 'D01S02',
+        description: 'To provide Capitation Grant to 691 students at Sogesca Secondary School',
+        budget: 1000000,
+        expenditure: 500000,
+        balance: 500000
+      },{
+        id: 3,
+        code: 'C01S22',
+        description: 'To provide monthly employees benefits for 1 casual labourers in Kidoka Dispensary  by June 2020',
+        budget: 2000000,
+        expenditure: 1000000,
+        balance: 1000000
+      },{
+        id: 4,
+        code: 'C01S12',
+        description: 'To facilitate good working environment to 5 staffs by June 2020',
+        budget: 200000,
+        expenditure: 50000,
+        balance: 150000
+      },{
+        id: 5,
+        code: 'C01S05',
+        description: 'To facilitate Construction of Samazi Health Centre at Samazi Ward by, June 2019',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 6,
+        code: 'C01S06',
+        description: 'To facilitate quarterly Economics, and infrastructure committee meeting by june  2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 7,
+        code: 'C01S11',
+        description: 'To conduct mothly QIT meeting to 12 Health care providers at Hamai RHC by june 2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 8,
+        code: 'C01S91',
+        description: 'To provide Capitation Grant to 1166 students at Ngasamo Secondary School',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 9,
+        code: 'C01S09',
+        description: 'To purchase 1 kit of supplementary drugs and medical supplies for RCH  services   by june 2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },{
+        id: 10,
+        code: 'C01S10',
+        description: 'To provide Responsibility Allowance to 68 Head Teachers  by June 2020',
+        budget: 2000000,
+        expenditure: 500000,
+        balance: 1500000
+      },
+    ];
+
     this.adminHierarchyService
       .query({ columns: ["id", "name"] })
       .subscribe(
@@ -281,7 +359,7 @@ export class ActivityImplementationComponent implements OnInit {
     };
     const ref = this.dialogService.open(ActivityImplementationUpdateComponent, {
       data,
-      header: "Create/Update ActivityImplementation",
+      header: "ActivityImplementation",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -332,7 +410,7 @@ export class ActivityImplementationComponent implements OnInit {
         },
       });
     }
-    this.activityImplementations = resp?.data ?? [];
+    // this.activityImplementations = resp?.data ?? [];
   }
 
   /**
@@ -342,5 +420,69 @@ export class ActivityImplementationComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Activity Implementation");
+  }
+
+  track(item: any) {
+    const data: ActivityImplementation = item ?? {
+      ...new ActivityImplementation(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
+      period_id: this.period_id,
+      facility_type_id: this.facility_type_id,
+      facility_id: this.facility_id,
+    };
+
+    const ref = this.dialogService.open(ActivityImplementationUpdateComponent, {
+      data,
+      header: "Activity Implementation",
+      width:"55%",
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  history(item: any) {
+    const data: ActivityImplementation = item ?? {
+      ...new ActivityImplementation(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
+      period_id: this.period_id,
+      facility_type_id: this.facility_type_id,
+      facility_id: this.facility_id,
+    };
+    const ref = this.dialogService.open(ActivityImplementationHistoryComponent, {
+      data,
+      header: "Activity Implementation History",
+      width:"65%",
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  attachments(item: any) {
+    const data: ActivityImplementation = item ?? {
+      ...new ActivityImplementation(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
+      period_id: this.period_id,
+      facility_type_id: this.facility_type_id,
+      facility_id: this.facility_id,
+    };
+    const ref = this.dialogService.open(ActivityImplementationEvidenceComponent, {
+      data,
+      header: "Activity Implementation Evidence",
+      width:"50%",
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

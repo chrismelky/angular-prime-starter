@@ -41,13 +41,7 @@ export class ProjectSectorComponent implements OnInit {
   projects?: Project[] = [];
   sectors?: Sector[] = [];
 
-  cols = [
-    {
-      field: "sector_id",
-      header: "Sector ",
-      sort: true,
-    },
-  ]; //Table display columns
+  cols = []; //Table display columns
 
   isLoading = false;
   page?: number = 1;

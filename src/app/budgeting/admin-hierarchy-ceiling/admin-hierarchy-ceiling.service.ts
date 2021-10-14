@@ -12,7 +12,6 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { AdminHierarchyCeiling } from "./admin-hierarchy-ceiling.model";
-import {first} from "rxjs/operators";
 
 @Injectable({ providedIn: "root" })
 export class AdminHierarchyCeilingService {
@@ -55,6 +54,15 @@ export class AdminHierarchyCeilingService {
     return this.http.get<CustomResponse<any[]>>(
       url,
       { params: options }
+    );
+  }
+  ceilingByPosition(
+    positions: any
+  ): Observable<CustomResponse<any>> {
+    const url = 'api/ceiling_by_positions';
+    return this.http.post<CustomResponse<any>>(
+      url,
+      positions
     );
   }
 

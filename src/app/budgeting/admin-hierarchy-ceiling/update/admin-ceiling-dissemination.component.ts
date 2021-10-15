@@ -147,13 +147,13 @@ export class AdminCeilingDisseminationComponent implements OnInit {
           this.councilCeilingGroup![startIndex].ceiling = this.councilCeiling!.filter((c) => c.parent_id === ceilingId.id);
           this.defaultSelected![ceiling.position] = {...this.councilCeilingGroup![startIndex].ceiling[0]};
           if(!ceiling.chain.next){
+            this.finalCeiling = this.defaultSelected![ceiling.position];
             this.loadFacilityCeiling(this.defaultSelected![ceiling.position]);
           }
         }
         if(ceiling.chain.next){
           let sections = this.councilCeiling!.filter(cc => cc.parent_id == this.defaultSelected![ceiling.position].id);
           this.totalAllocatedCeiling[ceiling.position] = {...{amount:this.getTotalAllocatedAmount(sections)}};
-          console.log(this.getTotalAllocatedAmount(sections))
         }
         this.selectedCeiling[ceiling.position] ={...this.defaultSelected![ceiling.position]};
       }
@@ -164,6 +164,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   sectionChange(ceiling: any,chain:CeilingChain) : void{
     if(chain.next){
       this.selectedCeiling[chain.section_level_position.position] = {...ceiling};
+      let sections = this.councilCeiling!.filter(cc => cc.parent_id == ceiling.id);
+      this.totalAllocatedCeiling[chain.section_level_position.position] = {...{amount:this.getTotalAllocatedAmount(sections)}};
       let ceilingData = this.councilCeilingGroup!.filter(cg => cg.position > ceiling.section.position);
       let startIndex = this.councilCeilingGroup!.findIndex(c=>c.position == ceilingData[0].position);
       this.updateSelection(ceilingData,startIndex,chain.section_level_position.position);
@@ -221,7 +223,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   updateCeiling(adminHierarchyCeiling: AdminHierarchyCeiling){
     const index = this.toAllocate!.findIndex(item => item.id === adminHierarchyCeiling.id);
     if(this.clonedCeiling![index].amount != adminHierarchyCeiling.amount){
-    if(this.totalAllocatedCeiling[this.allocationPosition!] <= this.selectedCeiling[this.allocationPosition!]!.amount!) {
+    if(this.totalAllocatedCeiling[this.allocationPosition!].amount <= this.selectedCeiling[this.allocationPosition!]!.amount!) {
       const ceiling = this.updateFromForm(adminHierarchyCeiling);
       this.subscribeToSaveResponse(
         this.adminHierarchyCeilingService.update(ceiling),adminHierarchyCeiling

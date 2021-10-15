@@ -16,7 +16,10 @@
                <span class="p-float-label">
                   <div fxLayout="row" fxLayoutAlign="space-between center">
                     <span><b>{{ceiling.label}}</b></span>
-                    <span><b>{{ (ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount) | currency:"TZS":"TSH"}}  (100%)</b>  Allocated</span>
+                    <span><b>{{ (ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
+                      | currency:"TZS":"TSH"}} ({{(ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
+                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00
+                      }})%</b>  Allocated</span>
                   </div>
                 </span>
               <p-dropdown
@@ -41,31 +44,6 @@
                   <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>
                 </ng-template>
               </p-dropdown>
-<!--              <span class="p-inputgroup p-col-12" style="background-color: red">-->
-<!--                       <p-dropdown-->
-<!--                         optionValue=""-->
-<!--                         optionLabel="section.name"-->
-<!--                         [autoDisplayFirst]="true"-->
-<!--                         placeholder="Select  {{ceiling.label}}"-->
-<!--                         [filter]="true"-->
-<!--                         [options]="ceiling.ceiling!"-->
-<!--                         (onChange)="sectionChange($event.value,ceiling.chain)"-->
-<!--                         styleClass="form-control"-->
-<!--                       >-->
-
-<!--            <ng-template let-item pTemplate="item">-->
-<!--              <div fxLayout="row" fxLayoutAlign="space-between center">-->
-<!--                <span class=""> {{item.section.name}} </span>-->
-<!--                <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>-->
-<!--              </div>-->
-<!--            </ng-template>-->
-<!--             <ng-template let-item pTemplate="selectedItem">-->
-<!--               <span class=""> {{item.section.name}}</span>-->
-<!--               <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>-->
-<!--            </ng-template>-->
-<!--          </p-dropdown>-->
-<!--                <button  (click)="allocateCeiling(ceiling.position,op,$event)" *ngIf="ceiling.chain.next" type="button" pButton pRipple icon="pi pi-briefcase" label="Allocate " styleClass="p-button-outlined"></button>-->
-<!--              </span>-->
             </div>
           </div>
         </div>
@@ -120,8 +98,12 @@
                   <td>{{rowData?.council}}</td>
                   <td>{{rowData?.facility}}</td>
                   <td>
-                    <div  class="p-field" fxFlex>
+                    <div  class="p-field" fxFlex style="text-align: end;">
+                      <span *ngIf="finalCeiling.amount <=0 || rowData.is_locked">
+                        {{rowData!.amount | currency:"TZS":"TSH"}}
+                      </span>
                     <p-inputNumber
+                      *ngIf="finalCeiling.amount > 0 && !rowData.is_locked"
                       mode="decimal"
                       prefix="TSH "
                       [(ngModel)]="rowData!.amount"
@@ -133,9 +115,13 @@
                     ></p-inputNumber>
                     </div>
                   </td>
-                  <td>
-                    <div  class="p-field" fxFlex>
+                  <td >
+                    <div  class="p-field" fxFlex style="text-align: end;">
+                      <span *ngIf="finalCeiling.amount <=0 || rowData.is_locked">
+                        {{rowData!.percent | number : '1.2-2'}} %
+                      </span>
                     <p-inputNumber
+                      *ngIf="finalCeiling.amount > 0  && !rowData.is_locked"
                       mode="decimal"
                       suffix=" %"
                       [(ngModel)]="rowData.percent"
@@ -206,17 +192,22 @@
           </tr>
           <tr>
             <th>Council</th>
-            <th>{{currentActiveCeiling?.section?.section_level?.name}}</th>
+            <th>{{toAllocate!.length>0?toAllocate![0]?.section?.section_level?.name:null}}</th>
             <th class="end">Amount (TSH)</th>
             <th class="end">%</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-rowData let-editing="editing" let-rowIndex="rowIndex" let-columns="columns">
+        <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex" let-columns="columns">
           <tr>
             <td>{{rowData?.admin_hierarchy.name}}</td>
             <td>{{rowData?.section?.name}}</td>
             <td  styleClass="col-button">
+              <div  class="p-field" fxFlex style="text-align: end;">
+                      <span *ngIf="rowData.is_locked">
+                        {{rowData!.amount | currency:"TZS":"TSH"}}
+                      </span>
                     <p-inputNumber
+                      *ngIf="!rowData.is_locked"
                       mode="decimal"
                       prefix="TSH "
                       [(ngModel)]="rowData!.amount"
@@ -226,10 +217,15 @@
                       (onInput)="ceilingChange(rowData,$event.value)"
                       [min]="0"
                     ></p-inputNumber>
+              </div>
             </td>
             <td>
-              <div  class="p-field" fxFlex>
-              <p-inputNumber
+              <div  class="p-field" fxFlex style="text-align: end;">
+                <span *ngIf="rowData.is_locked">
+                  {{rowData!.amount | currency:"TZS":"TSH"}}
+                </span>
+                <p-inputNumber
+                  *ngIf="!rowData.is_locked"
                 mode="decimal"
                 suffix=" %"
                 [(ngModel)]="rowData.percent"

@@ -41,7 +41,7 @@ export class GfsCodeUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
-    aggregated_code: [null, [Validators.required]],
+    aggregated_code: [null],
     account_type_id: [null, [Validators.required]],
     category_id: [null, [Validators.required]],
     is_procurement: [false, []],

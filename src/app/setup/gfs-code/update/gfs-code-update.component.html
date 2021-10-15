@@ -53,23 +53,8 @@
               id="aggregated_code"
               type="text"
               pInputText
-              formControlName="aggregated_code"
-            />
-            <label for="aggregated_code">Aggregated Code </label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('aggregated_code')!.invalid &&
-              (editForm.get('aggregated_code')!.dirty ||
-                editForm.get('aggregated_code')!.touched ||
-                formError)
-            "
-          >
-            <small
-              class="p-error"
-              *ngIf="editForm.get('aggregated_code')?.errors?.required"
-            >Aggregated Code is required.</small
-            >
+              formControlName="aggregated_code"/>
+            <label for="aggregated_code">Aggregated Code</label>
           </span>
         </div>
       </div>

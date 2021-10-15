@@ -24,10 +24,15 @@ body {
 .p-panelmenu .p-panelmenu-header > a .p-menuitem-icon {
   margin-right: 0.7rem;
 }
+
+.p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-icon {
+  font-size: 14px;
+}
 .p-panelmenu .p-panelmenu-content .p-menuitem .p-menuitem-link {
   .p-menuitem-icon {
     order: 1; // to be the first item on right side.
     font-weight: 400;
+    font-size: 14px;
    }
    .p-menuitem-text {
     flex-grow: 1; // to fill the whole space and push the icon to the end
@@ -327,7 +332,7 @@ p-card.filter {
 
 .p-dropdown.p-dropdown-clearable .p-dropdown-label, .p-password {
   font-size: $fontSize;
-  line-height: 0.8125rem;
+  // line-height: 0.8125rem;
 }
 
 .p-accordion .p-accordion-header .p-accordion-header-link {
@@ -542,10 +547,11 @@ i.clear {
   padding: $fontSize
 }
 
+.p-inputgroup-addon,
 .p-inputtext-sm .p-inputtext,
 .p-cascadeselect .p-cascadeselect-label,
 .p-multiselect .p-multiselect-label {
-  padding: 0.65625rem 0.65625rem;
+  padding: 0.563rem 0.65625rem;
 }
 
 .mat-dialog-content {

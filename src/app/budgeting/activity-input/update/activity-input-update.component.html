@@ -1,0 +1,447 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="unit_price"
+            formControlName="unit_price"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+          ></p-inputNumber>
+          <label for="unit_price">Unit Price </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('unit_price')!.invalid &&
+            (editForm.get('unit_price')!.dirty ||
+              editForm.get('unit_price')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('unit_price')?.errors?.required"
+            >Unit Price is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="quantity"
+            formControlName="quantity"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+          ></p-inputNumber>
+          <label for="quantity">Quantity </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('quantity')!.invalid &&
+            (editForm.get('quantity')!.dirty ||
+              editForm.get('quantity')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('quantity')?.errors?.required"
+            >Quantity is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="frequency"
+            formControlName="frequency"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+          ></p-inputNumber>
+          <label for="frequency">Frequency </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('frequency')!.invalid &&
+            (editForm.get('frequency')!.dirty ||
+              editForm.get('frequency')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('frequency')?.errors?.required"
+            >Frequency is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="forward_year_one_amount"
+            formControlName="forward_year_one_amount"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+          ></p-inputNumber>
+          <label for="forward_year_one_amount">Forward Year One Amount </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('forward_year_one_amount')!.invalid &&
+            (editForm.get('forward_year_one_amount')!.dirty ||
+              editForm.get('forward_year_one_amount')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="forward_year_two_amount"
+            formControlName="forward_year_two_amount"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+          ></p-inputNumber>
+          <label for="forward_year_two_amount">Forward Year Two Amount </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('forward_year_two_amount')!.invalid &&
+            (editForm.get('forward_year_two_amount')!.dirty ||
+              editForm.get('forward_year_two_amount')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="chart_of_account"
+            type="text"
+            pInputText
+            formControlName="chart_of_account"
+          />
+          <label for="chart_of_account">Chart Of Account </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('chart_of_account')!.invalid &&
+            (editForm.get('chart_of_account')!.dirty ||
+              editForm.get('chart_of_account')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="approve_amount"
+            formControlName="approve_amount"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+          ></p-inputNumber>
+          <label for="approve_amount">Approve Amount </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('approve_amount')!.invalid &&
+            (editForm.get('approve_amount')!.dirty ||
+              editForm.get('approve_amount')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="adjusted_amount"
+            formControlName="adjusted_amount"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+          ></p-inputNumber>
+          <label for="adjusted_amount">Adjusted Amount </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('adjusted_amount')!.invalid &&
+            (editForm.get('adjusted_amount')!.dirty ||
+              editForm.get('adjusted_amount')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="activity_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="activities!"
+            formControlName="activity_id"
+          ></p-dropdown>
+          <label for="activity_id">Activity </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('activity_id')!.invalid &&
+            (editForm.get('activity_id')!.dirty ||
+              editForm.get('activity_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('activity_id')?.errors?.required"
+            >Activity is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="fund_source_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="fundSources!"
+            formControlName="fund_source_id"
+          ></p-dropdown>
+          <label for="fund_source_id">Fund Source </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('fund_source_id')!.invalid &&
+            (editForm.get('fund_source_id')!.dirty ||
+              editForm.get('fund_source_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('fund_source_id')?.errors?.required"
+            >Fund Source is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="financial_year_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="financialYears!"
+            formControlName="financial_year_id"
+          ></p-dropdown>
+          <label for="financial_year_id">Financial Year </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('financial_year_id')!.invalid &&
+            (editForm.get('financial_year_id')!.dirty ||
+              editForm.get('financial_year_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('financial_year_id')?.errors?.required"
+            >Financial Year is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="admin_hierarchy_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="adminHierarchies!"
+            formControlName="admin_hierarchy_id"
+          ></p-dropdown>
+          <label for="admin_hierarchy_id">Admin Hierarchy </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('admin_hierarchy_id')!.invalid &&
+            (editForm.get('admin_hierarchy_id')!.dirty ||
+              editForm.get('admin_hierarchy_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
+            >Admin Hierarchy is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="facility_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="facilities!"
+            formControlName="facility_id"
+          ></p-dropdown>
+          <label for="facility_id">Facility </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('facility_id')!.invalid &&
+            (editForm.get('facility_id')!.dirty ||
+              editForm.get('facility_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('facility_id')?.errors?.required"
+            >Facility is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="section_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="sections!"
+            formControlName="section_id"
+          ></p-dropdown>
+          <label for="section_id">Section </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('section_id')!.invalid &&
+            (editForm.get('section_id')!.dirty ||
+              editForm.get('section_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('section_id')?.errors?.required"
+            >Section is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="budget_class_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="budgetClasses!"
+            formControlName="budget_class_id"
+          ></p-dropdown>
+          <label for="budget_class_id">Budget Class </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('budget_class_id')!.invalid &&
+            (editForm.get('budget_class_id')!.dirty ||
+              editForm.get('budget_class_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('budget_class_id')?.errors?.required"
+            >Budget Class is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="unit"
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="units!"
+            formControlName="unit"
+          ></p-dropdown>
+          <label for="unit">Unit </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('unit')!.invalid &&
+            (editForm.get('unit')!.dirty ||
+              editForm.get('unit')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

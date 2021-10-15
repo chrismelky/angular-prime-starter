@@ -13,8 +13,6 @@ import { SharedModule } from "../../shared/shared.module";
 import { FundSourceBudgetClassComponent } from "./fund-source-budget-class.component";
 import { FundSourceBudgetClassUpdateComponent } from "./update/fund-source-budget-class-update.component";
 import { CeiningsSectorComponent } from './update/ceinings-sector.component';
-import { CeilingFundTypeUpdateComponent } from './update/ceiling-fund-type-update.component';
-import { CeilingBankAccountUpdateComponent } from './update/ceiling-bank-account-update.component';
 import { CeilingFacilityTypeComponent } from './update/ceiling-facility-type.component';
 
 @NgModule({
@@ -23,8 +21,6 @@ import { CeilingFacilityTypeComponent } from './update/ceiling-facility-type.com
     FundSourceBudgetClassComponent,
     FundSourceBudgetClassUpdateComponent,
     CeiningsSectorComponent,
-    CeilingFundTypeUpdateComponent,
-    CeilingBankAccountUpdateComponent,
     CeilingFacilityTypeComponent,
   ],
   entryComponents: [FundSourceBudgetClassUpdateComponent],

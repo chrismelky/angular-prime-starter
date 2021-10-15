@@ -1,3 +1,4 @@
+<script src="admin-ceiling-dissemination.component.ts"></script>
 <div class="ui-dialog-content">
   <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <p-card class="filter">
@@ -7,32 +8,42 @@
       </div>
     </ng-template>
     <ng-template pTemplate="body">
-      <div fxLayout="column" fxLayoutGap="10px" *ngIf="section_level_position === ceilingStartSectionPosition">
-        <div fxLayout="row wrap" fxLayoutGap="10px">
-          <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
-            <div class="p-field" fxFlex>
-              Total Council Ceiling <b>{{ceiling!.amount | currency:"TZS":"TSH"}}</b> Allocated Amount :
-              <b>{{totalCouncilAmount | currency:"TZS":"TSH"}}</b>
-                (<b>{{ ceiling!.amount! > 0?((totalCouncilAmount!/ceiling!.amount!)*100):0.00 | number : '1.2-2'}} %</b>)
-              <p-badge severity="success" *ngIf="ceiling!.amount!>0" [value]="'Allocate'" (click)="openDialog(op,ceiling!.section!.position!,$event,ceiling!)" class="badge-custom"   styleClass="p-mr-2"></p-badge>
-            </div>
-          </div>
-        </div>
-      </div>
-      <br *ngIf="section_level_position === ceilingStartSectionPosition">
+      <div class="overlay-position"><span #overlayTarget></span></div>
       <div fxLayout="column" fxLayoutGap="10px">
         <div fxLayout="row wrap" fxLayoutGap="10px">
-          <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
-            <div class="p-field" fxFlex >
-              <span class="p-float-label" *ngIf="this.ceiling!.section!.position !== this.costCenterCeiling?.section?.position">
-                <b>{{department!.name}}</b> Total  Allocated Amount : <b>{{totalAllocatedDepartmentAmount | currency:"TZS":"TSH"}}</b>
-                (<b>{{ departmentCeiling!.amount! >0.00?((totalAllocatedDepartmentAmount/departmentCeiling!.amount!)*100):0.00 | number : '1.2-2'}} %</b>)
-                 <p-badge severity="success" *ngIf="departmentCeiling!.amount!>0" [value]="'Allocate'" (click)="openDialog(op,departmentCeiling!.section!.position!,$event,departmentCeiling!)" class="badge-custom"  styleClass="p-mr-2"></p-badge>
-              </span>
-            </div>
-            <div class="p-field" fxFlex>
-              <b>{{activeCostCenter!.name}}</b> Total Allocated Amount : <b>{{totalAllocatedCostCenterAmount | currency:"TZS":"TSH"}}</b>
-              (<b>{{ costCenterCeiling!.amount! >0.00?((totalAllocatedCostCenterAmount/costCenterCeiling!.amount!)*100):0.00 | number : '1.2-2'}} %</b>)
+          <div fxLayout="row wrap" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
+            <div *ngFor="let ceiling of councilCeilingGroup" class="p-field" fxFlex>
+               <span class="p-float-label">
+                  <div fxLayout="row" fxLayoutAlign="space-between center">
+                    <span><b>{{ceiling.label}}</b></span>
+                    <span><b>{{ (ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
+                      | currency:"TZS":"TSH"}} ({{(ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
+                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00
+                      }})%</b>  Allocated</span>
+                  </div>
+                </span>
+              <p-dropdown
+                optionValue=""
+                optionLabel="section.name"
+                [autoDisplayFirst]="true"
+                [(ngModel)]="defaultSelected![ceiling.position]"
+                placeholder="Select  {{ceiling.label}}"
+                [filter]="true"
+                [options]="ceiling.ceiling!"
+                (onChange)="sectionChange($event.value,ceiling.chain)"
+                styleClass="form-control"
+              >
+                <ng-template let-item pTemplate="item">
+                  <div fxLayout="row" fxLayoutAlign="space-between center">
+                    <span class=""> {{item.section.name}} </span>
+                    <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(ceiling.position,op,$event,defaultSelected![ceiling.position])" *ngIf="ceiling.chain.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
+                  </div>
+                </ng-template>
+                <ng-template let-item pTemplate="selectedItem">
+                  <span class=""> {{item.section.name}}</span>
+                  <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>
+                </ng-template>
+              </p-dropdown>
             </div>
           </div>
         </div>
@@ -40,82 +51,7 @@
       <br>
       <div fxLayout="column" fxLayoutGap="10px">
         <div fxLayout="row wrap" fxLayoutGap="10px">
-          <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
-            <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="department_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [(ngModel)]="selectedDepartment"
-                (ngModelChange)="onSelectDepartment($event)"
-                [filter]="true"
-                [options]="departments!"
-                class="p-inputtext-sm"
-              ></p-dropdown>
-              <label for="department_id">Department</label>
-            </span>
-            </div>
-            <div class="p-field" fxFlex>
-               <span class="p-float-label displayField">
-                 <b>
-                   {{departmentCeiling!.amount|currency:"TZS":"TSH"}}
-                 </b>
-               </span>
-<!--            <span class="p-float-label" *ngIf="!departmentCeiling!.is_locked">-->
-<!--<p-inputNumber-->
-<!--  id="department_amount"-->
-<!--  mode="decimal"-->
-<!--  prefix="TSH "-->
-<!--  [(ngModel)]="departmentCeiling!.amount"-->
-<!--  [minFractionDigits]="2"-->
-<!--  [maxFractionDigits]="2"-->
-<!--&gt;</p-inputNumber>-->
-<!--          <label for="department_amount">Total Amount </label>-->
-<!--            </span>-->
-            </div>
-              <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="cost_center_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                [options]="costCenter!"
-                (ngModelChange)="onSelectCostCenter($event)"
-                [(ngModel)]="selectedCostCenter"
-                class="p-inputtext-sm"
-              ></p-dropdown>
-              <label for="cost_center_id">Cost Center</label>
-            </span>
-              </div>
-            <div class="p-field" fxFlex>
-              <span class="p-float-label displayField">
-                <b>
-                   {{costCenterCeiling!.amount|currency:"TZS":"TSH"}}
-                </b>
-              </span>
-<!--            <span class="p-float-label" *ngIf="!costCenterCeiling!.is_locked">-->
-<!--<p-inputNumber-->
-<!--  id="cost_center_amount"-->
-<!--  mode="decimal"-->
-<!--  prefix="TSH "-->
-<!--  [(ngModel)]="costCenterCeiling!.amount"-->
-<!--  [minFractionDigits]="2"-->
-<!--  [maxFractionDigits]="2"-->
-<!--&gt;</p-inputNumber>-->
-<!--          <label for="cost_center_amount">Total Amount </label>-->
-<!--            </span>-->
-            </div>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div fxLayout="column" fxLayoutGap="10px">
-        <div fxLayout="row wrap" fxLayoutGap="10px">
-          <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
+          <div fxLayout="row wrap" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
             <div class="p-field" fxFlex>
             <p-table
               #fc
@@ -129,6 +65,8 @@
               dataKey="id"
             >
               <ng-template pTemplate="caption">
+                <span><b>{{finalCeiling?.section?.name}} Allocation</b></span>
+                <br>
                 <div fxLayout="column" fxLayoutGap="10px">
                   <div fxLayout="row wrap" fxLayoutGap="10px">
                     <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
@@ -143,7 +81,7 @@
                 </div>
               </ng-template>
               <ng-template pTemplate="header" >
-                <tr *ngIf="totalAllocatedCostCenterAmount > costCenterCeiling!.amount!">
+                <tr *ngIf="totalFacilityAllocatedAmount! > finalCeiling?.amount">
                   <th colspan="4">
                     <span><b style="color: red">Allocation Exceed Ceiling No Change Will Be saved !</b></span>
                   </th>
@@ -159,52 +97,42 @@
                 <tr>
                   <td>{{rowData?.council}}</td>
                   <td>{{rowData?.facility}}</td>
-                  <td  pEditableColumn [pEditableColumnDisabled]="rowData.is_locked"  id="amount">
-                    <p-cellEditor >
-                      <ng-template pTemplate="input">
-                        <div class="end">
-                          <p-inputNumber
-                            mode="decimal"
-                            prefix="TSH "
-                            [(ngModel)]="rowData!.amount"
-                            [minFractionDigits]="2"
-                            [maxFractionDigits]="2"
-                            (onBlur)="updateFacilityCeiling(rowData)"
-                            (onInput)="facilityCeilingChange(rowData,$event.value)"
-                            [min]="0"
-                          ></p-inputNumber>
-                        </div>
-                      </ng-template>
-                      <ng-template pTemplate="output" >
-                        <div>
-                          <b>{{rowData?.amount |currency:"TZS":"TSH"}}</b>
-                        </div>
-                      </ng-template>
-                    </p-cellEditor>
+                  <td>
+                    <div  class="p-field" fxFlex style="text-align: end;">
+                      <span *ngIf="finalCeiling.amount <=0 || rowData.is_locked">
+                        {{rowData!.amount | currency:"TZS":"TSH"}}
+                      </span>
+                    <p-inputNumber
+                      *ngIf="finalCeiling.amount > 0 && !rowData.is_locked"
+                      mode="decimal"
+                      prefix="TSH "
+                      [(ngModel)]="rowData!.amount"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="2"
+                      (onBlur)="updateFacilityCeiling(rowData)"
+                      (onInput)="facilityCeilingChange(rowData,$event.value)"
+                      [min]="0"
+                    ></p-inputNumber>
+                    </div>
                   </td>
-                  <td pEditableColumn [pEditableColumnDisabled]="rowData.is_locked">
-                    <p-cellEditor>
-                      <ng-template pTemplate="input">
-                        <div class="end">
-                          <p-inputNumber
-                            mode="decimal"
-                            suffix=" %"
-                            [(ngModel)]="rowData.percent"
-                            [minFractionDigits]="2"
-                            [maxFractionDigits]="2"
-                            (onBlur)="updateFacilityCeiling(rowData)"
-                            (onInput)="getFacilityPercent(rowData,$event.value)"
-                            [min]="0"
-                            [max]="100"
-                          ></p-inputNumber>
-                        </div>
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        <div>
-                          <b>{{rowData.percent | number : '1.2-2'}}  %</b>
-                        </div>
-                      </ng-template>
-                    </p-cellEditor>
+                  <td >
+                    <div  class="p-field" fxFlex style="text-align: end;">
+                      <span *ngIf="finalCeiling.amount <=0 || rowData.is_locked">
+                        {{rowData!.percent | number : '1.2-2'}} %
+                      </span>
+                    <p-inputNumber
+                      *ngIf="finalCeiling.amount > 0  && !rowData.is_locked"
+                      mode="decimal"
+                      suffix=" %"
+                      [(ngModel)]="rowData.percent"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="2"
+                      (onBlur)="updateFacilityCeiling(rowData)"
+                      (onInput)="getFacilityPercent(rowData,$event.value)"
+                      [min]="0"
+                      [max]="100"
+                    ></p-inputNumber>
+                    </div>
                   </td>
                 </tr>
               </ng-template>
@@ -221,27 +149,28 @@
 
 <p-overlayPanel
   appendTo="body"
-  (onShow)="getCeilingByLevel()"
-  (onHide)="closeOverlay(c)"
   #op
+  id="overlay"
   [showCloseIcon]="true"
   [dismissable]="false"
   [focusOnShow]="false"
+  [style]="marginStyle"
 >
-  <div class="dialog-content">
+  <div class="dialog-content" style="overflow: auto">
     <div class="card">
       <p-table
         #c
         class="ceiling"
-        [value]="ceilingToDisseminate!"
+        [value]="toAllocate!"
         [scrollable]="true"
         scrollHeight="32vh"
         dataKey="id"
         editMode="row"
         [globalFilterFields]="['admin_hierarchy.name','section.name']"
-        dataKey="id"
       >
         <ng-template pTemplate="caption">
+          <span><b>{{selectedCeiling[allocationPosition!]?.section?.name!}} Allocation</b></span>
+          <br>
           <div fxLayout="column" fxLayoutGap="10px">
             <div fxLayout="row wrap" fxLayoutGap="10px">
               <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
@@ -256,27 +185,29 @@
           </div>
         </ng-template>
         <ng-template pTemplate="header" >
-          <tr *ngIf="currentAllocatedAmount > currentActiveCeiling!.amount!">
-            <th colspan="4">
+          <tr>
+            <th colspan="4" *ngIf="(totalAllocatedCeiling[allocationPosition!]?.amount) > selectedCeiling![allocationPosition!]?.amount!">
               <span><b style="color: red">Allocation Exceed Ceiling No Change Will Be saved !</b></span>
             </th>
           </tr>
           <tr>
             <th>Council</th>
-            <th>{{currentActiveCeiling?.section?.section_level?.name}}</th>
+            <th>{{toAllocate!.length>0?toAllocate![0]?.section?.section_level?.name:null}}</th>
             <th class="end">Amount (TSH)</th>
             <th class="end">%</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-rowData let-editing="editing" let-rowIndex="rowIndex" let-columns="columns">
+        <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex" let-columns="columns">
           <tr>
             <td>{{rowData?.admin_hierarchy.name}}</td>
             <td>{{rowData?.section?.name}}</td>
-            <td  styleClass="col-button" pEditableColumn [pEditableColumnDisabled]="rowData.is_locked"  id="amount">
-              <p-cellEditor >
-                <ng-template pTemplate="input">
-                  <div class="end">
+            <td  styleClass="col-button">
+              <div  class="p-field" fxFlex style="text-align: end;">
+                      <span *ngIf="rowData.is_locked">
+                        {{rowData!.amount | currency:"TZS":"TSH"}}
+                      </span>
                     <p-inputNumber
+                      *ngIf="!rowData.is_locked"
                       mode="decimal"
                       prefix="TSH "
                       [(ngModel)]="rowData!.amount"
@@ -286,36 +217,26 @@
                       (onInput)="ceilingChange(rowData,$event.value)"
                       [min]="0"
                     ></p-inputNumber>
-                  </div>
-                </ng-template>
-                <ng-template pTemplate="output" >
-                  <div class="end">
-                    <b>{{rowData?.amount | currency:"TZS":"TSH"}}</b>
-                  </div>
-                </ng-template>
-              </p-cellEditor>
+              </div>
             </td>
-            <td pEditableColumn [pEditableColumnDisabled]="rowData.is_locked">
-              <p-cellEditor>
-                <ng-template pTemplate="input">
-                  <p-inputNumber
-                    mode="decimal"
-                    suffix=" %"
-                    [(ngModel)]="rowData.percent"
-                    [minFractionDigits]="2"
-                    [maxFractionDigits]="2"
-                    (onBlur)="updateCeiling(rowData)"
-                    (onInput)="getPercent(rowData,$event.value)"
-                    [min]="0"
-                    [max]="100"
-                  ></p-inputNumber>
-                </ng-template>
-                <ng-template pTemplate="output">
-                  <div class="end">
-                    <b>{{rowData.percent}}  %</b>
-                  </div>
-                </ng-template>
-              </p-cellEditor>
+            <td>
+              <div  class="p-field" fxFlex style="text-align: end;">
+                <span *ngIf="rowData.is_locked">
+                  {{rowData!.amount | currency:"TZS":"TSH"}}
+                </span>
+                <p-inputNumber
+                  *ngIf="!rowData.is_locked"
+                mode="decimal"
+                suffix=" %"
+                [(ngModel)]="rowData.percent"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                (onBlur)="updateCeiling(rowData)"
+                (onInput)="getPercent(rowData,$event.value)"
+                [min]="0"
+                [max]="100"
+              ></p-inputNumber>
+              </div>
             </td>
           </tr>
         </ng-template>
@@ -324,7 +245,5 @@
     </div>
   </div>
   <div class="p-dialog-footer">
-<!--    <p-button (onClick)="close()" label="Finish"  styleClass="p-button-primary"></p-button>-->
-    <!--  &nbsp;<p-button (onClick)="save()"   label="Save" icon="pi pi-save"></p-button>-->
   </div>
 </p-overlayPanel>

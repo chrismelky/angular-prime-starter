@@ -1,0 +1,22 @@
+<div class="dialog-content">
+  <div class="card">
+    <button
+      pButton
+      icon="pi pi-download"
+      class="p-button-raised"
+      (click)="downloadTemplate()"
+      label="Download Fund Sources Category Upload Template"
+    ></button>
+    <br>
+    <br>
+    <p-fileUpload name="fundSourceCategories[]" [customUpload]="true" (onSelect)="onSelect($event)"
+                  (uploadHandler)="onUpload($event)"
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+      <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+          <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </div>
+</div>

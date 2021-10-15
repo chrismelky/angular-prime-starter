@@ -3,69 +3,14 @@
     name="editForm"
     role="form"
     novalidate
-    (ngSubmit)="save()"
+    (ngSubmit)="saveOrUpdateActivityComment()"
     [formGroup]="editForm"
   >
+
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="admin_hierarchy_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="adminHierarchies!"
-            formControlName="admin_hierarchy_id"
-          ></p-dropdown>
-          <label for="admin_hierarchy_id">Admin Hierarchy </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('admin_hierarchy_id')!.invalid &&
-            (editForm.get('admin_hierarchy_id')!.dirty ||
-              editForm.get('admin_hierarchy_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
-            >Admin Hierarchy is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="section_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="sections!"
-            formControlName="section_id"
-          ></p-dropdown>
-          <label for="section_id">Section </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('section_id')!.invalid &&
-            (editForm.get('section_id')!.dirty ||
-              editForm.get('section_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('section_id')?.errors?.required"
-            >Section is required.</small
-          >
-        </span>
+        <textarea rows="2" id="id" formControlName="comments"
+                  cols="30" placeholder="Put your comments here" pInputTextarea [autoResize]="true"></textarea>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

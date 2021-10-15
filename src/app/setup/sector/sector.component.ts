@@ -29,13 +29,13 @@ export class SectorComponent implements OnInit {
 
   cols = [
     {
-      field: "code",
-      header: "Code",
+      field: "name",
+      header: "Name",
       sort: false,
     },
     {
-      field: "name",
-      header: "Name",
+      field: "code",
+      header: "Code",
       sort: false,
     },
     {

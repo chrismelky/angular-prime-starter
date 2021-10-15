@@ -129,20 +129,16 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="projectSectors?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th [pSortableColumn]="'sector_id'">
+            Sector <p-sortIcon [field]="'sector_id'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+          <td>
+            {{ rowData.sector?.name }}
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

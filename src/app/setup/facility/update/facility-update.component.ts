@@ -35,39 +35,41 @@ export class FacilityUpdateComponent implements OnInit {
   starRatings?: PlanrepEnum[] = [];
   facilityTypes?: FacilityType[] = [];
   facility: Facility = {};
+  adminHierarchyId!: number;
 
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
-    code: [null, [Validators.required]],
+    code: [null, [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
     name: [null, [Validators.required]],
     facility_type_id: [null, [Validators.required]],
-    admin_hierarchy_id: [null, [Validators.required]],
     ownership: [null, [Validators.required]],
     physical_state: [null, [Validators.required]],
     star_rating: [null, [Validators.required]],
   });
 
   constructor(
-    protected facilityService: FacilityService,
     protected facilityTypeService: FacilityTypeService,
     protected adminHierarchyService: AdminHierarchyService,
+    protected facilityService: FacilityService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected enumService: EnumService
   ) {
-    if(this.dialogConfig.data.facility !== undefined){
+    if (this.dialogConfig.data.facility !== undefined) {
       const facility = this.dialogConfig.data.facility as Facility;
       facility.facility_type_id = this.dialogConfig.data.facility_type_id;
       facility.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+      this.adminHierarchyId = this.dialogConfig.data.admin_hierarchy_id;
       this.facility = facility;
-    } else{
+    } else {
       this.facility.facility_type_id = this.dialogConfig.data.facility_type_id;
       this.facility.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+      this.adminHierarchyId = this.dialogConfig.data.admin_hierarchy_id;
     }
     this.facilityTypes = this.dialogConfig.data.facilityTypes;
   }
@@ -90,6 +92,7 @@ export class FacilityUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const facility = this.createFromForm();
+    facility.admin_hierarchy_id = this.adminHierarchyId;
     if (facility.id !== undefined) {
       this.subscribeToSaveResponse(this.facilityService.update(facility));
     } else {
@@ -137,7 +140,6 @@ export class FacilityUpdateComponent implements OnInit {
       code: facility.code,
       name: facility.name,
       facility_type_id: facility.facility_type_id,
-      admin_hierarchy_id: facility.admin_hierarchy_id,
       ownership: facility.ownership,
       physical_state: facility.physical_state,
       star_rating: facility.star_rating,
@@ -155,14 +157,9 @@ export class FacilityUpdateComponent implements OnInit {
       code: this.editForm.get(['code'])!.value,
       name: this.editForm.get(['name'])!.value,
       facility_type_id: this.editForm.get(['facility_type_id'])!.value,
-      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
       ownership: this.editForm.get(['ownership'])!.value,
       physical_state: this.editForm.get(['physical_state'])!.value,
       star_rating: this.editForm.get(['star_rating'])!.value,
     };
-  }
-
-  onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
-    this.editForm.get('admin_hierarchy_id')?.setValue(adminHierarchy.id);
   }
 }

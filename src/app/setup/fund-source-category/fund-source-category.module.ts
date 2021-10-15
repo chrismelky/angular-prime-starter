@@ -12,12 +12,13 @@ import { FundSourceCategoryRoutingModule } from "./fund-source-category-routing.
 import { SharedModule } from "../../shared/shared.module";
 import { FundSourceCategoryComponent } from "./fund-source-category.component";
 import { FundSourceCategoryUpdateComponent } from "./update/fund-source-category-update.component";
+import {UploadComponent} from "./upload/upload.component";
 
 @NgModule({
   imports: [SharedModule, CommonModule, FundSourceCategoryRoutingModule],
   declarations: [
     FundSourceCategoryComponent,
-    FundSourceCategoryUpdateComponent,
+    FundSourceCategoryUpdateComponent,UploadComponent
   ],
   entryComponents: [FundSourceCategoryUpdateComponent],
 })

@@ -194,7 +194,7 @@
                 <button *ngIf="rowData.amount > 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
                 <button
                   pButton
-                  *ngIf="!rowData['is_locked'] && position === 1"
+                  *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData['amount'] <=0 "
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="p-button-text p-button-plain p-button-rounded p-button-icon"

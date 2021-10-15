@@ -13,12 +13,30 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  font-size: 13px;
+  font-size: $fontSize;
   color: #202124;
 }
 
 .p-dialog .p-dialog-content {
   padding-top: 0.5rem;
+}
+
+.p-panelmenu .p-panelmenu-header > a .p-menuitem-icon {
+  margin-right: 0.7rem;
+}
+
+.p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-icon {
+  font-size: 14px;
+}
+.p-panelmenu .p-panelmenu-content .p-menuitem .p-menuitem-link {
+  .p-menuitem-icon {
+    order: 1; // to be the first item on right side.
+    font-weight: 400;
+    font-size: 14px;
+   }
+   .p-menuitem-text {
+    flex-grow: 1; // to fill the whole space and push the icon to the end
+   }
 }
 
 .sidenav-item {
@@ -41,13 +59,13 @@ body {
     }
 
     .pi-chevron-right {
-      font-size: 13px;
+      font-size: $fontSize;
     }
 
     .p-menuitem-text {
       font-size: 14px;
       line-height: 18px;
-      font-weight: 500;
+      font-weight: 400;
       overflow-x: hidden;
 
     }
@@ -216,7 +234,7 @@ body {
   padding: 0.25rem 0.5rem;
 
   .p-inline-message-text {
-    font-size: 0.75rem;
+    font-size: $fontSize;
   }
 }
 
@@ -226,7 +244,7 @@ body {
 
 
 .p-overlaypanel .p-overlaypanel-content {
-  padding: 0.75rem;
+  padding: $fontSize;
 }
 
 .p-button.planrep-tree {
@@ -264,7 +282,7 @@ p-card.filter {
   }
 
   .card-header-text {
-    font-size: 0.75rem !important;
+    font-size: $fontSize !important;
   }
 
   .p-card-content {
@@ -295,11 +313,11 @@ p-card.filter {
 }
 
 .p-component {
-  font-size: 0.8125rem;
+  font-size: $fontSize;
 }
 
 .p-tag {
-  font-size: 0.75rem;
+  font-size: $fontSize;
   font-weight: 500;
 }
 
@@ -313,8 +331,8 @@ p-card.filter {
 }
 
 .p-dropdown.p-dropdown-clearable .p-dropdown-label, .p-password {
-  font-size: 0.8125rem;
-  line-height: 0.8125rem;
+  font-size: $fontSize;
+  // line-height: 0.8125rem;
 }
 
 .p-accordion .p-accordion-header .p-accordion-header-link {
@@ -342,7 +360,7 @@ i.clear {
   .p-paginator-pages .p-paginator-page {
     min-width: 36px;
     height: 36px;
-    font-size: 12px;
+    font-size: $fontSize;
     line-height: 12px;
   }
 
@@ -363,7 +381,7 @@ i.clear {
     }
 
     .p-dropdown-label {
-      font-size: 12px;
+      font-size: $fontSize;
       line-height: 12px;
       text-align: left;
       min-width: 24px;
@@ -382,7 +400,7 @@ i.clear {
 
 .p-datatable .p-datatable-thead > tr > th {
   color: rgba(0, 0, 0, .54);
-  font-size: 0.75rem;
+  font-size: $fontSize;
   padding: 0;
   padding-left: 24px;
 }
@@ -404,11 +422,11 @@ i.clear {
 .sub-table .p-datatable {
   .p-datatable-tbody tr, .p-datatable-thead tr > th, tr > td {
     background-color: transparent;
-    font-size: 12px;
+    font-size: $fontSize;
     height: 36px !important;
 
     .pi {
-      font-size: 12px;
+      font-size: $fontSize;
       line-height: 12px;
     }
   }
@@ -496,7 +514,7 @@ i.clear {
         height: 2rem;
 
         .pi {
-          font-size: 13px;
+          font-size: $fontSize;
         }
       }
     }
@@ -518,21 +536,22 @@ i.clear {
 
 .p-inputtext, .p-float-label {
   width: 100%;
-  font-size: 0.8125rem;
+  font-size: $fontSize;
 }
 
 .p-inputtext-sm .p-inputtext, .p-inputtext.p-inputtext-sm {
-  font-size: 0.8125rem;
+  font-size: $fontSize;
 }
 
 .p-inputtext.p-inputtext-sm {
-  padding: 0.75rem
+  padding: $fontSize
 }
 
+.p-inputgroup-addon,
 .p-inputtext-sm .p-inputtext,
 .p-cascadeselect .p-cascadeselect-label,
 .p-multiselect .p-multiselect-label {
-  padding: 0.65625rem 0.65625rem;
+  padding: 0.563rem 0.65625rem;
 }
 
 .mat-dialog-content {

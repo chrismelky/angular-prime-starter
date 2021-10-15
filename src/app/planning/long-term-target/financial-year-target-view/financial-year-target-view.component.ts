@@ -25,6 +25,7 @@ export class FinancialYearTargetViewComponent implements OnInit {
   @Input() longTermTarget?: LongTermTarget;
   @Input() financialYearId?: number;
   @Input() currentFinancialYear?: FinancialYear;
+  @Input() adminHierarchyId?: number;
   @ViewChild('op') op?: TemplateRef<OverlayPanel>;
   @Output() onSave: EventEmitter<any> = new EventEmitter();
 
@@ -51,6 +52,8 @@ export class FinancialYearTargetViewComponent implements OnInit {
           long_term_target_id: this.longTermTarget?.id,
           section_id: this.longTermTarget?.section_id,
           financial_year_id: this.financialYearId,
+          admin_hierarchy_id: this.adminHierarchyId,
+          objective_id: this.longTermTarget?.objective_id,
           code: this.longTermTarget?.code,
         },
         true
@@ -71,8 +74,10 @@ export class FinancialYearTargetViewComponent implements OnInit {
                 ...new FinancialYearTarget(),
                 long_term_target_id: this.longTermTarget?.id,
                 section_id: this.longTermTarget?.section_id,
+                objective_id: this.longTermTarget?.objective_id,
                 financial_year_id: this.financialYearId,
                 code: this.longTermTarget?.code,
+                admin_hierarchy_id: this.adminHierarchyId,
               },
               false
             );
@@ -92,6 +97,8 @@ export class FinancialYearTargetViewComponent implements OnInit {
       long_term_target_id: [target.long_term_target_id, [Validators.required]],
       code: [target.code, [Validators.required]],
       section_id: [target.section_id, [Validators.required]],
+      admin_hierarchy_id: [target.admin_hierarchy_id, [Validators.required]],
+      objective_id: [target.objective_id, [Validators.required]],
     });
   }
 
@@ -108,6 +115,8 @@ export class FinancialYearTargetViewComponent implements OnInit {
       financial_year_id: this.editForm.get(['financial_year_id'])!.value,
       code: this.editForm.get(['code'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      objective_id: this.editForm.get(['objective_id'])!.value,
     };
   }
 

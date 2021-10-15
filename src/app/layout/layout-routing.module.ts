@@ -1210,6 +1210,13 @@ const routes: Routes = [
             "../setup/generic-sector-problem/generic-sector-problem.module"
           ).then((m) => m.GenericSectorProblemModule),
       },
+      {
+        path: "activity-input",
+        loadChildren: () =>
+          import("../budgeting/activity-input/activity-input.module").then(
+            (m) => m.ActivityInputModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

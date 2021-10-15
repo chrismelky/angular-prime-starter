@@ -608,7 +608,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     };
     const ref = this.dialogService.open(AdminCeilingDisseminationComponent, {
       header: 'Ceiling Dissemination',
-      width: '60%',
+      width: '80%',
       styleClass:'planrep-dialogy',
       data,
     });

@@ -37,6 +37,9 @@
             dataType="string"
             id="start_date"
             appendTo="body"
+            [yearNavigator]="true"
+            [monthNavigator]="true"
+            yearRange="10"
             formControlName="start_date"
           ></p-calendar>
           <label for="start_date">Start Date </label>
@@ -62,6 +65,9 @@
             dataType="string"
             id="end_date"
             appendTo="body"
+            [yearNavigator]="true"
+            [monthNavigator]="true"
+            yearRange="10"
             formControlName="end_date"
           ></p-calendar>
           <label for="end_date">End Date </label>

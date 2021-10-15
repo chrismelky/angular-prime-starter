@@ -16,8 +16,9 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field">
+          <div class="p-field" fxFlex>
             <span class="p-float-label p-input-icon-right">
+              <input [(ngModel)]="search['description']" pInputText />
               <label for="description">Description </label>
               <i
                 class="pi pi-times clear"

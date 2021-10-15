@@ -124,7 +124,6 @@ const routes: Routes = [
       adminHierarchyCostCentre: AdminHierarchyCostCentreResolveService,
       financialYear: PlanningFinancialYearResolveService,
     },
-    //canActivate: [UserRouteAccessService],
   },
 ];
 

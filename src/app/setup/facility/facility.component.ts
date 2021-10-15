@@ -34,6 +34,7 @@ import {FacilityService} from './facility.service';
 import {FacilityUpdateComponent} from './update/facility-update.component';
 import {UserService} from '../user/user.service';
 import {FacilityCustomDetailValueComponent} from "./facility-custom-detail-value/facility-custom-detail-value.component";
+import {TransferComponent} from "./transfer/transfer.component";
 
 @Component({
   selector: 'app-facility',
@@ -338,6 +339,20 @@ export class FacilityComponent implements OnInit {
       data,
       width: '60%',
       header: "Custom Details",
+    });
+    ref.onClose.subscribe((result) => {
+      this.loadPage(this.page);
+    });
+  }
+
+  transfer(rowData: Facility): void {
+    const data = {
+      facility: rowData,
+    };
+    const ref = this.dialogService.open(TransferComponent, {
+      data,
+      width: '60%',
+      header: "Facility Transfer Form",
     });
     ref.onClose.subscribe((result) => {
       this.loadPage(this.page);

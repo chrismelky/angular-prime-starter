@@ -13,6 +13,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { ActivityComponent } from './activity.component';
 import { ActivityUpdateComponent } from './update/activity-update.component';
 import { MatStepperModule } from '@angular/material/stepper';
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 
 @NgModule({
   imports: [
@@ -20,6 +21,12 @@ import { MatStepperModule } from '@angular/material/stepper';
     CommonModule,
     ActivityRoutingModule,
     MatStepperModule,
+  ],
+  providers: [
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: { showError: true },
+    },
   ],
   declarations: [ActivityComponent, ActivityUpdateComponent],
   entryComponents: [ActivityUpdateComponent],

@@ -49,4 +49,11 @@ export class ProjectService {
   upload(data: any): Observable<CustomResponse<Project[]>> {
     return this.http.post<CustomResponse<Project[]>>(this.resourceUrl + '/upload', data);
   }
+
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
+    );
+  }
 }

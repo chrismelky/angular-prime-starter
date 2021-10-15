@@ -29,7 +29,7 @@ import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model
 import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { Facility } from 'src/app/setup/facility/facility.model';
+import { Facility, FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
 import { Section } from 'src/app/setup/section/section.model';
 import { SectionService } from 'src/app/setup/section/section.service';
@@ -39,6 +39,7 @@ import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.serv
 import { ActivityInput } from './activity-input.model';
 import { ActivityInputService } from './activity-input.service';
 import { ActivityInputUpdateComponent } from './update/activity-input-update.component';
+import { AdminHierarchyCostCentre } from 'src/app/planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
 
 @Component({
   selector: 'app-activity-input',
@@ -47,16 +48,23 @@ import { ActivityInputUpdateComponent } from './update/activity-input-update.com
 export class ActivityInputComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
+
+  facilityIsLoading = false;
+
   activityInputs?: ActivityInput[] = [];
+
+  adminHierarchyCostCentre?: AdminHierarchyCostCentre;
+  financialYear?: FinancialYear;
+
+  facilities?: Facility[] = [];
+  facilityGroupByType?: any[] = [];
 
   activities?: Activity[] = [];
   fundSources?: FundSource[] = [];
-  financialYears?: FinancialYear[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
-  facilities?: Facility[] = [];
-  sections?: Section[] = [];
+
   budgetClasses?: BudgetClass[] = [];
   units?: PlanrepEnum[] = [];
+  mainBudgetClasses?: BudgetClass[] = [];
 
   cols = [
     {
@@ -79,31 +87,6 @@ export class ActivityInputComponent implements OnInit {
       header: 'Unit',
       sort: true,
     },
-    {
-      field: 'forward_year_one_amount',
-      header: 'Forward Year One Amount',
-      sort: false,
-    },
-    {
-      field: 'forward_year_two_amount',
-      header: 'Forward Year Two Amount',
-      sort: false,
-    },
-    {
-      field: 'chart_of_account',
-      header: 'Chart Of Account',
-      sort: true,
-    },
-    {
-      field: 'approve_amount',
-      header: 'Approve Amount',
-      sort: false,
-    },
-    {
-      field: 'adjusted_amount',
-      header: 'Adjusted Amount',
-      sort: false,
-    },
   ]; //Table display columns
 
   isLoading = false;
@@ -123,6 +106,7 @@ export class ActivityInputComponent implements OnInit {
   facility_id!: number;
   section_id!: number;
   budget_class_id!: number;
+  budget_type!: string;
 
   constructor(
     protected activityInputService: ActivityInputService,
@@ -143,46 +127,14 @@ export class ActivityInputComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activityService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Activity[]>) => (this.activities = resp.data)
-      );
-    this.fundSourceService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
-      );
-    this.financialYearService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
-    this.adminHierarchyService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.facilityService
       .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
       );
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.budgetClassService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<BudgetClass[]>) =>
-          (this.budgetClasses = resp.data)
-      );
     this.units = this.enumService.get('units');
     this.handleNavigation();
+    this.loadMainBudgetClassesWithChildren();
   }
 
   /**
@@ -231,6 +183,27 @@ export class ActivityInputComponent implements OnInit {
       );
   }
 
+  loadFacilities(): void {
+    const parentName = `p${this.adminHierarchyCostCentre?.admin_hierarchy?.admin_hierarchy_position}`;
+    const parentId = this.adminHierarchyCostCentre?.admin_hierarchy_id;
+    const sectionId = this.adminHierarchyCostCentre?.section_id;
+    this.facilityIsLoading = true;
+    this.facilityService.planning(parentName, parentId!, sectionId!).subscribe(
+      (resp: CustomResponse<FacilityView[]>) => {
+        this.facilityIsLoading = false;
+        this.facilityGroupByType = this.helper.groupBy(resp.data!, 'type');
+      },
+      (error) => (this.facilityIsLoading = false)
+    );
+  }
+
+  /** Load main budget classess with children budget classes */
+  loadMainBudgetClassesWithChildren(): void {
+    this.budgetClassService.tree().subscribe((resp) => {
+      this.mainBudgetClasses = resp.data;
+    });
+  }
+
   /**
    * Called initialy/onInit to
    * Restore page, sort option from url query params if exist and load page
@@ -238,11 +211,18 @@ export class ActivityInputComponent implements OnInit {
   protected handleNavigation(): void {
     combineLatest([
       this.activatedRoute.data,
+      this.activatedRoute.params,
       this.activatedRoute.queryParamMap,
-    ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+    ]).subscribe(([data, params, queryParams]) => {
+      this.adminHierarchyCostCentre = data.adminHierarchyCostCentre;
+      this.budget_type = params['budgetType'];
+      this.financialYear = data.financialYear;
+
+      this.loadFacilities();
+
+      const page = queryParams.get('page');
+      const perPage = queryParams.get('per_page');
+      const sort = (queryParams.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
       const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;

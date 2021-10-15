@@ -157,22 +157,28 @@
             (click)="createOrUpdate()"
             label="Add Fund Source"
           ></button>
+          <button
+            pButton
+            icon="pi pi-upload"
+            class="p-button-raised"
+            [disabled]=""
+            (click)="upload()"
+            label="Upload Fund Sources"
+          ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="fundSources?.length">
           <th
             *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th>Is Conditional</th>
-          <th>Is Foreign</th>
-          <th>Is Treasurer</th>
-          <th>Can Project</th>
-          <th>is_active</th>
+<!--          <th>Is Conditional</th>-->
+<!--          <th>Is Foreign</th>-->
+<!--          <th>Is Treasurer</th>-->
+<!--          <th>Can Project</th>-->
+<!--          <th>is_active</th>-->
           <th></th>
         </tr>
       </ng-template>
@@ -181,36 +187,36 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>
-            <p-inputSwitch
-            [disabled]="true"
-            [(ngModel)]="rowData['is_conditional']"
-          ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['is_foreign']"
-            ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['is_treasurer']"
-            ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['can_project']"
-            ></p-inputSwitch>
-          </td>
-          <td>
-            <p-inputSwitch
-              [disabled]="true"
-              [(ngModel)]="rowData['is_active']"
-            ></p-inputSwitch>
-          </td>
+<!--          <td>-->
+<!--            <p-inputSwitch-->
+<!--            [disabled]="true"-->
+<!--            [(ngModel)]="rowData['is_conditional']"-->
+<!--          ></p-inputSwitch>-->
+<!--          </td>-->
+<!--          <td>-->
+<!--            <p-inputSwitch-->
+<!--              [disabled]="true"-->
+<!--              [(ngModel)]="rowData['is_foreign']"-->
+<!--            ></p-inputSwitch>-->
+<!--          </td>-->
+<!--          <td>-->
+<!--            <p-inputSwitch-->
+<!--              [disabled]="true"-->
+<!--              [(ngModel)]="rowData['is_treasurer']"-->
+<!--            ></p-inputSwitch>-->
+<!--          </td>-->
+<!--          <td>-->
+<!--            <p-inputSwitch-->
+<!--              [disabled]="true"-->
+<!--              [(ngModel)]="rowData['can_project']"-->
+<!--            ></p-inputSwitch>-->
+<!--          </td>-->
+<!--          <td>-->
+<!--            <p-inputSwitch-->
+<!--              [disabled]="true"-->
+<!--              [(ngModel)]="rowData['is_active']"-->
+<!--            ></p-inputSwitch>-->
+<!--          </td>-->
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

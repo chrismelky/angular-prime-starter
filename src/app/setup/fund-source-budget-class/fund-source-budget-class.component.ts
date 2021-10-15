@@ -81,12 +81,6 @@ export class FundSourceBudgetClassComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this.budgetClassService
-    //   .query({ columns: ["id", "name"] })
-    //   .subscribe(
-    //     (resp: CustomResponse<BudgetClass[]>) =>
-    //       (this.budgetClasses = resp.data)
-    //   );
     this.budgetClassService.getParentChild().subscribe(
       (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data));
     this.fundSourceService
@@ -226,7 +220,7 @@ export class FundSourceBudgetClassComponent implements OnInit {
     };
     const ref = this.dialogService.open(FundSourceBudgetClassUpdateComponent, {
       data,
-      header: "Create/Update FundSourceBudgetClass",
+      header: "Update Ceiling",
     });
     ref.onClose.subscribe((result) => {
       if (result) {

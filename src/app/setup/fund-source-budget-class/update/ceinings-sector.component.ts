@@ -51,8 +51,15 @@ export class CeiningsSectorComponent implements OnInit {
               'ceiling':res?.data ?? []
             }
           })?? [];
-          this.ceilingSectorStatus?.push({sector:resultSector});
-          console.log(this.ceilingSectorStatus);
+          this.ceilingSectorStatus = this.sectors!.map((s) => {
+            const csc = resultSector!.find(cs => cs.sector_id === s.id)
+            return{
+              is_active:csc!.is_active,
+              sector_id:csc!.sector_id,
+              ceiling:csc!.ceiling,
+              sector_name:s.name
+            }
+          });
         });
   }
 

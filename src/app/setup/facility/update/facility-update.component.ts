@@ -51,9 +51,9 @@ export class FacilityUpdateComponent implements OnInit {
   });
 
   constructor(
-    protected facilityService: FacilityService,
     protected facilityTypeService: FacilityTypeService,
     protected adminHierarchyService: AdminHierarchyService,
+    protected facilityService: FacilityService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,

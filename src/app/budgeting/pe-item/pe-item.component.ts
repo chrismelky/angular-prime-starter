@@ -5,47 +5,47 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {combineLatest} from 'rxjs';
+import {ConfirmationService, LazyLoadEvent, MenuItem} from 'primeng/api';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Paginator} from 'primeng/paginator';
+import {Table} from 'primeng/table';
 
-import { CustomResponse } from '../../utils/custom-response';
+import {CustomResponse} from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
-import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
-import { PeSubForm } from 'src/app/setup/pe-sub-form/pe-sub-form.model';
-import { PeSubFormService } from 'src/app/setup/pe-sub-form/pe-sub-form.service';
-import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
-import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
-import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
-import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
-import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
+import {HelperService} from 'src/app/utils/helper.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import {FinancialYear} from 'src/app/setup/financial-year/financial-year.model';
+import {FinancialYearService} from 'src/app/setup/financial-year/financial-year.service';
+import {PeSubForm} from 'src/app/setup/pe-sub-form/pe-sub-form.model';
+import {PeSubFormService} from 'src/app/setup/pe-sub-form/pe-sub-form.service';
+import {BudgetClass} from 'src/app/setup/budget-class/budget-class.model';
+import {BudgetClassService} from 'src/app/setup/budget-class/budget-class.service';
+import {FundSource} from 'src/app/setup/fund-source/fund-source.model';
+import {FundSourceService} from 'src/app/setup/fund-source/fund-source.service';
+import {Section} from 'src/app/setup/section/section.model';
+import {SectionService} from 'src/app/setup/section/section.service';
 
-import { PeItem } from './pe-item.model';
-import { PeItemService } from './pe-item.service';
-import { PeItemUpdateComponent } from './update/pe-item-update.component';
-import { UserService } from '../../setup/user/user.service';
-import { User } from '../../setup/user/user.model';
-import { PeFormService } from '../../setup/pe-form/pe-form.service';
-import { FundSourceBudgetClassService } from '../../setup/fund-source-budget-class/fund-source-budget-class.service';
-import { FundSourceBudgetClass } from '../../setup/fund-source-budget-class/fund-source-budget-class.model';
-import { PeDefinitionService } from '../../setup/pe-definition/pe-definition.service';
-import { isNumeric } from 'rxjs/internal-compatibility';
-import { FacilityService } from '../../setup/facility/facility.service';
-import { Facility } from '../../setup/facility/facility.model';
-import { BudgetCeilingService } from '../../shared/budget-ceiling.service';
+import {PeItem} from './pe-item.model';
+import {PeItemService} from './pe-item.service';
+import {PeItemUpdateComponent} from './update/pe-item-update.component';
+import {UserService} from '../../setup/user/user.service';
+import {User} from '../../setup/user/user.model';
+import {PeFormService} from '../../setup/pe-form/pe-form.service';
+import {FundSourceBudgetClassService} from '../../setup/fund-source-budget-class/fund-source-budget-class.service';
+import {FundSourceBudgetClass} from '../../setup/fund-source-budget-class/fund-source-budget-class.model';
+import {PeDefinitionService} from '../../setup/pe-definition/pe-definition.service';
+import {isNumeric} from 'rxjs/internal-compatibility';
+import {FacilityService} from '../../setup/facility/facility.service';
+import {Facility} from '../../setup/facility/facility.model';
+import {BudgetCeilingService} from '../../shared/budget-ceiling.service';
 
 @Component({
   selector: 'app-pe-item',
@@ -96,7 +96,7 @@ export class PeItemComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
-  is_current_budget_locked!:boolean;
+  is_current_budget_locked!: boolean;
   pe_sub_form_id!: number;
   budget_class_id!: number;
   fund_source_id!: number;
@@ -104,6 +104,7 @@ export class PeItemComponent implements OnInit {
   pe_form_id!: number;
   currentUser?: User;
   parent_sub_budget_class?: any;
+  yearRange?: string;
 
   constructor(
     protected peItemService: PeItemService,
@@ -136,9 +137,6 @@ export class PeItemComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("Current User")
-    // @ts-ignore
-    console.log(this.is_current_budget_locked)
     this.peSubFormService
       .getParentChildren()
       .subscribe(
@@ -162,6 +160,7 @@ export class PeItemComponent implements OnInit {
     }
     this.splitButtons();
     this.handleNavigation();
+    this.calenderYearRange();
   }
 
   splitButtons() {
@@ -809,7 +808,8 @@ export class PeItemComponent implements OnInit {
       return pdv.uid === uid;
     });
     if (data.isTrusted) {
-      this.selectedRowsIndexArray.push(rowId); /** used to display */
+      this.selectedRowsIndexArray.push(rowId);
+      /** used to display */
       selectedItems.forEach((value: any) => {
         this.selectedRowsArray.push(value);
       });
@@ -900,12 +900,17 @@ export class PeItemComponent implements OnInit {
         peTableFields: JSON.stringify(this.peTableFields),
       };
       this.peItemService.printPeFormStatus(object).subscribe((resp) => {
-        let file = new Blob([resp], { type: 'application/pdf' });
+        let file = new Blob([resp], {type: 'application/pdf'});
         let fileURL = URL.createObjectURL(file);
         window.open(fileURL, '_blank');
       });
     } else {
       this.toastService.error('Please make sure all filters are selected');
     }
+  }
+
+  calenderYearRange() {
+    const year = new Date().getFullYear();
+    this.yearRange = `${year}:${year + 6}`;
   }
 }

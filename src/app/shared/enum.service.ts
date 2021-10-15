@@ -263,6 +263,7 @@ export class EnumService {
       {display: "Text", value: "TEXT"},
       {display: "Number", value: "NUMBER"},
       {display: "Currency", value: "CURRENCY"},
+      {display: "Date", value: "DATE"},
     ],
 
     peInPutValues: [

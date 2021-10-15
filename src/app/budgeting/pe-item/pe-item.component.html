@@ -158,7 +158,46 @@
 
           <td *ngFor="let input of inputTexts[i.id]">
             <div *ngIf="input.select_option === null">
-              <input
+
+              <div *ngIf="input?.output_type === 'CURRENCY'; else notCurrencyBlock">
+                <p-inputNumber
+                  [size]="10"
+                  [disabled]="!!input.formula || is_current_budget_locked"
+                  [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                  (onBlur)="updateValue(peValuesArray[i.uid!][input.id])"
+                  autocomplete="off"
+                  inputId="{{ i.uid! }}-{{ input.id! }}"
+                  [inputStyle]="{'text-align': 'right','max-width':'2px !important'}">
+                </p-inputNumber>
+              </div>
+
+              <ng-template #notCurrencyBlock>
+                <ng-container *ngIf="input?.output_type === 'DATE'; else notDateBlock;">
+                  <p-calendar
+                    appendTo="body"
+                    [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="{{yearRange}}"
+                    dateFormat="yy-mm-dd">
+                  </p-calendar>
+                </ng-container>
+
+                <ng-template #notDateBlock>
+                  <input
+                    type="{{input.type}}"
+                    id="{{ i.uid! }}-{{ input.id! }}"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [disabled]="!!input.formula || is_current_budget_locked"
+                    [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                    (blur)="updateValue(peValuesArray[i.uid!][input.id])"
+                    autocomplete="off"
+                  >
+                </ng-template>
+              </ng-template>
+
+              <!--input
                 type="{{input.type}}"
                 id="{{ i.uid! }}-{{ input.id! }}"
                 class="p-inputtext-sm"
@@ -167,7 +206,7 @@
                 [(ngModel)]="peValuesArray[i.uid!][input.id].value"
                 (blur)="updateValue(peValuesArray[i.uid!][input.id])"
                 autocomplete="off"
-              >
+              -->
             </div>
             <div *ngIf="input.select_option !== null">
               <p-dropdown
@@ -203,12 +242,12 @@
               [disabled]=true
               [(ngModel)]="verticalTotal[total.id!]"
             /-->
-            <p-inputNumber styleClass="text-align:left"
+            <p-inputNumber
+              [size]="10"
               [(ngModel)]="verticalTotal[total.id!]"
               inputId="{{total.id}}"
               [disabled]=true
-               style="max-width: 30px !important;"
-            >
+              [inputStyle]="{'text-align': 'right','max-width':'2px !important'}">
             </p-inputNumber>
           </td>
         </tr>

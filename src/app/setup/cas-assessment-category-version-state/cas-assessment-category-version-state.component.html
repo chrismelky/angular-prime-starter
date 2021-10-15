@@ -30,7 +30,7 @@
                 [(ngModel)]="search['cas_assessment_category_version_id']"
               ></p-dropdown>
               <label for="cas_assessment_category_version_id"
-                >Cas Assessment Category Version
+                >CAS Category Version
               </label>
             </span>
           </div>
@@ -47,7 +47,7 @@
                 [options]="casAssessmentStates!"
                 [(ngModel)]="search['cas_assessment_state_id']"
               ></p-dropdown>
-              <label for="cas_assessment_state_id">Cas Assessment State </label>
+              <label for="cas_assessment_state_id">CAS State </label>
             </span>
           </div>
         </div>
@@ -90,7 +90,7 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text"
-            >Cas Assessment Category Version States</span
+            >CAS Category Version States</span
           >
           <button
             pButton
@@ -98,17 +98,17 @@
             class="p-button-raised"
             [disabled]=""
             (click)="createOrUpdate()"
-            label="Add Cas Assessment Category Version State"
+            label="Add CAS Category Version State"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="casAssessmentCategoryVersionStates?.length">
           <th [pSortableColumn]="'cas_assessment_category_version_id'">
-            Cas Assessment Category Version <p-sortIcon [field]="'cas_assessment_category_version_id'"></p-sortIcon>
+            CAS Category Version <p-sortIcon [field]="'cas_assessment_category_version_id'"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'cas_assessment_state_id'">
-            Cas Assessment State <p-sortIcon [field]="'cas_assessment_state_id'"></p-sortIcon>
+            CAS State <p-sortIcon [field]="'cas_assessment_state_id'"></p-sortIcon>
           </th>
           <th
             *ngFor="let col of columns"

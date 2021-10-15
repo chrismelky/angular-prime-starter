@@ -12,11 +12,13 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { Scrutinization } from "./scrutinization.model";
+import {Activity} from "../activity/activity.model";
 
 @Injectable({ providedIn: "root" })
 export class ScrutinizationService {
   public activityCommentsUrl = "api/activity_scrutinization_comments";
   public inputCommentsUrl = "api/input_scrutinization_comments";
+  private activitiesUrl = "api/scrutinization_activities";
 
   constructor(protected http: HttpClient) {}
 
@@ -55,6 +57,12 @@ export class ScrutinizationService {
   query(req?: any): Observable<CustomResponse<Scrutinization[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<Scrutinization[]>>(this.activityCommentsUrl, {
+      params: options,
+    });
+  }
+  queryActivities(req?: any): Observable<CustomResponse<Activity[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<Activity[]>>(this.activitiesUrl, {
       params: options,
     });
   }

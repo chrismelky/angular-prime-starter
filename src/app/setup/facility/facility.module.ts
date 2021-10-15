@@ -13,10 +13,11 @@ import {SharedModule} from "../../shared/shared.module";
 import {FacilityComponent} from "./facility.component";
 import {FacilityUpdateComponent} from "./update/facility-update.component";
 import {FacilityCustomDetailValueModule} from "./facility-custom-detail-value/facility-custom-detail-value.module";
+import { TransferComponent } from './transfer/transfer.component';
 
 @NgModule({
   imports: [SharedModule, CommonModule, FacilityRoutingModule, FacilityCustomDetailValueModule],
-  declarations: [FacilityComponent, FacilityUpdateComponent],
+  declarations: [FacilityComponent, FacilityUpdateComponent, TransferComponent],
   entryComponents: [FacilityUpdateComponent],
 })
 export class FacilityModule {

@@ -1,6 +1,6 @@
-<div class="content" fxLayout="column" fxLayoutGap="0.75rem">
-  <app-loader [isLoading]="facilityIsLoading || targetIsLoading"></app-loader>
+<app-loader [isLoading]="facilityIsLoading || targetIsLoading"></app-loader>
 
+<div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
   <p-card class="filter">
     <ng-template pTemplate="header">
@@ -222,7 +222,8 @@
                 !financialYearTarget ||
                 !financialYear ||
                 !adminHierarchyCostCentre ||
-                !budget_type
+                !budget_type ||
+                !facilityType
               "
               (click)="createOrUpdate()"
               label="Add Activity"

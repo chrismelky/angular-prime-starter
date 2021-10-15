@@ -55,24 +55,7 @@ export class PeDefinitionComponent implements OnInit {
       field: "field_name",
       header: "Field Name",
       sort: true,
-    },
-    {
-      field: "column_number",
-      header: "Column Number",
-      sort: false,
-    },
-    {
-      field: "sort_order",
-      header: "Order",
-      sort: false,
-    },
-    {
-      field: "formula",
-      header: "Formula",
-      sort: true,
-    },
-
-
+    }
   ]; //Table display columns
 
   isLoading = false;
@@ -260,7 +243,7 @@ export class PeDefinitionComponent implements OnInit {
     const ref = this.dialogService.open(PeDefinitionUpdateComponent, {
       data,
       width:"800px",
-      header: "Create/Update PeDefinition",
+      header: "Create/Update PE Columns",
     });
     ref.onClose.subscribe((result) => {
       if (result) {

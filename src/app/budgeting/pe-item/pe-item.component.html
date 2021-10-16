@@ -252,7 +252,7 @@
   </p-card>
 
   <p-card *ngIf="peTableFields?.childrenDefinitions">
-    <div *ngIf="balanceAmount > 0;else noBalanceAmount" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
       <div *ngIf="peTableFields.peSubForm?.is_multiple" fxLayout="row" fxLayoutGap="10px">
         <button
           [disabled]="is_current_budget_locked"
@@ -281,11 +281,6 @@
         label="Submit"
         icon="pi pi-check"></button>
     </div>
-    <ng-template fxLayoutAlign="end" #noBalanceAmount>
-      <div fxLayout="row" fxLayoutGap="10px">
-        <h3>Here is no Balance</h3>
-      </div>
-    </ng-template>
   </p-card>
 </div>
 

@@ -80,6 +80,7 @@ export class ReferenceDocumentComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   reference_document_type_id!: number;
+  admin_hierarchy_position!: number;
 
   constructor(
     protected referenceDocumentService: ReferenceDocumentService,
@@ -142,7 +143,14 @@ export class ReferenceDocumentComponent implements OnInit {
         }
       );
   }
-
+  /**
+   *
+   * @param event adminhierarchyId or Ids
+   */
+  onAdminHierarchySelection(event: any): void {
+    this.admin_hierarchy_id = event.id;
+    this.admin_hierarchy_position =event.admin_hierarchy_position;
+  }
   /**
    * Called initialy/onInit to
    * Restore page, sort option from url query params if exist and load page

@@ -14,13 +14,11 @@ import {FundSourceComponent} from "./fund-source.component";
 import {FundSourceUpdateComponent} from "./update/fund-source-update.component";
 import {DynamicDialogModule} from "primeng/dynamicdialog";
 import {FieldsetModule} from 'primeng/fieldset';
-import {ViewBudgetClassComponent} from './update/view-budget-class.component';
-import {ViewGfsCodeComponent} from './update/view-gfs-code.component';
 import {UploadComponent} from "./upload/upload.component";
 
 @NgModule({
   imports: [SharedModule, CommonModule, FundSourceRoutingModule, DynamicDialogModule, FieldsetModule],
-  declarations: [FundSourceComponent, FundSourceUpdateComponent, ViewBudgetClassComponent, ViewGfsCodeComponent, UploadComponent],
+  declarations: [FundSourceComponent, FundSourceUpdateComponent, UploadComponent],
   entryComponents: [FundSourceUpdateComponent],
 })
 export class FundSourceModule {

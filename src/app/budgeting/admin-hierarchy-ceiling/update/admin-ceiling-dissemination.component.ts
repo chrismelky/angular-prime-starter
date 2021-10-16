@@ -27,7 +27,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   @ViewChild('overlayTarget')
   overlayTarget: ElementRef | undefined;
 
-  positionLeft = '-22%';
+  positionLeft = '0%';
   positionTop = '5em';
   marginStyle = { 'margin-left': this.positionLeft, 'margin-top': this.positionTop };
 
@@ -50,23 +50,14 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   filterValue: string = '';
   facilityFilterValue?: string = '';
   ceiling?: AdminHierarchyCeiling={};
-  currentActiveCeiling?: AdminHierarchyCeiling={};
   ceilingChain?: CeilingChain[]=[];
   councilCeilingGroup?: any[]=[];
   facilityCeiling?: any[]=[];
-  departments?: any[]=[];
-  costCenter?: any[]=[];
-  department?: Section={};
-  ceilingAllocationLevel?:number;
   clonedCeiling?:  any[]= [];
   facilities?: Facility[]=[];
   budgetCeiling?: BudgetCeiling[]=[];
   councilCeiling?: AdminHierarchyCeiling[]=[];
 
-
-  totalAllocatedDepartmentAmount = 0.00;
-  totalAllocatedCostCenterAmount = 0.00;
-  currentAllocatedAmount = 0.00;
 
   /**
    * Declare form

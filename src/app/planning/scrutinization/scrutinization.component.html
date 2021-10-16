@@ -141,7 +141,7 @@
       <ng-template pTemplate="body" let-activity  let-expanded="expanded">
         <tr>
           <td>
-            <button type="button" pButton pRipple [pRowToggler]="activity" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+            <button type="button" pButton pRipple [pRowToggler]="activity" (click)="loadInputs(activity.id)" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
           </td>
           <td>{{activity.code}}</td>
           <td>{{activity.description}}</td>
@@ -160,7 +160,7 @@
         <tr>
           <td colspan="4">
             <div class="p-p-3">
-              <p-table [value]="activity.inputs" dataKey="name">
+              <p-table [value]="activity.inputs" dataKey="id">
                 <ng-template pTemplate="header">
                   <tr>
         <th pSortableColumn="customer">input</th>

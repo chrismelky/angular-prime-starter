@@ -228,7 +228,7 @@ export class ReferenceDocumentTypeComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/reference-document-type"], {
+      this.router.navigate(["/reference-document_type"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,

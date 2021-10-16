@@ -320,6 +320,10 @@ export class ScrutinizationComponent implements OnInit {
       );
   }
 
+  loadInputs(activityId: number){
+      console.log(activityId)
+  }
+
   setActivityComments(activity: any) {
     let data = activity;
     const ref = this.dialogService.open(ScrutinizationUpdateComponent, {
@@ -328,7 +332,7 @@ export class ScrutinizationComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        // this.loadPage(this.page);
+        this.loadActivities();
       }
     });
   }

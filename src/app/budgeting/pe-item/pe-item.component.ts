@@ -155,7 +155,9 @@ export class PeItemComponent implements OnInit {
           code: '00000000',
         })
         .subscribe(
-          (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
+          (resp: CustomResponse<Facility[]>) => {
+            this.facilities = resp.data
+          }
         );
     }
     this.splitButtons();
@@ -382,9 +384,11 @@ export class PeItemComponent implements OnInit {
         })
         .subscribe((resp) => {
           let amount = 0;
-          resp.data?.forEach((d: any) => {
-            amount += parseFloat(d.amount);
-          });
+          if(resp.data?.length ) {
+             resp.data?.forEach((d: any) => {
+                amount += parseFloat(d.amount);
+              });
+          }
           this.cellingAmount = amount;
         });
     }
@@ -888,7 +892,7 @@ export class PeItemComponent implements OnInit {
   }
 
   printPeFormStatus() {
-    if (this.isCriteriaMeet()) {
+    if (this.isCriteriaMeet() && this.facilities[0]?.id) {
       const object = {
         admin_hierarchy_id: this.admin_hierarchy_id,
         financial_year_id: this.financial_year_id,

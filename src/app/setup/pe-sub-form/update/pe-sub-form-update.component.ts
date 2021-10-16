@@ -29,6 +29,7 @@ export class PeSubFormUpdateComponent implements OnInit {
 
   parents?: PeSubForm[] = [];
   peForms?: PeForm[] = [];
+  sub_form_id:number = 0
 
   /**
    * Declare form
@@ -56,10 +57,15 @@ export class PeSubFormUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log("PE")
+    console.log(this.dialogConfig.data?.id)
+    this.sub_form_id = this.dialogConfig.data?.id
     this.parentService
       .query({ columns: ["id", "name"],parent_id:null })
       .subscribe(
-        (resp: CustomResponse<PeSubForm[]>) => (this.parents = resp.data)
+        (resp: CustomResponse<PeSubForm[]>) => {
+          this.parents = (resp.data ?? []).filter(p => p.id !== this.sub_form_id)
+        }
       );
     this.peFormService
       .query({ columns: ["id", "name"] })

@@ -119,12 +119,6 @@ export class ActivityComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.budgetClassService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<BudgetClass[]>) =>
-          (this.budgetClasses = resp.data)
-      );
     this.activityTypeService
       .query({ columns: ['id', 'name'] })
       .subscribe(

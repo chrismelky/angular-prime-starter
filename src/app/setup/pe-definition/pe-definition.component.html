@@ -28,7 +28,7 @@
                 (onChange)="filterChanged()"
                 [(ngModel)]="pe_form_id"
               ></p-dropdown>
-              <label for="pe_form_id">Pe Form </label>
+              <label for="pe_form_id">PE Form </label>
             </span>
           </div>
         </div>
@@ -216,7 +216,7 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Personal Emoluments Columns</span>
+          <span class="card-header-text">PE Columns</span>
           <button
             pButton
             pRipple
@@ -224,15 +224,18 @@
             class="p-button-raised"
             [disabled]="!pe_form_id"
             (click)="createOrUpdate()"
-            label="Add Pe Definition"
+            label="PE Columns"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="peDefinitionsNodeTree?.length">
-          <th *ngFor="let col of columns">
+          <th style="width: 40%" *ngFor="let col of columns">
             {{ col.header}}
           </th>
+          <th>Column Number</th>
+          <th>Formula</th>
+          <th>Order</th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
@@ -242,13 +245,17 @@
         let-rowData="rowData"
         let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns; let i = index">
+          <td style="width: 40%" *ngFor="let col of columns; let i = index">
             <p-treeTableToggler
               [rowNode]="rowNode"
               *ngIf="i == 0"
-            ></p-treeTableToggler>
+            >
+            </p-treeTableToggler>
             {{ rowData[col.field] }}
           </td>
+          <td>{{rowData?.column_number}}</td>
+          <td>{{rowData?.formula}}</td>
+          <td>{{rowData?.sort_order}}</td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

@@ -40,7 +40,9 @@ export class PeDefinitionUpdateComponent implements OnInit {
   peOutPutValues?: PlanrepEnum[] = [];
   peInPutValues?: PlanrepEnum[] = [];
   peSelectOption?: PeSelectOption[] = [];
-
+  pe_selected_definition_id:number = 0
+  is_input_status:boolean = false;
+  select_option_status:boolean = false;
   /**
    * Declare form
    */
@@ -76,10 +78,13 @@ export class PeDefinitionUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.pe_selected_definition_id = this.dialogConfig.data?.id
     this.peDefinitionService
-      .query({ columns: ["id", "field_name"],pe_form_id:this.dialogConfig.data?.pe_form_id })
+      .query({ columns: ["id", "field_name"],pe_form_id:this.dialogConfig.data?.pe_form_id,parent_id:null })
       .subscribe(
-        (resp: CustomResponse<PeDefinition[]>) => (this.parents = resp.data)
+        (resp: CustomResponse<PeDefinition[]>) => {
+          this.parents = (resp.data ?? []).filter(p => p.id !== this.pe_selected_definition_id)
+        }
       );
     this.gfsCodeService
       .query({ columns: ["id", "name","code"] })
@@ -98,10 +103,11 @@ export class PeDefinitionUpdateComponent implements OnInit {
         (resp: CustomResponse<PeSelectOption[]>) => (this.peSelectOption = resp.data)
       );
 
-    this.units = this.enumService.get("units");
+    this.units = (this.enumService.get("units") ?? []).filter(u => u.value === "Lumpsum" || u.value === "Each");
     this.valueTypes = this.enumService.get("valueTypes");
     this.peOutPutValues = this.enumService.get("peOutPutValues");
     this.peInPutValues = this.enumService.get("peInPutValues");
+    this.inputTypeChanged(null)
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -124,6 +130,28 @@ export class PeDefinitionUpdateComponent implements OnInit {
       this.subscribeToSaveResponse(
         this.peDefinitionService.create(peDefinition)
       );
+    }
+  }
+
+  inputTypeChanged(event:any){
+    if(event !== null) {
+      if (event.value === "SELECT") {
+        this.editForm.get("is_input")?.disable()
+        this.editForm.get("gfs_code_id")?.disable()
+        this.editForm.get('select_option')?.enable()
+      } else if (event.value === "CURRENCY") {
+        this.editForm.get("is_input")?.enable()
+        this.editForm.get("gfs_code_id")?.enable()
+        this.editForm.get('select_option')?.disable()
+      } else {
+        this.editForm.get('is_input')?.disable()
+        this.editForm.get('gfs_code_id')?.disable()
+        this.editForm.get('select_option')?.disable()
+      }
+    } else {
+      this.editForm.get('is_input')?.disable()
+      this.editForm.get('gfs_code_id')?.disable()
+      this.editForm.get('select_option')?.disable()
     }
   }
 

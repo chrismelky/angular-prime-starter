@@ -120,7 +120,7 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Cas Assessment Category Versions</span>
+          <span class="card-header-text">CAS Category Versions</span>
           <button
             pButton
             pRipple
@@ -128,7 +128,7 @@
             class="p-button-raised"
             [disabled]="!financial_year_id"
             (click)="createOrUpdate()"
-            label="Add Cas Assessment Category Version"
+            label="Add CAS Category Version"
           ></button>
         </div>
       </ng-template>
@@ -211,6 +211,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Cas Assessment Category Version"
+  header="Confirmation Delete CAS Category Version"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

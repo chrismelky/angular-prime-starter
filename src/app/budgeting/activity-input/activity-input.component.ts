@@ -21,7 +21,10 @@ import {
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import { Activity } from 'src/app/planning/activity/activity.model';
+import {
+  Activity,
+  ActivityFundSource,
+} from 'src/app/planning/activity/activity.model';
 import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
@@ -50,17 +53,18 @@ export class ActivityInputComponent implements OnInit {
   @ViewChild('table') table!: Table;
 
   facilityIsLoading = false;
+  activityLoading = false;
 
   activityInputs?: ActivityInput[] = [];
 
-  adminHierarchyCostCentre?: AdminHierarchyCostCentre;
-  financialYear?: FinancialYear;
+  adminHierarchyCostCentre!: AdminHierarchyCostCentre;
+  financialYear!: FinancialYear;
 
   facilities?: Facility[] = [];
   facilityGroupByType?: any[] = [];
 
   activities?: Activity[] = [];
-  fundSources?: FundSource[] = [];
+  activityFundSources?: ActivityFundSource[] = [];
 
   budgetClasses?: BudgetClass[] = [];
   units?: PlanrepEnum[] = [];
@@ -100,7 +104,7 @@ export class ActivityInputComponent implements OnInit {
 
   //Mandatory filter
   activity_id!: number;
-  fund_source_id!: number;
+  activityFundSource!: ActivityFundSource;
   financial_year_id!: number;
   admin_hierarchy_id!: number;
   facility_id!: number;
@@ -145,7 +149,7 @@ export class ActivityInputComponent implements OnInit {
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
       !this.activity_id ||
-      !this.fund_source_id ||
+      !this.activityFundSource ||
       !this.financial_year_id ||
       !this.admin_hierarchy_id ||
       !this.facility_id ||
@@ -163,7 +167,7 @@ export class ActivityInputComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         activity_id: this.activity_id,
-        fund_source_id: this.fund_source_id,
+        fund_source_id: this.activityFundSource.fund_source_id,
         financial_year_id: this.financial_year_id,
         admin_hierarchy_id: this.admin_hierarchy_id,
         facility_id: this.facility_id,
@@ -202,6 +206,54 @@ export class ActivityInputComponent implements OnInit {
     this.budgetClassService.tree().subscribe((resp) => {
       this.mainBudgetClasses = resp.data;
     });
+  }
+
+  /**
+   * Load activities by selected budget class and
+   */
+  loadActivities(): void {
+    if (!this.facility_id || !this.budget_class_id) {
+      return;
+    }
+    this.activityLoading = true;
+    this.activityService
+      .query({
+        financial_year_id: this.financialYear.id,
+        admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
+        budget_type: this.budget_type,
+        section_id: this.adminHierarchyCostCentre.section_id,
+        budget_class_id: this.budget_class_id,
+        facility_id: this.facility_id,
+      })
+      .subscribe(
+        (resp) => {
+          this.activityLoading = false;
+          this.activities = resp.data;
+        },
+        (error) => (this.activityLoading = false)
+      );
+  }
+
+  /**
+   * Load activity fund source
+   * @returns
+   */
+  loadFundSource(): void {
+    if (!this.activity_id) {
+      return;
+    }
+    this.activityService
+      .activityFundSources(this.financialYear.id!, this.activity_id)
+      .subscribe((resp) => {
+        this.activityFundSources = resp.data?.map((af) => {
+          return {
+            id: af.id,
+            fund_source_id: af.fund_source_id,
+            name: af.name,
+            code: af.code,
+          };
+        });
+      });
   }
 
   /**
@@ -312,7 +364,7 @@ export class ActivityInputComponent implements OnInit {
     const data: ActivityInput = activityInput ?? {
       ...new ActivityInput(),
       activity_id: this.activity_id,
-      fund_source_id: this.fund_source_id,
+      fund_source_id: this.activityFundSource.fund_source_id,
       financial_year_id: this.financial_year_id,
       admin_hierarchy_id: this.admin_hierarchy_id,
       facility_id: this.facility_id,

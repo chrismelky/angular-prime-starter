@@ -96,28 +96,30 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="mainBudgetClasses!"
-                (onChange)="filterChanged()"
+                (onChange)="loadActivities()"
                 [(ngModel)]="budget_class_id"
               ></p-dropdown>
               <label for="budget_class_id">Budget Class </label>
             </span>
           </div>
-
-          <!-- Fund source -->
+          <!-- Budget class -->
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="fund_source_id"
+                id="budget_class_id"
+                [group]="true"
+                optionGroupLabel="name"
+                optionGroupChildren="children"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="fundSources!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="fund_source_id"
+                [options]="mainBudgetClasses!"
+                (onChange)="loadActivities()"
+                [(ngModel)]="budget_class_id"
               ></p-dropdown>
-              <label for="fund_source_id">Fund Source </label>
+              <label for="budget_class_id">Budget Class </label>
             </span>
           </div>
         </div>
@@ -125,20 +127,38 @@
 
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
         <!-- Activity -->
-        <div class="p-field" fxFlex>
+        <div class="p-field" fxFlex="2 2 calc(10px)">
           <span class="p-float-label">
             <p-dropdown
               id="activity_id"
               optionValue="id"
-              optionLabel="name"
+              optionLabel="description"
               [autoDisplayFirst]="false"
               [filter]="true"
               class="p-inputtext-sm"
               [options]="activities!"
-              (onChange)="filterChanged()"
+              (onChange)="loadFundSource()"
               [(ngModel)]="activity_id"
-            ></p-dropdown>
+            >
+            </p-dropdown>
             <label for="activity_id">Activity </label>
+          </span>
+        </div>
+
+        <!-- Fund source -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="fund_source_id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              [options]="activityFundSources!"
+              (onChange)="filterChanged()"
+              [(ngModel)]="activityFundSource"
+            ></p-dropdown>
+            <label for="fund_source_id">Fund Source </label>
           </span>
         </div>
       </div>
@@ -168,7 +188,7 @@
             class="p-button-raised"
             [disabled]="
               !activity_id ||
-              !fund_source_id ||
+              !activityFundSource ||
               !financial_year_id ||
               !admin_hierarchy_id ||
               !facility_id ||

@@ -46,6 +46,7 @@ import {isNumeric} from 'rxjs/internal-compatibility';
 import {FacilityService} from '../../setup/facility/facility.service';
 import {Facility} from '../../setup/facility/facility.model';
 import {BudgetCeilingService} from '../../shared/budget-ceiling.service';
+import {ActivityInputService} from "../activity-input/activity-input.service";
 
 @Component({
   selector: 'app-pe-item',
@@ -125,7 +126,8 @@ export class PeItemComponent implements OnInit {
     protected fundSourceBudgetClassService: FundSourceBudgetClassService,
     protected peDefinitionService: PeDefinitionService,
     protected facilityService: FacilityService,
-    protected budgetCeilingService: BudgetCeilingService
+    protected budgetCeilingService: BudgetCeilingService,
+    protected activityInputService: ActivityInputService
   ) {
     this.currentUser = userService.getCurrentUser();
     if (this.currentUser.admin_hierarchy) {
@@ -270,6 +272,7 @@ export class PeItemComponent implements OnInit {
     }
     /** first fetch ceiling amount */
     this.fetchCeilingAmount();
+    this.fetchBudgetAmount()
     this.peTableFields = [];
     this.peDefinitionService
       .getParentChildrenByFormId({
@@ -310,7 +313,7 @@ export class PeItemComponent implements OnInit {
         .subscribe((resp) => {
           this.budgetedAmount = resp.data.budgetedAmount;
           if (resp.data.rows.length === 1) {
-            // sync data value
+            /** sync data value */
           } else if (resp.data.rows.length >= 1) {
             /** increase row and add dataValue */
             for (let i = 1; i < resp.data.rows.length; i++) {
@@ -319,7 +322,6 @@ export class PeItemComponent implements OnInit {
           }
           /** Update dataValue fetched */
           this.updateFetchedDataValues(resp.data.dataValues);
-
           /** Update dataValue fetched */
           this.budgetBalance();
         });
@@ -375,24 +377,46 @@ export class PeItemComponent implements OnInit {
     if (this.facilities[0]?.id) {
       this.budgetCeilingService
         .query({
-          columns: ['id', 'amount','facility_id'],
+          columns: ['id', 'amount', 'facility_id'],
           admin_hierarchy_id: this.admin_hierarchy_id,
           facility_id: this.facilities[0]?.id,
           financial_year_id: this.financial_year_id,
           section_id: this.section_id,
           budget_type: 'CURRENT',
-          per_page:1000
+          per_page: 1000
         })
         .subscribe((resp) => {
           let amount = 0;
-          if(resp.data?.length) {
-             resp.data?.forEach((d: any) => {
-                amount += parseFloat(d.amount);
-              });
+          if (resp.data?.length) {
+            resp.data?.forEach((d: any) => {
+              amount += parseFloat(d.amount);
+            });
           }
           this.cellingAmount = amount;
         });
     }
+  }
+
+  fetchBudgetAmount(){
+    this.activityInputService.query({
+      columns: ['id', 'unit_price','quantity','frequency'],
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      facility_id: this.facilities[0]?.id,
+      financial_year_id: this.financial_year_id,
+      section_id: this.section_id,
+      budget_class_id: this.budget_class_id,
+      fund_source_id: this.fund_source_id,
+      per_page: 1000
+    }).subscribe((resp)=>{
+      let amount = 0;
+      if (resp.data?.length) {
+        resp.data?.forEach((d: any) => {
+          amount += (parseFloat(d.unit_price) * parseInt(d.quantity) * parseInt(d.frequency));
+        });
+      }
+      this.budgetedAmount = amount;
+      this.budgetBalance();
+    })
   }
 
   /** check balance, ceiling - budget */
@@ -656,9 +680,10 @@ export class PeItemComponent implements OnInit {
 
     this.peItemService.create(object).subscribe((response) => {
       if (response.success) {
+        this.fetchBudgetAmount();
         this.toastService.info(response.message);
       } else {
-        this.toastService.error('Error While Updating data');
+        this.toastService.error(response.message);
       }
     });
   }

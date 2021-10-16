@@ -41,7 +41,7 @@ export class FundSourceUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    code: [null, []],
+    code: [null, [Validators.required]],
     gfs_code_id: [null, [Validators.required]],
     fund_source_category_id: [null, [Validators.required]],
     is_conditional: [false, []],

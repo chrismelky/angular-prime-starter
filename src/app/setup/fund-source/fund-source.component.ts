@@ -5,10 +5,10 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
+import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {combineLatest, Observable} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem, SelectItemGroup} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -29,6 +29,12 @@ import { FundSource } from "./fund-source.model";
 import { FundSourceService } from "./fund-source.service";
 import { FundSourceUpdateComponent } from "./update/fund-source-update.component";
 import {UploadComponent} from "./upload/upload.component";
+import {Sector} from "../sector/sector.model";
+import {FormBuilder, Validators} from "@angular/forms";
+import {BudgetClassService} from "../budget-class/budget-class.service";
+import {FundSourceBudgetClassService} from "../fund-source-budget-class/fund-source-budget-class.service";
+import {SectorService} from "../sector/sector.service";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: "app-fund-source",
@@ -37,10 +43,30 @@ import {UploadComponent} from "./upload/upload.component";
 export class FundSourceComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
+  @ViewChild('overlayOpening')
+  overlayTarget: ElementRef | undefined;
+  selectedFundSource?:FundSource={};
+  positionLeft = '0%';
+  positionTop = '0px';
+  marginStyle = { 'margin-left': this.positionLeft, 'margin-top': this.positionTop };
   fundSources?: FundSource[] = [];
 
   gfsCodes?: GfsCode[] = [];
   fundSourceCategories?: FundSourceCategory[] = [];
+
+  fundSourcesBudgetClasses?: any[] = [];
+  budgetClasses?: SelectItemGroup[];
+
+  budgetClassIds?: any[] = [];
+  sectors?: Sector[] = [];
+  selectedSectors?: any[] = [];
+  fundSourceBudgetClassForm = this.fb.group({
+    fund_source_id: [null, []],
+    budget_Classes: [null, [Validators.required]],
+    budget_class_id:[null, []],
+    ceiling_name:[null, []],
+    sectors:[null,[]]
+  });
 
   cols = [
     {
@@ -69,11 +95,15 @@ export class FundSourceComponent implements OnInit {
   fund_source_category_id!: number;
 
   constructor(
+    protected fb: FormBuilder,
     protected fundSourceService: FundSourceService,
     protected gfsCodeService: GfsCodeService,
     protected fundSourceCategoryService: FundSourceCategoryService,
+    private fundSourceBudgetClassService : FundSourceBudgetClassService,
+    protected sectorService: SectorService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
+    private budgetClassService: BudgetClassService,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
@@ -300,4 +330,90 @@ export class FundSourceComponent implements OnInit {
       }
     });
   }
+
+  loadGfsCode(event:Event,gfs:any,fund_source:FundSource): void {
+    this.selectedFundSource = fund_source;
+    let aggregatedCode = fund_source.gfs_code!.code;
+    this.gfsCodeService
+      .query({aggregated_code:aggregatedCode,page:1,per_page:1000})
+      .subscribe(
+        (res: CustomResponse<GfsCode[]>) => {
+          this.gfsCodes = res?.data ?? [];
+        });
+    gfs.toggle(event,this.overlayTarget?.nativeElement)
+  }
+  loadBudgetClasses(event: Event,bc:any,fundSource:FundSource) : void{
+    this.selectedFundSource = fundSource;
+    bc.toggle(event,this.overlayTarget?.nativeElement)
+    this.selectedSectors = [];
+    this.budgetClassService.getParentChild().subscribe(
+      (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data));
+    this.sectorService
+      .query({ columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
+      );
+    this.fundSourceBudgetClassService
+      .query({fund_source_id: this.selectedFundSource!.id,page:1})
+      .subscribe(
+        (res: CustomResponse<FundSource[]>) => {
+          this.fundSourcesBudgetClasses = res?.data ?? [];
+          this.budgetClassIds = this.fundSourcesBudgetClasses?.map((budgetClasses: { budget_class: any; })=>budgetClasses.budget_class.id);
+          this.fundSourceBudgetClassForm.get(["budget_Classes"])?.setValue(this.budgetClassIds);
+          for (let ceiling of this.fundSourcesBudgetClasses) {
+            this.fundSourceService
+              .queryCeilingSector({ceiling_id:ceiling.id,page:1})
+              .subscribe(
+                (res: CustomResponse<any[]>) => {
+                  let sectors = (res?.data ?? [])?.map((sectors: { sector: any; })=>sectors.sector.id);
+                  this.selectedSectors=this.selectedSectors?.concat(sectors);
+                  this.fundSourceBudgetClassForm.get(["sectors"])?.setValue(this.selectedSectors?.filter((item,index) => this.selectedSectors?.indexOf(item) === index));
+                });
+          }
+        }
+      );
+  }
+
+  saveBudgetClass(): void{
+    this.fundSourceBudgetClassForm.get(["fund_source_id"])?.setValue(this.selectedFundSource!.id);
+    this.fundSourceBudgetClassForm.get(["ceiling_name"])?.setValue(this.selectedFundSource!.gfs_code!.name);
+    this.fundSourceBudgetClassForm.get(["budget_class_id"])?.setValue(2);
+
+    if(this.fundSourceBudgetClassForm.get(["budget_Classes"])?.value.length == 0){
+      this.toastService.info('Nothing to save');
+      return;
+    }
+    if (this.fundSourceBudgetClassForm.invalid) {
+      return;
+    }
+    this.subscribeToSaveResponse(this.fundSourceBudgetClassService.create(this.fundSourceBudgetClassForm.value));
+  }
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<FundSource>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+  }
 }
+

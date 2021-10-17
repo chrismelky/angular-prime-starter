@@ -127,7 +127,7 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-table [value]="scrutinizations!" dataKey="name" responsiveLayout="scroll">
+    <p-table [value]="scrutinizations!" dataKey="description" responsiveLayout="scroll">
       <ng-template pTemplate="header" *ngIf="scrutinizations?.length! > 0">
         <tr>
           <th style="width: 3rem"></th>
@@ -163,7 +163,7 @@
               <p-table [value]="activity.inputs" dataKey="id">
                 <ng-template pTemplate="header">
                   <tr>
-        <th pSortableColumn="customer">input</th>
+        <th pSortableColumn="gfs">input</th>
         <th pSortableColumn="date"></th>
         <th pSortableColumn="amount">Amount</th>
         <th ></th>

@@ -283,7 +283,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-assessment-sub-criteria-report_set"], {
+      this.router.navigate(["/cas-assessment-sub-criteria-report-set"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,

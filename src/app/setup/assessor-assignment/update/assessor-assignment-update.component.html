@@ -7,14 +7,6 @@
     [formGroup]="editForm"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
-          id="active"
-          name="active"
-          formControlName="active"
-        ></p-inputSwitch>
-        <label for="active">Active </label>
-      </div>
 
       <div class="p-field" fxFlex>
         <span class="p-float-label">
@@ -192,6 +184,14 @@
           "
         >
         </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="active"
+          name="active"
+          formControlName="active"
+        ></p-inputSwitch>
+        <label for="active">Active </label>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

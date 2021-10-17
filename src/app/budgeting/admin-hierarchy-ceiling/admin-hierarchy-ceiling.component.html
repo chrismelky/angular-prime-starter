@@ -127,13 +127,8 @@
   <p-card>
     <p-table
       #table
-      [lazy]="true"
-      [resizableColumns]="true"
-      [responsive]="true"
-      [autoLayout]="true"
       dataKey="id"
       editMode="row"
-      [loading]="isLoading"
       [value]="adminHierarchyCeilings!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
@@ -142,7 +137,7 @@
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Ceiling Amounts</span>
           <div class="card-header-text">
-            <p-splitButton  *ngIf="position ==1 && admin_hierarchy_position === ceilingStartPosition" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
+            <p-splitButton  *ngIf="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
               !admin_hierarchy_id || !financial_year_id || !budget_type
             " styleClass="p-button-raised"></p-splitButton>
           </div>

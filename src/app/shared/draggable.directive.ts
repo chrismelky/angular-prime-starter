@@ -10,11 +10,11 @@ import { fromEvent, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 
 @Directive({
-  selector: '[draggable]',
+  selector: '.dialog-content',
 })
 export class DraggableDirective implements AfterViewInit, OnDestroy {
-  @Input() dragHandle!: string;
-  @Input() dragTarget!: string;
+  @Input() dragHandle: string = '.p-dialog-header';
+  @Input() dragTarget: string = '.p-dynamic-dialog';
 
   // Element to be dragged
   private target!: HTMLElement;
@@ -37,7 +37,6 @@ export class DraggableDirective implements AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.destroy$.next();
-    console.log('Draggale init');
   }
 
   private setupEvents() {

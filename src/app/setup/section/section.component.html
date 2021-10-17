@@ -16,41 +16,10 @@
           fxLayoutAlign="start center"
         >
           <app-section-tree
+            fxFlex
             [returnType]="'object'"
             (onSelect)="onSectionSelection($event)"
           ></app-section-tree>
-          <!-- <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="section_level_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="sectionLevels!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="section_level_id"
-              ></p-dropdown>
-              <label for="section_level_id">Section Level </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="parent_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="parents!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="parent_id"
-              ></p-dropdown>
-              <label for="parent_id">Parent </label>
-            </span>
-          </div> -->
         </div>
         <div
           fxLayout="row wrap"

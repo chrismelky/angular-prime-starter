@@ -1,4 +1,9 @@
-<div class="dialog-content">
+<div
+  class="dialog-content"
+  [draggable]
+  dragHandle=".p-dialog-header"
+  dragTarget=".p-dynamic-dialog"
+>
   <form
     name="editForm"
     role="form"
@@ -39,7 +44,7 @@
           "
         >
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
-          >Code is required.</small
+            >Code is required.</small
           >
         </span>
       </div>

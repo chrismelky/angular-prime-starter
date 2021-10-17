@@ -304,7 +304,7 @@ export class ConfigurationSettingComponent implements OnInit {
   }
 
   updateValue(item:any){
-    item.value = item.multselected.length>0?item.multselected.map((x: any)=>x).join(","):item.value;
+    item.value = item.html_type === "MULT_SELECT"?item.multselected.map((x: any)=>x).join(","):item.value;
     const configurationSetting = this.createFromForm(item);
     this.subscribeToSaveResponse(
       this.configurationSettingService.update(configurationSetting)

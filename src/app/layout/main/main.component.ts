@@ -274,7 +274,7 @@ export class MainComponent implements OnInit {
               routerLink: "gfs-code",
             },
             {
-              label: "Gfs Code Categories",
+              label: "GFS Code Categories",
               icon: "pi pi-fw pi-link",
               routerLink: "gfs-code-category",
             },

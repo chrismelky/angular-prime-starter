@@ -181,23 +181,26 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Gfs Codes</span>
+          <span class="card-header-text">GFS Codes</span>
+          <span class="card-header-text">
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]="!account_type_id || !category_id"
             (click)="createOrUpdate()"
-            label="Add Gfs Code"
+            label="Add GFS Code"
           ></button>
+            &nbsp;
           <button
             pButton
             icon="pi pi-upload"
             class="p-button-raised"
             [disabled]="!account_type_id || !category_id"
             (click)="upload()"
-            label="Upload Gfs Codes"
+            label="Upload GFS Codes"
           ></button>
+          </span>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
@@ -267,6 +270,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Gfs Code"
+  header="Confirmation Delete GFS Code"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

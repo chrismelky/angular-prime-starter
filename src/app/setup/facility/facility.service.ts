@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 import { createRequestOption } from '../../utils/request-util';
 import { CustomResponse } from '../../utils/custom-response';
 import { Facility, FacilityView } from './facility.model';
+import {GfsCode} from "../gfs-code/gfs-code.model";
 
 @Injectable({ providedIn: 'root' })
 export class FacilityService {
@@ -81,5 +82,16 @@ export class FacilityService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  upload(data: any): Observable<CustomResponse<Facility[]>> {
+    return this.http.post<CustomResponse<Facility[]>>(this.resourceUrl + '/upload', data);
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
+    );
   }
 }

@@ -14,10 +14,11 @@ import {FacilityComponent} from "./facility.component";
 import {FacilityUpdateComponent} from "./update/facility-update.component";
 import {FacilityCustomDetailValueModule} from "./facility-custom-detail-value/facility-custom-detail-value.module";
 import { TransferComponent } from './transfer/transfer.component';
+import {UploadComponent} from "./upload/upload.component";
 
 @NgModule({
   imports: [SharedModule, CommonModule, FacilityRoutingModule, FacilityCustomDetailValueModule],
-  declarations: [FacilityComponent, FacilityUpdateComponent, TransferComponent],
+  declarations: [FacilityComponent, FacilityUpdateComponent, TransferComponent, UploadComponent],
   entryComponents: [FacilityUpdateComponent],
 })
 export class FacilityModule {

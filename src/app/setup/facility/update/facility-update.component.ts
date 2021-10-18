@@ -78,7 +78,7 @@ export class FacilityUpdateComponent implements OnInit {
     this.ownerships = this.enumService.get('ownerships');
     this.physicalStates = this.enumService.get('physicalStates');
     this.starRatings = this.enumService.get('starRatings');
-    this.updateForm(this.facility); //Initialize form with data from dialog
+    this.updateForm(this.facility);
   }
 
   /**

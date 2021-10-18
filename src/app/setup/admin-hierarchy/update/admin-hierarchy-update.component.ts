@@ -77,10 +77,7 @@ export class AdminHierarchyUpdateComponent implements OnInit {
     this.updateForm(data); //Initialize form with data from dialog
   }
 
-  /**
-   * When form is valid Create AdminHierarchy Update if exist else set form has error and return
-   * @returns
-   */
+
   save(): void {
     if (this.editForm.invalid) {
       this.formError = true;

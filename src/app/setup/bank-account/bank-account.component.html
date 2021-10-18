@@ -101,12 +101,11 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="bankAccounts?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'gfs_code_id'">
+            GFS Code <p-sortIcon [field]="'gfs_code_id'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -115,6 +114,9 @@
         <tr>
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
+          </td>
+          <td>
+            {{ rowData.gfs_code?.code }} - {{ rowData.gfs_code?.name }}
           </td>
           <td>
             <div fxFlex fxLayout="row" fxLayoutAlign="end">

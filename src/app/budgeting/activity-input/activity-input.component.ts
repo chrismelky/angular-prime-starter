@@ -21,21 +21,13 @@ import {
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import {
-  Activity,
-  ActivityFundSource,
-  FacilityActivity,
-} from 'src/app/planning/activity/activity.model';
+import { FacilityActivity } from 'src/app/planning/activity/activity.model';
 import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
 import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
-import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { Facility, FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
-import { SectionService } from 'src/app/setup/section/section.service';
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
 import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
 
@@ -57,6 +49,8 @@ export class ActivityInputComponent implements OnInit {
 
   facilityIsLoading = false;
   activityLoading = false;
+  budgetClassIsLoading = false;
+  fundSourceIsLoading = false;
 
   activityInputs?: ActivityInput[] = [];
 
@@ -73,29 +67,6 @@ export class ActivityInputComponent implements OnInit {
   units?: PlanrepEnum[] = [];
   mainBudgetClasses?: BudgetClass[] = [];
   gfsCodes?: GfsCode[] = [];
-
-  cols = [
-    {
-      field: 'unit_price',
-      header: 'Unit Price',
-      sort: false,
-    },
-    {
-      field: 'quantity',
-      header: 'Quantity',
-      sort: false,
-    },
-    {
-      field: 'frequency',
-      header: 'Frequency',
-      sort: false,
-    },
-    {
-      field: 'unit',
-      header: 'Unit',
-      sort: true,
-    },
-  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -133,11 +104,6 @@ export class ActivityInputComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.facilityService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
     this.gfsCodeService
       .expenditure()
       .subscribe((resp) => (this.gfsCodes = resp.data));
@@ -201,9 +167,14 @@ export class ActivityInputComponent implements OnInit {
 
   /** Load main budget classess with children budget classes */
   loadMainBudgetClassesWithChildren(): void {
-    this.budgetClassService.tree().subscribe((resp) => {
-      this.mainBudgetClasses = resp.data;
-    });
+    this.budgetClassIsLoading = true;
+    this.budgetClassService.tree().subscribe(
+      (resp) => {
+        this.budgetClassIsLoading = false;
+        this.mainBudgetClasses = resp.data;
+      },
+      (errror) => (this.budgetClassIsLoading = false)
+    );
   }
 
   /**
@@ -214,9 +185,14 @@ export class ActivityInputComponent implements OnInit {
     if (!this.budget_class_id) {
       return;
     }
-    this.fundSourceService
-      .getByBudgetClass(this.budget_class_id)
-      .subscribe((resp) => (this.fundSources = resp.data));
+    this.fundSourceIsLoading = true;
+    this.fundSourceService.getByBudgetClass(this.budget_class_id).subscribe(
+      (resp) => {
+        this.fundSourceIsLoading = false;
+        this.fundSources = resp.data;
+      },
+      (error) => (this.fundSourceIsLoading = false)
+    );
   }
 
   /**
@@ -285,7 +261,7 @@ export class ActivityInputComponent implements OnInit {
     if (this.page !== 1) {
       setTimeout(() => this.paginator.changePage(0));
     } else {
-      this.loadPage(1);
+      this.loadPage(1, true);
     }
   }
 

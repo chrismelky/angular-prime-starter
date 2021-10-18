@@ -13,6 +13,7 @@ import { Component, Input, OnInit } from '@angular/core';
     right: 0;
     top: 0;
     bottom: 0;
+    margin:-1rem -0.5rem -0.5rem -0.5rem;
     background:#00000052;
     z-index:3310;
 

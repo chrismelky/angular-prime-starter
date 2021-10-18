@@ -39,6 +39,9 @@
               formError)
           "
         >
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
+            >Code is required.</small
+          >
         </span>
       </div>
 
@@ -91,10 +94,10 @@
             formControlName="gfs_code_id"
           >
             <ng-template let-item pTemplate="item">
-               [{{item.code}}] {{item.name}}
+              [{{ item.code }}] {{ item.name }}
             </ng-template>
-             <ng-template let-item pTemplate="selectedItem">
-               [{{item.code}}] {{item.name}}
+            <ng-template let-item pTemplate="selectedItem">
+              [{{ item.code }}] {{ item.name }}
             </ng-template>
           </p-dropdown>
           <label for="gfs_code_id">Gfs Code </label>

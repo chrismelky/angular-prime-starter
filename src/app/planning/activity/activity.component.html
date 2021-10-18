@@ -1,7 +1,6 @@
-<app-loader [isLoading]="facilityIsLoading || targetIsLoading"></app-loader>
-
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
+
   <p-card class="filter filter-no-adv">
     <ng-template pTemplate="header">
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
@@ -60,108 +59,104 @@
       </div>
     </ng-template>
     <ng-template pTemplate="content">
-      <div fxLayout="column" fxLayoutGap="20px">
-        <div fxLayout="row wrap" fxLayoutGap="0px">
-          <div
-            fxLayout="row wrap"
-            fxLayoutGap="20px"
-            fxFlex
-            fxLayoutAlign="start center"
-          >
-            <!-- Objective filter -->
-            <app-objective-tree
-              [selectionMode]="'single'"
-              [returnType]="'object'"
-              (onSelect)="onObjectiveSeletion($event)"
+      <div class="loader-area">
+        <app-loader
+          [isLoading]="facilityIsLoading || targetIsLoading"
+        ></app-loader>
+        <div fxLayout="column" fxLayoutGap="20px">
+          <div fxLayout="row wrap" fxLayoutGap="0px">
+            <div
+              fxLayout="row wrap"
+              fxLayoutGap="20px"
               fxFlex
-            ></app-objective-tree>
-            <!-- Target -->
-            <div class="p-field" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="financial_year_target_id"
-                  optionLabel="description"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="financialYearTargets!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="financialYearTarget"
-                ></p-dropdown>
-                <label for="financial_year_target_id">Target </label>
-              </span>
+              fxLayoutAlign="start center"
+            >
+              <!-- Objective filter -->
+              <app-objective-tree
+                [selectionMode]="'single'"
+                [returnType]="'object'"
+                (onSelect)="onObjectiveSeletion($event)"
+                (onLoadingChange)="onObjectiveLoadingChange($event)"
+                fxFlex
+              ></app-objective-tree>
+              <!-- Target -->
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="financial_year_target_id"
+                    optionLabel="description"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="financialYearTargets!"
+                    (onChange)="filterChanged()"
+                    [(ngModel)]="financialYearTarget"
+                  ></p-dropdown>
+                  <label for="financial_year_target_id">Target </label>
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div fxLayout="row wrap" fxLayoutGap="20px">
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start" fxFlex>
-            <!-- <span fxLayout="row" fxLayoutGap="20px">
-              <p-radioButton
-                *ngFor="let ft of facilityGroupByType"
-                (onClick)="facilityTypeChange()"
-                name="facilityType"
-                [value]="ft.name"
-                [(ngModel)]="facilityType"
-                [label]="ft.name"
-              ></p-radioButton>
-            </span> -->
-            <div class="p-field" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="facility_type"
-                  optionLabel="name"
-                  optionValue="name"
-                  [showClear]="false"
-                  [autoDisplayFirst]="false"
-                  class="p-inputtext-sm"
-                  [options]="facilityGroupByType!"
-                  (onChange)="facilityTypeChange()"
-                  [(ngModel)]="facilityType"
-                ></p-dropdown>
-                <label for="facility_type">Facility Type </label>
-              </span>
+          <div fxLayout="row wrap" fxLayoutGap="20px">
+            <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start" fxFlex>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="facility_type"
+                    optionLabel="name"
+                    optionValue="name"
+                    [showClear]="false"
+                    [autoDisplayFirst]="false"
+                    class="p-inputtext-sm"
+                    [options]="facilityGroupByType!"
+                    (onChange)="facilityTypeChange()"
+                    [(ngModel)]="facilityType"
+                  ></p-dropdown>
+                  <label for="facility_type">Facility Type </label>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="facility_id"
+                    optionLabel="name"
+                    optionValue="id"
+                    [showClear]="true"
+                    [autoDisplayFirst]="false"
+                    class="p-inputtext-sm"
+                    [options]="facilities!"
+                    (onChange)="filterChanged()"
+                    [(ngModel)]="facility_id"
+                  ></p-dropdown>
+                  <label for="facility_id">Facility</label>
+                </span>
+              </div>
             </div>
-            <div class="p-field" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="facility_id"
-                  optionLabel="name"
-                  optionValue="id"
-                  [showClear]="true"
-                  [autoDisplayFirst]="false"
-                  class="p-inputtext-sm"
-                  [options]="facilities!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="facility_id"
-                ></p-dropdown>
-                <label for="facility_id">Facility</label>
-              </span>
+            <div class="p-inputgroup" fxFlex>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="code"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['description']"
+                  />
+                  <label for="description">Description </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['description'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <button
+                pButton
+                class="p-inputgroup-addon p-button-primary p-button-text"
+                icon="pi pi-search"
+                label="Search"
+                (click)="onSearch()"
+              ></button>
             </div>
-          </div>
-          <div class="p-inputgroup" fxFlex>
-            <div class="p-field" fxFlex>
-              <span class="p-float-label p-input-icon-right">
-                <input
-                  id="code"
-                  type="text"
-                  class="p-inputtext-sm"
-                  pInputText
-                  [(ngModel)]="search['description']"
-                />
-                <label for="description">Description </label>
-                <i
-                  class="pi pi-times clear"
-                  (click)="search['description'] = undefined; onSearch()"
-                ></i>
-              </span>
-            </div>
-            <button
-              pButton
-              class="p-inputgroup-addon p-button-primary p-button-text"
-              icon="pi pi-search"
-              label="Search"
-              (click)="onSearch()"
-            ></button>
           </div>
         </div>
       </div>

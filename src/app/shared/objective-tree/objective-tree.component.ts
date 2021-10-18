@@ -18,6 +18,7 @@ export class ObjectiveTreeComponent implements OnInit {
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  @Output() onLoadingChange: EventEmitter<boolean> = new EventEmitter(false);
 
   objectiveNode!: TreeNode;
   objectives?: any[] = [];
@@ -30,12 +31,16 @@ export class ObjectiveTreeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.objectiveService
-      .tree()
-      .subscribe(
-        (resp: CustomResponse<Objective[]>) =>
-          (this.objectives = resp.data?.map((obj) => this.getNode(obj)))
-      );
+    this.onLoadingChange.next(false);
+    this.objectiveService.tree().subscribe(
+      (resp: CustomResponse<Objective[]>) => {
+        this.objectives = resp.data?.map((obj) => this.getNode(obj));
+        this.onLoadingChange.next(false);
+      },
+      (error) => {
+        this.onLoadingChange.next(false);
+      }
+    );
   }
 
   private getNode(ob: Objective): TreeNode {

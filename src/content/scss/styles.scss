@@ -275,10 +275,14 @@ body {
     padding-top: 0px;
   }
 }
+.loader-area {
+  position: relative;
+  padding: 0.5rem;
+}
 
 p-card.filter {
   .p-card-body {
-    padding: 0.75rem 1.5rem !important;
+    padding: 0.70rem 1.0rem !important;
   }
 
   .card-header-text {
@@ -308,7 +312,7 @@ p-card.filter {
 }
 p-card.filter-no-adv {
   .p-card-body {
-    padding-bottom: 1.25rem !important;
+    padding-bottom: 1.2rem !important;
   }
 }
 
@@ -561,6 +565,9 @@ i.clear {
 
 .mat-dialog-content {
   padding-top: 10px !important;
+}
+.dialog-content {
+  position: relative;
 }
 
 .p-dynamic-dialog {

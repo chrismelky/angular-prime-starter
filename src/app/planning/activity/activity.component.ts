@@ -54,6 +54,7 @@ export class ActivityComponent implements OnInit {
 
   facilityIsLoading = false;
   targetIsLoading = false;
+  objectiveIsLoading = false;
 
   adminHierarchyCostCentre?: AdminHierarchyCostCentre;
   financialYear?: FinancialYear;
@@ -223,6 +224,10 @@ export class ActivityComponent implements OnInit {
   onObjectiveSeletion(objective: Objective): void {
     this.objective = objective;
     this.loadTargets(this.objective?.id!);
+  }
+
+  onObjectiveLoadingChange(isLoading: boolean): void {
+    this.objectiveIsLoading = isLoading;
   }
 
   /**

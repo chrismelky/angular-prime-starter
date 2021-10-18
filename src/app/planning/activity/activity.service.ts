@@ -15,6 +15,7 @@ import {
   Activity,
   ActivityFacility,
   ActivityFundSource,
+  FacilityActivity,
 } from './activity.model';
 import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
 
@@ -56,6 +57,17 @@ export class ActivityService {
   ): Observable<CustomResponse<ActivityFacility[]>> {
     return this.http.get<CustomResponse<ActivityFacility[]>>(
       `${this.resourceUrl}/facilities/${financialYearId}/${activityId}`
+    );
+  }
+
+  facilityActivity(req: any): Observable<CustomResponse<FacilityActivity[]>> {
+    const options = createRequestOption(req);
+
+    return this.http.get<CustomResponse<FacilityActivity[]>>(
+      `${this.resourceUrl}/facility_activities/`,
+      {
+        params: options,
+      }
     );
   }
 

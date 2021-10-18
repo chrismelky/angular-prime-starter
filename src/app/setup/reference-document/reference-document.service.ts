@@ -20,7 +20,7 @@ export class ReferenceDocumentService {
   constructor(protected http: HttpClient) {}
 
   create(
-    referenceDocument: ReferenceDocument
+    referenceDocument: FormData
   ): Observable<CustomResponse<ReferenceDocument>> {
     return this.http.post<CustomResponse<ReferenceDocument>>(
       this.resourceUrl,
@@ -28,11 +28,11 @@ export class ReferenceDocumentService {
     );
   }
 
-  update(
-    referenceDocument: ReferenceDocument
-  ): Observable<CustomResponse<ReferenceDocument>> {
+    update(
+        referenceDocument: FormData
+    ): Observable<CustomResponse<ReferenceDocument>> {
     return this.http.put<CustomResponse<ReferenceDocument>>(
-      `${this.resourceUrl}/${referenceDocument.id}`,
+      `${this.resourceUrl}/${referenceDocument.get('id')}`,
       referenceDocument
     );
   }

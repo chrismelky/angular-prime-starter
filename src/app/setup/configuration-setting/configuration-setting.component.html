@@ -55,7 +55,7 @@
                     </ng-template>
                   </p-dropdown>
                   <input *ngIf="(item.html_type === 'TEXT' || item.html_type === 'NUMBER')" type="{{item.value_type}}" pInputText [(ngModel)]="item.value">
-                  <p-multiSelect appendTo="body" *ngIf="item.html_type === 'MULT_SELECT'" [options]="item.options" [(ngModel)]="item.arrayvalue"  optionValue="value"  defaultLabel="Select Options" optionLabel="name" selectedItemsLabel="{0} items selected"></p-multiSelect>
+                  <p-multiSelect appendTo="body" *ngIf="item.html_type === 'MULT_SELECT'" [options]="item.options" [(ngModel)]="item.multselected"  optionValue="value"  defaultLabel="Select Options" optionLabel="name" selectedItemsLabel="{0} items selected"></p-multiSelect>
                 </td>
                 <td>
                               <div fxLayout="row" fxLayoutAlign="end">

@@ -46,11 +46,6 @@ export class PeSubFormComponent implements OnInit {
       header: "Name",
       sort: true,
     },
-    {
-      field: "code",
-      header: "Code",
-      sort: true,
-    },
   ]; //Table display columns
 
   isLoading = false;

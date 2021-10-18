@@ -21,7 +21,10 @@ import {
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import { Activity } from 'src/app/planning/activity/activity.model';
+import {
+  Activity,
+  ActivityFundSource,
+} from 'src/app/planning/activity/activity.model';
 import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
@@ -29,7 +32,7 @@ import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model
 import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { Facility } from 'src/app/setup/facility/facility.model';
+import { Facility, FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
 import { Section } from 'src/app/setup/section/section.model';
 import { SectionService } from 'src/app/setup/section/section.service';
@@ -39,6 +42,7 @@ import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.serv
 import { ActivityInput } from './activity-input.model';
 import { ActivityInputService } from './activity-input.service';
 import { ActivityInputUpdateComponent } from './update/activity-input-update.component';
+import { AdminHierarchyCostCentre } from 'src/app/planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
 
 @Component({
   selector: 'app-activity-input',
@@ -47,16 +51,24 @@ import { ActivityInputUpdateComponent } from './update/activity-input-update.com
 export class ActivityInputComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
+
+  facilityIsLoading = false;
+  activityLoading = false;
+
   activityInputs?: ActivityInput[] = [];
 
-  activities?: Activity[] = [];
-  fundSources?: FundSource[] = [];
-  financialYears?: FinancialYear[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
+  adminHierarchyCostCentre!: AdminHierarchyCostCentre;
+  financialYear!: FinancialYear;
+
   facilities?: Facility[] = [];
-  sections?: Section[] = [];
+  facilityGroupByType?: any[] = [];
+
+  activities?: Activity[] = [];
+  activityFundSources?: ActivityFundSource[] = [];
+
   budgetClasses?: BudgetClass[] = [];
   units?: PlanrepEnum[] = [];
+  mainBudgetClasses?: BudgetClass[] = [];
 
   cols = [
     {
@@ -79,31 +91,6 @@ export class ActivityInputComponent implements OnInit {
       header: 'Unit',
       sort: true,
     },
-    {
-      field: 'forward_year_one_amount',
-      header: 'Forward Year One Amount',
-      sort: false,
-    },
-    {
-      field: 'forward_year_two_amount',
-      header: 'Forward Year Two Amount',
-      sort: false,
-    },
-    {
-      field: 'chart_of_account',
-      header: 'Chart Of Account',
-      sort: true,
-    },
-    {
-      field: 'approve_amount',
-      header: 'Approve Amount',
-      sort: false,
-    },
-    {
-      field: 'adjusted_amount',
-      header: 'Adjusted Amount',
-      sort: false,
-    },
   ]; //Table display columns
 
   isLoading = false;
@@ -117,12 +104,13 @@ export class ActivityInputComponent implements OnInit {
 
   //Mandatory filter
   activity_id!: number;
-  fund_source_id!: number;
+  activityFundSource!: ActivityFundSource;
   financial_year_id!: number;
   admin_hierarchy_id!: number;
   facility_id!: number;
   section_id!: number;
   budget_class_id!: number;
+  budget_type!: string;
 
   constructor(
     protected activityInputService: ActivityInputService,
@@ -143,46 +131,14 @@ export class ActivityInputComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activityService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Activity[]>) => (this.activities = resp.data)
-      );
-    this.fundSourceService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
-      );
-    this.financialYearService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
-    this.adminHierarchyService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
     this.facilityService
       .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
       );
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.budgetClassService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<BudgetClass[]>) =>
-          (this.budgetClasses = resp.data)
-      );
     this.units = this.enumService.get('units');
     this.handleNavigation();
+    this.loadMainBudgetClassesWithChildren();
   }
 
   /**
@@ -193,7 +149,7 @@ export class ActivityInputComponent implements OnInit {
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
       !this.activity_id ||
-      !this.fund_source_id ||
+      !this.activityFundSource ||
       !this.financial_year_id ||
       !this.admin_hierarchy_id ||
       !this.facility_id ||
@@ -211,7 +167,7 @@ export class ActivityInputComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         activity_id: this.activity_id,
-        fund_source_id: this.fund_source_id,
+        fund_source_id: this.activityFundSource.fund_source_id,
         financial_year_id: this.financial_year_id,
         admin_hierarchy_id: this.admin_hierarchy_id,
         facility_id: this.facility_id,
@@ -231,6 +187,75 @@ export class ActivityInputComponent implements OnInit {
       );
   }
 
+  loadFacilities(): void {
+    const parentName = `p${this.adminHierarchyCostCentre?.admin_hierarchy?.admin_hierarchy_position}`;
+    const parentId = this.adminHierarchyCostCentre?.admin_hierarchy_id;
+    const sectionId = this.adminHierarchyCostCentre?.section_id;
+    this.facilityIsLoading = true;
+    this.facilityService.planning(parentName, parentId!, sectionId!).subscribe(
+      (resp: CustomResponse<FacilityView[]>) => {
+        this.facilityIsLoading = false;
+        this.facilityGroupByType = this.helper.groupBy(resp.data!, 'type');
+      },
+      (error) => (this.facilityIsLoading = false)
+    );
+  }
+
+  /** Load main budget classess with children budget classes */
+  loadMainBudgetClassesWithChildren(): void {
+    this.budgetClassService.tree().subscribe((resp) => {
+      this.mainBudgetClasses = resp.data;
+    });
+  }
+
+  /**
+   * Load activities by selected budget class and
+   */
+  loadActivities(): void {
+    if (!this.facility_id || !this.budget_class_id) {
+      return;
+    }
+    this.activityLoading = true;
+    this.activityService
+      .query({
+        financial_year_id: this.financialYear.id,
+        admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
+        budget_type: this.budget_type,
+        section_id: this.adminHierarchyCostCentre.section_id,
+        budget_class_id: this.budget_class_id,
+        facility_id: this.facility_id,
+      })
+      .subscribe(
+        (resp) => {
+          this.activityLoading = false;
+          this.activities = resp.data;
+        },
+        (error) => (this.activityLoading = false)
+      );
+  }
+
+  /**
+   * Load activity fund source
+   * @returns
+   */
+  loadFundSource(): void {
+    if (!this.activity_id) {
+      return;
+    }
+    this.activityService
+      .activityFundSources(this.financialYear.id!, this.activity_id)
+      .subscribe((resp) => {
+        this.activityFundSources = resp.data?.map((af) => {
+          return {
+            id: af.id,
+            fund_source_id: af.fund_source_id,
+            name: af.name,
+            code: af.code,
+          };
+        });
+      });
+  }
+
   /**
    * Called initialy/onInit to
    * Restore page, sort option from url query params if exist and load page
@@ -238,11 +263,18 @@ export class ActivityInputComponent implements OnInit {
   protected handleNavigation(): void {
     combineLatest([
       this.activatedRoute.data,
+      this.activatedRoute.params,
       this.activatedRoute.queryParamMap,
-    ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+    ]).subscribe(([data, params, queryParams]) => {
+      this.adminHierarchyCostCentre = data.adminHierarchyCostCentre;
+      this.budget_type = params['budgetType'];
+      this.financialYear = data.financialYear;
+
+      this.loadFacilities();
+
+      const page = queryParams.get('page');
+      const perPage = queryParams.get('per_page');
+      const sort = (queryParams.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
       const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
@@ -332,7 +364,7 @@ export class ActivityInputComponent implements OnInit {
     const data: ActivityInput = activityInput ?? {
       ...new ActivityInput(),
       activity_id: this.activity_id,
-      fund_source_id: this.fund_source_id,
+      fund_source_id: this.activityFundSource.fund_source_id,
       financial_year_id: this.financial_year_id,
       admin_hierarchy_id: this.admin_hierarchy_id,
       facility_id: this.facility_id,

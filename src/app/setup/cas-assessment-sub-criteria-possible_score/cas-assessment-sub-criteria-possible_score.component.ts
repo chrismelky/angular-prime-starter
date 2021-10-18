@@ -304,7 +304,7 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/cas-assessment-sub-criteria-possible_score"], {
+      this.router.navigate(["/cas-assessment-sub-criteria-possible-score"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,

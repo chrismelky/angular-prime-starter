@@ -39,7 +39,7 @@ export class PriorityAreaUpdateComponent implements OnInit {
     description: [null, [Validators.required]],
     number: [null, [Validators.required]],
     objectives: [[], []],
-    sectors: [[], [Validators.required]],
+    sectors: [[], []],
   });
 
   constructor(

@@ -152,98 +152,6 @@
       </div>
     </p-accordionTab>
   </p-accordion>
-
-  <!-- Table Panel -->
-<!--  <p-card>-->
-<!--    <p-table-->
-<!--      #table-->
-<!--      [lazy]="true"-->
-<!--      [resizableColumns]="true"-->
-<!--      [responsive]="true"-->
-<!--      [autoLayout]="true"-->
-<!--      [loading]="isLoading"-->
-<!--      [columns]="cols"-->
-<!--      [value]="assessorAssignments!"-->
-<!--      [scrollable]="true"-->
-<!--      scrollHeight="500px"-->
-<!--      (onLazyLoad)="onSortChange($event)"-->
-<!--      [customSort]="true"-->
-<!--    >-->
-<!--      <ng-template pTemplate="caption">-->
-<!--        <div fxLayout="row" fxLayoutAlign="space-between center">-->
-<!--          <span class="card-header-text">Assessor Assignments</span>-->
-<!--          <button-->
-<!--            pButton-->
-<!--            icon="pi pi-plus"-->
-<!--            class="p-button-raised"-->
-<!--            [disabled]=""-->
-<!--            (click)="createOrUpdate()"-->
-<!--            label="Add Assessor Assignment"-->
-<!--          ></button>-->
-<!--        </div>-->
-<!--      </ng-template>-->
-<!--      <ng-template pTemplate="header" let-columns>-->
-<!--        <tr *ngIf="assessorAssignments?.length">-->
-<!--          <th-->
-<!--            *ngFor="let col of columns"-->
-<!--            [pSortableColumn]="col.sort ? col.field : null"-->
-<!--          >-->
-<!--            {{ col.header-->
-<!--            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>-->
-<!--          </th>-->
-<!--          <th style="flex: 0 0 2rem"></th>-->
-<!--        </tr>-->
-<!--      </ng-template>-->
-<!--      <ng-template pTemplate="body" let-rowData let-columns="columns">-->
-<!--        <tr>-->
-<!--          <td *ngFor="let col of columns">-->
-<!--            {{ rowData[col.field] }}-->
-<!--          </td>-->
-<!--          <td style="flex: 0 0 2rem">-->
-<!--            <div fxLayout="row" fxLayoutAlign="end">-->
-<!--              <div fxLayout="row" fxLayoutGap="2px">-->
-<!--                <button-->
-<!--                  pButton-->
-<!--                  pTooltip="Edit"-->
-<!--                  tooltipPosition="bottom"-->
-<!--                  class="-->
-<!--                    p-button-text p-button-plain p-button-rounded p-button-icon-->
-<!--                  "-->
-<!--                  icon="pi pi-pencil-->
-<!--              "-->
-<!--                  (click)="createOrUpdate(rowData)"-->
-<!--                ></button>-->
-<!--                <button-->
-<!--                  pButton-->
-<!--                  pTooltip="Delete"-->
-<!--                  tooltipPosition="bottom"-->
-<!--                  class="-->
-<!--                    p-button-text p-button-plain p-button-rounded p-button-icon-->
-<!--                  "-->
-<!--                  icon="pi pi-trash-->
-<!--              "-->
-<!--                  (click)="delete(rowData)"-->
-<!--                ></button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </td>-->
-<!--        </tr>-->
-<!--      </ng-template>-->
-<!--      <ng-template pTemplate="emptymessage"> No data found </ng-template>-->
-<!--      <ng-template pTemplate="footer">-->
-<!--        <p-paginator-->
-<!--          #paginator-->
-<!--          [alwaysShow]="assessorAssignments?.length! > 0"-->
-<!--          [rows]="per_page"-->
-<!--          dropdownAppendTo="body"-->
-<!--          [showCurrentPageReport]="true"-->
-<!--          [totalRecords]="totalItems"-->
-<!--          [rowsPerPageOptions]="perPageOptions"-->
-<!--          (onPageChange)="pageChanged($event)"-->
-<!--        ></p-paginator>-->
-<!--      </ng-template>-->
-<!--    </p-table>-->
-<!--  </p-card>-->
   <div class="card">
     <p-table [value]="assessorAssignments!" rowGroupMode="rowspan" groupRowsBy="assessorAssignment.user.first_name" sortField="assessorAssignment.user.first_name" sortMode="single" responsiveLayout="scroll">
       <ng-template pTemplate="caption">
@@ -259,7 +167,7 @@
           ></button>
         </div>
       </ng-template>
-      <ng-template pTemplate="header">
+      <ng-template pTemplate="header" *ngIf="assessorAssignments!.length > 0">
         <tr>
           <th style="width:3rem">#</th>
           <th>Names</th>
@@ -323,19 +231,19 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="footer">
+        <p-paginator
+          #paginator
+          [alwaysShow]="assessorAssignments?.length! > 0"
+          [rows]="per_page"
+          dropdownAppendTo="body"
+          [showCurrentPageReport]="true"
+          [totalRecords]="totalItems"
+          [rowsPerPageOptions]="perPageOptions"
+          (onPageChange)="pageChanged($event)"
+        ></p-paginator>
+      </ng-template>
     </p-table>
-    <div class="row">
-      <p-paginator
-        #paginator
-        [alwaysShow]="assessorAssignments?.length! > 0"
-        [rows]="per_page"
-        dropdownAppendTo="body"
-        [showCurrentPageReport]="true"
-        [totalRecords]="totalItems"
-        [rowsPerPageOptions]="perPageOptions"
-        (onPageChange)="pageChanged($event)"
-      ></p-paginator>
-    </div>
   </div>
 </div>
 

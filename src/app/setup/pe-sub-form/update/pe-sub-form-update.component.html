@@ -88,6 +88,8 @@
             class="p-inputtext-sm"
             appendTo="body"
             [options]="parents!"
+            filterBy="id,sub_form_id"
+            filterMatchMode="notEquals"
             formControlName="parent_id"
           ></p-dropdown>
           <label for="parent_id">Parent PE Subform </label>
@@ -136,15 +138,14 @@
       </div>
 
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-        <div fxLayout="row" fxLayoutGap="2px">
+        <!-- div fxLayout="row" fxLayoutGap="2px">
           <p-inputSwitch
             id="is_lowest"
             name="is_lowest"
             formControlName="is_lowest"
           ></p-inputSwitch>
           <label for="is_lowest">Is Lowest </label>
-        </div>
-
+        </div-->
 
         <div fxLayout="row" fxLayoutGap="2px">
           <p-inputSwitch

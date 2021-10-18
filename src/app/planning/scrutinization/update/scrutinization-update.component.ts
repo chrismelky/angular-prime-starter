@@ -56,16 +56,6 @@ export class ScrutinizationUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -78,14 +68,24 @@ export class ScrutinizationUpdateComponent implements OnInit {
       admin_hierarchy_level_id:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
       financial_year_id:this.currentUser.admin_hierarchy?.current_financial_year_id,
       comments:this.editForm.value.comments,
-      activity_id:this.dialogConfig.data.id
+      activity_id:this.dialogConfig.data.id,
+      id:this.dialogConfig.data.comment_id,
     }
     this.isSaving = true;
-    this.scrutinizationService.create(data).subscribe(resp => {
-      this.toastService.info(resp.message);
-      this.dialogRef.close(true);
-      this.isSaving = false;
-    });
+    if (this.dialogConfig.data.comment_id == null){
+      this.scrutinizationService.create(data).subscribe(resp => {
+        this.toastService.info(resp.message);
+        this.dialogRef.close(data);
+        this.isSaving = false;
+      });
+    }else {
+      this.scrutinizationService.update(data).subscribe(resp => {
+        this.toastService.info(resp.message);
+        this.dialogRef.close(data);
+        this.isSaving = false;
+      });
+    }
+
   }
 
   /**

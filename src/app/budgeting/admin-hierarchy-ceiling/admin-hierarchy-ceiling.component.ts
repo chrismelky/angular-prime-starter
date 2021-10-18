@@ -139,7 +139,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       .ceilingStartSectionPosition()
       .subscribe(
         (resp: CustomResponse<any>) => {
-          this.ceilingStartSectionPosition = +resp.data;
+          this.ceilingStartSectionPosition = +(resp.data);
+          console.log(this.ceilingStartSectionPosition);
         }
       );
     this.sectionLevelService
@@ -608,7 +609,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     };
     const ref = this.dialogService.open(AdminCeilingDisseminationComponent, {
       header: 'Ceiling Dissemination',
-      width: '60%',
+      width: '80%',
       styleClass:'planrep-dialogy',
       data,
     });

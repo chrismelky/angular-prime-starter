@@ -53,6 +53,17 @@ export class FinancialYearTargetService {
     );
   }
 
+  allByObjectiveAndCostCentre(
+    financialYearId: number,
+    adminHierarchyId: number,
+    objectiveId: number,
+    costCentreId: number
+  ): Observable<CustomResponse<FinancialYearTarget[]>> {
+    return this.http.get<CustomResponse<FinancialYearTarget[]>>(
+      `${this.resourceUrl}/all_by_objective_and_cost_centre/${financialYearId}/${adminHierarchyId}/${objectiveId}/${costCentreId}`
+    );
+  }
+
   query(req?: any): Observable<CustomResponse<FinancialYearTarget[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<FinancialYearTarget[]>>(

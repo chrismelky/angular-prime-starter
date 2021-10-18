@@ -121,7 +121,7 @@ const routes: Routes = [
         },
       },
       {
-        path: "reference-document-type",
+        path: "reference-document_type",
         loadChildren: () =>
           import(
             "../setup/reference-document-type/reference-document-type.module"
@@ -305,7 +305,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: "setup",
+            only: "WRITE_ASSESSMENT_SETTINGS",
           },
         },
       },
@@ -344,7 +344,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: "setup",
+            only: "WRITE_ASSESSMENT_SETTINGS",
           },
         },
       },
@@ -1138,7 +1138,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: "WRITE_FINANCE_SETTING",
+            only: "WRITE_ASSESSMENT_SCORE",
           },
         },
       },

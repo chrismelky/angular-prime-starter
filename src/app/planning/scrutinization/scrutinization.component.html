@@ -127,8 +127,8 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-table [value]="scrutinizations!" dataKey="name" responsiveLayout="scroll">
-      <ng-template pTemplate="header">
+    <p-table [value]="scrutinizations!" dataKey="description" responsiveLayout="scroll">
+      <ng-template pTemplate="header" *ngIf="scrutinizations?.length! > 0">
         <tr>
           <th style="width: 3rem"></th>
           <th>Code</th>
@@ -141,13 +141,13 @@
       <ng-template pTemplate="body" let-activity  let-expanded="expanded">
         <tr>
           <td>
-            <button type="button" pButton pRipple [pRowToggler]="activity" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+            <button type="button" pButton pRipple [pRowToggler]="activity" (click)="loadInputs(activity.id)" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
           </td>
           <td>{{activity.code}}</td>
-          <td>{{activity.name}}</td>
+          <td>{{activity.description}}</td>
           <td></td>
           <td>
-            <p-badge [value]="activity.status?'Scrutinized':'Not Scrutinized'"  severity="{{activity.status == 1?'success':'warning'}}"></p-badge>
+            <p-badge [value]="activity.status"  severity="{{activity.status == 1?'success':'warning'}}"></p-badge>
           </td>
           <td>
             <button pButton type="button" class="p-button-outlined p-button-rounded p-button-icon" label="Comments"
@@ -160,10 +160,10 @@
         <tr>
           <td colspan="4">
             <div class="p-p-3">
-              <p-table [value]="activity.inputs" dataKey="name">
+              <p-table [value]="activity.inputs" dataKey="id">
                 <ng-template pTemplate="header">
                   <tr>
-        <th pSortableColumn="customer">input</th>
+        <th pSortableColumn="gfs">input</th>
         <th pSortableColumn="date"></th>
         <th pSortableColumn="amount">Amount</th>
         <th ></th>
@@ -177,7 +177,7 @@
           <td></td>
           <td>{{input.amount | currency:'TZS  '}}</td>
           <td></td>
-          <td><p-badge [value]="input.status?'Scrutinized':'Not Scrutinized'"  severity="{{input.status == 1?'success':'warning'}}"></p-badge></td>
+          <td><p-badge [value]="input.status"  severity="{{input.status == 1?'success':'warning'}}"></p-badge></td>
           <td>
             <button pButton type="button" class="p-button-outlined  p-button-rounded p-button-icon" label="Comments"
                     style="margin-left: 16px" icon="pi pi-comment" (click)="setInputComments(input)"
@@ -195,6 +195,11 @@
           </td>
         </tr>
       </ng-template>
+<ng-template pTemplate="emptymessage">
+  <tr>
+    <td colspan="3">There are no activities for this cost centre yet.</td>
+  </tr>
+</ng-template>
     </p-table>
 <ng-template pTemplate="footer">
   <p-paginator

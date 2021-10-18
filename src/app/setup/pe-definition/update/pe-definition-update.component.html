@@ -62,11 +62,13 @@
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
 
         <div class="p-field p-col-12 p-md-4" fxFlex>
-          <span class="p-float-label">
+          <span class="p-float-label" >
           <p-inputNumber
             id="sort_order"
             formControlName="sort_order"
-          ></p-inputNumber>
+            [size]=90
+          >
+          </p-inputNumber>
           <label for="sort_order">Sort Order </label>
         </span>
           <span
@@ -107,13 +109,12 @@
             optionLabel="display"
             [autoDisplayFirst]="false"
             [filter]="true"
-            [showClear]="true"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="units!"
             formControlName="unit"
           ></p-dropdown>
-          <label for="unit">Unit </label>
+          <label for="unit">Unit of Measure </label>
         </span>
           <span
             *ngIf="
@@ -141,11 +142,11 @@
               optionLabel="display"
               [autoDisplayFirst]="false"
               [filter]="true"
-              [showClear]="true"
               class="p-inputtext-sm"
               appendTo="body"
               [options]="peInPutValues!"
               formControlName="type"
+              (onChange)="inputTypeChanged($event)"
             ></p-dropdown>
            <label for="inputType">Input type </label>
         </span>
@@ -183,8 +184,7 @@
             *ngIf="
             editForm.get('select_option')!.invalid &&
             (editForm.get('select_option')!.dirty ||
-              editForm.get('select_option')!.touched ||
-                formError)
+              editForm.get('select_option')!.touched ||formError)
             "
           >
             <small class="p-error" *ngIf="editForm.get('select_option')?.errors?.required"
@@ -201,7 +201,6 @@
               optionLabel="display"
               [autoDisplayFirst]="false"
               [filter]="true"
-              [showClear]="true"
               class="p-inputtext-sm"
               appendTo="body"
               [options]="peOutPutValues!"
@@ -295,7 +294,7 @@
             [options]="peForms!"
             formControlName="pe_form_id"
           ></p-dropdown>
-          <label for="pe_form_id">Pe Form </label>
+          <label for="pe_form_id">PE Form </label>
         </span>
           <span
             *ngIf="
@@ -322,34 +321,33 @@
             formControlName="is_input"
           ></p-inputSwitch>
           <label for="is_input"> Is Input </label>
-        </div>
-
-        <div class="p-field p-col-12 p-md-4" fxFlex>
           <p-inputSwitch
-            id="has_breakdown"
-            name="has_breakdown"
-            formControlName="has_breakdown"
+            id="is_active"
+            name="is_active"
+            formControlName="is_active"
           ></p-inputSwitch>
-          <label for="has_breakdown"> Has Breakdown </label>
-        </div>
-
-        <div class="p-field p-col-12 p-md-4" fxFlex>
-            <p-inputSwitch
-              id="is_active"
-              name="is_active"
-              formControlName="is_active"
-            ></p-inputSwitch>
           <label for="is_active"> Is Active </label>
         </div>
 
-        <div class="p-field p-col-12 p-md-4" fxFlex>
+
+
+        <!--div class="p-field p-col-12 p-md-4" fxFlex>
+         <p-inputSwitch
+           id="has_breakdown"
+           name="has_breakdown"
+           formControlName="has_breakdown"
+         ></p-inputSwitch>
+         <label for="has_breakdown"> Has Breakdown </label>
+       </div-->
+
+        <!--div class="p-field p-col-12 p-md-4" fxFlex>
           <p-inputSwitch
             id="is_vertical"
             name="is_vertical"
             formControlName="is_vertical"
           ></p-inputSwitch>
           <label for="is_vertical">Vertical total </label>
-        </div>
+        </div-->
       </div>
 
         <div fxLayout="row" fxLayoutGap="0.75rem">

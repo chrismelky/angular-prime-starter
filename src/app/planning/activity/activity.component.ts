@@ -52,6 +52,9 @@ export class ActivityComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
 
+  facilityIsLoading = false;
+  targetIsLoading = false;
+
   adminHierarchyCostCentre?: AdminHierarchyCostCentre;
   financialYear?: FinancialYear;
 
@@ -61,40 +64,22 @@ export class ActivityComponent implements OnInit {
   budgetClasses?: BudgetClass[] = [];
   activityTypes?: ActivityType[] = [];
   facilities?: FacilityView[] = [];
+  facilityGroupByType?: any[] = [];
+  facilityType?: string;
   activityTaskNatures?: ActivityTaskNature[] = [];
   projects?: Project[] = [];
-  // interventions?: Intervention[] = [];
-  // sectorProblems?: SectorProblem[] = [];
-  // genericActivities?: GenericActivity[] = [];
-  // responsiblePeople?: ResponsiblePerson[] = [];
   periodTypes?: PlanrepEnum[] = [];
   objective?: Objective;
 
   cols = [
     {
-      field: 'description',
-      header: 'Description',
-      sort: true,
-    },
-    {
       field: 'code',
       header: 'Code',
       sort: true,
     },
-
     {
-      field: 'budget_class_id',
-      header: 'Budget Class ',
-      sort: true,
-    },
-    {
-      field: 'activity_type_id',
-      header: 'Activity Type ',
-      sort: true,
-    },
-    {
-      field: 'project_id',
-      header: 'Project ',
+      field: 'description',
+      header: 'Description',
       sort: true,
     },
   ]; //Table display columns
@@ -111,6 +96,7 @@ export class ActivityComponent implements OnInit {
   //Mandatory filter
   financialYearTarget?: FinancialYearTarget; /** Selected Target object to diaplay target info wheen creating activity */
   budget_type!: string;
+  facility_id!: number;
 
   constructor(
     protected activityService: ActivityService,
@@ -123,10 +109,6 @@ export class ActivityComponent implements OnInit {
     protected facilityService: FacilityService,
     protected activityTaskNatureService: ActivityTaskNatureService,
     protected projectService: ProjectService,
-    // protected interventionService: InterventionService,
-    // protected sectorProblemService: SectorProblemService,
-    // protected genericActivityService: GenericActivityService,
-    // protected responsiblePersonService: ResponsiblePersonService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -137,12 +119,6 @@ export class ActivityComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.budgetClassService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<BudgetClass[]>) =>
-          (this.budgetClasses = resp.data)
-      );
     this.activityTypeService
       .query({ columns: ['id', 'name'] })
       .subscribe(
@@ -182,6 +158,9 @@ export class ActivityComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
+    const facilityType = this.facility_id
+      ? { facility_id: this.facility_id }
+      : {};
     this.activityService
       .query({
         page: pageToLoad,
@@ -192,6 +171,7 @@ export class ActivityComponent implements OnInit {
         admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
         section_id: this.adminHierarchyCostCentre.section_id,
         budget_type: this.budget_type,
+        ...facilityType,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -249,16 +229,22 @@ export class ActivityComponent implements OnInit {
    * load Targets by objectives and section
    */
   loadTargets(objectiveId: number): void {
+    this.targetIsLoading = true;
     this.financialYearTargetService
-      .query({
-        objective_id: objectiveId,
-        admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
-        financial_year_id: this.financialYear?.id,
-        columns: ['id', 'description', 'code', 'long_term_target_id'],
-      })
+      .allByObjectiveAndCostCentre(
+        this.financialYear?.id!,
+        this.adminHierarchyCostCentre?.admin_hierarchy_id!,
+        objectiveId,
+        this.adminHierarchyCostCentre?.section_id!
+      )
       .subscribe(
-        (resp: CustomResponse<FinancialYearTarget[]>) =>
-          (this.financialYearTargets = resp.data)
+        (resp: CustomResponse<FinancialYearTarget[]>) => {
+          this.financialYearTargets = resp.data;
+          this.targetIsLoading = false;
+        },
+        (error) => {
+          this.targetIsLoading = false;
+        }
       );
   }
 
@@ -266,11 +252,14 @@ export class ActivityComponent implements OnInit {
     const parentName = `p${this.adminHierarchyCostCentre?.admin_hierarchy?.admin_hierarchy_position}`;
     const parentId = this.adminHierarchyCostCentre?.admin_hierarchy_id;
     const sectionId = this.adminHierarchyCostCentre?.section_id;
-    this.facilityService
-      .planning(parentName, parentId!, sectionId!)
-      .subscribe(
-        (resp: CustomResponse<FacilityView[]>) => (this.facilities = resp.data)
-      );
+    this.facilityIsLoading = true;
+    this.facilityService.planning(parentName, parentId!, sectionId!).subscribe(
+      (resp: CustomResponse<FacilityView[]>) => {
+        this.facilityIsLoading = false;
+        this.facilityGroupByType = this.helper.groupBy(resp.data!, 'type');
+      },
+      (error) => (this.facilityIsLoading = false)
+    );
   }
 
   /**
@@ -284,6 +273,15 @@ export class ActivityComponent implements OnInit {
     } else {
       this.loadPage(1);
     }
+  }
+
+  facilityTypeChange(): void {
+    this.facilities =
+      this.facilityGroupByType?.find((ft) => ft.name === this.facilityType)
+        ?.values || [];
+    this.facilities?.length === 1 &&
+      (this.facility_id = this.facilities[0]?.id!);
+    this.filterChanged();
   }
 
   /**

@@ -32,6 +32,8 @@ import { Activity } from '../activity/activity.model';
 import {Scrutinization} from "./scrutinization.model";
 import {SetCommentComponent} from "../assessment-criteria/update/set-comment.component";
 import {InputUpdateComponent} from "./update/input-update.component";
+import {User} from "../../setup/user/user.model";
+import {UserService} from "../../setup/user/user.service";
 
 @Component({
   selector: 'app-scrutinization',
@@ -47,12 +49,7 @@ export class ScrutinizationComponent implements OnInit {
   departments?: Section[] = [];
   activities: Activity[] | undefined = [];
 
-  columns = [
-    { field: "vin", header: "Vin", width: "10%" },
-    { field: "year", header: "Year", width: "20%" },
-    { field: "brand", header: "Brand", width: "15%" },
-    { field: "color", header: "Color", width: "5%" }
-  ]; //Table display columns
+  columns = []; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -68,195 +65,25 @@ export class ScrutinizationComponent implements OnInit {
   section_id!: number;
   parent_id!: number;
   admin_hierarchy_position!: number;
+  budget_type = 'CURRENT';
+  currentUser: User;
 
   constructor(
     protected scrutinizationService: ScrutinizationService,
     protected adminHierarchyService: AdminHierarchyService,
     protected sectionService: SectionService,
     protected activatedRoute: ActivatedRoute,
-    protected activityService: ActivityService,
     protected router: Router,
+    protected userService: UserService,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+    this.currentUser = userService.getCurrentUser();
+  }
 
   ngOnInit(): void {
-     this.scrutinizations = [
-      {
-        id: 1,
-        code: 'C01S01',
-        name: 'To conduct annual training to 1health care provider from Soya dispensary on proper  use of patograph by June 2020',
-        budget: 2000000,
-        expenditure: 500000,
-        status: 1,
-        balance: 1500000,
-        inputs: [
-          {
-            id: 21,
-            code:'12345678',
-            status: 1,
-            name: 'nunua dawa',
-            amount: 5000
-          }
-        ]
-      },{
-        id: 2,
-        code: 'D01S02',
-        name: 'To provide Capitation Grant to 691 students at Sogesca Secondary School',
-        budget: 1000000,
-        expenditure: 500000,
-         status: 1,
-        balance: 500000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 0,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },{
-        id: 3,
-        code: 'C01S22',
-        name: 'To provide monthly employees benefits for 1 casual labourers in Kidoka Dispensary  by June 2020',
-        budget: 2000000,
-        expenditure: 1000000,
-         status: 0,
-        balance: 1000000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 0,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },{
-        id: 4,
-        code: 'C01S12',
-        name: 'To facilitate good working environment to 5 staffs by June 2020',
-        budget: 200000,
-        expenditure: 50000,
-         status: 1,
-        balance: 150000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 1,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },{
-        id: 5,
-        code: 'C01S05',
-        name: 'To facilitate Construction of Samazi Health Centre at Samazi Ward by, June 2019',
-        budget: 2000000,
-        expenditure: 500000,
-         status: 1,
-        balance: 1500000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 1,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },{
-        id: 6,
-        code: 'C01S06',
-        name: 'To facilitate quarterly Economics, and infrastructure committee meeting by june  2020',
-        budget: 2000000,
-        expenditure: 500000,
-         status: 0,
-        balance: 1500000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 0,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },{
-        id: 7,
-        code: 'C01S11',
-        name: 'To conduct mothly QIT meeting to 12 Health care providers at Hamai RHC by june 2020',
-        budget: 2000000,
-        expenditure: 500000,
-         status: 1,
-        balance: 1500000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 1,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },{
-        id: 8,
-        code: 'C01S91',
-        name: 'To provide Capitation Grant to 1166 students at Ngasamo Secondary School',
-        budget: 2000000,
-        expenditure: 500000,
-         status: 1,
-        balance: 1500000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 1,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },{
-        id: 9,
-        code: 'C01S09',
-        name: 'To purchase 1 kit of supplementary drugs and medical supplies for RCH  services   by june 2020',
-        budget: 2000000,
-         status: 1,
-        expenditure: 500000,
-        balance: 1500000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 1,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },{
-        id: 10,
-        code: 'C01S10',
-        name: 'To provide Responsibility Allowance to 68 Head Teachers  by June 2020',
-        budget: 2000000,
-         status: 1,
-        expenditure: 500000,
-        balance: 1500000,
-         inputs: [
-           {
-             id: 21,
-             code:'12345678',
-             status: 1,
-             name: 'nunua dawa',
-             amount: 5000
-           }
-         ]
-      },
-    ];
-
     this.sectionService
       .query({ position: 3 })
       .subscribe(
@@ -477,16 +304,24 @@ export class ScrutinizationComponent implements OnInit {
       );
   }
   loadActivities() {
-    this.activityService
-      .query({
+    this.scrutinizationService
+      .queryActivities({
+        page: this.page,
+        perPage: this.per_page,
         section_id: this.section_id,
         admin_hierarchy_id: this.admin_hierarchy_id,
+        budget_type: this.budget_type,
+        financial_year_id: this.currentUser.admin_hierarchy?.current_financial_year_id
       })
       .subscribe(
         (resp: CustomResponse<Activity[]>) => (
-          this.activities = resp.data
+          this.scrutinizations = resp.data
         )
       );
+  }
+
+  loadInputs(activityId: number){
+      console.log(activityId)
   }
 
   setActivityComments(activity: any) {
@@ -497,7 +332,7 @@ export class ScrutinizationComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        // this.loadPage(this.page);
+        this.loadActivities();
       }
     });
   }

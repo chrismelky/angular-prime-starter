@@ -91,21 +91,22 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Personal Emoluments Sub Forms</span>
+          <span class="card-header-text">PE Sub Forms</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
             (click)="createOrUpdate()"
-            label="Add Pe Sub Form"
+            label="Add PE Sub Form"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="peSubFormsNode?.length">
-          <th *ngFor="let col of columns">
+          <th style="width: 60%" *ngFor="let col of columns">
             {{ col.header}}
           </th>
+          <th style="flex: 0 0 2rem">Code</th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>
@@ -115,13 +116,14 @@
         let-rowData="rowData"
         let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns; let i = index">
+          <td style="width: 60%" *ngFor="let col of columns; let i = index">
             <p-treeTableToggler
               [rowNode]="rowNode"
-              *ngIf="i == 0"
-            ></p-treeTableToggler>
+              *ngIf="i == 0">
+            </p-treeTableToggler>
             {{ rowData[col.field] }}
           </td>
+          <td style="flex: 0 0 2 rem">{{ rowData?.code }}</td>
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
@@ -129,43 +131,37 @@
                   pButton
                   pTooltip="Edit"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  icon="pi pi-pencil"
+                  (click)="createOrUpdate(rowData)">
+                </button>
                 <button
                   pButton
                   pTooltip="Delete"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-trash
-              "
-                  (click)="delete(rowData)"
-                ></button>
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  icon="pi pi-trash"
+                  (click)="delete(rowData)">
+                </button>
               </div>
             </div>
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found</ng-template>
     </p-treeTable>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="peSubFormsNode?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
+    <ng-template pTemplate="footer">
+      <p-paginator
+        #paginator
+        [alwaysShow]="peSubFormsNode?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </ng-template>
   </p-card>
 </div>
 

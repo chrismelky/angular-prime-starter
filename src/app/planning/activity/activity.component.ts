@@ -341,6 +341,10 @@ export class ActivityComponent implements OnInit {
     return [`${predicate}:${direction}`];
   }
 
+  back(): void {
+    this.router.navigate(['/admin-hierarchy-cost-centres', this.budget_type]);
+  }
+
   /**
    * Creating or updating Activity
    * @param activity ; If undefined initize new model to create else edit existing model

@@ -5,20 +5,19 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import {createRequestOption} from "../../utils/request-util";
-import {CustomResponse} from "../../utils/custom-response";
-import {GfsCode} from "./gfs-code.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { GfsCode } from './gfs-code.model';
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: 'root' })
 export class GfsCodeService {
-  public resourceUrl = "api/gfs_codes";
+  public resourceUrl = 'api/gfs_codes';
 
-  constructor(protected http: HttpClient) {
-  }
+  constructor(protected http: HttpClient) {}
 
   create(gfsCode: GfsCode): Observable<CustomResponse<GfsCode>> {
     return this.http.post<CustomResponse<GfsCode>>(this.resourceUrl, gfsCode);
@@ -48,13 +47,23 @@ export class GfsCodeService {
 
   queryRev(req?: any): Observable<CustomResponse<GfsCode[]>> {
     const options = createRequestOption(req);
-    const url = '/api/gfs_codes/revenue';
-    return this.http.get<CustomResponse<GfsCode[]>>(url, {
-      params: options,
-    });
+    return this.http.get<CustomResponse<GfsCode[]>>(
+      `${this.resourceUrl}/revenue`,
+      {
+        params: options,
+      }
+    );
   }
 
-  gfsCodesByAccountTypeCode(accountTypeCode: string): Observable<CustomResponse<GfsCode[]>> {
+  expenditure(): Observable<CustomResponse<GfsCode[]>> {
+    return this.http.get<CustomResponse<GfsCode[]>>(
+      `${this.resourceUrl}/expenditure`
+    );
+  }
+
+  gfsCodesByAccountTypeCode(
+    accountTypeCode: string
+  ): Observable<CustomResponse<GfsCode[]>> {
     const url = '/api/gfs_codes/gfsCodesByAccountTypeCode';
     return this.http.get<CustomResponse<GfsCode[]>>(url, {
       params: {
@@ -64,13 +73,15 @@ export class GfsCodeService {
   }
 
   upload(data: any): Observable<CustomResponse<GfsCode[]>> {
-    return this.http.post<CustomResponse<GfsCode[]>>(this.resourceUrl + '/upload', data);
+    return this.http.post<CustomResponse<GfsCode[]>>(
+      this.resourceUrl + '/upload',
+      data
+    );
   }
 
   downloadTemplate(): any {
-    return this.http.get(
-      this.resourceUrl + '/downloadUploadTemplate',
-      {responseType: 'arraybuffer'}
-    );
+    return this.http.get(this.resourceUrl + '/downloadUploadTemplate', {
+      responseType: 'arraybuffer',
+    });
   }
 }

@@ -306,6 +306,11 @@ p-card.filter {
     }
   }
 }
+p-card.filter-no-adv {
+  .p-card-body {
+    padding-bottom: 1.25rem !important;
+  }
+}
 
 .p-avatar.p-avatar-circle {
   background: #3F51B5;

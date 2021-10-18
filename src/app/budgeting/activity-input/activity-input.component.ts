@@ -43,6 +43,9 @@ import { ActivityInput } from './activity-input.model';
 import { ActivityInputService } from './activity-input.service';
 import { ActivityInputUpdateComponent } from './update/activity-input-update.component';
 import { AdminHierarchyCostCentre } from 'src/app/planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
+import { GfsCodeService } from 'src/app/setup/gfs-code/gfs-code.service';
+import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-activity-input',
@@ -69,6 +72,7 @@ export class ActivityInputComponent implements OnInit {
   budgetClasses?: BudgetClass[] = [];
   units?: PlanrepEnum[] = [];
   mainBudgetClasses?: BudgetClass[] = [];
+  gfsCodes?: GfsCode[] = [];
 
   cols = [
     {
@@ -104,7 +108,6 @@ export class ActivityInputComponent implements OnInit {
 
   //Mandatory filter
   facilityActivity!: FacilityActivity;
-  financial_year_id!: number;
   admin_hierarchy_id!: number;
   facility_id!: number;
   section_id!: number;
@@ -116,10 +119,7 @@ export class ActivityInputComponent implements OnInit {
     protected activityInputService: ActivityInputService,
     protected activityService: ActivityService,
     protected fundSourceService: FundSourceService,
-    protected financialYearService: FinancialYearService,
-    protected adminHierarchyService: AdminHierarchyService,
     protected facilityService: FacilityService,
-    protected sectionService: SectionService,
     protected budgetClassService: BudgetClassService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -127,7 +127,9 @@ export class ActivityInputComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected enumService: EnumService
+    protected enumService: EnumService,
+    protected gfsCodeService: GfsCodeService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -136,7 +138,9 @@ export class ActivityInputComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
       );
-    this.units = this.enumService.get('units');
+    this.gfsCodeService
+      .expenditure()
+      .subscribe((resp) => (this.gfsCodes = resp.data));
     this.handleNavigation();
     this.loadMainBudgetClassesWithChildren();
   }
@@ -149,10 +153,7 @@ export class ActivityInputComponent implements OnInit {
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
       !this.facilityActivity ||
-      !this.financial_year_id ||
-      !this.admin_hierarchy_id ||
-      !this.facility_id ||
-      !this.section_id ||
+      !this.financialYear ||
       !this.budget_class_id
     ) {
       return;
@@ -165,13 +166,11 @@ export class ActivityInputComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        financial_year_id: this.financialYear.id,
         activity_id: this.facilityActivity.activity_id,
-        fund_source_id: this.fund_source_id,
-        financial_year_id: this.financial_year_id,
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        facility_id: this.facility_id,
-        section_id: this.section_id,
         budget_class_id: this.budget_class_id,
+        activity_facility_id: this.facilityActivity.id,
+        activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -354,16 +353,23 @@ export class ActivityInputComponent implements OnInit {
   createOrUpdate(activityInput?: ActivityInput): void {
     const data: ActivityInput = activityInput ?? {
       ...new ActivityInput(),
-      activity_id: this.facilityActivity.activity_id,
-      fund_source_id: this.fund_source_id,
-      financial_year_id: this.financial_year_id,
-      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financialYear.id,
+      admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
+      section_id: this.adminHierarchyCostCentre.section_id,
       facility_id: this.facility_id,
-      section_id: this.section_id,
       budget_class_id: this.budget_class_id,
+      fund_source_id: this.fund_source_id,
+      activity_id: this.facilityActivity.activity_id,
+      activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
+      activity_facility_id: this.facilityActivity.id,
     };
     const ref = this.dialogService.open(ActivityInputUpdateComponent, {
-      data,
+      data: {
+        activityInput: data,
+        facilityActivity: this.facilityActivity,
+        gfsCodes: this.gfsCodes,
+      },
+      width: '900px',
       header: 'Create/Update ActivityInput',
     });
     ref.onClose.subscribe((result) => {
@@ -371,6 +377,10 @@ export class ActivityInputComponent implements OnInit {
         this.loadPage(this.page);
       }
     });
+  }
+
+  back(): void {
+    this.router.navigate(['/admin-hierarchy-cost-centres', this.budget_type]);
   }
 
   /**
@@ -405,14 +415,17 @@ export class ActivityInputComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/activity-input'], {
-        queryParams: {
-          page: this.page,
-          per_page: this.per_page,
-          sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
-        },
-      });
+      this.router.navigate(
+        ['/activity-input', this.budget_type, this.adminHierarchyCostCentre.id],
+        {
+          queryParams: {
+            page: this.page,
+            per_page: this.per_page,
+            sort:
+              this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+          },
+        }
+      );
     }
     this.activityInputs = resp?.data ?? [];
   }

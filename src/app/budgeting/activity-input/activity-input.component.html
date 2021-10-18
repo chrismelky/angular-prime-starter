@@ -1,9 +1,20 @@
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
-  <p-card class="filter">
+  <p-card class="filter filter-no-adv">
     <ng-template pTemplate="header">
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-        <i class="pi pi-filter"></i>
+        <button
+          icon="pi pi-arrow-left"
+          pButton
+          (click)="back()"
+          class="p-button-rounded p-button-icon-only"
+        ></button>
+        <p-divider fxFlex class="title" align="center">
+          <span fxLayout="column" fxLayoutAlign="centre center">
+            <small>Cost centre</small>
+            <strong>{{ adminHierarchyCostCentre?.section?.name }}</strong>
+          </span>
+        </p-divider>
         <!-- <span class="card-header-text">Filter</span> -->
         <p-divider fxFlex class="title" align="center">
           <span fxLayout="column" fxLayoutAlign="centre center">
@@ -25,12 +36,7 @@
             }}</strong>
           </span>
         </p-divider>
-        <p-divider fxFlex class="title" align="center">
-          <span fxLayout="column" fxLayoutAlign="centre center">
-            <small>Cost centre</small>
-            <strong>{{ adminHierarchyCostCentre?.section?.name }}</strong>
-          </span>
-        </p-divider>
+
         <p-divider fxFlex class="title" align="center">
           <span
             fxLayout="column"
@@ -53,8 +59,8 @@
         <!-- <i class="pi pi-lock"></i> -->
       </div>
     </ng-template>
-    <div fxLayout="column" fxLayoutGap="10px">
-      <div fxLayout="row wrap" fxLayoutGap="10px">
+    <div fxLayout="column" fxLayoutGap="20px">
+      <div fxLayout="row wrap" fxLayoutGap="20px">
         <div
           fxLayout="row wrap"
           fxLayoutGap="0.75rem"
@@ -123,7 +129,7 @@
         </div>
       </div>
 
-      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
         <!-- Activity -->
         <div class="p-field" fxFlex="2 2 calc(10px)">
           <span class="p-float-label">
@@ -132,9 +138,10 @@
               optionLabel="description"
               [autoDisplayFirst]="false"
               [filter]="true"
+              filterBy="code,description"
               class="p-inputtext-sm"
               [options]="facilityActivities!"
-              (onChange)="loadPage()"
+              (onChange)="filterChanged()"
               [(ngModel)]="facilityActivity"
             >
               <ng-template pTemplate="selectedItem">
@@ -174,36 +181,46 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !facilityActivity ||
-              !fund_source_id ||
-              !financial_year_id ||
-              !admin_hierarchy_id ||
-              !facility_id ||
-              !section_id ||
-              !budget_class_id
-            "
+            [disabled]="!facilityActivity || !financialYear || !budget_class_id"
             (click)="createOrUpdate()"
-            label="Add Activity Input"
+            label="Add Input"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="activityInputs?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th [pSortableColumn]="'gfs_code_id'">
+            Gfs Code
+            <p-sortIcon [field]="'gfs_code_id'"></p-sortIcon>
           </th>
+          <th>Unit</th>
+          <th>Unit Price</th>
+          <th>Quantity</th>
+          <th>Frequency</th>
+          <th>Sub Total</th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+          <td>[{{ rowData.gfs_code.code }}] {{ rowData.gfs_code.name }}</td>
+          <td>
+            {{ rowData.unit }}
+          </td>
+          <td>
+            {{ rowData.unit_price | currency: " " }}
+          </td>
+          <td>
+            {{ rowData.quantity | currency: " " }}
+          </td>
+          <td>
+            {{ rowData.frequency | currency: " " }}
+          </td>
+          <td>
+            {{
+              rowData.unit_price * rowData.quantity * rowData.frequency
+                | currency: " "
+            }}
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

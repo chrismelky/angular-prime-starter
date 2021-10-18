@@ -13,13 +13,14 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
 import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import { Activity } from 'src/app/planning/activity/activity.model';
+import {
+  Activity,
+  FacilityActivity,
+} from 'src/app/planning/activity/activity.model';
 import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
-import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
 import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { Facility } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
@@ -30,6 +31,7 @@ import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.serv
 import { ActivityInput } from '../activity-input.model';
 import { ActivityInputService } from '../activity-input.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
 
 @Component({
   selector: 'app-activity-input-update',
@@ -42,45 +44,37 @@ export class ActivityInputUpdateComponent implements OnInit {
 
   activities?: Activity[] = [];
   fundSources?: FundSource[] = [];
-  financialYears?: FinancialYear[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
   facilities?: Facility[] = [];
   sections?: Section[] = [];
   budgetClasses?: BudgetClass[] = [];
   units?: PlanrepEnum[] = [];
-
+  gfsCodes?: GfsCode[] = [];
+  facilityActivity?: FacilityActivity;
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
+    gfs_code_id: [null, [Validators.required]],
     unit_price: [null, [Validators.required]],
     quantity: [null, [Validators.required]],
     frequency: [null, [Validators.required]],
-    unit: [null, []],
+    unit: [null, [Validators.required]],
     forward_year_one_amount: [null, []],
     forward_year_two_amount: [null, []],
     activity_id: [null, [Validators.required]],
+    activity_fund_source_id: [null, [Validators.required]],
+    activity_facility_id: [null, [Validators.required]],
+    budget_class_id: [null, [Validators.required]],
     fund_source_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
     admin_hierarchy_id: [null, [Validators.required]],
-    facility_id: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
-    budget_class_id: [null, [Validators.required]],
-    chart_of_account: [null, []],
-    approve_amount: [null, []],
-    adjusted_amount: [null, []],
+    facility_id: [null, [Validators.required]],
   });
 
   constructor(
     protected activityInputService: ActivityInputService,
-    protected activityService: ActivityService,
-    protected fundSourceService: FundSourceService,
-    protected financialYearService: FinancialYearService,
-    protected adminHierarchyService: AdminHierarchyService,
-    protected facilityService: FacilityService,
-    protected sectionService: SectionService,
-    protected budgetClassService: BudgetClassService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -89,46 +83,11 @@ export class ActivityInputUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activityService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Activity[]>) => (this.activities = resp.data)
-      );
-    this.fundSourceService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
-      );
-    this.financialYearService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
-    this.adminHierarchyService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.facilityService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
-    this.sectionService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-      );
-    this.budgetClassService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<BudgetClass[]>) =>
-          (this.budgetClasses = resp.data)
-      );
+    const dialogData = this.dialogConfig.data;
+    this.facilityActivity = dialogData.facilityActivity;
+    this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.updateForm(dialogData.activityInput); //Initialize form with data from dialog
   }
 
   /**
@@ -136,6 +95,7 @@ export class ActivityInputUpdateComponent implements OnInit {
    * @returns
    */
   save(): void {
+    console.log(this.editForm);
     if (this.editForm.invalid) {
       this.formError = true;
       return;
@@ -189,6 +149,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   protected updateForm(activityInput: ActivityInput): void {
     this.editForm.patchValue({
       id: activityInput.id,
+      gfs_code_id: activityInput.gfs_code_id,
       unit_price: activityInput.unit_price,
       quantity: activityInput.quantity,
       frequency: activityInput.frequency,
@@ -202,9 +163,8 @@ export class ActivityInputUpdateComponent implements OnInit {
       facility_id: activityInput.facility_id,
       section_id: activityInput.section_id,
       budget_class_id: activityInput.budget_class_id,
-      chart_of_account: activityInput.chart_of_account,
-      approve_amount: activityInput.approve_amount,
-      adjusted_amount: activityInput.adjusted_amount,
+      activity_fund_source_id: activityInput.activity_fund_source_id,
+      activity_facility_id: activityInput.activity_facility_id,
     });
   }
 
@@ -216,6 +176,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     return {
       ...new ActivityInput(),
       id: this.editForm.get(['id'])!.value,
+      gfs_code_id: this.editForm.get(['gfs_code_id'])!.value,
       unit_price: this.editForm.get(['unit_price'])!.value,
       quantity: this.editForm.get(['quantity'])!.value,
       frequency: this.editForm.get(['frequency'])!.value,
@@ -231,9 +192,9 @@ export class ActivityInputUpdateComponent implements OnInit {
       facility_id: this.editForm.get(['facility_id'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
       budget_class_id: this.editForm.get(['budget_class_id'])!.value,
-      chart_of_account: this.editForm.get(['chart_of_account'])!.value,
-      approve_amount: this.editForm.get(['approve_amount'])!.value,
-      adjusted_amount: this.editForm.get(['adjusted_amount'])!.value,
+      activity_facility_id: this.editForm.get(['activity_facility_id'])!.value,
+      activity_fund_source_id: this.editForm.get(['activity_fund_source_id'])!
+        .value,
     };
   }
 }

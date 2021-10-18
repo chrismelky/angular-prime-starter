@@ -24,6 +24,7 @@ import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
 import {
   Activity,
   ActivityFundSource,
+  FacilityActivity,
 } from 'src/app/planning/activity/activity.model';
 import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
@@ -34,7 +35,6 @@ import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.mo
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { Facility, FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
-import { Section } from 'src/app/setup/section/section.model';
 import { SectionService } from 'src/app/setup/section/section.service';
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
 import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
@@ -63,8 +63,8 @@ export class ActivityInputComponent implements OnInit {
   facilities?: Facility[] = [];
   facilityGroupByType?: any[] = [];
 
-  activities?: Activity[] = [];
-  activityFundSources?: ActivityFundSource[] = [];
+  facilityActivities?: FacilityActivity[] = [];
+  fundSources?: FundSource[] = [];
 
   budgetClasses?: BudgetClass[] = [];
   units?: PlanrepEnum[] = [];
@@ -103,13 +103,13 @@ export class ActivityInputComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  activity_id!: number;
-  activityFundSource!: ActivityFundSource;
+  facilityActivity!: FacilityActivity;
   financial_year_id!: number;
   admin_hierarchy_id!: number;
   facility_id!: number;
   section_id!: number;
   budget_class_id!: number;
+  fund_source_id!: number;
   budget_type!: string;
 
   constructor(
@@ -148,8 +148,7 @@ export class ActivityInputComponent implements OnInit {
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
-      !this.activity_id ||
-      !this.activityFundSource ||
+      !this.facilityActivity ||
       !this.financial_year_id ||
       !this.admin_hierarchy_id ||
       !this.facility_id ||
@@ -166,8 +165,8 @@ export class ActivityInputComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        activity_id: this.activity_id,
-        fund_source_id: this.activityFundSource.fund_source_id,
+        activity_id: this.facilityActivity.activity_id,
+        fund_source_id: this.fund_source_id,
         financial_year_id: this.financial_year_id,
         admin_hierarchy_id: this.admin_hierarchy_id,
         facility_id: this.facility_id,
@@ -209,51 +208,43 @@ export class ActivityInputComponent implements OnInit {
   }
 
   /**
-   * Load activities by selected budget class and
-   */
-  loadActivities(): void {
-    if (!this.facility_id || !this.budget_class_id) {
-      return;
-    }
-    this.activityLoading = true;
-    this.activityService
-      .query({
-        financial_year_id: this.financialYear.id,
-        admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
-        budget_type: this.budget_type,
-        section_id: this.adminHierarchyCostCentre.section_id,
-        budget_class_id: this.budget_class_id,
-        facility_id: this.facility_id,
-      })
-      .subscribe(
-        (resp) => {
-          this.activityLoading = false;
-          this.activities = resp.data;
-        },
-        (error) => (this.activityLoading = false)
-      );
-  }
-
-  /**
    * Load activity fund source
    * @returns
    */
   loadFundSource(): void {
-    if (!this.activity_id) {
+    if (!this.budget_class_id) {
       return;
     }
+    this.fundSourceService
+      .getByBudgetClass(this.budget_class_id)
+      .subscribe((resp) => (this.fundSources = resp.data));
+  }
+
+  /**
+   * Load activities by selected budget class and
+   */
+  loadFacilityActivities(): void {
+    if (!this.facility_id || !this.budget_class_id || !this.fund_source_id) {
+      return;
+    }
+    this.activityLoading = true;
     this.activityService
-      .activityFundSources(this.financialYear.id!, this.activity_id)
-      .subscribe((resp) => {
-        this.activityFundSources = resp.data?.map((af) => {
-          return {
-            id: af.id,
-            fund_source_id: af.fund_source_id,
-            name: af.name,
-            code: af.code,
-          };
-        });
-      });
+      .facilityActivity({
+        financial_year_id: this.financialYear.id,
+        admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
+        budget_type: this.budget_type,
+        section_id: this.adminHierarchyCostCentre.section_id,
+        facility_id: this.facility_id,
+        budget_class_id: this.budget_class_id,
+        fund_source_id: this.fund_source_id,
+      })
+      .subscribe(
+        (resp) => {
+          this.activityLoading = false;
+          this.facilityActivities = resp.data;
+        },
+        (error) => (this.activityLoading = false)
+      );
   }
 
   /**
@@ -363,8 +354,8 @@ export class ActivityInputComponent implements OnInit {
   createOrUpdate(activityInput?: ActivityInput): void {
     const data: ActivityInput = activityInput ?? {
       ...new ActivityInput(),
-      activity_id: this.activity_id,
-      fund_source_id: this.activityFundSource.fund_source_id,
+      activity_id: this.facilityActivity.activity_id,
+      fund_source_id: this.fund_source_id,
       financial_year_id: this.financial_year_id,
       admin_hierarchy_id: this.admin_hierarchy_id,
       facility_id: this.facility_id,

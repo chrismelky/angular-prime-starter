@@ -49,22 +49,12 @@ export class ReferenceDocumentComponent implements OnInit {
     {
       field: 'name',
       header: 'Name',
-      sort: true,
+      sort: false,
     },
     {
-      field: 'url',
-      header: 'Url',
-      sort: true,
-    },
-    {
-      field: 'start_financial_year_id',
-      header: 'Start Financial Year ',
-      sort: true,
-    },
-    {
-      field: 'end_financial_year_id',
-      header: 'End Financial Year ',
-      sort: true,
+      field: 'description',
+      header: 'Description',
+      sort: false,
     },
   ]; //Table display columns
 
@@ -316,5 +306,9 @@ export class ReferenceDocumentComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Reference Document');
+  }
+
+  download(rowData: any) {
+    
   }
 }

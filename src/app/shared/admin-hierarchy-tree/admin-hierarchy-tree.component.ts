@@ -58,7 +58,7 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
       })
       .subscribe(
         (resp) => {
-          console.log(resp);
+          // console.log(resp);
           this.treeLoading = false;
           selected.children = resp.data?.map((a) => {
             return {

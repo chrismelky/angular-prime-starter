@@ -43,6 +43,8 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, []],
     url: [null, []],
+    file: [null, []],
+    description: [null, []],
     start_financial_year_id: [null, []],
     end_financial_year_id: [null, []],
     admin_hierarchy_id: [null, [Validators.required]],
@@ -79,6 +81,13 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
         (resp: CustomResponse<ReferenceDocumentType[]>) =>
           (this.referenceDocumentTypes = resp.data)
       );
+    this.adminHierarchyService
+      .query({ columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.adminHierarchies = resp.data)
+      );
+
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -93,7 +102,7 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const referenceDocument = this.createFromForm();
-    if (referenceDocument.id !== undefined) {
+    if (referenceDocument.get('id') !== 'undefined') {
       this.subscribeToSaveResponse(
         this.referenceDocumentService.update(referenceDocument)
       );
@@ -142,6 +151,7 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
       id: referenceDocument.id,
       name: referenceDocument.name,
       url: referenceDocument.url,
+      description: referenceDocument.description,
       start_financial_year_id: referenceDocument.start_financial_year_id,
       end_financial_year_id: referenceDocument.end_financial_year_id,
       admin_hierarchy_id: referenceDocument.admin_hierarchy_id,
@@ -153,20 +163,23 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
    * Return form values as object of type ReferenceDocument
    * @returns ReferenceDocument
    */
-  protected createFromForm(): ReferenceDocument {
-    return {
-      ...new ReferenceDocument(),
-      id: this.editForm.get(['id'])!.value,
-      name: this.editForm.get(['name'])!.value,
-      url: this.editForm.get(['url'])!.value,
-      start_financial_year_id: this.editForm.get(['start_financial_year_id'])!
-        .value,
-      end_financial_year_id: this.editForm.get(['end_financial_year_id'])!
-        .value,
-      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
-      reference_document_type_id: this.editForm.get([
-        'reference_document_type_id',
-      ])!.value,
-    };
+  protected createFromForm(): FormData {
+    const  formData = new FormData();
+    formData.append('id', this.editForm.get(['id'])!.value);
+    formData.append('name', this.editForm.get(['name'])!.value);
+    formData.append('url', this.editForm.get(['url'])!.value);
+    formData.append('file', this.editForm.get(['file'])!.value);
+    formData.append('description', this.editForm.get(['description'])!.value);
+    formData.append('start_financial_year_id',this.editForm.get(['start_financial_year_id'])!.value);
+    formData.append('end_financial_year_id', this.editForm.get(['end_financial_year_id'])!.value);
+    formData.append('admin_hierarchy_id', this.editForm.get(['admin_hierarchy_id'])!.value);
+    formData.append('reference_document_type_id', this.editForm.get(['reference_document_type_id'])!.value);
+    return formData;
+  }
+  onSelect(event: any) {
+    if (event.files?.length)
+      this.editForm.patchValue({
+        file: event.files[0],
+      });
   }
 }

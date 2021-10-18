@@ -47,7 +47,9 @@ export class ActivityFacility {
     public facility_id?: number,
     public financial_year_id?: number,
     public project_output_value?: string,
-    public indicator_value?: string
+    public indicator_value?: string,
+    public code?: string,
+    public description?: string
   ) {}
 }
 
@@ -56,6 +58,8 @@ export class ActivityFundSource {
     public id?: number,
     public activity_id?: number,
     public fund_source_id?: number,
-    public financial_year_id?: number
+    public financial_year_id?: number,
+    public name?: string,
+    public code?: string
   ) {}
 }

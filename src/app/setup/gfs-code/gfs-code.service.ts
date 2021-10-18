@@ -5,15 +5,15 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import {Injectable} from "@angular/core";
+import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { GfsCode } from "./gfs-code.model";
+import {createRequestOption} from "../../utils/request-util";
+import {CustomResponse} from "../../utils/custom-response";
+import {GfsCode} from "./gfs-code.model";
 
-@Injectable({ providedIn: "root" })
+@Injectable({providedIn: "root"})
 export class GfsCodeService {
   public resourceUrl = "api/gfs_codes";
 
@@ -51,6 +51,15 @@ export class GfsCodeService {
     const url = '/api/gfs_codes/revenue';
     return this.http.get<CustomResponse<GfsCode[]>>(url, {
       params: options,
+    });
+  }
+
+  gfsCodesByAccountTypeCode(accountTypeCode: string): Observable<CustomResponse<GfsCode[]>> {
+    const url = '/api/gfs_codes/gfsCodesByAccountTypeCode';
+    return this.http.get<CustomResponse<GfsCode[]>>(url, {
+      params: {
+        accountTypeCode: `${accountTypeCode}`,
+      },
     });
   }
 

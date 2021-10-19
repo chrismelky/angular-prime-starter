@@ -33,25 +33,6 @@ export class FinancialYearComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
   financialYears?: FinancialYear[] = [];
-  previousFinancialYears?: FinancialYear[] = [];
-
-  cols = [
-    {
-      field: 'name',
-      header: 'Name',
-      sort: true,
-    },
-    {
-      field: 'is_current',
-      header: 'Is Current',
-      sort: false,
-    },
-    {
-      field: 'status',
-      header: 'Status',
-      sort: false,
-    },
-  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -75,12 +56,6 @@ export class FinancialYearComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.financialYearService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.previousFinancialYears = resp.data)
-      );
     this.handleNavigation();
   }
 

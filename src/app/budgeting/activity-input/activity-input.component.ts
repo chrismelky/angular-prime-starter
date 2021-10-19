@@ -21,21 +21,13 @@ import {
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import {
-  Activity,
-  ActivityFundSource,
-  FacilityActivity,
-} from 'src/app/planning/activity/activity.model';
+import { FacilityActivity } from 'src/app/planning/activity/activity.model';
 import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
 import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
-import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { Facility, FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
-import { SectionService } from 'src/app/setup/section/section.service';
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
 import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
 
@@ -43,6 +35,9 @@ import { ActivityInput } from './activity-input.model';
 import { ActivityInputService } from './activity-input.service';
 import { ActivityInputUpdateComponent } from './update/activity-input-update.component';
 import { AdminHierarchyCostCentre } from 'src/app/planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
+import { GfsCodeService } from 'src/app/setup/gfs-code/gfs-code.service';
+import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-activity-input',
@@ -54,6 +49,8 @@ export class ActivityInputComponent implements OnInit {
 
   facilityIsLoading = false;
   activityLoading = false;
+  budgetClassIsLoading = false;
+  fundSourceIsLoading = false;
 
   activityInputs?: ActivityInput[] = [];
 
@@ -69,29 +66,7 @@ export class ActivityInputComponent implements OnInit {
   budgetClasses?: BudgetClass[] = [];
   units?: PlanrepEnum[] = [];
   mainBudgetClasses?: BudgetClass[] = [];
-
-  cols = [
-    {
-      field: 'unit_price',
-      header: 'Unit Price',
-      sort: false,
-    },
-    {
-      field: 'quantity',
-      header: 'Quantity',
-      sort: false,
-    },
-    {
-      field: 'frequency',
-      header: 'Frequency',
-      sort: false,
-    },
-    {
-      field: 'unit',
-      header: 'Unit',
-      sort: true,
-    },
-  ]; //Table display columns
+  gfsCodes?: GfsCode[] = [];
 
   isLoading = false;
   page?: number = 1;
@@ -104,7 +79,6 @@ export class ActivityInputComponent implements OnInit {
 
   //Mandatory filter
   facilityActivity!: FacilityActivity;
-  financial_year_id!: number;
   admin_hierarchy_id!: number;
   facility_id!: number;
   section_id!: number;
@@ -116,10 +90,7 @@ export class ActivityInputComponent implements OnInit {
     protected activityInputService: ActivityInputService,
     protected activityService: ActivityService,
     protected fundSourceService: FundSourceService,
-    protected financialYearService: FinancialYearService,
-    protected adminHierarchyService: AdminHierarchyService,
     protected facilityService: FacilityService,
-    protected sectionService: SectionService,
     protected budgetClassService: BudgetClassService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -127,16 +98,15 @@ export class ActivityInputComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected enumService: EnumService
+    protected enumService: EnumService,
+    protected gfsCodeService: GfsCodeService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
-    this.facilityService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
-    this.units = this.enumService.get('units');
+    this.gfsCodeService
+      .expenditure()
+      .subscribe((resp) => (this.gfsCodes = resp.data));
     this.handleNavigation();
     this.loadMainBudgetClassesWithChildren();
   }
@@ -149,10 +119,7 @@ export class ActivityInputComponent implements OnInit {
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
       !this.facilityActivity ||
-      !this.financial_year_id ||
-      !this.admin_hierarchy_id ||
-      !this.facility_id ||
-      !this.section_id ||
+      !this.financialYear ||
       !this.budget_class_id
     ) {
       return;
@@ -165,13 +132,11 @@ export class ActivityInputComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        financial_year_id: this.financialYear.id,
         activity_id: this.facilityActivity.activity_id,
-        fund_source_id: this.fund_source_id,
-        financial_year_id: this.financial_year_id,
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        facility_id: this.facility_id,
-        section_id: this.section_id,
         budget_class_id: this.budget_class_id,
+        activity_facility_id: this.facilityActivity.id,
+        activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -202,9 +167,14 @@ export class ActivityInputComponent implements OnInit {
 
   /** Load main budget classess with children budget classes */
   loadMainBudgetClassesWithChildren(): void {
-    this.budgetClassService.tree().subscribe((resp) => {
-      this.mainBudgetClasses = resp.data;
-    });
+    this.budgetClassIsLoading = true;
+    this.budgetClassService.tree().subscribe(
+      (resp) => {
+        this.budgetClassIsLoading = false;
+        this.mainBudgetClasses = resp.data;
+      },
+      (errror) => (this.budgetClassIsLoading = false)
+    );
   }
 
   /**
@@ -215,9 +185,14 @@ export class ActivityInputComponent implements OnInit {
     if (!this.budget_class_id) {
       return;
     }
-    this.fundSourceService
-      .getByBudgetClass(this.budget_class_id)
-      .subscribe((resp) => (this.fundSources = resp.data));
+    this.fundSourceIsLoading = true;
+    this.fundSourceService.getByBudgetClass(this.budget_class_id).subscribe(
+      (resp) => {
+        this.fundSourceIsLoading = false;
+        this.fundSources = resp.data;
+      },
+      (error) => (this.fundSourceIsLoading = false)
+    );
   }
 
   /**
@@ -286,7 +261,7 @@ export class ActivityInputComponent implements OnInit {
     if (this.page !== 1) {
       setTimeout(() => this.paginator.changePage(0));
     } else {
-      this.loadPage(1);
+      this.loadPage(1, true);
     }
   }
 
@@ -354,16 +329,23 @@ export class ActivityInputComponent implements OnInit {
   createOrUpdate(activityInput?: ActivityInput): void {
     const data: ActivityInput = activityInput ?? {
       ...new ActivityInput(),
-      activity_id: this.facilityActivity.activity_id,
-      fund_source_id: this.fund_source_id,
-      financial_year_id: this.financial_year_id,
-      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financialYear.id,
+      admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
+      section_id: this.adminHierarchyCostCentre.section_id,
       facility_id: this.facility_id,
-      section_id: this.section_id,
       budget_class_id: this.budget_class_id,
+      fund_source_id: this.fund_source_id,
+      activity_id: this.facilityActivity.activity_id,
+      activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
+      activity_facility_id: this.facilityActivity.id,
     };
     const ref = this.dialogService.open(ActivityInputUpdateComponent, {
-      data,
+      data: {
+        activityInput: data,
+        facilityActivity: this.facilityActivity,
+        gfsCodes: this.gfsCodes,
+      },
+      width: '900px',
       header: 'Create/Update ActivityInput',
     });
     ref.onClose.subscribe((result) => {
@@ -371,6 +353,10 @@ export class ActivityInputComponent implements OnInit {
         this.loadPage(this.page);
       }
     });
+  }
+
+  back(): void {
+    this.router.navigate(['/admin-hierarchy-cost-centres', this.budget_type]);
   }
 
   /**
@@ -405,14 +391,17 @@ export class ActivityInputComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/activity-input'], {
-        queryParams: {
-          page: this.page,
-          per_page: this.per_page,
-          sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
-        },
-      });
+      this.router.navigate(
+        ['/activity-input', this.budget_type, this.adminHierarchyCostCentre.id],
+        {
+          queryParams: {
+            page: this.page,
+            per_page: this.per_page,
+            sort:
+              this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+          },
+        }
+      );
     }
     this.activityInputs = resp?.data ?? [];
   }

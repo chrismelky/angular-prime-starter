@@ -44,16 +44,20 @@
           >
         </span>
       </div>
-
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input
+          <p-dropdown
             id="value_type"
-            type="text"
-            pInputText
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="inputTypes!"
             formControlName="value_type"
-          />
-          <label for="value_type">Value Type </label>
+          ></p-dropdown>
+          <label for="value_type">Value Type</label>
         </span>
         <span
           *ngIf="
@@ -66,7 +70,7 @@
           <small
             class="p-error"
             *ngIf="editForm.get('value_type')?.errors?.required"
-            >Value Type is required.</small
+          >Value Type is required.</small
           >
         </span>
       </div>

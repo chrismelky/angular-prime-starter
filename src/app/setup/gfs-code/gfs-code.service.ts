@@ -61,13 +61,13 @@ export class GfsCodeService {
     );
   }
 
-  gfsCodesByAccountTypeCode(
-    accountTypeCode: string
+  gfsCodesByAccountTypeName(
+    accountTypeName: string
   ): Observable<CustomResponse<GfsCode[]>> {
-    const url = '/api/gfs_codes/gfsCodesByAccountTypeCode';
+    const url = '/api/gfs_codes/gfsCodesByAccountTypeName';
     return this.http.get<CustomResponse<GfsCode[]>>(url, {
       params: {
-        accountTypeCode: `${accountTypeCode}`,
+        accountTypeName: `${accountTypeName}`,
       },
     });
   }

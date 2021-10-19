@@ -19,7 +19,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]=""
+            [disabled]="!user?.is_super_user"
             (click)="create()"
             label="Add User Role"
           ></button>
@@ -43,7 +43,7 @@
                   pButton
                   pTooltip="Edit"
                   tooltipPosition="bottom"
-                  [disabled]="user?.is_super_user"
+                  [disabled]="!user?.is_super_user"
                   class="
                     p-button-text p-button-plain p-button-rounded p-button-icon
                   "
@@ -54,7 +54,7 @@
                 <button
                   pButton
                   pTooltip="Delete"
-                  [disabled]="user?.is_super_user"
+                  [disabled]="!user?.is_super_user"
                   tooltipPosition="bottom"
                   class="
                     p-button-text p-button-plain p-button-rounded p-button-icon

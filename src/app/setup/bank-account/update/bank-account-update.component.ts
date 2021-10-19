@@ -50,7 +50,7 @@ export class BankAccountUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.gfsCodeService
-      .gfsCodesByAccountTypeCode('04')
+      .gfsCodesByAccountTypeName('Cash')
       .subscribe(
         (resp: CustomResponse<GfsCode[]>) =>
           (this.gfsCodes = resp.data)

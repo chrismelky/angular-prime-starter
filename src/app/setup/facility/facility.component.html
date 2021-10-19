@@ -207,6 +207,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
+            [disabled]="!admin_hierarchy_id"
             (click)="createOrUpdate()"
             label="Add Facility"
           ></button>
@@ -215,7 +216,6 @@
             pButton
             icon="pi pi-upload"
             class="p-button-raised"
-            [disabled]=""
             (click)="upload()"
             label="Upload Facilities"
           ></button>

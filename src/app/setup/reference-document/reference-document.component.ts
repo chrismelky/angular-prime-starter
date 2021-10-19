@@ -30,6 +30,7 @@ import { ReferenceDocumentService } from './reference-document.service';
 import { ReferenceDocumentUpdateComponent } from './update/reference-document-update.component';
 import { FinancialYear } from '../financial-year/financial-year.model';
 import { FinancialYearService } from '../financial-year/financial-year.service';
+import {error} from "@angular/compiler/src/util";
 
 @Component({
   selector: 'app-reference-document',
@@ -49,22 +50,12 @@ export class ReferenceDocumentComponent implements OnInit {
     {
       field: 'name',
       header: 'Name',
-      sort: true,
+      sort: false,
     },
     {
-      field: 'url',
-      header: 'Url',
-      sort: true,
-    },
-    {
-      field: 'start_financial_year_id',
-      header: 'Start Financial Year ',
-      sort: true,
-    },
-    {
-      field: 'end_financial_year_id',
-      header: 'End Financial Year ',
-      sort: true,
+      field: 'description',
+      header: 'Description',
+      sort: false,
     },
   ]; //Table display columns
 
@@ -316,5 +307,14 @@ export class ReferenceDocumentComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Reference Document');
+  }
+
+  download(id: number) {
+    this.referenceDocumentService.fileDownload(id).subscribe( resp =>{
+      let file = new Blob([resp], { type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank");
+    });
+
   }
 }

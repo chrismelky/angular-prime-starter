@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
@@ -16,11 +16,12 @@ import { ReferenceDocument } from "./reference-document.model";
 @Injectable({ providedIn: "root" })
 export class ReferenceDocumentService {
   public resourceUrl = "api/reference_documents";
+  public downloadUrl = "api/download_document";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    referenceDocument: ReferenceDocument
+    referenceDocument: FormData
   ): Observable<CustomResponse<ReferenceDocument>> {
     return this.http.post<CustomResponse<ReferenceDocument>>(
       this.resourceUrl,
@@ -28,11 +29,11 @@ export class ReferenceDocumentService {
     );
   }
 
-  update(
-    referenceDocument: ReferenceDocument
-  ): Observable<CustomResponse<ReferenceDocument>> {
+    update(
+        referenceDocument: FormData
+    ): Observable<CustomResponse<ReferenceDocument>> {
     return this.http.put<CustomResponse<ReferenceDocument>>(
-      `${this.resourceUrl}/${referenceDocument.id}`,
+      `${this.resourceUrl}/${referenceDocument.get('id')}`,
       referenceDocument
     );
   }
@@ -53,5 +54,14 @@ export class ReferenceDocumentService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  fileDownload(id: number){
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+    };
+    return this.http.get<any>(
+      `${this.downloadUrl}/${id}`,httpOptions
+    )
   }
 }

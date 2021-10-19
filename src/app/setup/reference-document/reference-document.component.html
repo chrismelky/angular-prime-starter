@@ -164,51 +164,63 @@
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="referenceDocuments?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th style="flex: 0 0 2rem"></th>
+        <tr  *ngIf="referenceDocuments!.length > 0">
+          <th>Name</th>
+          <th>Description</th>
+          <th>Start Financial Year</th>
+          <th>End Financial Year</th>
+          <th>Document</th>
+          <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <ng-template pTemplate="body" let-rowData>
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+          <td>{{rowData.name}}</td>
+          <td>{{rowData.description}}</td>
+          <td>{{rowData.start_financial_year?.name}}</td>
+          <td>{{rowData.end_financial_year?.name}}</td>
+          <td>
+            <button
+              pButton
+              pTooltip="Download"
+              tooltipPosition="bottom"
+              class="
+                p-button-text p-button-plain p-button-rounded p-button-icon
+              "
+              icon="pi pi-download"
+              (click)="download(rowData.id)"
+            ></button>
           </td>
-          <td style="flex: 0 0 2 rem">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
                     p-button-text p-button-plain p-button-rounded p-button-icon
                   "
-                  icon="pi pi-pencil
-              "
+                  icon="pi pi-pencil"
                   (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
                   pButton
+                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
                     p-button-text p-button-plain p-button-rounded p-button-icon
                   "
-                  icon="pi pi-trash
-              "
+                  icon="pi pi-trash"
                   (click)="delete(rowData)"
                 ></button>
               </div>
             </div>
           </td>
         </tr>
+
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
     </p-table>

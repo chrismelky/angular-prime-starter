@@ -266,7 +266,7 @@ export class GfsCodeCategoryComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Gfs Code Category");
+    this.toastService.error("Error loading GFS Code Category");
   }
 
   /**

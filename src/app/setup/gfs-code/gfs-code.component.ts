@@ -303,7 +303,7 @@ export class GfsCodeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Gfs Code");
+    this.toastService.error("Error loading GFS Code");
   }
 
   upload(): void {
@@ -314,7 +314,7 @@ export class GfsCodeComponent implements OnInit {
     const ref = this.dialogService.open(UploadComponent, {
       data,
       width: '60%',
-      header: 'Gfs Codes Upload Form'
+      header: 'GFS Codes Upload Form'
     });
     ref.onClose.subscribe((result) => {
       if (result) {

@@ -86,7 +86,7 @@ export class GenericSectorProblemComponent implements OnInit {
 
   ngOnInit(): void {
     this.priorityAreaService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "description"] })
       .subscribe(
         (resp: CustomResponse<PriorityArea[]>) =>
           (this.priorityAreas = resp.data)

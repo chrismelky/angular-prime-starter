@@ -62,18 +62,14 @@
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown
-              id="category_id"
-              optionValue="id"
-              optionLabel="name"
-              [autoDisplayFirst]="false"
-              [filter]="true"
-              class="p-inputtext-sm"
-              appendTo="body"
-              [options]="categories!"
-              formControlName="category_id"
-            ></p-dropdown>
-            <label for="category_id">Category </label>
+            <p-dropdown [options]="categories!" formControlName="category_id" id="category_id" placeholder="Select Category" [group]="true">
+                <ng-template let-group pTemplate="group">
+                    <div class="p-d-flex p-ai-center">
+                        <span>{{group.label}}</span>
+                    </div>
+                </ng-template>
+              </p-dropdown>
+            <label for="category_id">Category</label>
           </span>
           <span
             *ngIf="

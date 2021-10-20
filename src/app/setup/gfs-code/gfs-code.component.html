@@ -17,18 +17,14 @@
         >
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown
-                id="category_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="categories!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="category_id"
-              ></p-dropdown>
-              <label for="category_id">Category </label>
+              <p-dropdown [options]="categories!" [(ngModel)]="category_id" placeholder="Select Category" [group]="true">
+                <ng-template let-group pTemplate="group">
+                    <div class="p-d-flex p-ai-center">
+                        <span>{{group.label}}</span>
+                    </div>
+                </ng-template>
+              </p-dropdown>
+              <label>Category</label>
             </span>
           </div>
           <div class="p-field" fxFlex>
@@ -210,7 +206,8 @@
             [pSortableColumn]="col.sort ? col.field : null"
           >
             {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            }}
+            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -250,7 +247,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found</ng-template>
     </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator

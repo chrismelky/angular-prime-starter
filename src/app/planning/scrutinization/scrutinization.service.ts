@@ -13,12 +13,14 @@ import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { Scrutinization } from "./scrutinization.model";
 import {Activity} from "../activity/activity.model";
+import {ActivityInput} from "../../budgeting/activity-input/activity-input.model";
 
 @Injectable({ providedIn: "root" })
 export class ScrutinizationService {
   public activityCommentsUrl = "api/activity_scrutinization_comments";
   public inputCommentsUrl = "api/input_scrutinization_comments";
   private activitiesUrl = "api/scrutinization_activities";
+  private activityInputUrl = "api/scrutinization_inputs";
 
   constructor(protected http: HttpClient) {}
 
@@ -47,6 +49,14 @@ export class ScrutinizationService {
       scrutinization
     );
   }
+  updateInputComment(
+    scrutinization: Scrutinization
+  ): Observable<CustomResponse<Scrutinization>> {
+    return this.http.put<CustomResponse<Scrutinization>>(
+      `${this.inputCommentsUrl}/${scrutinization.id}`,
+      scrutinization
+    );
+  }
 
   find(id: number): Observable<CustomResponse<Scrutinization>> {
     return this.http.get<CustomResponse<Scrutinization>>(
@@ -69,5 +79,12 @@ export class ScrutinizationService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.activityCommentsUrl}/${id}`);
+  }
+
+  queryInput(req?: any): Observable<CustomResponse<ActivityInput[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<ActivityInput[]>>(this.activityInputUrl, {
+      params: options,
+    });
   }
 }

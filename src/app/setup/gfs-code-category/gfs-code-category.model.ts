@@ -7,3 +7,11 @@ export class GfsCodeCategory {
     public active?: boolean
   ) {}
 }
+
+export class GfsCodeCategoryTree {
+  constructor(
+    public value?: number,
+    public label?: string,
+    public items?: GfsCodeCategoryTree[],
+  ) {}
+}

@@ -11,7 +11,7 @@ import { Observable } from "rxjs";
 
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
-import { GfsCodeCategory } from "./gfs-code-category.model";
+import {GfsCodeCategory, GfsCodeCategoryTree} from "./gfs-code-category.model";
 
 @Injectable({ providedIn: "root" })
 export class GfsCodeCategoryService {
@@ -48,6 +48,10 @@ export class GfsCodeCategoryService {
     return this.http.get<CustomResponse<GfsCodeCategory[]>>(this.resourceUrl, {
       params: options,
     });
+  }
+
+  tree(): Observable<CustomResponse<GfsCodeCategoryTree[]>> {
+    return this.http.get<CustomResponse<GfsCodeCategoryTree[]>>(`${this.resourceUrl}/tree`);
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

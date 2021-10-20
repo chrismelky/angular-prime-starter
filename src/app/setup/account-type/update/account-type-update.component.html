@@ -49,12 +49,35 @@
           >
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <h5>Balance Type</h5>
-        <div *ngFor="let category of balanceTypes" class="p-field-checkbox">
-          <p-radioButton [inputId]="category.value" name="category" [value]="category.value"></p-radioButton>
-          <label [for]="category.value">{{category.display}}</label>
-        </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="balance_type"
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="balanceTypes!"
+            formControlName="balance_type"
+          ></p-dropdown>
+          <label for="balance_type">Balance Type </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('balance_type')!.invalid &&
+            (editForm.get('balance_type')!.dirty ||
+              editForm.get('balance_type')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('balance_type')?.errors?.required"
+          >Balance Type is required.</small
+          >
+        </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

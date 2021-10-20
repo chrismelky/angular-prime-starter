@@ -64,7 +64,6 @@
       [responsive]="true"
       [autoLayout]="true"
       [loading]="isLoading"
-      [columns]="cols"
       [value]="financialYears!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
@@ -85,12 +84,8 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="financialYears?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th [pSortableColumn]="'name'">
+            Name<p-sortIcon [field]="'name'"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'start_date'">
             Start Date<p-sortIcon [field]="'start_date'"></p-sortIcon>
@@ -104,8 +99,8 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+          <td>
+            {{ rowData.name }}
           </td>
           <td>
             {{ rowData["start_date"] | date: "mediumDate" }}
@@ -115,6 +110,7 @@
           </td>
           <td>
             <button
+              *ngIf="rowData.status === 3"
               pButton
               pRipple
               pTooltip="Open"

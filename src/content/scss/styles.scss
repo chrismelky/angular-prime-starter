@@ -275,6 +275,9 @@ body {
     padding-top: 0px;
   }
 }
+.loader-area {
+  position: relative;
+}
 
 p-card.filter {
   .p-card-body {
@@ -304,6 +307,11 @@ p-card.filter {
         display: none !important;
       }
     }
+  }
+}
+p-card.filter-no-adv {
+  .p-card-body {
+    padding-bottom: 1.25rem !important;
   }
 }
 
@@ -556,6 +564,9 @@ i.clear {
 
 .mat-dialog-content {
   padding-top: 10px !important;
+}
+.dialog-content {
+  position: relative;
 }
 
 .p-dynamic-dialog {

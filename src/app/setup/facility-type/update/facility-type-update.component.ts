@@ -5,21 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {Component, Inject, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {finalize} from 'rxjs/operators';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
-import { CustomResponse } from '../../../utils/custom-response';
-import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
-import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
-import { FacilityType } from '../facility-type.model';
-import { FacilityTypeService } from '../facility-type.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { Section } from '../../section/section.model';
-import { SectionService } from '../../section/section.service';
+import {CustomResponse} from '../../../utils/custom-response';
+import {EnumService, PlanrepEnum} from 'src/app/shared/enum.service';
+import {AdminHierarchyLevel} from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import {AdminHierarchyLevelService} from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
+import {FacilityType} from '../facility-type.model';
+import {FacilityTypeService} from '../facility-type.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {Section} from '../../section/section.model';
+import {SectionService} from '../../section/section.service';
 
 @Component({
   selector: 'app-facility-type-update',
@@ -31,6 +31,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
   errors = [];
 
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
+  departments?: Section[] = [];
   sections?: Section[] = [];
   lgaLevels?: PlanrepEnum[] = [];
 
@@ -46,6 +47,8 @@ export class FacilityTypeUpdateComponent implements OnInit {
     sections: [this.fb.array([]), [Validators.required]],
   });
 
+  departmentControl = new FormControl(null, [Validators.required])
+
   constructor(
     protected facilityTypeService: FacilityTypeService,
     protected adminHierarchyLevelService: AdminHierarchyLevelService,
@@ -55,18 +58,19 @@ export class FacilityTypeUpdateComponent implements OnInit {
     private toastService: ToastService,
     protected enumService: EnumService,
     protected sectionService: SectionService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.adminHierarchyLevelService
-      .query({ columns: ['id', 'name'] })
+      .query({columns: ['id', 'name']})
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
     this.sectionService
-      .costCentreSections()
-      .subscribe((resp) => (this.sections = resp.data));
+      .departments()
+      .subscribe((resp) => (this.departments = resp.data));
     this.lgaLevels = this.enumService.get('lgaLevels');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
@@ -116,7 +120,8 @@ export class FacilityTypeUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -152,5 +157,14 @@ export class FacilityTypeUpdateComponent implements OnInit {
         .value,
       sections: this.editForm.get(['sections'])!.value,
     };
+  }
+
+  loadSections(row: any): void {
+    const department: Section = row.value as Section;
+    this.editForm.get('sections')?.reset();
+    this.editForm.get('sections')?.clearValidators();
+    this.sectionService
+      .query({parent_id: department.id, columns: ["id", "name", "code"]})
+      .subscribe((resp) => (this.sections = resp.data));
   }
 }

@@ -1,9 +1,10 @@
 export class ActivityInput {
   constructor(
     public id?: number,
-    public unit_price?: string,
-    public quantity?: string,
-    public frequency?: string,
+    public unit_price?: number,
+    public gfs_code_id?: number,
+    public quantity?: number,
+    public frequency?: number,
     public unit?: string,
     public forward_year_one_amount?: string,
     public forward_year_two_amount?: string,
@@ -14,8 +15,7 @@ export class ActivityInput {
     public facility_id?: number,
     public section_id?: number,
     public budget_class_id?: number,
-    public chart_of_account?: string,
-    public approve_amount?: string,
-    public adjusted_amount?: string
+    public activity_facility_id?: number,
+    public activity_fund_source_id?: number
   ) {}
 }

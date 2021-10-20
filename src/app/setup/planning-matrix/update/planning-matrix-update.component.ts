@@ -17,6 +17,7 @@ import { ReferenceDocumentService } from "src/app/setup/reference-document/refer
 import { PlanningMatrix } from "../planning-matrix.model";
 import { PlanningMatrixService } from "../planning-matrix.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {NationalReferenceService} from "../../national-reference/national-reference.service";
 
 @Component({
   selector: "app-planning-matrix-update",
@@ -35,12 +36,12 @@ export class PlanningMatrixUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    reference_document_id: [null, [Validators.required]],
+    national_reference_id: [null, [Validators.required]],
   });
 
   constructor(
     protected planningMatrixService: PlanningMatrixService,
-    protected referenceDocumentService: ReferenceDocumentService,
+    protected referenceDocumentService: NationalReferenceService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -49,7 +50,7 @@ export class PlanningMatrixUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.referenceDocumentService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ["id", "code","description"] })
       .subscribe(
         (resp: CustomResponse<ReferenceDocument[]>) =>
           (this.referenceDocuments = resp.data)
@@ -116,7 +117,7 @@ export class PlanningMatrixUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: planningMatrix.id,
       name: planningMatrix.name,
-      reference_document_id: planningMatrix.reference_document_id,
+      national_reference_id: planningMatrix.national_reference_id,
     });
   }
 
@@ -129,7 +130,7 @@ export class PlanningMatrixUpdateComponent implements OnInit {
       ...new PlanningMatrix(),
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
-      reference_document_id: this.editForm.get(["reference_document_id"])!
+      national_reference_id: this.editForm.get(["national_reference_id"])!
         .value,
     };
   }

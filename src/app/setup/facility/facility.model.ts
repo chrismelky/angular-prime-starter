@@ -12,7 +12,6 @@ export class Facility {
     public admin_hierarchy?: AdminHierarchy,
     public ownership?: string,
     public physical_state?: string,
-    public star_rating?: string
   ) {}
 }
 

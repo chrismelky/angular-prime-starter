@@ -59,6 +59,7 @@ export class SectionComponent implements OnInit {
   //Mandatory filter
   position!: number;
   parent_id!: number;
+  parent!: Section;
 
   constructor(
     protected sectionService: SectionService,
@@ -167,6 +168,7 @@ export class SectionComponent implements OnInit {
    */
   onSectionSelection(parentSection: Section): void {
     this.parent_id = parentSection.id!;
+    this.parent = parentSection;
     this.position = parentSection.position! + 1;
     this.filterChanged();
   }
@@ -237,6 +239,7 @@ export class SectionComponent implements OnInit {
       ...new Section(),
       position: this.position,
       parent_id: this.parent_id,
+      parent: this.parent,
     };
     const ref = this.dialogService.open(SectionUpdateComponent, {
       data,

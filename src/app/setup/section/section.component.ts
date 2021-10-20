@@ -1,25 +1,25 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {combineLatest} from 'rxjs';
+import {ConfirmationService, LazyLoadEvent, MenuItem} from 'primeng/api';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Paginator} from 'primeng/paginator';
+import {Table} from 'primeng/table';
 
-import { CustomResponse } from '../../utils/custom-response';
+import {CustomResponse} from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { Sector } from 'src/app/setup/sector/sector.model';
-import { SectorService } from 'src/app/setup/sector/sector.service';
-import { SectionLevel } from 'src/app/setup/section-level/section-level.model';
-import { SectionLevelService } from 'src/app/setup/section-level/section-level.service';
-import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
-import { SectionUpdateComponent } from './update/section-update.component';
+import {HelperService} from 'src/app/utils/helper.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {Sector} from 'src/app/setup/sector/sector.model';
+import {SectorService} from 'src/app/setup/sector/sector.service';
+import {SectionLevel} from 'src/app/setup/section-level/section-level.model';
+import {SectionLevelService} from 'src/app/setup/section-level/section-level.service';
+import {Section} from 'src/app/setup/section/section.model';
+import {SectionService} from 'src/app/setup/section/section.service';
+import {SectionUpdateComponent} from './update/section-update.component';
 
 @Component({
   selector: 'app-section',
@@ -58,7 +58,7 @@ export class SectionComponent implements OnInit {
 
   //Mandatory filter
   position!: number;
-  parent_id!: number;
+  parent_id = 0;
   parent!: Section;
 
   constructor(
@@ -71,7 +71,8 @@ export class SectionComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.sectorService
@@ -111,7 +112,7 @@ export class SectionComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         position: this.position,
-        parent_id: this.parent_id,
+        parent_id: this.parent_id === 0 ? null : this.parent_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(

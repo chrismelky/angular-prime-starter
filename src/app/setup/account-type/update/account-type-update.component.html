@@ -50,29 +50,11 @@
         </span>
       </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input
-            id="balance_type"
-            type="text"
-            pInputText
-            formControlName="balance_type"
-          />
-          <label for="balance_type">Balance Type </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('balance_type')!.invalid &&
-            (editForm.get('balance_type')!.dirty ||
-              editForm.get('balance_type')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('balance_type')?.errors?.maxlength"
-            >Balance Type maximum length is 100 characters</small
-          >
-        </span>
+        <h5>Balance Type</h5>
+        <div *ngFor="let category of balanceTypes" class="p-field-checkbox">
+          <p-radioButton [inputId]="category.value" name="category" [value]="category.value"></p-radioButton>
+          <label [for]="category.value">{{category.display}}</label>
+        </div>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

@@ -282,6 +282,10 @@ export class EnumService {
       {display: "Number", value: "number"},
       {display: "Boolean", value: "boolean"},
     ],
+    balanceTypes: [
+      {display: "Debit", value: "DEBIT"},
+      {display: "Credit", value: "CREDIT"}
+    ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };
 

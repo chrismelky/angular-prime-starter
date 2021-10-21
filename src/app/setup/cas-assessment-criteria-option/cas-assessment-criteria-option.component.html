@@ -36,7 +36,7 @@
               <p-dropdown
                 id="cas_assessment_category_version_id"
                 optionValue="id"
-                optionLabel="cas_assessment_category.name"
+                optionLabel="cas_category_name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
@@ -175,6 +175,7 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
+          <th></th>
           <th style="flex: 0 0 2rem"></th>
         </tr>
       </ng-template>

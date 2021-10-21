@@ -183,6 +183,7 @@ export class FacilityComponent implements OnInit {
    */
   onAdminHierarchySelection(event: number): void {
     this.admin_hierarchy_id = event;
+    this.filterChanged();
   }
 
   /**

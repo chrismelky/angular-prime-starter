@@ -27,7 +27,7 @@ import { GfsCodeService } from "./gfs-code.service";
 import { GfsCodeUpdateComponent } from "./update/gfs-code-update.component";
 import {UploadComponent} from "./upload/upload.component";
 import {GfsCodeCategoryService} from "../gfs-code-category/gfs-code-category.service";
-import {GfsCodeCategory} from "../gfs-code-category/gfs-code-category.model";
+import {GfsCodeCategory, GfsCodeCategoryTree} from "../gfs-code-category/gfs-code-category.model";
 
 @Component({
   selector: "app-gfs-code",
@@ -39,7 +39,7 @@ export class GfsCodeComponent implements OnInit {
   gfsCodes?: GfsCode[] = [];
 
   accountTypes?: AccountType[] = [];
-  categories?: GfsCodeCategory[] = [];
+  categories?: GfsCodeCategoryTree[] = [];
 
   cols = [
     {
@@ -80,6 +80,7 @@ export class GfsCodeComponent implements OnInit {
 
   //Mandatory filter
   account_type_id!: number;
+  main_category_id!: number;
   category_id!: number;
 
   constructor(
@@ -101,9 +102,9 @@ export class GfsCodeComponent implements OnInit {
         (resp: CustomResponse<AccountType[]>) => (this.accountTypes = resp.data)
       );
     this.categoryService
-      .query({ columns: ["id", "name"] })
+      .tree()
       .subscribe(
-        (resp: CustomResponse<GfsCodeCategory[]>) => (this.categories = resp.data)
+        (resp: CustomResponse<GfsCodeCategoryTree[]>) => (this.categories = resp.data)
       );
     this.handleNavigation();
   }

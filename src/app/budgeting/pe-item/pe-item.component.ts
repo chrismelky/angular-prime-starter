@@ -272,7 +272,7 @@ export class PeItemComponent implements OnInit {
     }
     /** first fetch ceiling amount */
     this.fetchCeilingAmount();
-    this.fetchBudgetAmount()
+    //this.fetchBudgetAmount()
     this.peTableFields = [];
     this.peDefinitionService
       .getParentChildrenByFormId({
@@ -680,7 +680,7 @@ export class PeItemComponent implements OnInit {
 
     this.peItemService.create(object).subscribe((response) => {
       if (response.success) {
-        this.fetchBudgetAmount();
+        //this.fetchBudgetAmount();
         this.toastService.info(response.message);
       } else {
         this.toastService.error(response.message);

@@ -108,7 +108,9 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Planning Units</span>
+          <span class="card-header-text" *ngIf="position === 2">Sectors</span>
+          <span class="card-header-text" *ngIf="position === 3">Departments</span>
+          <span class="card-header-text" *ngIf="position === 4">Cost Centres</span>
           <button
             pButton
             pRipple

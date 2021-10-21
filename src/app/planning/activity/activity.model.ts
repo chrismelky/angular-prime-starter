@@ -56,6 +56,14 @@ export class ActivityFundSource {
     public id?: number,
     public activity_id?: number,
     public fund_source_id?: number,
-    public financial_year_id?: number
+    public financial_year_id?: number,
+    public name?: string,
+    public code?: string
   ) {}
+}
+
+export class FacilityActivity extends ActivityFacility {
+  public code?: string;
+  public description?: string;
+  public activity_fund_source_id?: number;
 }

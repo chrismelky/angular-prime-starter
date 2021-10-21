@@ -32,7 +32,6 @@ export class FacilityUpdateComponent implements OnInit {
   adminHierarchies?: AdminHierarchy[] = [];
   ownerships?: PlanrepEnum[] = [];
   physicalStates?: PlanrepEnum[] = [];
-  starRatings?: PlanrepEnum[] = [];
   facilityTypes?: FacilityType[] = [];
   facility: Facility = {};
   adminHierarchyId!: number;
@@ -47,7 +46,6 @@ export class FacilityUpdateComponent implements OnInit {
     facility_type_id: [null, [Validators.required]],
     ownership: [null, [Validators.required]],
     physical_state: [null, [Validators.required]],
-    star_rating: [null, [Validators.required]],
   });
 
   constructor(
@@ -77,8 +75,7 @@ export class FacilityUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.ownerships = this.enumService.get('ownerships');
     this.physicalStates = this.enumService.get('physicalStates');
-    this.starRatings = this.enumService.get('starRatings');
-    this.updateForm(this.facility); //Initialize form with data from dialog
+    this.updateForm(this.facility);
   }
 
   /**
@@ -142,7 +139,6 @@ export class FacilityUpdateComponent implements OnInit {
       facility_type_id: facility.facility_type_id,
       ownership: facility.ownership,
       physical_state: facility.physical_state,
-      star_rating: facility.star_rating,
     });
   }
 
@@ -159,7 +155,6 @@ export class FacilityUpdateComponent implements OnInit {
       facility_type_id: this.editForm.get(['facility_type_id'])!.value,
       ownership: this.editForm.get(['ownership'])!.value,
       physical_state: this.editForm.get(['physical_state'])!.value,
-      star_rating: this.editForm.get(['star_rating'])!.value,
     };
   }
 }

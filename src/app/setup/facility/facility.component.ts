@@ -35,6 +35,7 @@ import {FacilityUpdateComponent} from './update/facility-update.component';
 import {UserService} from '../user/user.service';
 import {FacilityCustomDetailValueComponent} from "./facility-custom-detail-value/facility-custom-detail-value.component";
 import {TransferComponent} from "./transfer/transfer.component";
+import {UploadComponent} from "./upload/upload.component";
 
 @Component({
   selector: 'app-facility',
@@ -65,7 +66,7 @@ export class FacilityComponent implements OnInit {
       header: 'Name',
       sort: true,
     },
-    {
+    /*{
       field: 'ownership',
       header: 'Ownership',
       sort: true,
@@ -75,11 +76,7 @@ export class FacilityComponent implements OnInit {
       header: 'Physical State',
       sort: true,
     },
-    {
-      field: 'star_rating',
-      header: 'Star Rating',
-      sort: true,
-    },
+   */
   ]; //Table display columns
 
   isLoading = false;
@@ -356,6 +353,18 @@ export class FacilityComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       this.loadPage(this.page);
+    });
+  }
+
+  upload(): void {
+    const ref = this.dialogService.open(UploadComponent, {
+      width: '60%',
+      header: 'Facility Upload Form'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
     });
   }
 }

@@ -37,8 +37,6 @@ export class FacilityTypeComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
   facilityTypes?: FacilityType[] = [];
-
-  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
   lgaLevels?: PlanrepEnum[] = [];
 
   cols = [
@@ -68,9 +66,6 @@ export class FacilityTypeComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
 
-  //Mandatory filter
-  admin_hierarchy_level_id!: number;
-
   constructor(
     protected facilityTypeService: FacilityTypeService,
     protected adminHierarchyLevelService: AdminHierarchyLevelService,
@@ -85,12 +80,6 @@ export class FacilityTypeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.adminHierarchyLevelService
-      .query({columns: ["id", "name"]})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
-      );
     this.lgaLevels = this.enumService.get("lgaLevels");
     this.handleNavigation();
   }
@@ -101,9 +90,6 @@ export class FacilityTypeComponent implements OnInit {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_level_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -112,7 +98,6 @@ export class FacilityTypeComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_level_id: this.admin_hierarchy_level_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -147,6 +132,7 @@ export class FacilityTypeComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
   }
 
@@ -227,7 +213,6 @@ export class FacilityTypeComponent implements OnInit {
   createOrUpdate(facilityType?: FacilityType): void {
     const data: FacilityType = facilityType ?? {
       ...new FacilityType(),
-      admin_hierarchy_level_id: this.admin_hierarchy_level_id,
     };
     const ref = this.dialogService.open(FacilityTypeUpdateComponent, {
       data,

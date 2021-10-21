@@ -19,7 +19,7 @@ import { CategoryService } from "src/app/setup/category/category.service";
 import { GfsCode } from "../gfs-code.model";
 import { GfsCodeService } from "../gfs-code.service";
 import { ToastService } from "src/app/shared/toast.service";
-import {GfsCodeCategory} from "../../gfs-code-category/gfs-code-category.model";
+import {GfsCodeCategory, GfsCodeCategoryTree} from "../../gfs-code-category/gfs-code-category.model";
 import {GfsCodeCategoryService} from "../../gfs-code-category/gfs-code-category.service";
 
 @Component({
@@ -32,7 +32,7 @@ export class GfsCodeUpdateComponent implements OnInit {
   errors = [];
 
   accountTypes?: AccountType[] = [];
-  categories?: GfsCodeCategory[] = [];
+  categories?: GfsCodeCategoryTree[] = [];
 
   /**
    * Declare form
@@ -65,9 +65,9 @@ export class GfsCodeUpdateComponent implements OnInit {
         (resp: CustomResponse<AccountType[]>) => (this.accountTypes = resp.data)
       );
     this.categoryService
-      .query({ columns: ["id", "name"] })
+      .tree()
       .subscribe(
-        (resp: CustomResponse<GfsCodeCategory[]>) => (this.categories = resp.data)
+        (resp: CustomResponse<GfsCodeCategoryTree[]>) => (this.categories = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }

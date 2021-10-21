@@ -146,21 +146,6 @@
                   <label for="physical_state">Physical State </label>
                 </span>
               </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="star_rating"
-                    optionValue="value"
-                    optionLabel="display"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    class="p-inputtext-sm"
-                    [options]="starRatings!"
-                    [(ngModel)]="search['star_rating']"
-                  ></p-dropdown>
-                  <label for="star_rating">Star Rating </label>
-                </span>
-              </div>
             </div>
             <div
               fxLayout="row"
@@ -202,15 +187,24 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Facilities</span>
+          <span class="card-header-text">
           <button
             pButton
-            pRipple
             icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!facility_type_id || !admin_hierarchy_id"
+            class="p-button-raised p-button-text"
+            [disabled]="!admin_hierarchy_id"
             (click)="createOrUpdate()"
             label="Add Facility"
           ></button>
+            &nbsp;
+          <button
+            pButton
+            icon="pi pi-upload"
+            class="p-button-raised"
+            (click)="upload()"
+            label="Upload Facilities"
+          ></button>
+          </span>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
@@ -219,8 +213,7 @@
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
           >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th></th>
         </tr>

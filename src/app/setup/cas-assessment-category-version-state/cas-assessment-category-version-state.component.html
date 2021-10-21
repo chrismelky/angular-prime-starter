@@ -83,7 +83,6 @@
       [columns]="cols"
       [value]="casAssessmentCategoryVersionStates!"
       [scrollable]="true"
-      scrollHeight="500px"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
@@ -104,30 +103,28 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="casAssessmentCategoryVersionStates?.length">
-          <th [pSortableColumn]="'cas_assessment_category_version_id'">
-            CAS Category Version <p-sortIcon [field]="'cas_assessment_category_version_id'"></p-sortIcon>
+          <th>
+            CAS Category Version
           </th>
-          <th [pSortableColumn]="'cas_assessment_state_id'">
-            CAS State <p-sortIcon [field]="'cas_assessment_state_id'"></p-sortIcon>
+          <th>
+            CAS State
           </th>
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th style="flex: 0 0 2rem"></th>
+          <th>Min Value </th>
+          <th>Max Value </th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td>{{ rowData.cas_assessment_category?.name}}</td>
+          <td>{{ rowData.cas_assessment_category_version.cas_category_name}}</td>
           <td>{{ rowData.cas_assessment_state?.name }}</td>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
+          <td >
+            {{ rowData.min_value }}
           </td>
-          <td style="flex: 0 0 2rem">
+          <td >
+            {{ rowData.max_value }}
+          </td>
+          <td >
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

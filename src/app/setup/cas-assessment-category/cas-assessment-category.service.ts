@@ -37,7 +37,7 @@ export class CasAssessmentCategoryService {
     );
   }
 
-  find(id: number): Observable<CustomResponse<CasAssessmentCategory>> {
+  find(id: any): Observable<CustomResponse<CasAssessmentCategory>> {
     return this.http.get<CustomResponse<CasAssessmentCategory>>(
       `${this.resourceUrl}/${id}`
     );

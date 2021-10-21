@@ -43,6 +43,36 @@
           >
         </span>
       </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="gfs_code_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="gfsCodes!"
+            formControlName="gfs_code_id"
+          ></p-dropdown>
+          <label for="gfs_code_id">GFS Code </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('gfs_code_id')!.invalid &&
+            (editForm.get('gfs_code_id')!.dirty ||
+              editForm.get('gfs_code_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('gfs_code_id')?.errors?.required"
+          >GFS Code is required.</small
+          >
+        </span>
+      </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

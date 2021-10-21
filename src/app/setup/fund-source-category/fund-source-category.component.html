@@ -8,7 +8,6 @@
           <span class="filter-text">Filter</span>
         </span>
       </ng-template>
-
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
           fxLayout="row wrap"
@@ -88,23 +87,23 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Fund Source Categories</span>
+          <span class="card-header-text">
           <button
             pButton
-            pRipple
             icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]=""
+            class="p-button-raised p-button-text"
             (click)="createOrUpdate()"
             label="Add Fund Source Category"
           ></button>
+            &nbsp;
           <button
             pButton
             icon="pi pi-upload"
             class="p-button-raised"
-            [disabled]=""
             (click)="upload()"
             label="Upload Fund Source Categories"
           ></button>
+          </span>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

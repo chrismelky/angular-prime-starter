@@ -15,6 +15,9 @@ import { CustomResponse } from "../../../utils/custom-response";
 import { BankAccount } from "../bank-account.model";
 import { BankAccountService } from "../bank-account.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {GfsCodeService} from "../../gfs-code/gfs-code.service";
+import {AdminHierarchyLevel} from "../../admin-hierarchy-level/admin-hierarchy-level.model";
+import {GfsCode} from "../../gfs-code/gfs-code.model";
 
 @Component({
   selector: "app-bank-account-update",
@@ -24,6 +27,7 @@ export class BankAccountUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  gfsCodes?: GfsCode[] = [];
 
   /**
    * Declare form
@@ -32,10 +36,12 @@ export class BankAccountUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
+    gfs_code_id: [null, [Validators.required]],
   });
 
   constructor(
     protected bankAccountService: BankAccountService,
+    protected gfsCodeService: GfsCodeService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -43,7 +49,13 @@ export class BankAccountUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
+    this.gfsCodeService
+      .gfsCodesByAccountTypeName('Cash')
+      .subscribe(
+        (resp: CustomResponse<GfsCode[]>) =>
+          (this.gfsCodes = resp.data)
+      );
+    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
@@ -102,6 +114,7 @@ export class BankAccountUpdateComponent implements OnInit {
       id: bankAccount.id,
       name: bankAccount.name,
       code: bankAccount.code,
+      gfs_code_id: bankAccount.gfs_code_id,
     });
   }
 
@@ -115,6 +128,7 @@ export class BankAccountUpdateComponent implements OnInit {
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
       code: this.editForm.get(["code"])!.value,
+      gfs_code_id: this.editForm.get(["gfs_code_id"])!.value,
     };
   }
 }

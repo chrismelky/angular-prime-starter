@@ -1,3 +1,5 @@
+import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+
 export class AdminHierarchy {
   constructor(
     public id?: number,
@@ -5,6 +7,7 @@ export class AdminHierarchy {
     public code?: string,
     public parent_id?: number,
     public admin_hierarchy_position?: number,
+    public admin_hierarchy_level?: AdminHierarchyLevel,
     public current_budget_locked?: string,
     public is_carryover_budget_locked?: string,
     public is_supplementary_budget_locked?: string,

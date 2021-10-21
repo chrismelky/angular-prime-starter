@@ -10,6 +10,7 @@ import { ObjectiveTreeComponent } from './objective-tree/objective-tree.componen
 import { AssessmentTreeComponent } from './assessment-tree/assessment-tree.component';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { LoaderComponent } from '../shared/loader/loader.component';
+import { DraggableDirective } from '../shared/draggable.directive';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { LoaderComponent } from '../shared/loader/loader.component';
     ObjectiveTreeComponent,
     AssessmentTreeComponent,
     LoaderComponent,
+    DraggableDirective,
   ],
   imports: [SharedMaterialModule, SharedPrimengModule, CommonModule],
   exports: [
@@ -30,6 +32,7 @@ import { LoaderComponent } from '../shared/loader/loader.component';
     CommonModule,
     NgxPermissionsModule,
     LoaderComponent,
+    DraggableDirective,
   ],
   providers: [ConfirmationService, DialogService],
 })

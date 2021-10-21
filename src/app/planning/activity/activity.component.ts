@@ -54,6 +54,7 @@ export class ActivityComponent implements OnInit {
 
   facilityIsLoading = false;
   targetIsLoading = false;
+  objectiveIsLoading = false;
 
   adminHierarchyCostCentre?: AdminHierarchyCostCentre;
   financialYear?: FinancialYear;
@@ -225,6 +226,10 @@ export class ActivityComponent implements OnInit {
     this.loadTargets(this.objective?.id!);
   }
 
+  onObjectiveLoadingChange(isLoading: boolean): void {
+    this.objectiveIsLoading = isLoading;
+  }
+
   /**
    * load Targets by objectives and section
    */
@@ -339,6 +344,10 @@ export class ActivityComponent implements OnInit {
     const predicate = this.predicate ? this.predicate : 'id';
     const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
+  }
+
+  back(): void {
+    this.router.navigate(['/admin-hierarchy-cost-centres', this.budget_type]);
   }
 
   /**

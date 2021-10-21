@@ -1,12 +1,14 @@
-<app-loader [isLoading]="facilityIsLoading || targetIsLoading"></app-loader>
-
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
-  <p-card class="filter">
+  <p-card class="filter filter-no-adv">
     <ng-template pTemplate="header">
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-        <i class="pi pi-filter"></i>
-        <!-- <span class="card-header-text">Filter</span> -->
+        <button
+          icon="pi pi-arrow-left"
+          pButton
+          (click)="back()"
+          class="p-button-rounded p-button-icon-only"
+        ></button>
         <p-divider fxFlex class="title" align="center">
           <span fxLayout="column" fxLayoutAlign="centre center">
             <small>Budget Type</small>
@@ -56,142 +58,106 @@
       </div>
     </ng-template>
     <ng-template pTemplate="content">
-      <div fxLayout="column" fxLayoutGap="20px">
-        <div fxLayout="row wrap" fxLayoutGap="0px">
-          <div
-            fxLayout="row wrap"
-            fxLayoutGap="20px"
-            fxFlex
-            fxLayoutAlign="start center"
-          >
-            <!-- Objective filter -->
-            <app-objective-tree
-              [selectionMode]="'single'"
-              [returnType]="'object'"
-              (onSelect)="onObjectiveSeletion($event)"
+      <div class="loader-area">
+        <app-loader
+          [isLoading]="facilityIsLoading || targetIsLoading"
+        ></app-loader>
+        <div fxLayout="column" fxLayoutGap="20px">
+          <div fxLayout="row wrap" fxLayoutGap="0px">
+            <div
+              fxLayout="row wrap"
+              fxLayoutGap="10px"
               fxFlex
-            ></app-objective-tree>
-            <!-- Target -->
-            <div class="p-field" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="financial_year_target_id"
-                  optionLabel="description"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="financialYearTargets!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="financialYearTarget"
-                ></p-dropdown>
-                <label for="financial_year_target_id">Target </label>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div fxLayout="row wrap" fxLayoutGap="20px">
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start" fxFlex>
-            <span fxLayout="row" fxLayoutGap="20px">
-              <p-radioButton
-                *ngFor="let ft of facilityGroupByType"
-                (onClick)="facilityTypeChange()"
-                name="facilityType"
-                [value]="ft.name"
-                [(ngModel)]="facilityType"
-                [label]="ft.name"
-              ></p-radioButton>
-            </span>
-            <div class="p-field" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="facility_id"
-                  optionLabel="name"
-                  optionValue="id"
-                  [showClear]="true"
-                  [autoDisplayFirst]="false"
-                  class="p-inputtext-sm"
-                  [options]="facilities!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="facility_id"
-                ></p-dropdown>
-                <label for="facility_id">Facility</label>
-              </span>
-            </div>
-          </div>
-          <div class="p-inputgroup" fxFlex>
-            <div class="p-field" fxFlex>
-              <span class="p-float-label p-input-icon-right">
-                <input
-                  id="code"
-                  type="text"
-                  class="p-inputtext-sm"
-                  pInputText
-                  [(ngModel)]="search['description']"
-                />
-                <label for="description">Description </label>
-                <i
-                  class="pi pi-times clear"
-                  (click)="search['description'] = undefined; onSearch()"
-                ></i>
-              </span>
-            </div>
-            <button
-              pButton
-              class="p-inputgroup-addon p-button-primary p-button-text"
-              icon="pi pi-search"
-              label="Search"
-              (click)="onSearch()"
-            ></button>
-          </div>
-        </div>
-        <p-accordion>
-          <p-accordionTab
-            class="p-shadow-0"
-            #advFilter
-            [selected]="advFilter.selected"
-            [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"
-          >
-            <div fxLayout="row wrap" fxLayoutGap="10px">
-              <div
-                fxLayout="row wrap"
-                fxLayoutGap="0.75rem"
+              fxLayoutAlign="start center"
+            >
+              <!-- Objective filter -->
+              <app-objective-tree
+                [selectionMode]="'single'"
+                [returnType]="'object'"
+                (onSelect)="onObjectiveSeletion($event)"
+                (onLoadingChange)="onObjectiveLoadingChange($event)"
                 fxFlex
-                fxLayoutAlign="start center"
-              >
-                <!-- Decription search -->
-
-                <!-- Code search -->
-                <div class="p-field" fxFlex>
-                  <span class="p-float-label p-input-icon-right">
-                    <input
-                      id="code"
-                      type="text"
-                      class="p-inputtext-sm"
-                      pInputText
-                      [(ngModel)]="search['code']"
-                    />
-                    <label for="code">Code </label>
-                    <i
-                      class="pi pi-times clear"
-                      (click)="search['code'] = undefined; onSearch()"
-                    ></i>
-                  </span>
-                </div>
-              </div>
-              <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end">
-                <button
-                  pButton
-                  pTooltip="Clear Advanced Search"
-                  tooltipPosition="bottom"
-                  class="p-button-text p-button-plain"
-                  icon="pi pi-times"
-                  label="Clear"
-                  (click)="clearSearch()"
-                ></button>
+              ></app-objective-tree>
+              <!-- Target -->
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="financial_year_target_id"
+                    optionLabel="description"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="financialYearTargets!"
+                    (onChange)="filterChanged()"
+                    [(ngModel)]="financialYearTarget"
+                  ></p-dropdown>
+                  <label for="financial_year_target_id">Target </label>
+                </span>
               </div>
             </div>
-          </p-accordionTab>
-        </p-accordion>
+          </div>
+          <div fxLayout="row wrap" fxLayoutGap="10px">
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start" fxFlex>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="facility_type"
+                    optionLabel="name"
+                    optionValue="name"
+                    [showClear]="false"
+                    [autoDisplayFirst]="false"
+                    class="p-inputtext-sm"
+                    [options]="facilityGroupByType!"
+                    (onChange)="facilityTypeChange()"
+                    [(ngModel)]="facilityType"
+                  ></p-dropdown>
+                  <label for="facility_type">Facility Type </label>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="facility_id"
+                    optionLabel="name"
+                    optionValue="id"
+                    [showClear]="true"
+                    [autoDisplayFirst]="false"
+                    class="p-inputtext-sm"
+                    [options]="facilities!"
+                    (onChange)="filterChanged()"
+                    [(ngModel)]="facility_id"
+                  ></p-dropdown>
+                  <label for="facility_id">Facility</label>
+                </span>
+              </div>
+            </div>
+            <div class="p-inputgroup" fxFlex>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="code"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['description']"
+                  />
+                  <label for="description">Description </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['description'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <button
+                pButton
+                class="p-inputgroup-addon p-button-primary p-button-text"
+                icon="pi pi-search"
+                label="Search"
+                (click)="onSearch()"
+              ></button>
+            </div>
+          </div>
+        </div>
       </div>
     </ng-template>
   </p-card>

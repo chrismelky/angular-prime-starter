@@ -5,16 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {Component, Inject, OnInit} from '@angular/core';
+import {FormBuilder, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {finalize} from 'rxjs/operators';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
-import { CustomResponse } from '../../../utils/custom-response';
-import { AccountType } from '../account-type.model';
-import { AccountTypeService } from '../account-type.service';
-import { ToastService } from 'src/app/shared/toast.service';
+import {CustomResponse} from '../../../utils/custom-response';
+import {AccountType} from '../account-type.model';
+import {AccountTypeService} from '../account-type.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {EnumService} from "../../../shared/enum.service";
 
 @Component({
   selector: 'app-account-type-update',
@@ -25,6 +26,8 @@ export class AccountTypeUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
+  balanceTypes = this.enumService.get('balanceTypes')
+
   /**
    * Declare form
    */
@@ -32,16 +35,18 @@ export class AccountTypeUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required, Validators.maxLength(200)]],
     code: [null, [Validators.required, Validators.maxLength(50)]],
-    balance_type: [null, [Validators.maxLength(100)]],
+    balance_type: ['DEBIT', [Validators.required]],
   });
 
   constructor(
     protected accountTypeService: AccountTypeService,
     public dialogRef: DynamicDialogRef,
+    public enumService: EnumService,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
@@ -88,7 +93,8 @@ export class AccountTypeUpdateComponent implements OnInit {
    * Note; general error handleing is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

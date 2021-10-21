@@ -49,14 +49,19 @@
           >
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <input
+          <p-dropdown
             id="balance_type"
-            type="text"
-            pInputText
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="balanceTypes!"
             formControlName="balance_type"
-          />
+          ></p-dropdown>
           <label for="balance_type">Balance Type </label>
         </span>
         <span
@@ -69,8 +74,8 @@
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('balance_type')?.errors?.maxlength"
-            >Balance Type maximum length is 100 characters</small
+            *ngIf="editForm.get('balance_type')?.errors?.required"
+          >Balance Type is required.</small
           >
         </span>
       </div>

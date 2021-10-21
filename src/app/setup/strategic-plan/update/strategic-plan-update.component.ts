@@ -97,8 +97,6 @@ export class StrategicPlanUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const strategicPlan = this.createFromForm();
-    console.log(strategicPlan.get('name'));
-    console.log(strategicPlan.get('id'));
     if (strategicPlan.get('id') !== 'undefined') {
       this.subscribeToSaveResponse(
         this.strategicPlanService.update(strategicPlan)

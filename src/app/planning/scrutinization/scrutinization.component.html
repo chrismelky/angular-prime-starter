@@ -126,81 +126,111 @@
   </p-card>
 
   <!-- Table Panel -->
+<p-card>
+  <ng-template pTemplate="caption">
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <span class="card-header-text">Scrutinization</span>
+      <button
+        pButton
+        icon="pi pi-plus"
+        class="p-button-raised p-button-outlined"
+        [disabled]="!scrutinizations"
+        (click)="createOrUpdate()"
+        label="Forward"
+      ></button>
+    </div>
+  </ng-template>
+</p-card>
+
   <p-card>
-    <p-table [value]="scrutinizations!" dataKey="name" responsiveLayout="scroll">
-      <ng-template pTemplate="header" *ngIf="scrutinizations?.length! > 0">
-        <tr>
-          <th style="width: 3rem"></th>
-          <th>Code</th>
-          <th>Activity</th>
-          <th></th>
-          <th></th>
-          <th></th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-activity  let-expanded="expanded">
-        <tr>
-          <td>
-            <button type="button" pButton pRipple [pRowToggler]="activity" (click)="loadInputs(activity.id)" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
-          </td>
-          <td>{{activity.code}}</td>
-          <td>{{activity.description}}</td>
-          <td></td>
-          <td>
-            <p-badge [value]="activity.status"  severity="{{activity.status == 1?'success':'warning'}}"></p-badge>
-          </td>
-          <td>
-            <button pButton type="button" class="p-button-outlined p-button-rounded p-button-icon" label="Comments"
-                    style="margin-left: 16px" icon="pi pi-comment" (click)="setActivityComments(activity)"
-            ></button>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="rowexpansion"  let-activity>
-        <tr>
-          <td colspan="4">
-            <div class="p-p-3">
-              <p-table [value]="activity.inputs" dataKey="id">
-                <ng-template pTemplate="header">
-                  <tr>
-        <th pSortableColumn="customer">input</th>
-        <th pSortableColumn="date"></th>
-        <th pSortableColumn="amount">Amount</th>
-        <th ></th>
-        <th ></th>
-        <th ></th>
-                  </tr>
-                </ng-template>
-      <ng-template pTemplate="body" let-input>
-        <tr>
-          <td>{{input.code+' - '+input.name}}</td>
-          <td></td>
-          <td>{{input.amount | currency:'TZS  '}}</td>
-          <td></td>
-          <td><p-badge [value]="input.status"  severity="{{input.status == 1?'success':'warning'}}"></p-badge></td>
-          <td>
-            <button pButton type="button" class="p-button-outlined  p-button-rounded p-button-icon" label="Comments"
-                    style="margin-left: 16px" icon="pi pi-comment" (click)="setInputComments(input)"
-            ></button>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="3">There are no inputs for this activity yet.</td>
-        </tr>
-      </ng-template>
-              </p-table>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
+    <p-tabView>
+      <p-tabPanel header="Budget">
+        <p-table [value]="scrutinizations!" dataKey="description" responsiveLayout="scroll">
+          <ng-template pTemplate="header" *ngIf="scrutinizations?.length! > 0">
+            <tr>
+              <th style="width: 3rem"></th>
+              <th>Code</th>
+              <th>Activity</th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-activity  let-expanded="expanded">
+            <tr>
+              <td>
+                <button type="button" pButton pRipple [pRowToggler]="activity" (click)="loadInputs(activity.id)" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+              </td>
+              <td>{{activity.code}}</td>
+              <td>{{activity.description}}</td>
+              <td></td>
+              <td>
+                <!--            <button type="button" pButton pRipple  class="p-button-text p-button-rounded p-button-plain" [icon]="activity.status == 1 ? 'pi pi-check-circle' : 'pi pi-times-circle'"></button>-->
+                <p-badge [value]="activity.status"  severity="{{activity.status == 1?'success':'warning'}}" ></p-badge>
+              </td>
+              <td>
+                <button pButton type="button" class="p-button-outlined p-button-rounded p-button-icon" label="Comments"
+                        style="margin-left: 16px" icon="pi pi-comment" (click)="setActivityComments(activity)"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="rowexpansion"  let-activity>
+            <tr>
+              <td colspan="12">
+                <div class="p-p-3">
+                  <p-table [value]="inputs!" dataKey="id">
+                    <ng-template pTemplate="header">
+            <tr>
+              <th >Facility</th>
+              <th [colSpan]="2">Fund Source</th>
+              <th [colSpan]="2">Description</th>
+              <th >Quantity</th>
+              <th >Frequency</th>
+              <th >Unit Price</th>
+              <th >Sub Total</th>
+              <th ></th>
+              <th ></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-input>
+            <tr>
+              <td>{{input.name}}</td>
+              <td [colSpan]="2">{{input.fund_source_code+' - '+input.fund_source}}</td>
+              <td [colSpan]="2">{{input.gfs_code+' - '+input.gfs_name}}</td>
+              <td>{{input.quantity}}</td>
+              <td>{{input.frequency}}</td>
+              <td>{{input.unit_price}}</td>
+              <td>{{input.quantity*input.frequency*input.unit_price | currency:'TZS  '}}</td>
+              <td [colSpan]="2">
+                <p-badge [value]="input.status"  severity="{{input.status == 1?'success':'warning'}}"></p-badge>
+                <button pButton type="button" class="p-button-outlined  p-button-rounded p-button-icon" label="Comments"
+                        style="margin-left: 16px" icon="pi pi-comment" (click)="setInputComments(input)"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="3">There are no inputs for this activity yet.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+</div>
+</td>
+</tr>
+</ng-template>
 <ng-template pTemplate="emptymessage">
   <tr>
     <td colspan="3">There are no activities for this cost centre yet.</td>
   </tr>
 </ng-template>
-    </p-table>
+</p-table>
+      </p-tabPanel>
+      <p-tabPanel header="Budget vs Ceiling">
+
+      </p-tabPanel>
+    </p-tabView>
 <ng-template pTemplate="footer">
   <p-paginator
     #paginator

@@ -81,7 +81,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "cas_assessment_category_id"] })
+      .query({ columns: ["id", "cas_category_name"] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)

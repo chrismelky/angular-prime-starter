@@ -185,6 +185,8 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
+          <th>CAS Plan</th>
+          <th>Period Group</th>
           <th></th>
         </tr>
       </ng-template>
@@ -195,7 +197,6 @@
           </td>
           <td>{{ rowData.cas_plan?.name }}</td>
           <td>{{ rowData.period_group?.name }}</td>
-          <td style="flex: 0 0 2 rem"></td>
 
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

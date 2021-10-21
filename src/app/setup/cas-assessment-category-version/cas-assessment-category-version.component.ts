@@ -48,21 +48,6 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
   casAssessmentCategories?: CasAssessmentCategory[] = [];
 
   cols = [
-    /*{
-      field: "reference_document_id",
-      header: "Reference Document ",
-      sort: false,
-    },
-    {
-      field: "cas_assessment_state_id",
-      header: "Cas Assessment State ",
-      sort: false,
-    },
-    {
-      field: "cas_assessment_category_id",
-      header: "Cas Assessment Category ",
-      sort: false,
-    },*/
     {
       field: "minimum_passmark",
       header: "Minimum Passmark",
@@ -269,7 +254,7 @@ export class CasAssessmentCategoryVersionComponent implements OnInit {
       CasAssessmentCategoryVersionUpdateComponent,
       {
         data,
-        header: "Create/Update CasAssessmentCategoryVersion",
+        header: "Create/Update CasCategoryVersion",
       }
     );
     ref.onClose.subscribe((result) => {

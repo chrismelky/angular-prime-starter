@@ -1,0 +1,60 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-autoComplete id="user" [suggestions]="users!" appendTo="body" [formControl]="userControl" [multiple]="true" (completeMethod)="searchUser($event)">
+            <ng-template let-user pTemplate="item">
+              <div style="font-size:18px">{{user.first_name}} {{user.last_name}}</div>
+            </ng-template>
+            <ng-template let-value pTemplate="selectedItem">
+              <span style="font-size:18px">{{value.first_name}} {{value.last_name}}</span>
+            </ng-template>
+          </p-autoComplete>
+          <label for="user">User</label>
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-calendar
+            dataType="string"
+            id="expire_date"
+            appendTo="body"
+            dateFormat="MM dd, yy"
+            [formControl]="expireDateControl"
+          ></p-calendar>
+          <label for="expire_date">Expire Date</label>
+        </span>
+        <span
+          *ngIf="
+            expireDateControl!.invalid &&
+            (expireDateControl!.dirty ||
+              expireDateControl!.touched)"
+        >
+          <small
+            class="p-error"
+            *ngIf="expireDateControl?.errors?.required"
+          >Expire Date is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          [disabled]="expireDateControl.invalid || userControl.invalid"
+          (click)="save()"
+          pButton
+          type="button"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>
+

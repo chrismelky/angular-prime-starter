@@ -10,7 +10,6 @@ import {User} from "../../user.model";
 import {UserGroupService} from "../user-group.service";
 import {Group} from "../../../group/group.model";
 import {CreateUserGroup} from "../user-group.model";
-import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-create',

@@ -8,7 +8,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { ConfirmationService, LazyLoadEvent } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -25,6 +25,7 @@ import { Group } from "./group.model";
 import { GroupService } from "./group.service";
 import { GroupUpdateComponent } from "./update/group-update.component";
 import {GroupRoleComponent} from "./group-role/group-role.component";
+import {UserGroupComponent} from "./user-group/user-group.component";
 
 @Component({
   selector: "app-group",
@@ -254,6 +255,22 @@ export class GroupComponent implements OnInit {
     const ref = this.dialogService.open(GroupRoleComponent, {
       data,
       width: '60%',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  users(row: Group): void {
+    const data = {
+      group: row
+    }
+    const ref = this.dialogService.open(UserGroupComponent, {
+      data,
+      width: '60%',
+      header: row.name
     });
     ref.onClose.subscribe((result) => {
       if (result) {

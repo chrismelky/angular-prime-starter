@@ -44,6 +44,8 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DragDropModule } from 'primeng/dragdrop';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+
 
 @NgModule({
   declarations: [],
@@ -93,6 +95,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     ProgressBarModule,
     DragDropModule,
     ProgressSpinnerModule,
+    AutoCompleteModule
   ],
 })
 export class SharedPrimengModule {}

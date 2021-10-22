@@ -159,10 +159,10 @@
       <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
         <tr [pEditableRow]="rowData">
           <td>{{ri+1}}</td>
-          <td>[{{rowData?.ceiling.fund_source.gfs_code.code}}] {{rowData?.ceiling.fund_source.gfs_code.name}}</td>
-          <td>{{rowData?.ceiling.fund_source.name}}</td>
-          <td>{{rowData?.ceiling.budget_class.name}}</td>
-          <td>{{rowData?.ceiling.bank_account.name}}</td>
+          <td>[{{rowData?.ceiling?.fund_source?.gfs_code?.code}}] {{rowData?.ceiling.fund_source.gfs_code.name}}</td>
+          <td>{{rowData?.ceiling?.fund_source?.name}}</td>
+          <td>{{rowData?.ceiling?.budget_class?.name}}</td>
+          <td>{{rowData?.ceiling?.bank_account?.name}}</td>
           <td [pEditableRow]="rowData" style="min-width:200px !important;">
             <p-cellEditor>
               <ng-template pTemplate="input">

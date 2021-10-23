@@ -71,6 +71,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     admin_hierarchy_id: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
     facility_id: [null, [Validators.required]],
+    total: [{ value: 0.0, disabled: true }, []],
   });
 
   constructor(
@@ -88,6 +89,15 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
     this.updateForm(dialogData.activityInput); //Initialize form with data from dialog
+    this.editForm
+      .get('unit_price')
+      ?.valueChanges.subscribe(() => this.updateTotal());
+    this.editForm
+      .get('quantity')
+      ?.valueChanges.subscribe(() => this.updateTotal());
+    this.editForm
+      .get('frequency')
+      ?.valueChanges.subscribe(() => this.updateTotal());
   }
 
   /**
@@ -111,6 +121,16 @@ export class ActivityInputUpdateComponent implements OnInit {
         this.activityInputService.create(activityInput)
       );
     }
+  }
+
+  updateTotal(): void {
+    const total =
+      (this.editForm.get('unit_price')?.value || 0) *
+      (this.editForm.get('quantity')?.value || 0) *
+      (this.editForm.get('frequency')?.value || 0);
+    this.editForm.patchValue({
+      total,
+    });
   }
 
   protected subscribeToSaveResponse(

@@ -42,16 +42,6 @@ export class CasAssessmentCategoryVersionStateComponent implements OnInit {
   casAssessmentStates?: CasAssessmentState[] = [];
 
   cols = [
-    {
-      field: "min_value",
-      header: "Min Value",
-      sort: false,
-    },
-    {
-      field: "max_value",
-      header: "Max Value",
-      sort: false,
-    },
   ]; //Table display columns
 
   isLoading = false;

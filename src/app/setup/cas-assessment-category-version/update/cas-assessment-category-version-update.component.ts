@@ -32,6 +32,7 @@ export class CasAssessmentCategoryVersionUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  cas_category_name?: string;
 
   financialYears?: FinancialYear[] = [];
   referenceDocuments?: ReferenceDocument[] = [];
@@ -49,6 +50,7 @@ export class CasAssessmentCategoryVersionUpdateComponent implements OnInit {
     cas_assessment_category_id: [null, []],
     minimum_passmark: [null, [Validators.required]],
     highest_score: [null, [Validators.required]],
+    cas_category_name: [null, []],
   });
 
   constructor(
@@ -184,6 +186,7 @@ export class CasAssessmentCategoryVersionUpdateComponent implements OnInit {
       ])!.value,
       minimum_passmark: this.editForm.get(['minimum_passmark'])!.value,
       highest_score: this.editForm.get(['highest_score'])!.value,
+      cas_category_name: this.editForm.get(['cas_category_name'])!.value,
     };
   }
 }

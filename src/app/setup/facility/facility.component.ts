@@ -76,11 +76,7 @@ export class FacilityComponent implements OnInit {
       header: 'Physical State',
       sort: true,
     },
-    {
-      field: 'star_rating',
-      header: 'Star Rating',
-      sort: true,
-    },*/
+   */
   ]; //Table display columns
 
   isLoading = false;
@@ -187,6 +183,7 @@ export class FacilityComponent implements OnInit {
    */
   onAdminHierarchySelection(event: number): void {
     this.admin_hierarchy_id = event;
+    this.filterChanged();
   }
 
   /**

@@ -57,14 +57,23 @@ export class InputUpdateComponent implements OnInit {
       admin_hierarchy_level_id:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
       financial_year_id:this.currentUser.admin_hierarchy?.current_financial_year_id,
       comments:this.editForm.value.comments,
-      activity_input_id:this.dialogConfig.data.id
+      activity_input_id:this.dialogConfig.data.id,
+      id:this.dialogConfig.data.comment_id,
     }
     this.isSaving = true;
-    this.scrutinizationService.createInputComment(data).subscribe(resp => {
-      this.toastService.info(resp.message);
-      this.dialogRef.close(true);
-      this.isSaving = false;
-    });
+    if (this.dialogConfig.data.comment_id == null){
+      this.scrutinizationService.createInputComment(data).subscribe(resp => {
+        this.toastService.info(resp.message);
+        this.dialogRef.close(this.dialogConfig.data.id);
+        this.isSaving = false;
+      });
+    }else {
+      this.scrutinizationService.updateInputComment(data).subscribe(resp => {
+        this.toastService.info(resp.message);
+        this.dialogRef.close(this.dialogConfig.data.id);
+        this.isSaving = false;
+      });
+    }
   }
 
   /**

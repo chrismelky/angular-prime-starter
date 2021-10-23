@@ -14,9 +14,10 @@ import { ScrutinizationComponent } from "./scrutinization.component";
 import { ScrutinizationUpdateComponent } from "./update/scrutinization-update.component";
 import {InputUpdateComponent} from "./update/input-update.component";
 import {BadgeModule} from "primeng/badge";
+import {TabViewModule} from "primeng/tabview";
 
 @NgModule({
-    imports: [SharedModule, CommonModule, ScrutinizationRoutingModule, BadgeModule],
+    imports: [SharedModule, CommonModule, ScrutinizationRoutingModule, BadgeModule, TabViewModule],
   declarations: [ScrutinizationComponent, ScrutinizationUpdateComponent, InputUpdateComponent],
   entryComponents: [ScrutinizationUpdateComponent, InputUpdateComponent],
 })

@@ -7,7 +7,6 @@
  */
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
 import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {Paginator} from "primeng/paginator";
@@ -27,7 +26,6 @@ import {GroupService} from "src/app/setup/group/group.service";
 
 import {UserGroup} from "./user-group.model";
 import {UserGroupService} from "./user-group.service";
-import {UserGroupUpdateComponent} from "./update/user-group-update.component";
 import {CreateComponent} from "./create/create.component";
 
 @Component({
@@ -38,7 +36,7 @@ export class UserGroupComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
   userGroups?: UserGroup[] = [];
-  user: User | undefined;
+  group: Group | undefined;
   groups?: Group[] = [];
 
   cols = []; //Table display columns
@@ -51,8 +49,6 @@ export class UserGroupComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-
-  //Mandatory filter
 
   constructor(
     protected userGroupService: UserGroupService,
@@ -67,21 +63,13 @@ export class UserGroupComponent implements OnInit {
     protected helper: HelperService,
     protected toastService: ToastService
   ) {
-    this.user = this.dialogConfig.data.user;
+    this.group = this.dialogConfig.data.group;
   }
 
   ngOnInit(): void {
-    this.groupService
-      .query({columns: ["id", "name"]})
-      .subscribe((resp: CustomResponse<Group[]>) => (this.groups = resp.data));
     this.handleNavigation();
   }
 
-  /**
-   * Load data from api
-   * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
-   */
   loadPage(page?: number, dontNavigate?: boolean): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
@@ -90,7 +78,7 @@ export class UserGroupComponent implements OnInit {
       .query({
         page: pageToLoad,
         per_page: this.perPage,
-        user_id: this.user?.id,
+        group_id: this.group?.id,
         sort: this.sort(),
         ...this.helper.buildFilter(this.search),
       })
@@ -106,10 +94,6 @@ export class UserGroupComponent implements OnInit {
       );
   }
 
-  /**
-   * Called initialy/onInit to
-   * Restore page, sort option from url query params if exist and load page
-   */
   protected handleNavigation(): void {
     const page = this.page;
     const perPage = this.perPage;
@@ -118,9 +102,6 @@ export class UserGroupComponent implements OnInit {
     this.loadPage(this.page, true);
   }
 
-  /**
-   * search items by @var search params
-   */
   onSearch(): void {
     if (this.page !== 1) {
       this.paginator.changePage(0);
@@ -129,9 +110,6 @@ export class UserGroupComponent implements OnInit {
     }
   }
 
-  /**
-   * Clear search params
-   */
   clearSearch(): void {
     this.search = {};
     if (this.page !== 1) {
@@ -141,12 +119,6 @@ export class UserGroupComponent implements OnInit {
     }
   }
 
-  /**
-   * Sorting changed
-   * predicate = column to sort by
-   * ascending = sort ascending else descending
-   * @param $event
-   */
   onSortChange($event: LazyLoadEvent): void {
     if ($event.sortField) {
       this.predicate = $event.sortField!;
@@ -155,37 +127,25 @@ export class UserGroupComponent implements OnInit {
     }
   }
 
-  /**
-   * When page changed
-   * @param event page event
-   */
   pageChanged(event: any): void {
     this.page = event.page + 1;
     this.perPage = event.rows!;
     this.loadPage();
   }
 
-  /**
-   * Impletement sorting Set/Reurn the sorting option for data
-   * @returns dfefault ot id sorting
-   */
   protected sort(): string[] {
     const predicate = this.predicate ? this.predicate : "id";
     const direction = this.ascending ? "asc" : "desc";
     return [`${predicate}:${direction}`];
   }
 
-  /**
-   * Creating or updating UserGroup
-   * @param userGroup ; If undefined initize new model to create else edit existing model
-   */
   create(): void {
     const data = {
-      user: this.user
+      group: this.group
     }
     const ref = this.dialogService.open(CreateComponent, {
       data,
-      header: "Assign Group",
+      header: this.group?.name+' User Assignment Form',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -194,29 +154,9 @@ export class UserGroupComponent implements OnInit {
     });
   }
 
-  edit(userGroup?: UserGroup): void {
-    const data = {
-      user: this.user,
-      userGroup: userGroup
-    }
-    const ref = this.dialogService.open(UserGroupUpdateComponent, {
-      data,
-      header: "Update Group",
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
-  }
-
-  /**
-   * Delete UserGroup
-   * @param userGroup
-   */
   delete(userGroup: UserGroup): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this UserGroup?",
+      message: "Are you sure that you want to delete this User Group?",
       accept: () => {
         this.userGroupService.delete(userGroup.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -226,12 +166,6 @@ export class UserGroupComponent implements OnInit {
     });
   }
 
-  /**
-   * When successfully data loaded
-   * @param resp
-   * @param page
-   * @param navigate
-   */
   protected onSuccess(
     resp: CustomResponse<UserGroup[]> | null,
     page: number,
@@ -242,9 +176,6 @@ export class UserGroupComponent implements OnInit {
     this.userGroups = resp?.data ?? [];
   }
 
-  /**
-   * When error on loading data set data to empty and reset page to load
-   */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;

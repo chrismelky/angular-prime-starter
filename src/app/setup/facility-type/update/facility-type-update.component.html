@@ -9,7 +9,7 @@
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="name" type="text" pInputText formControlName="name" />
+          <input id="name" type="text" pInputText formControlName="name"/>
           <label for="name">Name </label>
         </span>
         <span
@@ -27,7 +27,7 @@
       </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="code" type="text" pInputText formControlName="code" />
+          <input id="code" type="text" pInputText formControlName="code"/>
           <label for="code">Code </label>
         </span>
         <span
@@ -39,7 +39,7 @@
           "
         >
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
-            >Code is required.</small
+          >Code is required.</small
           >
         </span>
       </div>
@@ -69,7 +69,7 @@
           <small
             class="p-error"
             *ngIf="editForm.get('admin_hierarchy_level_id')?.errors?.required"
-            >Admin Hierarchy Level is required.</small
+          >Admin Hierarchy Level is required.</small
           >
         </span>
       </div>
@@ -99,11 +99,43 @@
           <small
             class="p-error"
             *ngIf="editForm.get('lga_level')?.errors?.required"
-            >Lga Level is required.</small
+          >Lga Level is required.</small
           >
         </span>
       </div>
+
       <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="department"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="departments!"
+            (onChange)="loadSections($event)"
+            [formControl]="departmentControl"
+          ></p-dropdown>
+          <label for="department">Department</label>
+        </span>
+        <span
+          *ngIf="
+            departmentControl!.invalid &&
+            (departmentControl!.dirty ||
+              departmentControl!.touched)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="departmentControl?.errors?.required"
+          >Department is required.</small
+          >
+        </span>
+      </div>
+
+
+      <div class="p-field" *ngIf="departmentControl.value" fxFlex>
         <span class="p-float-label">
           <p-multiSelect
             id="sections"
@@ -128,7 +160,7 @@
           <small
             class="p-error"
             *ngIf="editForm.get('sections')?.errors?.required"
-            >Section is required.</small
+          >Section is required.</small
           >
         </span>
       </div>

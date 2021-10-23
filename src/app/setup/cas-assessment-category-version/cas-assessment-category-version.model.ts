@@ -7,8 +7,8 @@ export class CasAssessmentCategoryVersion {
     public reference_document_id?: number,
     public cas_assessment_state_id?: number,
     public cas_assessment_category_id?: number,
-    public cas_assessment_category?: CasAssessmentCategory,
     public highest_score?: number,
+    public cas_category_name?: string,
     public minimum_passmark?: number
   ) {}
 }

@@ -16,9 +16,6 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <app-admin-hierarchy-tree
-            (onSelect)="onAdminHierarchySelection($event)"
-          ></app-admin-hierarchy-tree>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -35,6 +32,7 @@
               <label for="facility_type_id">Facility Type </label>
             </span>
           </div>
+          <app-admin-hierarchy-tree (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
         </div>
         <div
           fxLayout="row wrap"
@@ -146,21 +144,6 @@
                   <label for="physical_state">Physical State </label>
                 </span>
               </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="star_rating"
-                    optionValue="value"
-                    optionLabel="display"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    class="p-inputtext-sm"
-                    [options]="starRatings!"
-                    [(ngModel)]="search['star_rating']"
-                  ></p-dropdown>
-                  <label for="star_rating">Star Rating </label>
-                </span>
-              </div>
             </div>
             <div
               fxLayout="row"
@@ -206,7 +189,8 @@
           <button
             pButton
             icon="pi pi-plus"
-            class="p-button-raised"
+            class="p-button-raised p-button-text"
+            [disabled]="!admin_hierarchy_id"
             (click)="createOrUpdate()"
             label="Add Facility"
           ></button>
@@ -215,7 +199,6 @@
             pButton
             icon="pi pi-upload"
             class="p-button-raised"
-            [disabled]=""
             (click)="upload()"
             label="Upload Facilities"
           ></button>

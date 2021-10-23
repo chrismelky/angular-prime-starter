@@ -45,7 +45,7 @@ export class PlanningMatrixComponent implements OnInit {
       sort: true,
     },
     {
-      field: "reference_document_id",
+      field: "national_reference_id",
       header: "Reference Document ",
       sort: true,
     },

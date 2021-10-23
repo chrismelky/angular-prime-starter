@@ -34,6 +34,7 @@ import {SetCommentComponent} from "../assessment-criteria/update/set-comment.com
 import {InputUpdateComponent} from "./update/input-update.component";
 import {User} from "../../setup/user/user.model";
 import {UserService} from "../../setup/user/user.service";
+import {ActivityInput} from "../../budgeting/activity-input/activity-input.model";
 
 @Component({
   selector: 'app-scrutinization',
@@ -43,11 +44,12 @@ export class ScrutinizationComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
   scrutinizations?: Scrutinization[] = [];
+  inputs?: ActivityInput[] = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
   sections?: Section[] = [];
   departments?: Section[] = [];
-  activities: Activity[] | undefined = [];
+  activities: Activity[] = [];
 
   columns = []; //Table display columns
 
@@ -321,7 +323,14 @@ export class ScrutinizationComponent implements OnInit {
   }
 
   loadInputs(activityId: number){
-      console.log(activityId)
+      this.scrutinizationService.queryInput({
+        page: this.page,
+        perPage: this.per_page,
+        activity_id: activityId,
+        financial_year_id: this.currentUser.admin_hierarchy?.current_financial_year_id
+      }).subscribe((resp: CustomResponse<any>) => (
+        this.inputs = resp.data.inputs
+      ));
   }
 
   setActivityComments(activity: any) {
@@ -345,7 +354,7 @@ export class ScrutinizationComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        // this.loadPage(this.page);
+        this.loadInputs(result);
       }
     });
   }

@@ -43,16 +43,6 @@ export class DecisionLevelComponent implements OnInit {
       field: 'name',
       header: 'Name',
       sort: true,
-    },
-    {
-      field: 'admin_hierarchy_position_id',
-      header: 'Admin Hierarchy Position ',
-      sort: true,
-    },
-    {
-      field: 'section_level_id',
-      header: 'Section Level ',
-      sort: false,
     }
   ]; //Table display columns
 
@@ -278,6 +268,6 @@ export class DecisionLevelComponent implements OnInit {
   }
 
   nextDecisionLevels(data: any): DecisionLevel[] {
-    return JSON.parse(data) as DecisionLevel[];
+    return (JSON.parse(data) as DecisionLevel[]);
   }
 }

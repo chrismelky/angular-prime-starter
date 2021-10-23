@@ -17,22 +17,6 @@
           fxLayoutAlign="start center"
         >
           <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
-                id="ceiling_name"
-                type="text"
-                class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['ceiling_name']"
-              />
-              <label for="ceiling_name">Ceiling Name </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['ceiling_name'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
             <span class="p-float-label">
               <p-dropdown
                 placeholder="Select BudgetClass"

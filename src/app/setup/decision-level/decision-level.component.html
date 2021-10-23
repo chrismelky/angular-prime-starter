@@ -122,6 +122,12 @@
           <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
             {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
+          <th [pSortableColumn]="'admin_hierarchy_level_position'">
+            Administration Hierarchy Level <p-sortIcon [field]="'admin_hierarchy_level_position'"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'section_level_position'">
+            Planning Unit Level <p-sortIcon [field]="'section_level_position'"></p-sortIcon>
+          </th>
           <th [pSortableColumn]="'next_decision_level_ids'">
             Next Decision Levels <p-sortIcon [field]="'next_decision_level_ids'"></p-sortIcon>
           </th>
@@ -134,10 +140,15 @@
             {{ rowData[col.field] }}
           </td>
           <td>
-            <mat-chip-list aria-label="Next Decision Level">
-              <mat-chip *ngFor="let row of nextDecisionLevels(rowData.next_decision_level_ids|json)">{{row.name}}</mat-chip>
-            </mat-chip-list>
-            <!--{{nextDecisionLevels(rowData.next_decision_level_ids|json)}}-->
+            {{ rowData.admin_hierarchy_level?.name }}
+          </td>
+          <td>
+            {{ rowData.section_level?.name }}
+          </td>
+          <td>
+            <ul>
+              <li *ngFor="let x of nextDecisionLevels(rowData.next_decision_level_ids)">{{x.name}}</li>
+            </ul>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

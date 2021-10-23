@@ -51,6 +51,7 @@
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <p-inputNumber
+            (onInput)="onPositionChange($event)"
             id="position"
             formControlName="position"
           ></p-inputNumber>
@@ -98,31 +99,63 @@
 
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
-            id="cost_centre_position"
-            [autoDisplayFirst]="false"
+          <p-multiSelect
+            id="cost_centres"
             [filter]="true"
-            optionValue="position"
+            dataKey="id"
             optionLabel="name"
             class="p-inputtext-sm"
             appendTo="body"
-            [options]="sectionLevels!"
-            formControlName="cost_centre_position"
-          ></p-dropdown>
-          <label for="cost_centre_position">Cost Centre Level</label>
+            [options]="sections!"
+            formControlName="cost_centres"
+          ></p-multiSelect>
+          <label for="cost_centres">Cost Centres</label>
         </span>
         <span
           *ngIf="
-            editForm.get('cost_centre_position')!.invalid &&
-            (editForm.get('cost_centre_position')!.dirty ||
-              editForm.get('cost_centre_position')!.touched ||
+            editForm.get('cost_centres')!.invalid &&
+            (editForm.get('cost_centres')!.dirty ||
+              editForm.get('cost_centres')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('cost_centre_position')?.errors?.required"
-            >Cost Centre Level is required.</small
+            *ngIf="editForm.get('cost_centres')?.errors?.required"
+            >Cost Centres is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="default_decision_level_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="decisionLevels!"
+            formControlName="default_decision_level_id"
+          ></p-dropdown>
+          <label for="default_decision_level_id"
+            >Default Budget Decision Level
+          </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('default_decision_level_id')!.invalid &&
+            (editForm.get('default_decision_level_id')!.dirty ||
+              editForm.get('default_decision_level_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('default_decision_level_id')?.errors?.required"
+            >Default decision level is required</small
           >
         </span>
       </div>

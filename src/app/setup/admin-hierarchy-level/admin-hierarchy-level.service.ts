@@ -5,20 +5,19 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import {createRequestOption} from "../../utils/request-util";
-import {CustomResponse} from "../../utils/custom-response";
-import {AdminHierarchyLevel} from "./admin-hierarchy-level.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { AdminHierarchyLevel } from './admin-hierarchy-level.model';
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: 'root' })
 export class AdminHierarchyLevelService {
-  public resourceUrl = "api/admin_hierarchy_levels";
+  public resourceUrl = 'api/admin_hierarchy_levels';
 
-  constructor(protected http: HttpClient) {
-  }
+  constructor(protected http: HttpClient) {}
 
   create(
     adminHierarchyLevel: AdminHierarchyLevel
@@ -48,12 +47,24 @@ export class AdminHierarchyLevelService {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<AdminHierarchyLevel[]>>(
       this.resourceUrl,
-      {params: options}
+      { params: options }
     );
   }
 
-  lowerLevels(currentPosition: number | undefined): Observable<CustomResponse<AdminHierarchyLevel[]>> {
-    return this.http.get<CustomResponse<AdminHierarchyLevel[]>>(`${this.resourceUrl}/lowerLevels/${currentPosition}`,);
+  lowerLevels(
+    currentPosition: number | undefined
+  ): Observable<CustomResponse<AdminHierarchyLevel[]>> {
+    return this.http.get<CustomResponse<AdminHierarchyLevel[]>>(
+      `${this.resourceUrl}/lowerLevels/${currentPosition}`
+    );
+  }
+
+  lowerLevelsCanBudget(
+    currentPosition: number | undefined
+  ): Observable<CustomResponse<AdminHierarchyLevel[]>> {
+    return this.http.get<CustomResponse<AdminHierarchyLevel[]>>(
+      `${this.resourceUrl}/lower_levels_can_budget/${currentPosition}`
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

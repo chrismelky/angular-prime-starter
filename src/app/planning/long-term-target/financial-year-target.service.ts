@@ -43,13 +43,14 @@ export class FinancialYearTargetService {
     );
   }
 
-  findOneBy(
-    financialYearTargetId: number,
+  findByTargetAndAdminArea(
+    longTermTargetId: number,
     financialYearId: number,
+    adminHierarchyId: number,
     sectionId: number
   ): Observable<CustomResponse<FinancialYearTarget>> {
     return this.http.get<CustomResponse<FinancialYearTarget>>(
-      `${this.resourceUrl}/find_one_by/${financialYearTargetId}/${financialYearId}/${sectionId}`
+      `${this.resourceUrl}/by_target_and_admin_area/${longTermTargetId}/${financialYearId}/${adminHierarchyId}/${sectionId}`
     );
   }
 

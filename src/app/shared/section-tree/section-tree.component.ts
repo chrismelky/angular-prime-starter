@@ -1,5 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { TreeNode } from 'primeng/api';
+import { OverlayPanel } from 'primeng/overlaypanel';
 import { Section } from 'src/app/setup/section/section.model';
 import { SectionService } from 'src/app/setup/section/section.service';
 import { User } from 'src/app/setup/user/user.model';
@@ -10,7 +19,7 @@ import { UserService } from 'src/app/setup/user/user.service';
   templateUrl: './section-tree.component.html',
   styleUrls: ['./section-tree.component.scss'],
 })
-export class SectionTreeComponent implements OnInit {
+export class SectionTreeComponent implements OnInit, AfterViewInit {
   currentUser!: User;
   treeLoading: boolean = false;
   nodes: TreeNode[] = [];
@@ -18,6 +27,7 @@ export class SectionTreeComponent implements OnInit {
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  @ViewChild('op') panel!: OverlayPanel;
 
   constructor(
     protected userService: UserService,
@@ -38,6 +48,9 @@ export class SectionTreeComponent implements OnInit {
         ]
       : [];
     this.selectedValue = this.nodes[0];
+  }
+
+  ngAfterViewInit(): void {
     this.onSelectionChange();
   }
 
@@ -77,5 +90,6 @@ export class SectionTreeComponent implements OnInit {
             return this.returnType === 'object' ? d : d.id;
           });
     this.onSelect.next(selection);
+    this.panel.hide();
   }
 }

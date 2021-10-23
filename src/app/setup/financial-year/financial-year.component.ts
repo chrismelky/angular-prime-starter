@@ -191,6 +191,7 @@ export class FinancialYearComponent implements OnInit {
     const ref = this.dialogService.open(FinancialYearOpenComponent, {
       data: financialYear,
       header: 'Open FinancialYear',
+      width: '900px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

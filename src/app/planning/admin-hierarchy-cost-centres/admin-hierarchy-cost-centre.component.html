@@ -5,6 +5,18 @@
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
         <i class="pi pi-filter"></i>
         <span class="card-header-text">Filter</span>
+        <p-divider fxFlex class="title" align="center">
+          <span fxLayout="column" fxLayoutAlign="centre center">
+            <small>Budget Type</small>
+            <strong>{{ budget_type }}</strong>
+          </span>
+        </p-divider>
+        <p-divider fxFlex class="title" align="center">
+          <span fxLayout="column" fxLayoutAlign="centre center">
+            <small>Financial year</small>
+            <strong>2021/22</strong>
+          </span>
+        </p-divider>
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
@@ -17,9 +29,17 @@
         >
           <app-admin-hierarchy-tree
             fxFlex
+            [stateKey]="'admin_cost_centre'"
             [returnType]="'object'"
             (onSelect)="onAdminHierarchySelection($event)"
           ></app-admin-hierarchy-tree>
+
+          <app-section-tree
+            (onSelect)="onSectionSelection($event)"
+            fxFlex
+            [returnType]="'object'"
+          >
+          </app-section-tree>
         </div>
         <div
           fxLayout="row wrap"
@@ -77,58 +97,73 @@
   <!-- Table Panel -->
   <div
     fxLayout="row"
-    fxLayoutGap="20px"
+    fxLayoutGap="10px"
     fxLayoutAlign="start wrap"
     style="width: 100%"
   >
-    <p-card *ngFor="let c of adminHierarchyCostCentres!" fxFlex="33%">
-      <div fxLayout="column" fxLayoutGap="4px" fxFlex>
-        <div
-          fxLayout="row"
-          fxFlex
-          fxLayoutGap="4px"
-          fxLayoutAlign="start start"
-        >
+    <p-card
+      *ngFor="let c of adminHierarchyCostCentres!"
+      fxFlex.lt-md="100%"
+      fxFlex="50%"
+    >
+      <div
+        style="padding: 0.75rem"
+        fxLayout="row"
+        fxLayoutGap="10px"
+        fxLayoutAlign="space-between start"
+        fxFlex
+      >
+        <!-- Name -->
+        <div fxLayout="row" fxFlex fxLayoutGap="4px" fxLayoutAlign="start fill">
           <div
-            fxFlex
             fxLayout="column"
-            fxLayoutGap="1px"
-            fxLayoutAlign="start start"
+            fxLayoutGap="10px"
+            fxLayoutAlign="space-between start"
           >
-            <span>Cost Centre: {{ c.section?.name }}</span>
-            <span>Budget Type:</span>
-            <span
-              >Decision Level:
-              <p-tag value="{{ c.current_budget_decision_level?.name }}"></p-tag
-            ></span>
-            <span>Status:</span>
-          </div>
-          <div>
-            <i class="pi pi-lock"></i>
+            <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start">
+              <p-tag [value]="c.section?.code!" severity="success"></p-tag>
+              <p-tag severity="info" value="{{ c.section?.name }}"></p-tag>
+            </div>
+            <div fxLayout="column" fxLayoutGap="1px">
+              <span>Budget Type:</span>
+              <span>Status</span>
+              <span
+                >Decision Level:
+                {{ c.current_budget_decision_level?.name }}</span
+              >
+            </div>
           </div>
         </div>
-        <span fxFlex></span>
+
         <div
-          fxLayout="row"
-          fxLayoutAlign="space-between center"
+          fxLayout="column"
           fxLayoutGap="10px"
+          fxFlex
+          fxLayoutAlign="space-between end"
         >
-          <button
-            fxFlex
-            pButton
-            class="p-button p-button-success p-button-outlined p-button-sm"
-            label="Plan"
-            icon="pi pi-list"
-            [routerLink]="['/activity', budget_type, c.id]"
-          ></button>
-          <button
-            fxFlex
-            pButton
-            class="p-button p-button-info p-button-outlined p-button-sm"
-            label="Budget"
-            icon="pi pi-money-bill"
-            [routerLink]="['/activity-input', budget_type, c.id]"
-          ></button>
+          <span fxFlex></span>
+          <div
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            fxLayoutGap="10px"
+          >
+            <button
+              fxFlex
+              pButton
+              class="p-button p-button-success p-button-text p-button-sm"
+              label="Plan"
+              icon="pi pi-list"
+              [routerLink]="['/activity', budget_type, c.id]"
+            ></button>
+            <button
+              fxFlex
+              pButton
+              class="p-button p-button-info p-button-text p-button-sm"
+              label="Budget"
+              icon="pi pi-money-bill"
+              [routerLink]="['/activity-input', budget_type, c.id]"
+            ></button>
+          </div>
         </div>
       </div>
     </p-card>

@@ -71,13 +71,22 @@
               fxLayoutAlign="start center"
             >
               <!-- Objective filter -->
-              <app-objective-tree
-                [selectionMode]="'single'"
-                [returnType]="'object'"
-                (onSelect)="onObjectiveSeletion($event)"
-                (onLoadingChange)="onObjectiveLoadingChange($event)"
-                fxFlex
-              ></app-objective-tree>
+              <!-- Target -->
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="objective_id"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="objectiveWithTargets!"
+                    (onChange)="filterChanged()"
+                    [(ngModel)]="objective"
+                  ></p-dropdown>
+                  <label for="objective_id">Objective </label>
+                </span>
+              </div>
               <!-- Target -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
@@ -87,7 +96,7 @@
                     [autoDisplayFirst]="false"
                     [filter]="true"
                     class="p-inputtext-sm"
-                    [options]="financialYearTargets!"
+                    [options]="objective?.values"
                     (onChange)="filterChanged()"
                     [(ngModel)]="financialYearTarget"
                   ></p-dropdown>
@@ -120,7 +129,7 @@
                     id="facility_id"
                     optionLabel="name"
                     optionValue="id"
-                    [showClear]="true"
+                    [showClear]="false"
                     [autoDisplayFirst]="false"
                     class="p-inputtext-sm"
                     [options]="facilities!"
@@ -189,7 +198,7 @@
                 !financialYear ||
                 !adminHierarchyCostCentre ||
                 !budget_type ||
-                !facilityType
+                !facility_id
               "
               (click)="createOrUpdate()"
               label="Add Activity"

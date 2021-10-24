@@ -31,18 +31,15 @@ import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hiera
 import { SectionService } from 'src/app/setup/section/section.service';
 import { FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
-import { ActivityTaskNature } from 'src/app/setup/activity-task-nature/activity-task-nature.model';
-import { ActivityTaskNatureService } from 'src/app/setup/activity-task-nature/activity-task-nature.service';
-import { Project } from 'src/app/setup/project/project.model';
-import { ProjectService } from 'src/app/setup/project/project.service';
 
 import { Activity } from './activity.model';
 import { ActivityService } from './activity.service';
 import { ActivityUpdateComponent } from './update/activity-update.component';
 import { FinancialYearTarget } from '../long-term-target/financial-year-target.model';
 import { FinancialYearTargetService } from '../long-term-target/financial-year-target.service';
-import { Objective } from 'src/app/setup/objective/objective.model';
 import { AdminHierarchyCostCentre } from '../admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
+import { ProjectTypeService } from 'src/app/setup/project-type/project-type.service';
+import { ProjectType } from 'src/app/setup/project-type/project-type.model';
 
 @Component({
   selector: 'app-activity',
@@ -67,10 +64,8 @@ export class ActivityComponent implements OnInit {
   facilities?: FacilityView[] = [];
   facilityGroupByType?: any[] = [];
   facilityType?: string;
-  activityTaskNatures?: ActivityTaskNature[] = [];
-  projects?: Project[] = [];
   periodTypes?: PlanrepEnum[] = [];
-  objective?: Objective;
+  projectTypes?: ProjectType[] = [];
 
   cols = [
     {
@@ -93,6 +88,8 @@ export class ActivityComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  objectiveWithTargets: any;
+  objective: any;
 
   //Mandatory filter
   financialYearTarget?: FinancialYearTarget; /** Selected Target object to diaplay target info wheen creating activity */
@@ -108,15 +105,14 @@ export class ActivityComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService,
     protected sectionService: SectionService,
     protected facilityService: FacilityService,
-    protected activityTaskNatureService: ActivityTaskNatureService,
-    protected projectService: ProjectService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected enumService: EnumService
+    protected enumService: EnumService,
+    protected projectTypeService: ProjectTypeService
   ) {}
 
   ngOnInit(): void {
@@ -126,18 +122,9 @@ export class ActivityComponent implements OnInit {
         (resp: CustomResponse<ActivityType[]>) =>
           (this.activityTypes = resp.data)
       );
-
-    this.activityTaskNatureService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<ActivityTaskNature[]>) =>
-          (this.activityTaskNatures = resp.data)
-      );
-    this.projectService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
-      );
+    this.projectTypeService.query().subscribe((resp) => {
+      this.projectTypes = resp.data;
+    });
     this.periodTypes = this.enumService.get('periodTypes');
     this.handleNavigation();
   }
@@ -152,16 +139,15 @@ export class ActivityComponent implements OnInit {
       !this.financialYearTarget ||
       !this.financialYear ||
       !this.adminHierarchyCostCentre ||
-      !this.budget_type
+      !this.budget_type ||
+      !this.facility_id
     ) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    const facilityType = this.facility_id
-      ? { facility_id: this.facility_id }
-      : {};
+
     this.activityService
       .query({
         page: pageToLoad,
@@ -172,7 +158,7 @@ export class ActivityComponent implements OnInit {
         admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
         section_id: this.adminHierarchyCostCentre.section_id,
         budget_type: this.budget_type,
-        ...facilityType,
+        facility_id: this.facility_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -212,39 +198,36 @@ export class ActivityComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadTargets();
 
       this.loadFacilities();
     });
   }
 
   /**
-   * when select objective
-   * @param selected objective object
-   */
-  onObjectiveSeletion(objective: Objective): void {
-    this.objective = objective;
-    this.loadTargets(this.objective?.id!);
-  }
-
-  onObjectiveLoadingChange(isLoading: boolean): void {
-    this.objectiveIsLoading = isLoading;
-  }
-
-  /**
    * load Targets by objectives and section
    */
-  loadTargets(objectiveId: number): void {
+  loadTargets(): void {
     this.targetIsLoading = true;
     this.financialYearTargetService
-      .allByObjectiveAndCostCentre(
+      .allByCostCentre(
         this.financialYear?.id!,
         this.adminHierarchyCostCentre?.admin_hierarchy_id!,
-        objectiveId,
         this.adminHierarchyCostCentre?.section_id!
       )
       .subscribe(
         (resp: CustomResponse<FinancialYearTarget[]>) => {
-          this.financialYearTargets = resp.data;
+          this.objectiveWithTargets = this.helper.groupBy(
+            resp.data!.map((t) => {
+              return {
+                ...t,
+                description: `[ ${t.code} ] ${t.description}`,
+                objective: `[ ${t.objective_code} ] ${t.objective}`,
+              };
+            }),
+            'objective'
+          );
+          console.log(this.objectiveWithTargets);
           this.targetIsLoading = false;
         },
         (error) => {
@@ -362,6 +345,7 @@ export class ActivityComponent implements OnInit {
       financial_year_id: this.financialYear?.id,
       admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
       section_id: this.adminHierarchyCostCentre?.section_id,
+      facility_id: this.facility_id,
       budget_type: this.budget_type,
       period_one: false,
       period_two: false,
@@ -372,8 +356,10 @@ export class ActivityComponent implements OnInit {
       data: {
         activity: data,
         facilities: this.facilities,
-        objectiveId: this.objective?.id,
+        objectiveId: this.financialYearTarget?.objective_id,
         adminHierarchyCostCentre: this.adminHierarchyCostCentre,
+        activityTypes: this.activityTypes,
+        projectTypes: this.projectTypes,
       },
       header: 'Create/Update Activity',
       width: '900px',

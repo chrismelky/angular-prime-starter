@@ -9,7 +9,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
 import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
@@ -47,6 +51,10 @@ import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
 import { Intervention } from 'src/app/setup/intervention/intervention.model';
 import { SectorProblem } from '../../sector-problem/sector-problem.model';
 import { ConfirmationService } from 'primeng/api';
+import { ProjectType } from 'src/app/setup/project-type/project-type.model';
+import { ExpenditureCategory } from 'src/app/setup/expenditure-category/expenditure-category.model';
+import { ExpenditureCategoryService } from 'src/app/setup/expenditure-category/expenditure-category.service';
+import { ResponsiblePersonUpdateComponent } from '../../responsible-person/update/responsible-person-update.component';
 
 @Component({
   selector: 'app-activity-update',
@@ -62,6 +70,7 @@ export class ActivityUpdateComponent implements OnInit {
   budgetClassIsLoading = false;
   referenceIsLoading = false;
   responsibleIsLoading = false;
+  categoryIsLoading = false;
 
   formError = false;
   errors = [];
@@ -76,7 +85,6 @@ export class ActivityUpdateComponent implements OnInit {
   allFundSources?: FundSource[] = [];
   activityTaskNatures?: ActivityTaskNature[] = [];
   projects?: Project[] = [];
-  projectOutputs?: ProjectOutput[] = [];
   interventions?: Intervention[] = [];
   sectorProblems?: SectorProblem[] = [];
   // genericActivities?: GenericActivity[] = [];
@@ -91,6 +99,10 @@ export class ActivityUpdateComponent implements OnInit {
   referenceLoading = false;
   referenceTypes?: ReferenceType[] = [];
   priorityAreas?: PriorityArea[] = [];
+  projectTypes: ProjectType[] = [];
+  expenditureCategories?: ExpenditureCategory[] = [];
+  projectOutputs?: ProjectOutput[] = [];
+  projectTypeRequired = false;
 
   /**
    * Declare form
@@ -99,7 +111,8 @@ export class ActivityUpdateComponent implements OnInit {
     id: [null, []],
     description: [null, [Validators.required]],
     code: [null, []],
-    indicator: [null, []],
+    indicator: [null, [Validators.required]],
+    indicator_value: [null, [Validators.required]],
     long_term_target_id: [null, [Validators.required]],
     financial_year_target_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
@@ -108,10 +121,14 @@ export class ActivityUpdateComponent implements OnInit {
     activity_type_id: [null, [Validators.required]],
     admin_hierarchy_id: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
+    facility_id: [null, [Validators.required]],
     activity_task_nature_id: [null, [Validators.required]],
     budget_type: [null, [Validators.required]],
     project_id: [null, [Validators.required]],
     project_output_id: [null, []],
+    project_type_id: [null, []],
+    expenditure_category_id: [null, []],
+    project_output_value: [null, []],
     generic_activity_id: [null, []],
     responsible_person_id: [null, [Validators.required]],
     period_type: [null, []],
@@ -121,10 +138,6 @@ export class ActivityUpdateComponent implements OnInit {
     period_four: [null, []],
     is_active: [null, []],
     fund_sources: [[], [Validators.required]],
-  });
-
-  facilityForm = this.fb.group({
-    activity_facilities: this.fb.array([], [Validators.required]),
   });
 
   referenceForm = this.fb.group({
@@ -144,7 +157,6 @@ export class ActivityUpdateComponent implements OnInit {
     protected facilityService: FacilityService,
     protected activityTaskNatureService: ActivityTaskNatureService,
     protected projectService: ProjectService,
-    protected projectOutputService: ProjectOutputService,
     protected fundSourceService: FundSourceService,
     protected priorityAreaService: PriorityAreaService,
     // protected genericActivityService: GenericActivityService,
@@ -155,17 +167,12 @@ export class ActivityUpdateComponent implements OnInit {
     private toastService: ToastService,
     protected enumService: EnumService,
     protected referenceTypeService: ReferenceTypeService,
-    private confirmationService: ConfirmationService
+    protected projectOutputService: ProjectOutputService,
+    protected expenditureCategoryService: ExpenditureCategoryService,
+    protected dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
-    /** fetch activity types */
-    this.activityTypeService
-      .query({
-        column: ['id', 'name', 'code'],
-      })
-      .subscribe((resp) => (this.activityTypes = resp.data));
-
     /** get perio type from enums */
     this.periodTypes = this.enumService.get('periodTypes');
 
@@ -182,13 +189,21 @@ export class ActivityUpdateComponent implements OnInit {
 
     this.facilities = [...this.allFacilities];
 
+    this.activityTypes = [...dialogData.activityTypes];
+
+    this.projectTypes = [...dialogData.projectTypes];
+
     /** fetch activity task nature by selected activity_type_id if edit mode */
     if (activity.id) {
       this.loadFundSources(activity.budget_class_id!, false);
       this.loadActivityTaskNature(activity.activity_type_id!);
       this.loadProjectOutput(activity.project_id!);
       this.loadActivityFundSource(activity.financial_year_id!, activity.id);
-      this.loadActivityFacilities(activity.financial_year_id!, activity.id);
+      this.updateProjectTypeValidation(activity.project_id!);
+      activity.project_type_id &&
+        this.loadExpenditureCategory(activity.project_type_id);
+      activity.expenditure_category_id &&
+        this.loadProjectOutput(activity.expenditure_category_id);
     }
 
     /** fetch budget class tree ie parent array with children array**/
@@ -196,9 +211,6 @@ export class ActivityUpdateComponent implements OnInit {
 
     /** Load responsible person by admin hiearch and sector */
     this.loadResponsiblePeople();
-
-    /** Load project by sector */
-    this.loadProjects();
 
     //Initialize form with data from dialog
     this.updateForm(activity);
@@ -244,6 +256,7 @@ export class ActivityUpdateComponent implements OnInit {
       },
       (error) => (this.fundSourceIsLoading = false)
     );
+    this.loadProjects(budgetClassId);
   }
 
   /**
@@ -364,28 +377,6 @@ export class ActivityUpdateComponent implements OnInit {
       });
   }
 
-  /** Load activity Fund sources if activity id exist */
-  loadActivityFacilities(financialYearId: number, activityId: number): void {
-    this.activityService
-      .activityFacilities(financialYearId, activityId)
-      .subscribe((resp) => {
-        resp.data?.forEach((af) => {
-          const facilityName = this.facilities?.find(
-            (f) => f.id === af.facility_id
-          )?.name;
-          const fg = this.fb.group({
-            id: af.id,
-            facility_id: [af.facility_id],
-            indicator_value: [af.indicator_value, [Validators.required]],
-            project_output_value: [af.project_output_value, []],
-            facility_name: [facilityName],
-          });
-          this.facilityControls.insert(0, fg);
-        });
-        this.filterFacilities();
-      });
-  }
-
   /**
    * Load intevention and sector proble form priority area
    * note. Interventions and sector problem are children of priority area object which are eager loaded with priority area
@@ -398,72 +389,6 @@ export class ActivityUpdateComponent implements OnInit {
     );
     this.interventions = priorityArea?.interventions;
     this.sectorProblems = priorityArea?.sector_problems;
-  }
-
-  get facilityControls(): FormArray {
-    return this.facilityForm.get('activity_facilities') as FormArray;
-  }
-
-  /** Add facility to editForm */
-  addFacility(
-    facilitiesToAdd: any,
-    indicatorValueToAdd?: any,
-    projectOutputValueToAdd?: any
-  ): void {
-    const addedIds: number[] = [];
-    facilitiesToAdd.value.forEach((f: Facility) => {
-      const fg = this.fb.group({
-        facility_id: [f.id],
-        indicator_value: [indicatorValueToAdd?.value, [Validators.required]],
-        project_output_value: [projectOutputValueToAdd?.value, []],
-        facility_name: [f.name],
-      });
-      this.facilityControls.insert(0, fg);
-      addedIds.push(f.id!);
-    });
-    this.filterFacilities();
-    facilitiesToAdd.value = [];
-    indicatorValueToAdd.value = '';
-    projectOutputValueToAdd.value = '';
-  }
-
-  confirmDeleteActivity(event: any, id?: number, ri?: number) {
-    this.confirmationService.confirm({
-      target: event.target,
-      key: 'deletePopup',
-      message: 'Are you sure that you want to delete this facility',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        if (id) {
-          this.activityService.deleteActivityFacility(id).subscribe(
-            (resp) => {
-              this.facilityControls.removeAt(ri!);
-              this.filterFacilities();
-            },
-            (error) => {}
-          );
-        } else {
-          this.facilityControls.removeAt(ri!);
-          this.filterFacilities();
-        }
-      },
-      reject: () => {
-        //reject action
-      },
-    });
-  }
-
-  /**
-   * Filter selected facilities (facilityControls value) from all facilities
-   * and assign to facilities selection list
-   */
-  private filterFacilities(): void {
-    const selectedFacilityIds: number[] = this.facilityControls.value.map(
-      (f: any) => f.facility_id
-    );
-    this.facilities = this.allFacilities?.filter(
-      (f0) => !selectedFacilityIds.includes(f0.id!)
-    );
   }
 
   /**
@@ -486,12 +411,13 @@ export class ActivityUpdateComponent implements OnInit {
   }
 
   /** Load projects */
-  loadProjects(): void {
+  loadProjects(budgetClassId: number): void {
     this.projectIsLoading = false;
     this.projectService
-      .query({
-        columns: ['id', 'name', 'code'],
-      })
+      .byBudgetClassAndSection(
+        budgetClassId,
+        this.adminHierarchyCostCentre?.section_id!
+      )
       .subscribe(
         (resp) => {
           this.projects = resp.data;
@@ -503,20 +429,70 @@ export class ActivityUpdateComponent implements OnInit {
       );
   }
 
+  loadExpenditureCategory(projectTypeId: number): void {
+    this.categoryIsLoading = true;
+    this.expenditureCategoryService
+      .query({
+        project_type_id: projectTypeId,
+      })
+      .subscribe(
+        (resp) => {
+          this.expenditureCategories = resp.data;
+          this.categoryIsLoading = false;
+        },
+        (error) => {
+          this.categoryIsLoading = false;
+        }
+      );
+  }
+
   /** Load project output by project*/
-  loadProjectOutput(projectId: number): void {
-    if (!projectId) {
-      return;
-    }
+  loadProjectOutput(expenditureCategoryId: number): void {
     this.projectOutputIsLoading = true;
     this.projectOutputService
       .query({
-        project_id: projectId,
+        expenditure_category_id: expenditureCategoryId,
+        sector_id: this.adminHierarchyCostCentre?.section?.sector_id,
       })
       .subscribe((resp) => {
         this.projectOutputs = resp.data;
         this.projectOutputIsLoading = false;
       });
+  }
+
+  updateProjectTypeValidation(projectId: number): void {
+    const project = this.projects?.find((p) => p.id === projectId);
+    if (project?.code === '0000') {
+      this.projectTypeRequired = false;
+      this.generalForm.patchValue({
+        expenditure_category_id: null,
+        project_type_id: null,
+        project_output_id: null,
+        project_output_value: null,
+      });
+      this.generalForm.get('expenditure_category_id')?.clearValidators();
+      this.generalForm.get('project_type_id')?.clearValidators();
+      this.generalForm.get('project_output_id')?.clearValidators();
+      this.generalForm.get('project_output_value')?.clearValidators();
+    } else {
+      this.projectTypeRequired = true;
+      this.generalForm
+        .get('expenditure_category_id')
+        ?.setValidators([Validators.required]);
+      this.generalForm
+        .get('project_type_id')
+        ?.setValidators([Validators.required]);
+      this.generalForm
+        .get('project_output_id')
+        ?.setValidators([Validators.required]);
+      this.generalForm
+        .get('project_output_value')
+        ?.setValidators([Validators.required]);
+    }
+    this.generalForm.get('expenditure_category_id')?.updateValueAndValidity();
+    this.generalForm.get('project_type_id')?.updateValueAndValidity();
+    this.generalForm.get('project_output_id')?.updateValueAndValidity();
+    this.generalForm.get('project_output_value')?.updateValueAndValidity();
   }
 
   /**
@@ -539,19 +515,33 @@ export class ActivityUpdateComponent implements OnInit {
   }
 
   /**
+   * Creating or updating ResponsiblePerson
+   * @param responsiblePerson ; If undefined initize new model to create else edit existing model
+   */
+  createResponsiblePerson(): void {
+    const data: ResponsiblePerson = {
+      ...new ResponsiblePerson(),
+      admin_hierarchy_id: this.adminHierarchyCostCentre?.admin_hierarchy_id,
+      sector_id: this.adminHierarchyCostCentre?.section?.sector_id,
+      is_active: true,
+    };
+    const ref = this.dialogService.open(ResponsiblePersonUpdateComponent, {
+      data,
+      header: 'Create ResponsiblePerson',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadResponsiblePeople();
+      }
+    });
+  }
+
+  /**
    * When form is valid Create Activity or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
-    console.log(this.generalForm);
-    console.log(this.facilityForm);
-    console.log(this.referenceForm);
-
-    if (
-      this.generalForm.invalid ||
-      this.facilityForm.invalid ||
-      this.referenceForm.invalid
-    ) {
+    if (this.generalForm.invalid || this.referenceForm.invalid) {
       this.formError = true;
       return;
     }
@@ -606,9 +596,11 @@ export class ActivityUpdateComponent implements OnInit {
       description: activity.description,
       code: activity.code,
       indicator: activity.indicator,
+      indicator_value: activity.indicator_value,
       long_term_target_id: activity.long_term_target_id,
       financial_year_target_id: activity.financial_year_target_id,
       financial_year_id: activity.financial_year_id,
+      facility_id: activity.facility_id,
       budget_class_id: activity.budget_class_id,
       main_budget_class_id: activity.budget_class?.parent_id,
       activity_type_id: activity.activity_type_id,
@@ -617,7 +609,10 @@ export class ActivityUpdateComponent implements OnInit {
       activity_task_nature_id: activity.activity_task_nature_id,
       budget_type: activity.budget_type,
       project_id: activity.project_id,
+      expenditure_category_id: activity.expenditure_category_id,
+      project_type_id: activity.project_type_id,
       project_output_id: activity.project_output_id,
+      project_output_value: activity.project_output_value,
       generic_activity_id: activity.generic_activity_id,
       responsible_person_id: activity.responsible_person_id,
       period_type: activity.period_type,
@@ -646,6 +641,7 @@ export class ActivityUpdateComponent implements OnInit {
       description: this.generalForm.get(['description'])!.value,
       code: this.generalForm.get(['code'])!.value,
       indicator: this.generalForm.get(['indicator'])!.value,
+      indicator_value: this.generalForm.get(['indicator_value'])!.value,
       long_term_target_id: this.generalForm.get(['long_term_target_id'])!.value,
       financial_year_target_id: this.generalForm.get([
         'financial_year_target_id',
@@ -660,7 +656,14 @@ export class ActivityUpdateComponent implements OnInit {
       ])!.value,
       budget_type: this.generalForm.get(['budget_type'])!.value,
       project_id: this.generalForm.get(['project_id'])!.value,
+      project_type_id: this.generalForm.get(['project_type_id'])!.value,
+      expenditure_category_id: this.generalForm.get([
+        'expenditure_category_id',
+      ])!.value,
+      facility_id: this.generalForm.get(['facility_id'])!.value,
       project_output_id: this.generalForm.get(['project_output_id'])!.value,
+      project_output_value: this.generalForm.get(['project_output_value'])!
+        .value,
       intervention_id: this.referenceForm.get(['intervention_id'])!.value,
       priority_area_id: this.referenceForm.get(['priority_area_id'])!.value,
       sector_problem_id: this.referenceForm.get(['sector_problem_id'])!.value,
@@ -674,8 +677,6 @@ export class ActivityUpdateComponent implements OnInit {
       period_four: this.generalForm.get(['period_four'])!.value,
       is_active: this.generalForm.get(['is_active'])!.value,
       fund_sources: this.generalForm.get(['fund_sources'])!.value,
-      activity_facilities: this.facilityForm.get(['activity_facilities'])!
-        .value,
       references: this.referenceForm
         .get(['references'])!
         .value.map((ref: any) => {

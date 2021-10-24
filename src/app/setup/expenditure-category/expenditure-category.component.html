@@ -17,27 +17,18 @@
         >
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <app-admin-hierarchy-tree
-                [returnType]="'object'"
-                id="admin_hierarchy_id"
-                (onSelect)="onAdminHierarchySelection($event)"
-              ></app-admin-hierarchy-tree>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
               <p-dropdown
-                id="levelId"
-                optionValue="position"
+                id="project_type_id"
+                optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="adminHierarchyLevels!"
+                [options]="projectTypes!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_position"
+                [(ngModel)]="project_type_id"
               ></p-dropdown>
-              <label for="levelId">Level</label>
+              <label for="project_type_id">Project Type </label>
             </span>
           </div>
         </div>
@@ -49,7 +40,6 @@
         >
           <button
             pButton
-            pRipple
             type="button"
             [pTooltip]="
               advFilter.selected
@@ -67,7 +57,6 @@
           ></button>
           <button
             pButton
-            pRipple
             class="p-button-primary p-button-raised"
             icon="pi pi-search"
             label="Search"
@@ -88,7 +77,24 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            ></div>
+            >
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="name"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['name']"
+                  />
+                  <label for="name">Name </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['name'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+            </div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -97,7 +103,6 @@
             >
               <button
                 pButton
-                pRipple
                 pTooltip="Clear Advanced Search"
                 tooltipPosition="bottom"
                 class="p-button-text p-button-plain"
@@ -122,39 +127,32 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="users!"
+      [value]="expenditureCategories!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Users</span>
+          <span class="card-header-text">Expenditure Categories</span>
           <button
             pButton
-            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            (click)="create()"
-            label="Add User"
+            [disabled]="!project_type_id"
+            (click)="createOrUpdate()"
+            label="Add Expenditure Category"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="users?.length">
+        <tr *ngIf="expenditureCategories?.length">
           <th
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
           >
-            {{ col.header }}
-            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'admin_hierarchy_id'">
-            Duty Station<p-sortIcon [field]="'admin_hierarchy_id'"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'section_id'">
-            Allocation<p-sortIcon [field]="'section_id'"></p-sortIcon>
-          </th>
-          <th>Status</th>
           <th></th>
         </tr>
       </ng-template>
@@ -163,54 +161,11 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{ rowData.admin_hierarchy?.name }}</td>
-          <td>{{ rowData.section?.name }}</td>
-          <td>
-            <p-checkbox
-              name="groupname"
-              [label]="rowData.active ? 'Active' : 'Deactivated'"
-              (onChange)="toggleActive(rowData, $event)"
-              [binary]="true"
-              [value]="rowData.active"
-            ></p-checkbox>
-          </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pTooltip="Roles"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-check"
-                  (click)="roles(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pTooltip="Password Reset"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-lock"
-                  (click)="passwordReset(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pTooltip="Groups"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-users
-              "
-                  (click)="groups(rowData)"
-                ></button>
-                <button
-                  pButton
-                  pRipple
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="
@@ -218,12 +173,10 @@
                   "
                   icon="pi pi-pencil
               "
-                  (click)="edit(rowData.id)"
+                  (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
                   pButton
-                  pRipple
-                  [disabled]="rowData!.is_super_user"
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -238,12 +191,12 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found</ng-template>
+      <ng-template pTemplate="emptymessage"> No data found </ng-template>
     </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="users?.length! > 0"
+        [alwaysShow]="expenditureCategories?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -258,6 +211,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete User"
+  header="Confirmation Delete Expenditure Category"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

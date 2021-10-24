@@ -5,29 +5,32 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { Project } from "src/app/setup/project/project.model";
-import { ProjectService } from "src/app/setup/project/project.service";
-import { ProjectOutput } from "../project-output.model";
-import { ProjectOutputService } from "../project-output.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { Project } from 'src/app/setup/project/project.model';
+import { ProjectService } from 'src/app/setup/project/project.service';
+import { ProjectOutput } from '../project-output.model';
+import { ProjectOutputService } from '../project-output.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { ExpenditureCategory } from '../../expenditure-category/expenditure-category.model';
+import { Sector } from '../../sector/sector.model';
 
 @Component({
-  selector: "app-project-output-update",
-  templateUrl: "./project-output-update.component.html",
+  selector: 'app-project-output-update',
+  templateUrl: './project-output-update.component.html',
 })
 export class ProjectOutputUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
 
-  projects?: Project[] = [];
+  expenditureCategories?: ExpenditureCategory[] = [];
+  sectors?: Sector[] = [];
 
   /**
    * Declare form
@@ -35,13 +38,13 @@ export class ProjectOutputUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    project_id: [null, [Validators.required]],
-    is_active: [false, []],
+    expenditure_category_id: [null, [Validators.required]],
+    sector_id: [null, [Validators.required]],
+    is_active: [null, []],
   });
 
   constructor(
     protected projectOutputService: ProjectOutputService,
-    protected projectService: ProjectService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -49,12 +52,10 @@ export class ProjectOutputUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
-      );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const dialogData = this.dialogConfig.data;
+    this.expenditureCategories = dialogData.expenditureCategories;
+    this.sectors = dialogData.sectors;
+    this.updateForm(dialogData.projectOutPut); //Initialize form with data from dialog
   }
 
   /**
@@ -116,7 +117,8 @@ export class ProjectOutputUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: projectOutput.id,
       name: projectOutput.name,
-      project_id: projectOutput.project_id,
+      expenditure_category_id: projectOutput.expenditure_category_id,
+      sector_id: projectOutput.sector_id,
       is_active: projectOutput.is_active,
     });
   }
@@ -128,10 +130,12 @@ export class ProjectOutputUpdateComponent implements OnInit {
   protected createFromForm(): ProjectOutput {
     return {
       ...new ProjectOutput(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      project_id: this.editForm.get(["project_id"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      expenditure_category_id: this.editForm.get(['expenditure_category_id'])!
+        .value,
+      sector_id: this.editForm.get(['sector_id'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

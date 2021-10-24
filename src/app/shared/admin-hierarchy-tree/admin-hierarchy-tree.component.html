@@ -32,6 +32,7 @@
     <p-tree
       [value]="nodes"
       [filter]="true"
+      [propagateSelectionUp]="false"
       (onNodeExpand)="nodeExpand($event)"
       [selectionMode]="selectionMode"
       [(selection)]="selectedValue"

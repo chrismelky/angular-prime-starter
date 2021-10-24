@@ -17,6 +17,10 @@ import { AdminHierarchyLevelService } from '../admin-hierarchy-level.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { SectionLevel } from '../../section-level/section-level.model';
 import { SectionLevelService } from '../../section-level/section-level.service';
+import { SectionService } from '../../section/section.service';
+import { Section } from '../../section/section.model';
+import { DecisionLevel } from '../../decision-level/decision-level.model';
+import { DecisionLevelService } from '../../decision-level/decision-level.service';
 
 @Component({
   selector: 'app-admin-hierarchy-level-update',
@@ -27,6 +31,8 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
   formError = false;
   errors = [];
   sectionLevels?: SectionLevel[] = [];
+  sections?: Section[] = [];
+  decisionLevels?: DecisionLevel[] = [];
 
   /**
    * Declare form
@@ -42,7 +48,8 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
     code_required: [true, []],
     can_budget: [false, []],
     code_length: [null, []],
-    cost_centre_position: [null, []],
+    cost_centres: [[]],
+    default_decision_level_id: [[]],
   });
 
   constructor(
@@ -51,14 +58,23 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected sectionLevelService: SectionLevelService
+    protected sectionLevelService: SectionLevelService,
+    protected sectionServive: SectionService,
+    protected decisionLevelService: DecisionLevelService
   ) {}
 
   ngOnInit(): void {
+    this.sectionServive
+      .costCentreSections()
+      .subscribe((resp) => (this.sections = resp.data));
     this.sectionLevelService
       .query({ column: ['id', 'position', 'name'] })
       .subscribe((resp) => (this.sectionLevels = resp.data));
-    this.updateForm(this.dialogConfig.data); //Initilize form with data from dialog
+
+    const adminLevel: AdminHierarchyLevel = this.dialogConfig.data;
+
+    adminLevel.id && this.loadDecisionLevels(adminLevel.position!);
+    this.updateForm(adminLevel); //Initilize form with data from dialog
   }
 
   /**
@@ -83,16 +99,41 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
     }
   }
 
+  onPositionChange($event: any): void {
+    const position = $event.value;
+    if (!position) {
+      this.decisionLevels = [];
+      return;
+    }
+    this.loadDecisionLevels(position);
+  }
+  /**
+   * Load decision level by admin level position
+   * @param position Admin level position
+   */
+  loadDecisionLevels(position: number): void {
+    this.decisionLevelService
+      .query({
+        admin_hierarchy_level_position: position,
+      })
+      .subscribe((resp) => {
+        this.decisionLevels = resp.data;
+      });
+  }
+
   canBudgetChange(canBudget: boolean): void {
-    console.log(canBudget);
     if (canBudget) {
+      this.editForm.get('cost_centres')?.setValidators([Validators.required]);
       this.editForm
-        .get('cost_centre_position')
+        .get('default_decision_level_id')
         ?.setValidators([Validators.required]);
-      this.editForm.get('cost_centre_position')?.updateValueAndValidity();
+      this.editForm.get('cost_centres')?.updateValueAndValidity();
+      this.editForm.get('default_decision_level_id')?.updateValueAndValidity();
     } else {
-      this.editForm.get('cost_centre_position')?.clearValidators();
-      this.editForm.get('cost_centre_position')?.updateValueAndValidity();
+      this.editForm.get('cost_centres')?.clearValidators();
+      this.editForm.get('default_decision_level_id')?.clearValidators();
+      this.editForm.get('cost_centres')?.updateValueAndValidity();
+      this.editForm.get('default_decision_level_id')?.updateValueAndValidity();
     }
   }
 
@@ -138,7 +179,8 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       code_required: adminHierarchyLevel.code_required,
       can_budget: adminHierarchyLevel.can_budget,
       code_length: adminHierarchyLevel.code_length,
-      cost_centre_position: adminHierarchyLevel.cost_centre_position,
+      cost_centres: adminHierarchyLevel.cost_centres,
+      default_decision_level_id: adminHierarchyLevel.default_decision_level_id,
     });
     this.canBudgetChange(adminHierarchyLevel.can_budget!);
   }
@@ -157,7 +199,10 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       code_required: this.editForm.get(['code_required'])!.value,
       can_budget: this.editForm.get(['can_budget'])!.value,
       code_length: this.editForm.get(['code_length'])!.value,
-      cost_centre_position: this.editForm.get(['cost_centre_position'])!.value,
+      cost_centres: this.editForm.get(['cost_centres'])!.value,
+      default_decision_level_id: this.editForm.get([
+        'default_decision_level_id',
+      ])!.value,
     };
   }
 }

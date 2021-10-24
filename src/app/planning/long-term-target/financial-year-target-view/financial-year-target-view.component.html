@@ -1,61 +1,143 @@
-<button
-  pButton
-  class="p-button p-button-plain p-button-sm p-button-text"
-  [icon]="
-    financialYearId === currentFinancialYear?.id &&
-    !longTermTarget?.financial_year_target
-      ? 'pi pi-plus'
-      : financialYearId === currentFinancialYear?.id
-      ? 'pi pi-check'
-      : 'pi pi-lock'
-  "
-  [label]="
-    financialYearId === currentFinancialYear?.id &&
-    !longTermTarget?.financial_year_target
-      ? 'confirm'
-      : 'view'
-  "
-  [ngClass]="{
-    'p-button-warning':
-      financialYearId === currentFinancialYear?.id &&
-      !longTermTarget?.financial_year_target
-  }"
-  (click)="op.toggle($event)"
-></button>
-<p-overlayPanel
-  #op
-  [focusOnShow]="false"
-  [dismissable]="true"
-  appendTo="body"
-  (onShow)="loadTarget()"
->
-  <ng-template pTemplate>
-    <form
-      name="editForm"
-      role="form"
-      novalidate
-      (ngSubmit)="save()"
-      [formGroup]="editForm"
-    >
-      <div fxLayout="column" fxLayoutGap="10px" style="width: 400px">
-        <div pFocusTrap class="p-field" fxFlex>
-          <span class="p-float-label">
-            <textarea
-              inputId="description"
-              name="description"
-              formControlName="description"
-              pInputTextarea
-              pFocusTrap
-              [autoResize]="true"
-              appendTo="body"
-            ></textarea>
-            <label for="description">Financial year target</label>
-          </span>
-        </div>
-        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-          <button pButton label="Save"></button>
-        </div>
+<div class="dialog-content">
+  <div fxLayout="column" fxLayoutGap="20px">
+    <p-fieldset legend="Long Term Target">
+      {{ longTermTarget?.description }}
+    </p-fieldset>
+
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <input
+            id="target"
+            pInputText
+            [(ngModel)]="currentAdminTarget.description"
+          />
+          <label for="target">Financial year target </label>
+        </span>
       </div>
-    </form>
-  </ng-template>
-</p-overlayPanel>
+      <button
+        class="p-button-raised"
+        icon="pi pi-check"
+        label="Save"
+        (click)="save(currentAdminTarget!)"
+        pButton
+        type="button"
+      ></button>
+    </div>
+
+    <div fxLayout="column" fxLayoutGap="0px" fxLayoutAlign="start">
+      <p-table
+        #dt
+        [value]="childAdminHierarchyTargets!"
+        dataKey="admin_area_code"
+        editMode="row"
+        responsiveLayout="scroll"
+        styleClass="p-datatable-gridlines"
+        [globalFilterFields]="['admin_area_name']"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 14rem; padding: 0px; border: none">
+              <div class="p-field in-table-header">
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="admin_hierarchy_level"
+                    appendTo="body"
+                    [autoDisplayFirst]="false"
+                    [filter]="false"
+                    (onChange)="loadChildrenTarget($event.value)"
+                    [options]="adminLevels!"
+                    optionLabel="name"
+                    optionValue="position"
+                    class="p-inputtext-sm"
+                  ></p-dropdown>
+                  <label for="admin_hierarchy_level">Lower level</label>
+                </span>
+              </div>
+            </th>
+            <th>Target/Priority</th>
+            <th style="width: 8rem"></th>
+          </tr>
+          <tr>
+            <th style="padding: 0px">
+              <p-columnFilter
+                type="text"
+                class="in-table-header"
+                field="admin_area_name"
+              ></p-columnFilter>
+            </th>
+            <th></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-target
+          let-editing="editing"
+          let-ri="rowIndex"
+        >
+          <tr [pEditableRow]="target">
+            <td>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  {{ target?.admin_area_name! }}
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ target?.admin_area_name! }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+            <td>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input
+                    id="{{ target.code }}"
+                    type="text"
+                    pInputText
+                    [(ngModel)]="target.description"
+                  />
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ target.description! }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+            <td style="text-align: center">
+              <div fxLayout="row" fxLayoutGap="2px" fxLayoutAlign="end">
+                <button
+                  *ngIf="!editing"
+                  pButton
+                  pRipple
+                  type="button"
+                  pInitEditableRow
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-text p-button-plain"
+                ></button>
+                <button
+                  *ngIf="editing"
+                  pButton
+                  pRipple
+                  (click)="save(target)"
+                  type="button"
+                  pSaveEditableRow
+                  icon="pi pi-check"
+                  class="p-button-rounded p-button-text p-button-success p-mr-2"
+                ></button>
+                <button
+                  *ngIf="editing"
+                  pButton
+                  pRipple
+                  type="button"
+                  pCancelEditableRow
+                  icon="pi pi-times"
+                  class="p-button-rounded p-button-text p-button-danger"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

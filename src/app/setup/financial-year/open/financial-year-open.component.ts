@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { TreeNode } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ToastService } from 'src/app/shared/toast.service';
 import { FinancialYear } from '../financial-year.model';
 import { FinancialYearService } from '../financial-year.service';
 
 type PreRequisite = {
   messages: string[];
   failed: boolean;
+  canBudgetLevels: any[];
 };
 @Component({
   selector: 'app-financial-year-open',
@@ -16,11 +19,13 @@ export class FinancialYearOpenComponent implements OnInit {
   preRequisite?: PreRequisite;
   isOpening = false;
   isCheking = false;
+  nodes?: TreeNode[] = [];
 
   constructor(
     protected financialYearService: FinancialYearService,
     public dialogRef: DynamicDialogRef,
-    public dialogConfig: DynamicDialogConfig
+    public dialogConfig: DynamicDialogConfig,
+    public toastService: ToastService
   ) {
     this.financialYear = dialogConfig.data;
   }
@@ -34,8 +39,21 @@ export class FinancialYearOpenComponent implements OnInit {
         (resp) => {
           this.isCheking = false;
           this.preRequisite = resp.data;
-          console.log(resp);
-          console.log(this.preRequisite);
+          this.nodes = this.preRequisite?.canBudgetLevels.map((c) => {
+            return {
+              label: c.name,
+              data: c.name,
+              expanded: true,
+              children: c.cost_centres.map((co: any) => {
+                return {
+                  label: co.name,
+                  data: co.name,
+                  leaf: true,
+                };
+              }),
+              leaf: false,
+            };
+          });
         },
         (error) => (this.isCheking = false)
       );
@@ -52,6 +70,7 @@ export class FinancialYearOpenComponent implements OnInit {
       (resp) => {
         this.isOpening = false;
         this.dialogRef.close(true);
+        this.toastService.info('Financial year opened successfully');
       },
       (error) => (this.isOpening = false)
     );

@@ -275,6 +275,15 @@ body {
     padding-top: 0px;
   }
 }
+.p-fieldset {
+  .p-fieldset-legend {
+    padding:0.1rem 0.1rem;
+  }
+  .p-fieldset-content {
+    padding:  0 0.1rem;
+
+  }
+}
 .loader-area {
   position: relative;
 }
@@ -322,6 +331,33 @@ p-card.filter-no-adv {
 
 .p-component {
   font-size: $fontSize;
+}
+
+.total-fieldset {
+  fieldset {
+    margin-top: -8px
+  }
+  .p-fieldset {
+   border: 1px solid rgba(0, 0, 0, 0.38)
+  }
+}
+
+.in-table-header {
+  margin-bottom: -4px;
+  height: 44px;
+  .p-dropdown {
+    height: 44px;
+
+    border-radius: 2px !important;
+  }
+
+  p-columnfilterformelement .p-inputtext {
+    border-radius: 2px;
+    height: 42px;
+    margin-bottom: -2px;
+
+
+  }
 }
 
 .p-tag {

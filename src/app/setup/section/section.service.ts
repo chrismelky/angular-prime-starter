@@ -70,4 +70,8 @@ export class SectionService {
   departments(): Observable<CustomResponse<any>> {
     return this.http.get<CustomResponse<any>>(`${this.resourceUrl}/departments`);
   }
+
+  departmentAndCostCentreTree(): Observable<CustomResponse<any>> {
+    return this.http.get<CustomResponse<any>>(`${this.resourceUrl}/departmentAndCostCentreTree`);
+  }
 }

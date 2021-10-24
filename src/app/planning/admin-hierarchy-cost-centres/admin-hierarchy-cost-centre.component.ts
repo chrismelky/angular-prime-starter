@@ -29,7 +29,6 @@ import { AdminHierarchyCostCentreService } from './admin-hierarchy-cost-centre.s
 })
 export class AdminHierarchyCostCentreComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
-  @ViewChild('table') table!: Table;
   adminHierarchyCostCentres?: AdminHierarchyCostCentre[] = [];
 
   isLoading = false;
@@ -43,6 +42,8 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
 
   //Mandatory filter
   admin_hierarchy_id!: number;
+  section_id!: number;
+  section_position!: number;
   budget_type?: string;
 
   constructor(
@@ -65,7 +66,7 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_id) {
+    if (!this.admin_hierarchy_id || !this.section_id) {
       return;
     }
     this.isLoading = true;
@@ -77,6 +78,8 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         admin_hierarchy_id: this.admin_hierarchy_id,
+        parent_section: `p${this.section_position}`,
+        parent_section_id: this.section_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -118,6 +121,12 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
 
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
+    this.loadPage(1);
+  }
+
+  onSectionSelection(event: any): void {
+    this.section_id = event.id;
+    this.section_position = event.position;
     this.loadPage(1);
   }
 
@@ -211,7 +220,6 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
    * When error on loading data set data to empty and reset page to load
    */
   protected onError(): void {
-    setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Admin Hierarchy Cost Centres');
   }

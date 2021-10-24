@@ -167,8 +167,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   }
 
 
-  allocateCeiling(position:number,table:any,event:any,ceiling:AdminHierarchyCeiling):void{
+  allocateCeiling(position:number,table:any,event:any,ceiling:AdminHierarchyCeiling,chain:any):void{
     this.allocationPosition = position;
+    this.sectionChange(ceiling,chain);
     if(ceiling!.amount!>0){
       this.toAllocate = this.councilCeiling!.filter(cc => cc.parent_id == ceiling.id)
       this.toAllocate = this.toAllocate!.map((c) => Object.assign(c,
@@ -384,6 +385,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
         this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
         });
     });
+  }
+  close():void{
+    this.dialogRef.close();
   }
 
 }

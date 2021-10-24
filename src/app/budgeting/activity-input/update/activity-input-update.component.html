@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -94,6 +94,7 @@
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
             <p-inputNumber
+              #unitPrice
               id="unit_price"
               formControlName="unit_price"
               mode="decimal"
@@ -121,6 +122,7 @@
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
             <p-inputNumber
+              #quantity
               id="quantity"
               formControlName="quantity"
               mode="decimal"
@@ -148,6 +150,7 @@
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
             <p-inputNumber
+              #frequency
               id="frequency"
               formControlName="frequency"
               mode="decimal"
@@ -171,50 +174,64 @@
             >
           </span>
         </div>
+
+        <p-fieldset fxFlex legend="Total" class="total-fieldset">
+          <strong>{{
+            (unitPrice?.value || 0) *
+              (quantity?.value || 0) *
+              (frequency?.value || 0) | currency: " "
+          }}</strong>
+        </p-fieldset>
       </div>
 
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <p-inputNumber
-            id="forward_year_one_amount"
-            formControlName="forward_year_one_amount"
-            mode="decimal"
-            [minFractionDigits]="2"
-            [maxFractionDigits]="2"
-          ></p-inputNumber>
-          <label for="forward_year_one_amount">Forward Year One Amount </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('forward_year_one_amount')!.invalid &&
-            (editForm.get('forward_year_one_amount')!.dirty ||
-              editForm.get('forward_year_one_amount')!.touched ||
-              formError)
-          "
-        >
-        </span>
+      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center">
+        <span fxFlex></span>
+        <div class="p-field" fxFlex="200px">
+          <span class="p-float-label">
+            <p-inputNumber
+              id="forward_year_one_amount"
+              formControlName="forward_year_one_amount"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+            <label for="forward_year_one_amount">Total Year2 </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('forward_year_one_amount')!.invalid &&
+              (editForm.get('forward_year_one_amount')!.dirty ||
+                editForm.get('forward_year_one_amount')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
       </div>
 
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <p-inputNumber
-            id="forward_year_two_amount"
-            formControlName="forward_year_two_amount"
-            mode="decimal"
-            [minFractionDigits]="2"
-            [maxFractionDigits]="2"
-          ></p-inputNumber>
-          <label for="forward_year_two_amount">Forward Year Two Amount </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('forward_year_two_amount')!.invalid &&
-            (editForm.get('forward_year_two_amount')!.dirty ||
-              editForm.get('forward_year_two_amount')!.touched ||
-              formError)
-          "
-        >
-        </span>
+      <div fxFlex fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center">
+        <span fxFlex></span>
+        <div class="p-field" fxFlex="200px">
+          <span class="p-float-label">
+            <p-inputNumber
+              id="forward_year_two_amount"
+              formControlName="forward_year_two_amount"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+            <label for="forward_year_two_amount">Total Year 3 </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('forward_year_two_amount')!.invalid &&
+              (editForm.get('forward_year_two_amount')!.dirty ||
+                editForm.get('forward_year_two_amount')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
       </div>
 
       <div fxLayout="row" fxLayoutGap="0.75rem">

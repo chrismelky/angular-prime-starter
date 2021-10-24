@@ -5,34 +5,34 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Component, Inject, OnInit } from "@angular/core";
+import { FormBuilder, Validators } from "@angular/forms";
+import { Observable } from "rxjs";
+import { finalize } from "rxjs/operators";
+import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
-import { CustomResponse } from '../../../utils/custom-response';
-import { User } from 'src/app/setup/user/user.model';
-import { UserService } from 'src/app/setup/user/user.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
-import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
-import { CasAssessmentRound } from 'src/app/setup/cas-assessment-round/cas-assessment-round.model';
-import { CasAssessmentRoundService } from 'src/app/setup/cas-assessment-round/cas-assessment-round.service';
-import { Period } from 'src/app/setup/period/period.model';
-import { PeriodService } from 'src/app/setup/period/period.service';
-import { CasAssessmentCategoryVersion } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model';
-import { CasAssessmentCategoryVersionService } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service';
-import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
-import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
-import { AssessorAssignment } from '../assessor-assignment.model';
-import { AssessorAssignmentService } from '../assessor-assignment.service';
-import { ToastService } from 'src/app/shared/toast.service';
+import { CustomResponse } from "../../../utils/custom-response";
+import { User } from "src/app/setup/user/user.model";
+import { UserService } from "src/app/setup/user/user.service";
+import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import { AdminHierarchyLevel } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model";
+import { AdminHierarchyLevelService } from "src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service";
+import { CasAssessmentRound } from "src/app/setup/cas-assessment-round/cas-assessment-round.model";
+import { CasAssessmentRoundService } from "src/app/setup/cas-assessment-round/cas-assessment-round.service";
+import { Period } from "src/app/setup/period/period.model";
+import { PeriodService } from "src/app/setup/period/period.service";
+import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
+import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
+import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
+import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+import { AssessorAssignment } from "../assessor-assignment.model";
+import { AssessorAssignmentService } from "../assessor-assignment.service";
+import { ToastService } from "src/app/shared/toast.service";
 
 @Component({
-  selector: 'app-assessor-assignment-update',
-  templateUrl: './assessor-assignment-update.component.html',
+  selector: "app-assessor-assignment-update",
+  templateUrl: "./assessor-assignment-update.component.html",
 })
 export class AssessorAssignmentUpdateComponent implements OnInit {
   isSaving = false;
@@ -40,7 +40,7 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
   errors = [];
 
   users?: User[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
+  admin_hierarchies?: AdminHierarchy[] = [];
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
   casAssessmentRounds?: CasAssessmentRound[] = [];
   periods?: Period[] = [];
@@ -53,12 +53,11 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     user_id: [null, []],
-    admin_hierarchy_id: [null, []],
-    admin_hierarchy_level_id: [null, []],
-    cas_assessment_round_id: [null, []],
-    period_id: [null, []],
-    cas_assessment_category_version_id: [null, []],
-    financial_year_id: [null, []],
+    admin_hierarchies: [null, []],
+    cas_assessment_round_id: [null, [Validators.required]],
+    period_id: [null, [Validators.required]],
+    cas_assessment_category_version_id: [null, [Validators.required]],
+    financial_year_id: [null, [Validators.required]],
     active: [false, []],
   });
 
@@ -79,33 +78,39 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService
-      .query({ columns: ['id', 'first_name', 'last_name', 'username'] })
+      .query({ columns: ["id", "first_name", "last_name", "mobile_number","username","email"] })
       .subscribe((resp: CustomResponse<User[]>) => (this.users = resp.data));
+    this.adminHierarchyService
+      .query({ admin_hierarchy_position: 2 })
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.admin_hierarchies = resp.data)
+      );
     this.adminHierarchyLevelService
-      .query({ columns: ['id', 'name'] })
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
       );
     this.casAssessmentRoundService
-      .query({ columns: ['id', 'name'] })
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentRound[]>) =>
           (this.casAssessmentRounds = resp.data)
       );
     this.periodService
-      .query({ columns: ['id', 'name'] })
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
       );
     this.casAssessmentCategoryVersionService
-      .query({ columns: ['id', 'cas_assessment_category_id'] })
+      .query({ columns: ["id", "cas_category_name"] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)
       );
     this.financialYearService
-      .query({ columns: ['id', 'name'] })
+      .query({ columns: ["id", "name"] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
@@ -169,17 +174,16 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
    * @param assessorAssignment
    */
   protected updateForm(assessorAssignment: AssessorAssignment): void {
+    const adminIds =  assessorAssignment.admin_hierarchies?.map((admin_hierarchy: { id: any; })=>admin_hierarchy.id);
     this.editForm.patchValue({
       id: assessorAssignment.id,
       user_id: assessorAssignment.user_id,
-      admin_hierarchy_id: assessorAssignment.admin_hierarchy_id,
-      admin_hierarchy_level_id: assessorAssignment.admin_hierarchy_level_id,
+      admin_hierarchies: adminIds,
       cas_assessment_round_id: assessorAssignment.cas_assessment_round_id,
       period_id: assessorAssignment.period_id,
       cas_assessment_category_version_id:
         assessorAssignment.cas_assessment_category_version_id,
       financial_year_id: assessorAssignment.financial_year_id,
-      active: assessorAssignment.active,
     });
   }
 
@@ -190,19 +194,16 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
   protected createFromForm(): AssessorAssignment {
     return {
       ...new AssessorAssignment(),
-      id: this.editForm.get(['id'])!.value,
-      user_id: this.editForm.get(['user_id'])!.value,
-      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
-      admin_hierarchy_level_id: this.editForm.get(['admin_hierarchy_level_id'])!
+      id: this.editForm.get(["id"])!.value,
+      user_id: this.editForm.get(["user_id"])!.value,
+      admin_hierarchies: this.editForm.get(["admin_hierarchies"])!.value,
+      cas_assessment_round_id: this.editForm.get(["cas_assessment_round_id"])!
         .value,
-      cas_assessment_round_id: this.editForm.get(['cas_assessment_round_id'])!
-        .value,
-      period_id: this.editForm.get(['period_id'])!.value,
+      period_id: this.editForm.get(["period_id"])!.value,
       cas_assessment_category_version_id: this.editForm.get([
-        'cas_assessment_category_version_id',
+        "cas_assessment_category_version_id",
       ])!.value,
-      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
-      active: this.editForm.get(['active'])!.value,
+      financial_year_id: this.editForm.get(["financial_year_id"])!.value,
     };
   }
 }

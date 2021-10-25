@@ -257,7 +257,7 @@ const routes: Routes = [
           },
         },
       },
-      {
+      /*{
         path: "long-term-target",
         loadChildren: () =>
           import("../planning/long-term-target/long-term-target.module").then(
@@ -269,7 +269,7 @@ const routes: Routes = [
             only: "WRITE_PLANNING_SETTING",
           },
         },
-      },
+      },*/
       {
         path: "calendar-event",
         loadChildren: () =>

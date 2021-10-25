@@ -25,7 +25,7 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="casAssessmentRounds!"
-                (onChange)="filterChanged()"
+                (onChange)="loadAssessors()"
                 [(ngModel)]="cas_assessment_round_id"
               ></p-dropdown>
               <label for="cas_assessment_round_id">Cas  Round </label>
@@ -41,7 +41,7 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="periods!"
-                (onChange)="filterChanged()"
+                (onChange)="loadAssessors()"
                 [(ngModel)]="period_id"
               ></p-dropdown>
               <label for="period_id">Period </label>
@@ -57,7 +57,7 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="casAssessmentCategoryVersions!"
-                (onChange)="filterChanged()"
+                (onChange)="loadAssessors()"
                 [(ngModel)]="cas_assessment_category_version_id"
               ></p-dropdown>
               <label for="cas_assessment_category_version_id"
@@ -153,6 +153,23 @@
   <!-- Table Panel -->
   <p-card>
     <p-table [value]="assessors!" dataKey="email" responsiveLayout="scroll">
+      <ng-template pTemplate="caption">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text">CAS Assessors</span>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-plus"
+            class="p-button-raised"
+            [disabled]="!cas_assessment_round_id ||
+            !period_id ||
+            !cas_assessment_category_version_id ||
+            !financial_year_id"
+            (click)="createOrUpdate()"
+            label="Add CAS Assessor"
+          ></button>
+        </div>
+      </ng-template>
       <ng-template pTemplate="header">
         <tr>
           <th style="width: 3rem"></th>
@@ -262,9 +279,9 @@
         </tr>
       </ng-template>
     </p-table>
-</div>
-</td>
-</tr>
+    </div>
+    </td>
+    </tr>
 </ng-template>
 <ng-template pTemplate="emptymessage">
   <tr>

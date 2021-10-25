@@ -67,7 +67,7 @@ export class ObjectiveComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  objective_type_id!: number;
+  objectiveType!: ObjectiveType;
 
   constructor(
     protected objectiveService: ObjectiveService,
@@ -102,7 +102,7 @@ export class ObjectiveComponent implements OnInit {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.objective_type_id) {
+    if (!this.objectiveType.id) {
       return;
     }
     this.isLoading = true;
@@ -113,7 +113,7 @@ export class ObjectiveComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        objective_type_id: this.objective_type_id,
+        objective_type_id: this.objectiveType.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -228,7 +228,7 @@ export class ObjectiveComponent implements OnInit {
   createOrUpdate(objective?: Objective): void {
     const data: Objective = objective ?? {
       ...new Objective(),
-      objective_type_id: this.objective_type_id,
+      objective_type_id: this.objectiveType.id,
     };
     const ref = this.dialogService.open(ObjectiveUpdateComponent, {
       data,

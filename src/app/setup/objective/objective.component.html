@@ -19,16 +19,15 @@
             <span class="p-float-label">
               <p-dropdown
                 id="objective_type_id"
-                optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="objectiveTypes!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="objective_type_id"
+                [(ngModel)]="objectiveType"
               ></p-dropdown>
-              <label for="objective_type_id">Objective Type </label>
+              <label for="objective_type_id">Objective Type</label>
             </span>
           </div>
         </div>
@@ -152,15 +151,15 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Objectives</span>
+          <span class="card-header-text">Service Outputs</span>
           <button
             pButton
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!objective_type_id"
+            [disabled]="!objectiveType"
             (click)="createOrUpdate()"
-            label="Add Objective"
+            label="Add Service Output"
           ></button>
         </div>
       </ng-template>

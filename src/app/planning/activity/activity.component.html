@@ -7,7 +7,9 @@
           icon="pi pi-arrow-left"
           pButton
           (click)="back()"
-          class="p-button-rounded p-button-icon-only"
+          class="
+            p-button-rounded p-button-text p-button-outline p-button-icon-only
+          "
         ></button>
         <p-divider fxFlex class="title" align="center">
           <span fxLayout="column" fxLayoutAlign="centre center">
@@ -63,32 +65,15 @@
           [isLoading]="facilityIsLoading || targetIsLoading"
         ></app-loader>
         <div fxLayout="column" fxLayoutGap="20px">
-          <div fxLayout="row wrap" fxLayoutGap="0px">
+          <div fxLayout="row" fxLayoutGap="0px">
             <div
-              fxLayout="row wrap"
+              fxLayout="row"
               fxLayoutGap="10px"
-              fxFlex
+              fxFlex="0 0 100%"
               fxLayoutAlign="start center"
             >
-              <!-- Objective filter -->
               <!-- Target -->
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="objective_id"
-                    optionLabel="name"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    class="p-inputtext-sm"
-                    [options]="objectiveWithTargets!"
-                    (onChange)="filterChanged()"
-                    [(ngModel)]="objective"
-                  ></p-dropdown>
-                  <label for="objective_id">Objective </label>
-                </span>
-              </div>
-              <!-- Target -->
-              <div class="p-field" fxFlex>
+              <div class="p-field" fxFlex="0 0 75%">
                 <span class="p-float-label">
                   <p-dropdown
                     id="financial_year_target_id"
@@ -96,74 +81,37 @@
                     [autoDisplayFirst]="false"
                     [filter]="true"
                     class="p-inputtext-sm"
-                    [options]="objective?.values"
+                    [group]="true"
+                    optionGroupChildren="values"
+                    optionGroupLabel="name"
+                    [options]="objectiveWithTargets"
                     (onChange)="filterChanged()"
                     [(ngModel)]="financialYearTarget"
                   ></p-dropdown>
                   <label for="financial_year_target_id">Target </label>
                 </span>
               </div>
-            </div>
-          </div>
-          <div fxLayout="row wrap" fxLayoutGap="10px">
-            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start" fxFlex>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="facility_type"
-                    optionLabel="name"
-                    optionValue="name"
-                    [showClear]="false"
-                    [autoDisplayFirst]="false"
-                    class="p-inputtext-sm"
-                    [options]="facilityGroupByType!"
-                    (onChange)="facilityTypeChange()"
-                    [(ngModel)]="facilityType"
-                  ></p-dropdown>
-                  <label for="facility_type">Facility Type </label>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
+
+              <div class="p-field" fxFlex="0 1 25%">
                 <span class="p-float-label">
                   <p-dropdown
                     id="facility_id"
                     optionLabel="name"
                     optionValue="id"
+                    optionGroupLabel="name"
+                    optionGroupChildren="values"
+                    [group]="true"
+                    [filter]="true"
                     [showClear]="false"
                     [autoDisplayFirst]="false"
                     class="p-inputtext-sm"
-                    [options]="facilities!"
+                    [options]="facilityGroupByType!"
                     (onChange)="filterChanged()"
                     [(ngModel)]="facility_id"
                   ></p-dropdown>
                   <label for="facility_id">Facility</label>
                 </span>
               </div>
-            </div>
-            <div class="p-inputgroup" fxFlex>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="code"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['description']"
-                  />
-                  <label for="description">Description </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['description'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <button
-                pButton
-                class="p-inputgroup-addon p-button-primary p-button-text"
-                icon="pi pi-search"
-                label="Search"
-                (click)="onSearch()"
-              ></button>
             </div>
           </div>
         </div>
@@ -173,11 +121,12 @@
 
   <!-- Table Panel -->
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start stretch">
-    <p-card fxFlex>
+    <p-card fxFlex="0 0 100%">
       <p-table
         #table
         [lazy]="true"
         [resizableColumns]="true"
+        columnResizeMode="expand"
         [responsive]="true"
         [autoLayout]="true"
         [loading]="isLoading"
@@ -207,21 +156,22 @@
         </ng-template>
         <ng-template pTemplate="header" let-columns>
           <tr *ngIf="activities?.length">
-            <th
-              *ngFor="let col of columns"
-              [pSortableColumn]="col.sort ? col.field : null"
-            >
-              {{ col.header
-              }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            <th [pSortableColumn]="'code'">
+              Code
+              <p-sortIcon [field]="'code'"></p-sortIcon>
             </th>
+            <th>Description</th>
             <th>Budget Class</th>
             <th></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
           <tr>
-            <td *ngFor="let col of columns">
-              {{ rowData[col.field] }}
+            <td>
+              {{ rowData.code }}
+            </td>
+            <td style="white-space: normal">
+              {{ rowData.description }}
             </td>
             <td>
               {{ rowData?.budget_class?.name }}

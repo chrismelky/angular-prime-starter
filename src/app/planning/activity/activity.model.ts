@@ -1,5 +1,4 @@
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
-import { Facility } from 'src/app/setup/facility/facility.model';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
 
@@ -43,17 +42,6 @@ export class Activity {
   ) {}
 }
 
-export class ActivityFacility {
-  constructor(
-    public id?: number,
-    public activity_id?: number,
-    public facility_id?: number,
-    public financial_year_id?: number,
-    public project_output_value?: string,
-    public indicator_value?: string
-  ) {}
-}
-
 export class ActivityFundSource {
   constructor(
     public id?: number,
@@ -65,8 +53,10 @@ export class ActivityFundSource {
   ) {}
 }
 
-export class FacilityActivity extends ActivityFacility {
+export class FacilityActivity {
+  public id?: number;
   public code?: string;
   public description?: string;
+  public budget_class_id?: number;
   public activity_fund_source_id?: number;
 }

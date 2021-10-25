@@ -193,7 +193,7 @@
         let-columns="columns"
         let-expanded="expanded"
       >
-        <tr [ngClass]="{ 'tr-expanded': expanded }">
+        <tr style="white-space: normal" [ngClass]="{ 'tr-expanded': expanded }">
           <td>[ {{ rowData.code }} ] {{ rowData.description }}</td>
           <td>
             <button

@@ -17,17 +17,10 @@ import {
   Activity,
   FacilityActivity,
 } from 'src/app/planning/activity/activity.model';
-import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
-import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
-import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { Facility } from 'src/app/setup/facility/facility.model';
-import { FacilityService } from 'src/app/setup/facility/facility.service';
 import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
-import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
 import { ActivityInput } from '../activity-input.model';
 import { ActivityInputService } from '../activity-input.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -64,7 +57,6 @@ export class ActivityInputUpdateComponent implements OnInit {
     forward_year_two_amount: [null, []],
     activity_id: [null, [Validators.required]],
     activity_fund_source_id: [null, [Validators.required]],
-    activity_facility_id: [null, [Validators.required]],
     budget_class_id: [null, [Validators.required]],
     fund_source_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
@@ -184,7 +176,6 @@ export class ActivityInputUpdateComponent implements OnInit {
       section_id: activityInput.section_id,
       budget_class_id: activityInput.budget_class_id,
       activity_fund_source_id: activityInput.activity_fund_source_id,
-      activity_facility_id: activityInput.activity_facility_id,
     });
   }
 
@@ -212,7 +203,6 @@ export class ActivityInputUpdateComponent implements OnInit {
       facility_id: this.editForm.get(['facility_id'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
       budget_class_id: this.editForm.get(['budget_class_id'])!.value,
-      activity_facility_id: this.editForm.get(['activity_facility_id'])!.value,
       activity_fund_source_id: this.editForm.get(['activity_fund_source_id'])!
         .value,
     };

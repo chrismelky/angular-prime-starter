@@ -513,7 +513,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
+            only: 'WRITE_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -856,7 +856,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
+            only: 'WRITE_PLANNING_SETTING',
           },
         },
       },

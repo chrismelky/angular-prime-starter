@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -43,6 +43,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   units?: PlanrepEnum[] = [];
   gfsCodes?: GfsCode[] = [];
   facilityActivity?: FacilityActivity;
+  total = 0.0;
   /**
    * Declare form
    */
@@ -63,7 +64,12 @@ export class ActivityInputUpdateComponent implements OnInit {
     admin_hierarchy_id: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
     facility_id: [null, [Validators.required]],
-    total: [{ value: 0.0, disabled: true }, []],
+    period_one: [null, []],
+    period_two: [null, []],
+    period_three: [null, []],
+    period_four: [null, []],
+    has_breakdown: [null, []],
+    breakdowns: [this.fb.array([]), []],
   });
 
   constructor(
@@ -80,16 +86,10 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.facilityActivity = dialogData.facilityActivity;
     this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
-    this.updateForm(dialogData.activityInput); //Initialize form with data from dialog
-    this.editForm
-      .get('unit_price')
-      ?.valueChanges.subscribe(() => this.updateTotal());
-    this.editForm
-      .get('quantity')
-      ?.valueChanges.subscribe(() => this.updateTotal());
-    this.editForm
-      .get('frequency')
-      ?.valueChanges.subscribe(() => this.updateTotal());
+    const input: ActivityInput = dialogData.activityInput;
+    input?.id &&
+      this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
+    this.updateForm(input); //Initialize form with data from dialog
   }
 
   /**
@@ -97,7 +97,6 @@ export class ActivityInputUpdateComponent implements OnInit {
    * @returns
    */
   save(): void {
-    console.log(this.editForm);
     if (this.editForm.invalid) {
       this.formError = true;
       return;
@@ -115,14 +114,12 @@ export class ActivityInputUpdateComponent implements OnInit {
     }
   }
 
-  updateTotal(): void {
-    const total =
-      (this.editForm.get('unit_price')?.value || 0) *
-      (this.editForm.get('quantity')?.value || 0) *
-      (this.editForm.get('frequency')?.value || 0);
-    this.editForm.patchValue({
-      total,
-    });
+  updateTotal(
+    unit_price?: number,
+    quantity?: number,
+    frequency?: number
+  ): void {
+    this.total = (unit_price || 0) * (quantity || 0) * (frequency || 0);
   }
 
   protected subscribeToSaveResponse(
@@ -154,6 +151,26 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.isSaving = false;
   }
 
+  get breakDownControls(): FormArray {
+    return this.editForm.get('breakdowns') as FormArray;
+  }
+
+  private addControl(data?: any): void {
+    const controlArray = this.breakDownControls;
+    controlArray.push(
+      this.fb.group({
+        item: data?.item,
+        quantity: data?.quantity,
+        frequency: data?.frequency,
+        unit_price: data?.unit_price,
+      })
+    );
+  }
+
+  removeControl(index: number): void {
+    this.breakDownControls.removeAt(index);
+  }
+
   /**
    * Set/Initialize form values
    * @param activityInput
@@ -176,7 +193,16 @@ export class ActivityInputUpdateComponent implements OnInit {
       section_id: activityInput.section_id,
       budget_class_id: activityInput.budget_class_id,
       activity_fund_source_id: activityInput.activity_fund_source_id,
+      period_one: activityInput.period_one,
+      period_two: activityInput.period_two,
+      period_three: activityInput.period_three,
+      period_four: activityInput.period_four,
+      has_breakdown: activityInput.has_breakdown,
     });
+    const breakdowns = activityInput.breakdowns
+      ? JSON.parse(activityInput.breakdowns)
+      : [];
+    breakdowns.forEach((b: any) => this.addControl(b));
   }
 
   /**
@@ -184,6 +210,7 @@ export class ActivityInputUpdateComponent implements OnInit {
    * @returns ActivityInput
    */
   protected createFromForm(): ActivityInput {
+    const breakdowns = this.editForm.get(['has_breakdown'])!.value;
     return {
       ...new ActivityInput(),
       id: this.editForm.get(['id'])!.value,
@@ -205,6 +232,12 @@ export class ActivityInputUpdateComponent implements OnInit {
       budget_class_id: this.editForm.get(['budget_class_id'])!.value,
       activity_fund_source_id: this.editForm.get(['activity_fund_source_id'])!
         .value,
+      period_one: this.editForm.get(['period_one'])!.value,
+      period_two: this.editForm.get(['period_two'])!.value,
+      period_three: this.editForm.get(['period_three'])!.value,
+      period_four: this.editForm.get(['period_four'])!.value,
+      has_breakdown: this.editForm.get(['has_breakdown'])!.value,
+      breakdowns: breakdowns ? JSON.stringify(breakdowns) : breakdowns,
     };
   }
 }

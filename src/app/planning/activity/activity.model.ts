@@ -57,6 +57,10 @@ export class FacilityActivity {
   public id?: number;
   public code?: string;
   public description?: string;
+  public period_one?: boolean;
+  public period_two?: boolean;
+  public period_three?: boolean;
+  public period_four?: boolean;
   public budget_class_id?: number;
   public activity_fund_source_id?: number;
 }

@@ -50,7 +50,6 @@ import { PriorityAreaService } from 'src/app/setup/priority-area/priority-area.s
 import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
 import { Intervention } from 'src/app/setup/intervention/intervention.model';
 import { SectorProblem } from '../../sector-problem/sector-problem.model';
-import { ConfirmationService } from 'primeng/api';
 import { ProjectType } from 'src/app/setup/project-type/project-type.model';
 import { ExpenditureCategory } from 'src/app/setup/expenditure-category/expenditure-category.model';
 import { ExpenditureCategoryService } from 'src/app/setup/expenditure-category/expenditure-category.service';

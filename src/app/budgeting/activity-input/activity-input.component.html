@@ -152,11 +152,19 @@
           </div>
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
             <span fxFlex="0 1 50%"></span>
-            <p-fieldset fxFlex="0 0 25%" legend="Total Ceiling">
-              1000000
+            <p-fieldset
+              class="total-fieldset"
+              fxFlex="0 0 25%"
+              legend="Total Ceiling"
+            >
+              {{ 1000000 | currency: " " }}
             </p-fieldset>
-            <p-fieldset fxFlex="0 0 25%" legend="Total Balance">
-              20000
+            <p-fieldset
+              class="total-fieldset"
+              fxFlex="0 0 25%"
+              legend="Total Balance"
+            >
+              {{ 20000 | currency: " " }}
             </p-fieldset>
           </div>
         </div>

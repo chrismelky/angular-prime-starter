@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {TreeNode} from "primeng/api";
 import {AssessmentCriteriaService} from "../../planning/assessment-criteria/assessment-criteria.service";
 import {AdminHierarchy} from "../../setup/admin-hierarchy/admin-hierarchy.model";
@@ -7,6 +7,8 @@ import {ToastService} from "../toast.service";
 import {ActivatedRoute} from "@angular/router";
 import {UserService} from "../../setup/user/user.service";
 import {User} from "../../setup/user/user.model";
+import {OverlayPanel} from "primeng/overlaypanel";
+import {LocalStorageService} from "ngx-webstorage";
 
 @Component({
   selector: 'app-assessment-tree',
@@ -20,7 +22,9 @@ export class AssessmentTreeComponent implements OnInit {
   selectedValue: any;
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
+  @Input() stateKey?: string;
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  @ViewChild('op') panel!: OverlayPanel;
   adminHierarchies: AdminHierarchy[] = [];
   financial_year_id!: number;
   cas_assessment_round_id!: number;
@@ -28,7 +32,7 @@ export class AssessmentTreeComponent implements OnInit {
   currentUser!: User;
   constructor(
     protected assessmentCriteriaService: AssessmentCriteriaService,
-    private toastService: ToastService,
+    protected localStorageService: LocalStorageService,
     protected userService: UserService,
     protected actRoute: ActivatedRoute,
     protected adminHierarchyService: AdminHierarchyService
@@ -93,5 +97,11 @@ export class AssessmentTreeComponent implements OnInit {
           return this.returnType === 'object' ? d : d.id;
         });
     this.onSelect.next(selection);
+    this.panel.hide();
+    this.localStorageService.store(`${this.stateKey}_selected`, {
+      label: this.selectedValue.label,
+      data: this.selectedValue.data,
+      leaf: this.selectedValue.leaf,
+    });
   }
 }

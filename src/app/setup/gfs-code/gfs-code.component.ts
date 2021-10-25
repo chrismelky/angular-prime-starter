@@ -8,7 +8,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent } from "primeng/api";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -22,12 +22,15 @@ import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
 import { AccountType } from "src/app/setup/account-type/account-type.model";
 import { AccountTypeService } from "src/app/setup/account-type/account-type.service";
+import { Category } from "src/app/setup/category/category.model";
+import { CategoryService } from "src/app/setup/category/category.service";
+
 import { GfsCode } from "./gfs-code.model";
 import { GfsCodeService } from "./gfs-code.service";
 import { GfsCodeUpdateComponent } from "./update/gfs-code-update.component";
 import {UploadComponent} from "./upload/upload.component";
+import {GfsCodeCategory} from "../gfs-code-category/gfs-code-category.model";
 import {GfsCodeCategoryService} from "../gfs-code-category/gfs-code-category.service";
-import {GfsCodeCategory, GfsCodeCategoryTree} from "../gfs-code-category/gfs-code-category.model";
 
 @Component({
   selector: "app-gfs-code",
@@ -39,7 +42,7 @@ export class GfsCodeComponent implements OnInit {
   gfsCodes?: GfsCode[] = [];
 
   accountTypes?: AccountType[] = [];
-  categories?: GfsCodeCategoryTree[] = [];
+  categories?: GfsCodeCategory[] = [];
 
   cols = [
     {
@@ -57,16 +60,16 @@ export class GfsCodeComponent implements OnInit {
       header: "Aggregated Code",
       sort: true,
     },
-    {
+    /*{
       field: "is_procurement",
-      header: "Is Procurement",
+      header: "Procurement",
       sort: false,
     },
     {
       field: "is_protected",
-      header: "Is Protected",
+      header: "Protected",
       sort: false,
-    },
+    },*/
   ]; //Table display columns
 
   isLoading = false;
@@ -79,9 +82,6 @@ export class GfsCodeComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  account_type_id!: number;
-  main_category_id!: number;
-  category_id!: number;
 
   constructor(
     protected gfsCodeService: GfsCodeService,
@@ -102,9 +102,9 @@ export class GfsCodeComponent implements OnInit {
         (resp: CustomResponse<AccountType[]>) => (this.accountTypes = resp.data)
       );
     this.categoryService
-      .tree()
+      .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<GfsCodeCategoryTree[]>) => (this.categories = resp.data)
+        (resp: CustomResponse<Category[]>) => (this.categories = resp.data)
       );
     this.handleNavigation();
   }
@@ -115,9 +115,6 @@ export class GfsCodeComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.account_type_id || !this.category_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -126,8 +123,6 @@ export class GfsCodeComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        account_type_id: this.account_type_id,
-        category_id: this.category_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -162,20 +157,8 @@ export class GfsCodeComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -242,8 +225,6 @@ export class GfsCodeComponent implements OnInit {
   createOrUpdate(gfsCode?: GfsCode): void {
     const data: GfsCode = gfsCode ?? {
       ...new GfsCode(),
-      account_type_id: this.account_type_id,
-      category_id: this.category_id,
     };
     const ref = this.dialogService.open(GfsCodeUpdateComponent, {
       data,
@@ -304,16 +285,11 @@ export class GfsCodeComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading GFS Code");
+    this.toastService.error("Error loading Gfs Code");
   }
 
   upload(): void {
-    const data = {
-      account_type_id: this.account_type_id,
-      category_id: this.category_id
-    }
     const ref = this.dialogService.open(UploadComponent, {
-      data,
       width: '60%',
       header: 'GFS Codes Upload Form'
     });

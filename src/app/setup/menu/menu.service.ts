@@ -43,6 +43,10 @@ export class MenuService {
     });
   }
 
+  currentUser(): Observable<CustomResponse<Menu>> {
+    return this.http.get<CustomResponse<Menu>>(`${this.resourceUrl}/currentUser`);
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

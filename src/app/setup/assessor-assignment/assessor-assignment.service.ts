@@ -54,8 +54,8 @@ export class AssessorAssignmentService {
   }
   getAssessors(req?: any): Observable<CustomResponse<AssessorAssignment[]>> {
     const options = createRequestOption(req);
-    return this.http.post<CustomResponse<AssessorAssignment[]>>(
-      this.assessorsUrl,options
+    return this.http.get<CustomResponse<AssessorAssignment[]>>(
+      this.assessorsUrl,{ params: options }
     );
   }
 

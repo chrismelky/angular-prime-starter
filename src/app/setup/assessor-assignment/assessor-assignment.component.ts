@@ -234,7 +234,7 @@ loadAssessors (){
     if (this.page !== 1) {
       this.paginator.changePage(0);
     } else {
-      this.loadPage();
+      this.loadAssessors();
     }
   }
 
@@ -246,7 +246,7 @@ loadAssessors (){
     if (this.page !== 1) {
       this.paginator.changePage(0);
     } else {
-      this.loadPage();
+      this.loadAssessors();
     }
   }
 
@@ -260,7 +260,7 @@ loadAssessors (){
     if ($event.sortField) {
       this.predicate = $event.sortField!;
       this.ascending = $event.sortOrder === 1;
-      this.loadPage();
+      this.loadAssessors();
     }
   }
 
@@ -271,7 +271,7 @@ loadAssessors (){
   pageChanged(event: any): void {
     this.page = event.page + 1;
     this.per_page = event.rows!;
-    this.loadPage();
+    this.loadAssessors();
   }
 
   /**
@@ -303,7 +303,7 @@ loadAssessors (){
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadPage(this.page);
+        this.loadAssessors();
       }
     });
   }
@@ -313,14 +313,14 @@ loadAssessors (){
    * @param assessorAssignment
    */
   delete(assessorAssignment: AssessorAssignment): void {
-    return;
+
     this.confirmationService.confirm({
       message: "Are you sure that you want to delete this AssessorAssignment?",
       accept: () => {
         this.assessorAssignmentService
           .delete(assessorAssignment.id!)
           .subscribe((resp) => {
-            this.loadPage(this.page);
+            this.loadAssessors();
             this.toastService.info(resp.message);
           });
       },
@@ -350,7 +350,7 @@ loadAssessors (){
         },
       });
     }
-    this.assessorAssignments = resp?.data ?? [];
+    this.assessors = resp?.data ?? [];
   }
 
   /**

@@ -28,7 +28,7 @@
           <small
             class="p-error"
             *ngIf="editForm.get('description')?.errors?.required"
-          >Description is required.</small
+            >Description is required.</small
           >
         </span>
       </div>
@@ -46,8 +46,14 @@
           "
         >
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
-            >Code is required.</small
-          >
+          >Code is required.
+          </small>
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.minlength">
+            Code should have a minimum length of 3 alphanumeric characters is required.
+          </small>
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.maxlength">
+            Code should have a maximum length of 3 alphanumeric characters is required.
+          </small>
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">

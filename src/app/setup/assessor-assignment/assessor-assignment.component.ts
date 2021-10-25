@@ -289,7 +289,6 @@ loadAssessors (){
    * @param assessorAssignment ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(assessorAssignment?: AssessorAssignment): void {
-    return;
     const data: AssessorAssignment = assessorAssignment ?? {
       ...new AssessorAssignment(),
       cas_assessment_round_id: this.cas_assessment_round_id,

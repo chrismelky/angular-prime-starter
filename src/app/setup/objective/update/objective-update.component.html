@@ -7,37 +7,6 @@
     [formGroup]="editForm"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="objective_type_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            (onChange)="objectiveTypeChanged()"
-            [options]="objectiveTypes!"
-            formControlName="objective_type_id"
-          ></p-dropdown>
-          <label for="objective_type_id">Objective Type </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('objective_type_id')!.invalid &&
-            (editForm.get('objective_type_id')!.dirty ||
-              editForm.get('objective_type_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('objective_type_id')?.errors?.required"
-            >Objective Type is required.</small
-          >
-        </span>
-      </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input
@@ -63,46 +32,7 @@
           >
         </span>
       </div>
-
-      <div
-        *ngIf="selectedObjectiveType && selectedObjectiveType.is_sectoral"
-        class="p-field"
-        fxFlex
-      >
-        <span class="p-float-label">
-          <p-multiSelect
-            id="sectors"
-            optionLabel="name"
-            dataKey="id"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="sectors!"
-            formControlName="sectors"
-          ></p-multiSelect>
-          <label for="sectors">Sector </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('sectors')!.invalid &&
-            (editForm.get('sectors')!.dirty ||
-              editForm.get('sectors')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('sectors')?.errors?.required"
-            >Sectors is required.</small
-          >
-        </span>
-      </div>
-
-      <div
-        *ngIf="selectedObjectiveType && !selectedObjectiveType.is_incremental"
-        class="p-field p-col-12 p-md-4"
-        fxFlex
-      >
+      <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input id="code" type="text" pInputText formControlName="code" />
           <label for="code">Code </label>
@@ -116,34 +46,14 @@
           "
         >
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
-            >Code is required.</small
-          >
-        </span>
-      </div>
-
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="parent_id"
-            optionValue="id"
-            optionLabel="description"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="parents!"
-            formControlName="parent_id"
-          ></p-dropdown>
-          <label for="parent_id">Parent </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('parent_id')!.invalid &&
-            (editForm.get('parent_id')!.dirty ||
-              editForm.get('parent_id')!.touched ||
-              formError)
-          "
-        >
+          >Code is required.
+          </small>
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.minlength">
+            Code should have a minimum length of 3 alphanumeric characters is required.
+          </small>
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.maxlength">
+            Code should have a maximum length of 3 alphanumeric characters is required.
+          </small>
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
@@ -153,7 +63,6 @@
           icon="pi pi-check"
           label="Save"
           pButton
-          pRipple
           type="submit"
         ></button>
       </div>

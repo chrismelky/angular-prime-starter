@@ -258,19 +258,6 @@ const routes: Routes = [
         },
       },
       {
-        path: 'long-term-target',
-        loadChildren: () =>
-          import('../planning/long-term-target/long-term-target.module').then(
-            (m) => m.LongTermTargetModule
-          ),
-        canLoad: [NgxPermissionsGuard],
-        data: {
-          permissions: {
-            only: 'WRITE_PLANNING_SETTING',
-          },
-        },
-      },
-      {
         path: 'calendar-event',
         loadChildren: () =>
           import('../setup/calendar-event/calendar-event.module').then(

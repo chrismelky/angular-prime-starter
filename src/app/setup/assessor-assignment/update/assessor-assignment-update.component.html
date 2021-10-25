@@ -13,14 +13,18 @@
           <p-dropdown
             id="user_id"
             optionValue="id"
-            optionLabel="first_name"
+            optionLabel="username"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="users!"
             formControlName="user_id"
-          ></p-dropdown>
+          >
+            <ng-template let-item pTemplate="item">
+                 {{item.first_name+'   '+item.last_name+ ' ' }} [  {{item.email }}]
+           </ng-template>
+          </p-dropdown>
           <label for="user_id">User </label>
         </span>
         <span
@@ -35,52 +39,18 @@
       </div>
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
-            id="admin_hierarchy_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="adminHierarchies!"
-            formControlName="admin_hierarchy_id"
-          ></p-dropdown>
-          <label for="admin_hierarchy_id">Admin Hierarchy </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('admin_hierarchy_id')!.invalid &&
-            (editForm.get('admin_hierarchy_id')!.dirty ||
-              editForm.get('admin_hierarchy_id')!.touched ||
-              formError)
-          "
-        >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="admin_hierarchy_level_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="adminHierarchyLevels!"
-            formControlName="admin_hierarchy_level_id"
-          ></p-dropdown>
-          <label for="admin_hierarchy_level_id">Admin Hierarchy Level </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('admin_hierarchy_level_id')!.invalid &&
-            (editForm.get('admin_hierarchy_level_id')!.dirty ||
-              editForm.get('admin_hierarchy_level_id')!.touched ||
-              formError)
-          "
-        >
+          <p-multiSelect id="admin_hierarchies"
+                         [options]="admin_hierarchies!"
+                         [virtualScroll]="true"
+                         [filter]="true"
+                         optionLabel="name"
+                         optionValue="id"
+                         display="chip"
+                         appendTo="body"
+                         formControlName="admin_hierarchies"
+          ></p-multiSelect>
+
+          <label for="admin_hierarchies">Admin Hierarchy  </label>
         </span>
       </div>
       <div class="p-field" fxFlex>
@@ -96,7 +66,7 @@
             [options]="casAssessmentRounds!"
             formControlName="cas_assessment_round_id"
           ></p-dropdown>
-          <label for="cas_assessment_round_id">Cas Assessment Round </label>
+          <label for="cas_assessment_round_id">Cas  Round </label>
         </span>
         <span
           *ngIf="
@@ -106,6 +76,11 @@
               formError)
           "
         >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('cas_assessment_round_id')?.errors?.required"
+            >Cas  Round is required.</small
+          >
         </span>
       </div>
       <div class="p-field" fxFlex>
@@ -131,6 +106,11 @@
               formError)
           "
         >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('period_id')?.errors?.required"
+            >Period is required.</small
+          >
         </span>
       </div>
       <div class="p-field" fxFlex>
@@ -138,7 +118,7 @@
           <p-dropdown
             id="cas_assessment_category_version_id"
             optionValue="id"
-            optionLabel="cas_assessment_category.name"
+            optionLabel="cas_category_name"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
@@ -147,7 +127,7 @@
             formControlName="cas_assessment_category_version_id"
           ></p-dropdown>
           <label for="cas_assessment_category_version_id"
-            >Cas Assessment Category Version
+            >Cas  Category Version
           </label>
         </span>
         <span
@@ -158,6 +138,14 @@
               formError)
           "
         >
+          <small
+            class="p-error"
+            *ngIf="
+              editForm.get('cas_assessment_category_version_id')?.errors
+                ?.required
+            "
+            >Cas  Category Version is required.</small
+          >
         </span>
       </div>
       <div class="p-field" fxFlex>
@@ -183,15 +171,12 @@
               formError)
           "
         >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('financial_year_id')?.errors?.required"
+            >Financial Year is required.</small
+          >
         </span>
-      </div>
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
-          id="active"
-          name="active"
-          formControlName="active"
-        ></p-inputSwitch>
-        <label for="active">Active </label>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

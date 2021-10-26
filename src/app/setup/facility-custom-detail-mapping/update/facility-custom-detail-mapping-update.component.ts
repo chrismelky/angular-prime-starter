@@ -32,7 +32,6 @@ export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
 
   facilityCustomDetails?: FacilityCustomDetail[] = [];
   facilityTypes?: FacilityType[] = [];
-  ownerships?: PlanrepEnum[] = [];
 
   /**
    * Declare form
@@ -41,7 +40,6 @@ export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
     id: [null, []],
     facility_custom_detail_id: [null, [Validators.required]],
     facility_type_id: [null, [Validators.required]],
-    ownership: [null, [Validators.required]],
   });
 
   constructor(
@@ -68,7 +66,6 @@ export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
       );
-    this.ownerships = this.enumService.get("ownerships");
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -139,7 +136,6 @@ export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
       facility_custom_detail_id:
         facilityCustomDetailMapping.facility_custom_detail_id,
       facility_type_id: facilityCustomDetailMapping.facility_type_id,
-      ownership: facilityCustomDetailMapping.ownership,
     });
   }
 
@@ -155,7 +151,6 @@ export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
         "facility_custom_detail_id",
       ])!.value,
       facility_type_id: this.editForm.get(["facility_type_id"])!.value,
-      ownership: this.editForm.get(["ownership"])!.value,
     };
   }
 }

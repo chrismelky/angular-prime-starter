@@ -136,7 +136,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
       if(ceiling.ceiling.length > 0){
         if(startIndex == 0){this.defaultSelected![ceiling.position] = {...ceiling.ceiling[0]};}else{
           let ceilingId = this.defaultSelected![parentPosition]?this.defaultSelected![parentPosition]:this.councilCeilingGroup![startIndex-1].ceiling[0];
-          this.councilCeilingGroup![startIndex].ceiling = this.councilCeiling!.filter((c) => c.parent_id === ceilingId.id);
+          let ceilingSectors = ceilingId.ceiling.sector.map((s: { id: any; }) => (s.id));
+          this.councilCeilingGroup![startIndex].ceiling = this.councilCeiling!.filter((c) => (c.parent_id === ceilingId.id && ceilingSectors.includes(c.section?.sector_id)));
           this.defaultSelected![ceiling.position] = {...this.councilCeilingGroup![startIndex].ceiling[0]};
           if(!ceiling.chain.next){
             this.finalCeiling = this.defaultSelected![ceiling.position];

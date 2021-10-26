@@ -950,6 +950,19 @@ const routes: Routes = [
         },
       },
       {
+        path: 'projection',
+        loadChildren: () =>
+          import(
+            '../budgeting/projection/projection.module'
+            ).then((m) => m.ProjectionModule),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: 'WRITE_PROJECTION',
+          },
+        },
+      },
+      {
         path: 'admin-hierarchy-ceiling',
         loadChildren: () =>
           import(

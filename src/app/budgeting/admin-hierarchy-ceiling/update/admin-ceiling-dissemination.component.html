@@ -1,18 +1,14 @@
 <script src="admin-ceiling-dissemination.component.ts"></script>
 <div class="ui-dialog-content">
   <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
-  <p-card class="filter">
-    <ng-template pTemplate="header">
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-        <span class="card-header-text"><b style="font-size:16px">Revenue Source : {{this.ceiling?.ceiling?.fund_source?.gfs_code?.name}}</b></span>
-      </div>
-    </ng-template>
-    <ng-template pTemplate="body">
-      <div class="overlay-position"><span #overlayTarget></span></div>
-      <div fxLayout="column" fxLayoutGap="10px">
-        <div fxLayout="row wrap" fxLayoutGap="10px">
-          <div fxLayout="row wrap" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
-            <div *ngFor="let ceiling of councilCeilingGroup" class="p-field" fxFlex>
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+      <span class="card-header-text"><b style="font-size:16px">Revenue Source : {{this.ceiling?.ceiling?.fund_source?.gfs_code?.name}}</b></span>
+    </div>
+    <div class="overlay-position"><span #overlayTarget></span></div>
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div fxLayout="row wrap" fxLayoutGap="10px">
+        <div fxLayout="row wrap" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
+          <div *ngFor="let ceiling of councilCeilingGroup" class="p-field" fxFlex>
                <span class="p-float-label">
                   <div  fxLayout="row" fxLayoutAlign="space-between center">
                     <span><b>{{ceiling.label}}</b></span>
@@ -24,37 +20,37 @@
                     ) | number : '1.2-2'}})%</b>Allocated</span>
                   </div>
                 </span>
-              <p-dropdown
-                optionValue=""
-                optionLabel="section.name"
-                [autoDisplayFirst]="true"
-                [(ngModel)]="defaultSelected![ceiling.position]"
-                placeholder="Select  {{ceiling.label}}"
-                [filter]="true"
-                [options]="ceiling.ceiling!"
-                (onChange)="sectionChange($event.value,ceiling.chain)"
-                styleClass="form-control"
-              >
-                <ng-template let-item pTemplate="item">
-                  <div fxLayout="row" fxLayoutAlign="space-between center">
-                    <span class=""> {{item.section.name}} </span>
-                    <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(ceiling.position,op,$event,item,ceiling.chain)" *ngIf="ceiling.chain.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
-                  </div>
-                </ng-template>
-                <ng-template let-item pTemplate="selectedItem">
-                  <span class=""> {{item.section.name}}</span>
-                  <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>
-                </ng-template>
-              </p-dropdown>
-            </div>
+            <p-dropdown
+              optionValue=""
+              optionLabel="section.name"
+              [autoDisplayFirst]="true"
+              [(ngModel)]="defaultSelected![ceiling.position]"
+              placeholder="Select  {{ceiling.label}}"
+              [filter]="true"
+              [options]="ceiling.ceiling!"
+              (onChange)="sectionChange($event.value,ceiling.chain)"
+              styleClass="form-control"
+            >
+              <ng-template let-item pTemplate="item">
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                  <span class=""> {{item.section.name}} </span>
+                  <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(ceiling.position,op,$event,item,ceiling.chain)" *ngIf="ceiling.chain.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
+                </div>
+              </ng-template>
+              <ng-template let-item pTemplate="selectedItem">
+                <span class=""> {{item.section.name}}</span>
+                <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>
+              </ng-template>
+            </p-dropdown>
           </div>
         </div>
       </div>
-      <br>
-      <div fxLayout="column" fxLayoutGap="10px">
-        <div fxLayout="row wrap" fxLayoutGap="10px">
-          <div fxLayout="row wrap" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
-            <div class="p-field" fxFlex>
+    </div>
+    <br>
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div fxLayout="row wrap" fxLayoutGap="10px">
+        <div fxLayout="row wrap" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
+          <div class="p-field" fxFlex>
             <p-table
               #fc
               class="ceiling"
@@ -104,17 +100,17 @@
                       <span *ngIf="finalCeiling.amount <=0 || rowData.is_locked">
                         {{rowData!.amount | currency:"TZS":"TSH"}}
                       </span>
-                    <p-inputNumber
-                      *ngIf="finalCeiling.amount > 0 && !rowData.is_locked"
-                      mode="decimal"
-                      prefix="TSH "
-                      [(ngModel)]="rowData!.amount"
-                      [minFractionDigits]="2"
-                      [maxFractionDigits]="2"
-                      (onBlur)="updateFacilityCeiling(rowData)"
-                      (onInput)="facilityCeilingChange(rowData,$event.value)"
-                      [min]="0"
-                    ></p-inputNumber>
+                      <p-inputNumber
+                        *ngIf="finalCeiling.amount > 0 && !rowData.is_locked"
+                        mode="decimal"
+                        prefix="TSH "
+                        [(ngModel)]="rowData!.amount"
+                        [minFractionDigits]="2"
+                        [maxFractionDigits]="2"
+                        (onBlur)="updateFacilityCeiling(rowData)"
+                        (onInput)="facilityCeilingChange(rowData,$event.value)"
+                        [min]="0"
+                      ></p-inputNumber>
                     </div>
                   </td>
                   <td >
@@ -122,30 +118,28 @@
                       <span *ngIf="finalCeiling.amount <=0 || rowData.is_locked">
                         {{rowData!.percent | number : '1.2-2'}} %
                       </span>
-                    <p-inputNumber
-                      *ngIf="finalCeiling.amount > 0  && !rowData.is_locked"
-                      mode="decimal"
-                      suffix=" %"
-                      [(ngModel)]="rowData.percent"
-                      [minFractionDigits]="2"
-                      [maxFractionDigits]="2"
-                      (onBlur)="updateFacilityCeiling(rowData)"
-                      (onInput)="getFacilityPercent(rowData,$event.value)"
-                      [min]="0"
-                      [max]="100"
-                    ></p-inputNumber>
+                      <p-inputNumber
+                        *ngIf="finalCeiling.amount > 0  && !rowData.is_locked"
+                        mode="decimal"
+                        suffix=" %"
+                        [(ngModel)]="rowData.percent"
+                        [minFractionDigits]="2"
+                        [maxFractionDigits]="2"
+                        (onBlur)="updateFacilityCeiling(rowData)"
+                        (onInput)="getFacilityPercent(rowData,$event.value)"
+                        [min]="0"
+                        [max]="100"
+                      ></p-inputNumber>
                     </div>
                   </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage"> No Ceiling Found </ng-template>
             </p-table>
-            </div>
           </div>
         </div>
       </div>
-    </ng-template>
-  </p-card>
+    </div>
   </div>
 </div>
 <div class="p-dialog-footer" style="bottom: 0">

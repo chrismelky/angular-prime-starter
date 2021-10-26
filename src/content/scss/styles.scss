@@ -369,6 +369,9 @@ p-card.filter-no-adv {
   min-width: 200px;
   width: 100%;
 }
+.period .p-inputnumber {
+  min-width: 10px !important;
+}
 
 .tree-input .p-disabled, .p-component:disabled {
   opacity: 1;

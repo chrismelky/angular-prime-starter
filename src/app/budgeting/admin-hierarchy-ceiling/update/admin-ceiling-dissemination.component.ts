@@ -54,6 +54,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   councilCeilingGroup?: any[]=[];
   facilityCeiling?: any[]=[];
   clonedCeiling?:  any[]= [];
+  clonedFacilityCeiling?:  any[]= [];
   facilities?: Facility[]=[];
   budgetCeiling?: BudgetCeiling[]=[];
   councilCeiling?: AdminHierarchyCeiling[]=[];
@@ -176,6 +177,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
         {percent: ceiling.amount!>0?((c.amount!/ceiling!.amount!)*100):(0)}));
       this.clonedCeiling = this.toAllocate!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent,section:c.section }));
       table.toggle(event,this.overlayTarget?.nativeElement);
+      this.sectionChange(ceiling,chain);
     }else{
       this.toastService.info('No Ceiling To allocate')
     }
@@ -191,7 +193,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   //Update Facility Ceiling
   updateFacilityCeiling(row:any):void{
     const index = this.facilityCeiling!.findIndex(item => item.id === row.id);
-    if(this.clonedCeiling![index].amount != row.amount){
+    if(this.clonedFacilityCeiling![index].amount != row.amount){
       if(this.totalFacilityAllocatedAmount! <= this.finalCeiling!.amount!) {
         const facilityCeiling = this.facilityUpdateCeilingFrom(row);
         if(facilityCeiling.id !== null){
@@ -204,9 +206,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
           );
         }
       }else{
-        this.facilityCeiling![index].amount=this.clonedCeiling![index].amount;
-        this.facilityCeiling![index].percent=this.clonedCeiling![index].percent;
-        this.getFacilityPercent(this.clonedCeiling![index],this.clonedCeiling![index].percent!);
+        this.facilityCeiling![index].amount=this.clonedFacilityCeiling![index].amount;
+        this.facilityCeiling![index].percent=this.clonedFacilityCeiling![index].percent;
+        this.getFacilityPercent(this.clonedFacilityCeiling![index],this.clonedFacilityCeiling![index].percent!);
       }
     }
   }
@@ -381,7 +383,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
             percent:budgetCeiling==undefined?0.00:((budgetCeiling.amount!)>0?(((budgetCeiling.amount!)/ceiling.amount)*100):0.00)
           }
         });
-        this.clonedCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
+        this.clonedFacilityCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
         this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
         });
     });

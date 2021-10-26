@@ -705,6 +705,11 @@ export class MainComponent implements OnInit {
           icon: "pi pi-fw pi-arrow-right",
           routerLink: "activity-input",
         },
+        {
+          label: "Projections",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "projection",
+        },
         /**====Planrep budgeting Menu Generator Hook: Dont Delete====*/
       ],
     },

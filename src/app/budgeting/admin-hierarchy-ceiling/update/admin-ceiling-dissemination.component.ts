@@ -168,14 +168,14 @@ export class AdminCeilingDisseminationComponent implements OnInit {
 
 
   allocateCeiling(position:number,table:any,event:any,ceiling:AdminHierarchyCeiling,chain:any):void{
+    console.log(ceiling.ceiling)
     this.allocationPosition = position;
-    this.sectionChange(ceiling,chain);
     if(ceiling!.amount!>0){
       this.toAllocate = this.councilCeiling!.filter(cc => cc.parent_id == ceiling.id)
       this.toAllocate = this.toAllocate!.map((c) => Object.assign(c,
         {percent: ceiling.amount!>0?((c.amount!/ceiling!.amount!)*100):(0)}));
-      table.toggle(event,this.overlayTarget?.nativeElement);
       this.clonedCeiling = this.toAllocate!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent,section:c.section }));
+      table.toggle(event,this.overlayTarget?.nativeElement);
     }else{
       this.toastService.info('No Ceiling To allocate')
     }
@@ -215,16 +215,16 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   updateCeiling(adminHierarchyCeiling: AdminHierarchyCeiling){
     const index = this.toAllocate!.findIndex(item => item.id === adminHierarchyCeiling.id);
     if(this.clonedCeiling![index].amount != adminHierarchyCeiling.amount){
-    if(this.totalAllocatedCeiling[this.allocationPosition!].amount <= this.selectedCeiling[this.allocationPosition!]!.amount!) {
-      const ceiling = this.updateFromForm(adminHierarchyCeiling);
-      this.subscribeToSaveResponse(
-        this.adminHierarchyCeilingService.update(ceiling),adminHierarchyCeiling
-      );
-    }else{
-      this.toAllocate![index].amount=this.clonedCeiling![index].amount;
-      this.toAllocate![index].percent=this.clonedCeiling![index].percent;
-      this.getPercent(this.clonedCeiling![index],this.clonedCeiling![index].percent!);
-    }
+      if(this.totalAllocatedCeiling[this.allocationPosition!].amount <= this.selectedCeiling[this.allocationPosition!]!.amount!) {
+        const ceiling = this.updateFromForm(adminHierarchyCeiling);
+        this.subscribeToSaveResponse(
+          this.adminHierarchyCeilingService.update(ceiling),adminHierarchyCeiling
+        );
+      }else{
+        this.toAllocate![index].amount=this.clonedCeiling![index].amount;
+        this.toAllocate![index].percent=this.clonedCeiling![index].percent;
+        this.getPercent(this.clonedCeiling![index],this.clonedCeiling![index].percent!);
+      }
     }
   }
 

@@ -49,6 +49,7 @@ import { saveAs } from 'file-saver';
 import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
 import {AdminCeilingDisseminationComponent} from "./update/admin-ceiling-dissemination.component";
+import {ProjectionAllocationComponent} from "../../shared/projection-allocation/projection-allocation.component";
 
 @Component({
   selector: 'app-admin-hierarchy-ceiling',
@@ -612,6 +613,20 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       width: '80%',
       styleClass:'planrep-dialogy',
       data,
+    });
+    ref.onClose.subscribe((result) => {});
+  }
+  editOwnSource(rowData: AdminHierarchyCeiling): void{
+    const ref = this.dialogService.open(ProjectionAllocationComponent, {
+      header: 'Allocate Ceiling',
+      width: '60%',
+      data:{
+        fund_source_id:rowData.ceiling.fund_source_id,
+        section_id:rowData.section_id,
+        financial_year_id:rowData.financial_year_id,
+        admin_hierarchy_id:rowData.admin_hierarchy_id,
+        budget_type:rowData.budget_type
+      }
     });
     ref.onClose.subscribe((result) => {});
   }

@@ -1217,6 +1217,13 @@ const routes: Routes = [
             (m) => m.ActivityInputModule
           ),
       },
+      {
+        path: "projection",
+        loadChildren: () =>
+          import("../budgeting/projection/projection.module").then(
+            (m) => m.ProjectionModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

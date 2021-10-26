@@ -14,6 +14,7 @@ import { ActivityComponent } from './activity.component';
 import { ActivityUpdateComponent } from './update/activity-update.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { ResponsiblePersonSharedModule } from '../responsible-person/responsible-person-shared.module';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
     CommonModule,
     ActivityRoutingModule,
     MatStepperModule,
+    ResponsiblePersonSharedModule,
   ],
   providers: [
     {

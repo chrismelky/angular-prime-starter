@@ -1,5 +1,6 @@
 import { AfterViewInit, EventEmitter, ViewChild } from '@angular/core';
 import { Component, Input, OnInit, Output } from '@angular/core';
+import { LocalStorageService } from 'ngx-webstorage';
 import { TreeNode } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
@@ -19,28 +20,41 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
   selectedValue: any;
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
+  @Input() stateKey?: string;
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @ViewChild('op') panel!: OverlayPanel;
 
   constructor(
     protected userService: UserService,
-    protected adminHierarchyService: AdminHierarchyService
+    protected adminHierarchyService: AdminHierarchyService,
+    protected localStorageService: LocalStorageService
   ) {
     this.currentUser = userService.getCurrentUser();
   }
 
   ngOnInit(): void {
-    const rootAdminHierarchy = this.currentUser.admin_hierarchy;
-    if (rootAdminHierarchy) {
-      this.nodes = [
-        {
-          label: rootAdminHierarchy.name,
-          data: rootAdminHierarchy,
-          children: [],
-          leaf: false,
-        },
-      ];
-      this.selectedValue = this.nodes[0];
+    if (
+      this.stateKey &&
+      this.localStorageService.retrieve(`${this.stateKey}_state`)
+    ) {
+      this.nodes = this.localStorageService.retrieve(`${this.stateKey}_state`);
+      this.selectedValue = this.localStorageService.retrieve(
+        `${this.stateKey}_selected`
+      );
+    } else {
+      const rootAdminHierarchy = this.currentUser.admin_hierarchy;
+      if (rootAdminHierarchy) {
+        this.nodes = [
+          {
+            label: rootAdminHierarchy.name,
+            data: rootAdminHierarchy,
+            key: rootAdminHierarchy.id?.toString(),
+            children: [],
+            leaf: false,
+          },
+        ];
+        this.selectedValue = this.nodes[0];
+      }
     }
   }
 
@@ -62,15 +76,33 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
           selected.children = resp.data?.map((a) => {
             return {
               label: a.name,
+              key: a.id?.toString(),
               data: a,
               leaf: false,
+              parent: undefined,
             };
           });
+          if (this.stateKey) {
+            this.localStorageService.store(
+              `${this.stateKey}_state`,
+              this.cleanNodes(this.nodes)
+            );
+          }
         },
         (error) => {
           this.treeLoading = false;
         }
       );
+  }
+
+  private cleanNodes(nodes: TreeNode[]): TreeNode[] {
+    return nodes.map((n) => {
+      return {
+        ...n,
+        parent: undefined,
+        children: n.children ? this.cleanNodes(n.children) : [],
+      };
+    });
   }
 
   onSelectionChange(event?: any): void {
@@ -84,5 +116,10 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
           });
     this.onSelect.next(selection);
     this.panel.hide();
+    this.localStorageService.store(`${this.stateKey}_selected`, {
+      label: this.selectedValue.label,
+      data: this.selectedValue.data,
+      leaf: this.selectedValue.leaf,
+    });
   }
 }

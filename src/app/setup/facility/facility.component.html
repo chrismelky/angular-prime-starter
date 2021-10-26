@@ -16,6 +16,7 @@
           fxFlex
           fxLayoutAlign="start center"
         >
+          <app-admin-hierarchy-tree (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -32,7 +33,7 @@
               <label for="facility_type_id">Facility Type </label>
             </span>
           </div>
-          <app-admin-hierarchy-tree (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
+
         </div>
         <div
           fxLayout="row wrap"

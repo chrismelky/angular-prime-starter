@@ -7,6 +7,8 @@ export class FinancialYearTarget {
     public admin_hierarchy_id?: number,
     public objective_id?: number,
     public code?: string,
-    public section_id?: number
+    public section_id?: number,
+    public objective_code?: string,
+    public objective?: string
   ) {}
 }

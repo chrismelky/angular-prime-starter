@@ -155,6 +155,7 @@
       [value]="longTermTargets!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
+      styleClass="p-datatable-gridlines"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
@@ -175,8 +176,12 @@
           <th pSortableColumn="description">
             Target<p-sortIcon field="description"></p-sortIcon>
           </th>
-          <th>KPI</th>
-          <th *ngFor="let y of financialYears" class="fit">
+          <th>Performance Indicator</th>
+          <th
+            *ngFor="let y of financialYears"
+            class="fit"
+            style="padding-right: 24px"
+          >
             {{ y.name }}
           </th>
           <th class="fit"></th>
@@ -188,26 +193,33 @@
         let-columns="columns"
         let-expanded="expanded"
       >
-        <tr [ngClass]="{ 'tr-expanded': expanded }">
-          <td>[{{ rowData.code }}] {{ rowData.description }}</td>
+        <tr style="white-space: normal" [ngClass]="{ 'tr-expanded': expanded }">
+          <td>[ {{ rowData.code }} ] {{ rowData.description }}</td>
           <td>
             <button
               pButton
+              style="font-size: 12px"
               [pRowToggler]="rowData"
               pTooltip="Key Performance Indicator"
               class="p-button p-button-plain p-button-sm p-button-text"
-              label="Indicators"
+              [label]="expanded ? 'Hide Indicators' : 'Show Indicators'"
               [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
             ></button>
           </td>
-          <td *ngFor="let y of financialYears">
-            <app-financial-year-target-view
-              [longTermTarget]="rowData"
-              [financialYearId]="y.id"
-              [adminHierarchyId]="strategicPlan.admin_hierarchy_id"
-              [currentFinancialYear]="currentFinancialYear"
-              (onSave)="fyTargetSaved($event)"
-            ></app-financial-year-target-view>
+          <td *ngFor="let y of financialYears" style="padding-right: 24px">
+            <button
+              pButton
+              pRipple
+              [pTooltip]="y.name + ' Targets'"
+              tooltipPosition="bottom"
+              class="
+                p-button-text p-button-plain p-button-rounded p-button-icon
+              "
+              icon="pi pi-external-link"
+              (click)="
+                financialYearTarget(rowData, y.id!, currentFinancialYear!)
+              "
+            ></button>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

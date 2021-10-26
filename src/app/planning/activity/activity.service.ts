@@ -13,7 +13,6 @@ import { createRequestOption } from '../../utils/request-util';
 import { CustomResponse } from '../../utils/custom-response';
 import {
   Activity,
-  ActivityFacility,
   ActivityFundSource,
   FacilityActivity,
 } from './activity.model';
@@ -49,15 +48,6 @@ export class ActivityService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
-  }
-
-  activityFacilities(
-    financialYearId: number,
-    activityId: number
-  ): Observable<CustomResponse<ActivityFacility[]>> {
-    return this.http.get<CustomResponse<ActivityFacility[]>>(
-      `${this.resourceUrl}/facilities/${financialYearId}/${activityId}`
-    );
   }
 
   facilityActivity(req: any): Observable<CustomResponse<FacilityActivity[]>> {

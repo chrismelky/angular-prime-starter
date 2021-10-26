@@ -7,6 +7,10 @@ import {CustomResponse} from "../../../utils/custom-response";
 import {finalize} from "rxjs/operators";
 import {GfsCodeService} from "../gfs-code.service";
 import {saveAs} from "file-saver";
+import {AccountType} from "../../account-type/account-type.model";
+import {GfsCodeCategoryTree} from "../../gfs-code-category/gfs-code-category.model";
+import {AccountTypeService} from "../../account-type/account-type.service";
+import {GfsCodeCategoryService} from "../../gfs-code-category/gfs-code-category.service";
 
 @Component({
   selector: 'app-upload',
@@ -20,28 +24,44 @@ export class UploadComponent implements OnInit {
   /**
    * Declare form
    */
-  editForm: FormGroup;
+  accountTypes?: AccountType[] = [];
+  categories?: GfsCodeCategoryTree[] = [];
+
+  editForm = this.fb.group({
+    category_id: [null, [Validators.required]],
+    account_type_id: [null, [Validators.required]],
+    file: [[], [Validators.required]],
+  });
 
   constructor(
     protected gfsCodeService: GfsCodeService,
     public dialogRef: DynamicDialogRef,
+    protected accountTypeService: AccountTypeService,
+    protected categoryService: GfsCodeCategoryService,
     public config: DynamicDialogConfig,
     public fb: FormBuilder,
     private toastService: ToastService,
   ) {
-    this.editForm = this.fb.group({
-      category_id: [this.config.data.category_id, [Validators.required]],
-      account_type_id: [this.config.data.account_type_id, [Validators.required]],
-      file: []
-    })
+
   }
 
   ngOnInit(): void {
+    this.accountTypeService
+      .query({columns: ["id", "name"]})
+      .subscribe(
+        (resp: CustomResponse<AccountType[]>) => (this.accountTypes = resp.data)
+      );
+    this.categoryService
+      .tree()
+      .subscribe(
+        (resp: CustomResponse<GfsCodeCategoryTree[]>) => (this.categories = resp.data)
+      );
   }
 
   onUpload(event: any): void {
     if (this.editForm.invalid) {
       this.formError = true;
+      console.log(this.editForm.value);
       return;
     }
     const gfsCodes = this.createFromForm();

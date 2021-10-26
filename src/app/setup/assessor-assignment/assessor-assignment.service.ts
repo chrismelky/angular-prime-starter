@@ -16,6 +16,8 @@ import { AssessorAssignment } from "./assessor-assignment.model";
 @Injectable({ providedIn: "root" })
 export class AssessorAssignmentService {
   public resourceUrl = "api/assessor_assignments";
+  private assessorsUrl = "api/get-assessors";
+  private adminUrl = "api/get-regions";
 
   constructor(protected http: HttpClient) {}
 
@@ -50,8 +52,20 @@ export class AssessorAssignmentService {
       { params: options }
     );
   }
+  getAssessors(req?: any): Observable<CustomResponse<AssessorAssignment[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<AssessorAssignment[]>>(
+      this.assessorsUrl,{ params: options }
+    );
+  }
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  getAssignedRegions(round_id: number,fy_id: number,version_id: number,user_id: number,admin_position: any ): Observable<CustomResponse<AssessorAssignment[]>> {
+    return this.http.get<CustomResponse<AssessorAssignment[]>>(
+      `${this.adminUrl}/${round_id}/${fy_id}/${version_id}/${user_id}/${admin_position}`
+    );
   }
 }

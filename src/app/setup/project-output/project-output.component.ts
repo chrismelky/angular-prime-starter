@@ -5,48 +5,60 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { Project } from "src/app/setup/project/project.model";
-import { ProjectService } from "src/app/setup/project/project.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Project } from 'src/app/setup/project/project.model';
+import { ProjectService } from 'src/app/setup/project/project.service';
 
-import { ProjectOutput } from "./project-output.model";
-import { ProjectOutputService } from "./project-output.service";
-import { ProjectOutputUpdateComponent } from "./update/project-output-update.component";
+import { ProjectOutput } from './project-output.model';
+import { ProjectOutputService } from './project-output.service';
+import { ProjectOutputUpdateComponent } from './update/project-output-update.component';
+import { ExpenditureCategory } from '../expenditure-category/expenditure-category.model';
+import { Sector } from '../sector/sector.model';
+import { ExpenditureCategoryService } from '../expenditure-category/expenditure-category.service';
+import { SectorService } from '../sector/sector.service';
+import { ProjectType } from '../project-type/project-type.model';
+import { ProjectTypeService } from '../project-type/project-type.service';
 
 @Component({
-  selector: "app-project-output",
-  templateUrl: "./project-output.component.html",
+  selector: 'app-project-output',
+  templateUrl: './project-output.component.html',
 })
 export class ProjectOutputComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   projectOutputs?: ProjectOutput[] = [];
 
-  projects?: Project[] = [];
+  categoryIsLoading = false;
+  sectorIsLoading = false;
+  projectTypeIsLoading = false;
+
+  projectTypes?: ProjectType[] = [];
+  expenditureCategories?: ExpenditureCategory[] = [];
+  sectors?: Sector[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "is_active",
-      header: "Is Active",
+      field: 'is_active',
+      header: 'Is Active',
       sort: false,
     },
   ]; //Table display columns
@@ -61,11 +73,14 @@ export class ProjectOutputComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  project_id!: number;
+  expenditure_category_id!: number;
+  sector_id!: number;
 
   constructor(
     protected projectOutputService: ProjectOutputService,
-    protected projectService: ProjectService,
+    protected expenditureCategoryService: ExpenditureCategoryService,
+    protected sectorService: SectorService,
+    protected projectTypeService: ProjectTypeService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -75,11 +90,24 @@ export class ProjectOutputComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
-      );
+    this.sectorIsLoading = true;
+    this.sectorService.query().subscribe(
+      (resp) => {
+        this.sectors = resp.data;
+        this.sectorIsLoading = false;
+      },
+      (error) => (this.sectorIsLoading = false)
+    );
+
+    this.projectTypeIsLoading = true;
+    this.projectTypeService.query().subscribe(
+      (resp) => {
+        this.projectTypes = resp.data;
+        this.projectTypeIsLoading = false;
+      },
+      (error) => (this.projectTypeIsLoading = false)
+    );
+
     this.handleNavigation();
   }
 
@@ -89,7 +117,7 @@ export class ProjectOutputComponent implements OnInit {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.project_id) {
+    if (!this.expenditure_category_id || !this.sector_id) {
       return;
     }
     this.isLoading = true;
@@ -100,7 +128,8 @@ export class ProjectOutputComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        project_id: this.project_id,
+        expenditure_category_id: this.expenditure_category_id,
+        sector_id: this.sector_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -115,6 +144,21 @@ export class ProjectOutputComponent implements OnInit {
       );
   }
 
+  loadCategories(projectTypeId: number): void {
+    this.categoryIsLoading = true;
+    this.expenditureCategoryService
+      .query({
+        project_type_id: projectTypeId,
+      })
+      .subscribe(
+        (resp) => {
+          this.expenditureCategories = resp.data;
+          this.categoryIsLoading = false;
+        },
+        (error) => (this.categoryIsLoading = false)
+      );
+  }
+
   /**
    * Called initialy/onInit to
    * Restore page, sort option from url query params if exist and load page
@@ -124,11 +168,11 @@ export class ProjectOutputComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -203,8 +247,8 @@ export class ProjectOutputComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -215,11 +259,16 @@ export class ProjectOutputComponent implements OnInit {
   createOrUpdate(projectOutput?: ProjectOutput): void {
     const data: ProjectOutput = projectOutput ?? {
       ...new ProjectOutput(),
-      project_id: this.project_id,
+      expenditure_category_id: this.expenditure_category_id,
+      sector_id: this.sector_id,
     };
     const ref = this.dialogService.open(ProjectOutputUpdateComponent, {
-      data,
-      header: "Create/Update ProjectOutput",
+      data: {
+        projectOutPut: data,
+        expenditureCategories: this.expenditureCategories,
+        sectors: this.sectors,
+      },
+      header: 'Create/Update ProjectOutput',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -234,7 +283,7 @@ export class ProjectOutputComponent implements OnInit {
    */
   delete(projectOutput: ProjectOutput): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this ProjectOutput?",
+      message: 'Are you sure that you want to delete this ProjectOutput?',
       accept: () => {
         this.projectOutputService
           .delete(projectOutput.id!)
@@ -260,12 +309,12 @@ export class ProjectOutputComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/project-output"], {
+      this.router.navigate(['/project-output'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -278,6 +327,6 @@ export class ProjectOutputComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Project Output");
+    this.toastService.error('Error loading Project Output');
   }
 }

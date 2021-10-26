@@ -1,3 +1,5 @@
+import { Section } from '../section/section.model';
+
 export class AdminHierarchyLevel {
   constructor(
     public id?: number,
@@ -7,6 +9,7 @@ export class AdminHierarchyLevel {
     public code_required?: boolean,
     public can_budget?: boolean,
     public code_length?: number,
-    public cost_centre_position?: number
+    public default_decision_level_id?: number,
+    public cost_centres?: Section[]
   ) {}
 }

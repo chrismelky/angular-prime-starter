@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -94,7 +94,11 @@
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
             <p-inputNumber
+              #unitPrice
               id="unit_price"
+              (onInput)="
+                updateTotal($event.value, quantity.value, frequency.value)
+              "
               formControlName="unit_price"
               mode="decimal"
               [minFractionDigits]="2"
@@ -121,9 +125,13 @@
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
             <p-inputNumber
+              #quantity
               id="quantity"
               formControlName="quantity"
               mode="decimal"
+              (onInput)="
+                updateTotal(unitPrice.value, $event.value, frequency.value)
+              "
               [minFractionDigits]="2"
               [maxFractionDigits]="2"
             ></p-inputNumber>
@@ -148,8 +156,12 @@
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
             <p-inputNumber
+              #frequency
               id="frequency"
               formControlName="frequency"
+              (onInput)="
+                updateTotal(unitPrice.value, quantity.value, $event.value)
+              "
               mode="decimal"
               [minFractionDigits]="2"
               [maxFractionDigits]="2"
@@ -171,50 +183,154 @@
             >
           </span>
         </div>
+
+        <p-fieldset fxFlex legend="Total" class="total-fieldset">
+          <strong>{{ total | currency: " " }}</strong>
+        </p-fieldset>
       </div>
 
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <p-inputNumber
-            id="forward_year_one_amount"
-            formControlName="forward_year_one_amount"
-            mode="decimal"
-            [minFractionDigits]="2"
-            [maxFractionDigits]="2"
-          ></p-inputNumber>
-          <label for="forward_year_one_amount">Forward Year One Amount </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('forward_year_one_amount')!.invalid &&
-            (editForm.get('forward_year_one_amount')!.dirty ||
-              editForm.get('forward_year_one_amount')!.touched ||
-              formError)
-          "
+      <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+        <span fxFlex="0 1 40%"></span>
+        <div
+          fxFlex="1 0 60%"
+          fxLayout="row"
+          fxLayoutGap="10px"
+          fxLayoutAlign="start"
         >
-        </span>
+          <div class="p-field" fxFlex="0 1 25%">
+            <span class="p-float-label">
+              <p-inputNumber
+                id="period_one"
+                formControlName="period_one"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+              ></p-inputNumber>
+              <label for="period_one">Q1(%)</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('period_one')!.invalid &&
+                (editForm.get('period_one')!.dirty ||
+                  editForm.get('period_one')!.touched ||
+                  formError)
+              "
+            >
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex="0 1 25%">
+            <span class="p-float-label">
+              <p-inputNumber
+                id="period_two"
+                formControlName="period_two"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+              ></p-inputNumber>
+              <label for="period_two">Q2(%)</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('period_two')!.invalid &&
+                (editForm.get('period_two')!.dirty ||
+                  editForm.get('period_two')!.touched ||
+                  formError)
+              "
+            >
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex="0 1 25%">
+            <span class="p-float-label">
+              <p-inputNumber
+                id="period_three"
+                formControlName="period_three"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+              ></p-inputNumber>
+              <label for="period_three">Q3(%)</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('period_three')!.invalid &&
+                (editForm.get('period_three')!.dirty ||
+                  editForm.get('period_three')!.touched ||
+                  formError)
+              "
+            >
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex="0 1 25%">
+            <span class="p-float-label">
+              <p-inputNumber
+                id="period_four"
+                formControlName="period_four"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+              ></p-inputNumber>
+              <label for="period_four">Q4(%)</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('period_four')!.invalid &&
+                (editForm.get('period_four')!.dirty ||
+                  editForm.get('period_four')!.touched ||
+                  formError)
+              "
+            >
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <p-inputNumber
-            id="forward_year_two_amount"
-            formControlName="forward_year_two_amount"
-            mode="decimal"
-            [minFractionDigits]="2"
-            [maxFractionDigits]="2"
-          ></p-inputNumber>
-          <label for="forward_year_two_amount">Forward Year Two Amount </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('forward_year_two_amount')!.invalid &&
-            (editForm.get('forward_year_two_amount')!.dirty ||
-              editForm.get('forward_year_two_amount')!.touched ||
-              formError)
-          "
-        >
-        </span>
+      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center">
+        <span fxFlex="0 1 50%"></span>
+        <div class="p-field" fxFlex="0 0 25%">
+          <span class="p-float-label">
+            <p-inputNumber
+              id="forward_year_one_amount"
+              formControlName="forward_year_one_amount"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+            <label for="forward_year_one_amount">Total Year2 </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('forward_year_one_amount')!.invalid &&
+              (editForm.get('forward_year_one_amount')!.dirty ||
+                editForm.get('forward_year_one_amount')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
+        <div class="p-field" fxFlex="0 0 25%">
+          <span class="p-float-label">
+            <p-inputNumber
+              id="forward_year_two_amount"
+              formControlName="forward_year_two_amount"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+            <label for="forward_year_two_amount">Total Year 3 </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('forward_year_two_amount')!.invalid &&
+              (editForm.get('forward_year_two_amount')!.dirty ||
+                editForm.get('forward_year_two_amount')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
       </div>
 
       <div fxLayout="row" fxLayoutGap="0.75rem">

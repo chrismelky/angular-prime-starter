@@ -17,8 +17,11 @@
         >
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
-                                        (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
+              <app-admin-hierarchy-tree
+                [returnType]="'object'"
+                id="admin_hierarchy_id"
+                (onSelect)="onAdminHierarchySelection($event)"
+              ></app-admin-hierarchy-tree>
             </span>
           </div>
           <div class="p-field" fxFlex>
@@ -138,12 +141,19 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="users?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}}
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header }}
             <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'admin_hierarchy_id'">Duty Station<p-sortIcon [field]="'admin_hierarchy_id'"></p-sortIcon></th>
-          <th [pSortableColumn]="'section_id'">Allocation<p-sortIcon [field]="'section_id'"></p-sortIcon></th>
+          <th [pSortableColumn]="'admin_hierarchy_id'">
+            Duty Station<p-sortIcon [field]="'admin_hierarchy_id'"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'section_id'">
+            Allocation<p-sortIcon [field]="'section_id'"></p-sortIcon>
+          </th>
           <th>Status</th>
           <th></th>
         </tr>
@@ -156,10 +166,13 @@
           <td>{{ rowData.admin_hierarchy?.name }}</td>
           <td>{{ rowData.section?.name }}</td>
           <td>
-            <mat-checkbox color="primary" (change)="toggleActive(rowData, $event)" [checked]="rowData.active">
-              <span *ngIf="rowData.active">Active</span>
-              <span *ngIf="!rowData.active">Deactivated</span>
-            </mat-checkbox>
+            <p-checkbox
+              name="groupname"
+              [label]="rowData.active ? 'Active' : 'Deactivated'"
+              (onChange)="toggleActive(rowData, $event)"
+              [binary]="true"
+              [value]="rowData.active"
+            ></p-checkbox>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">

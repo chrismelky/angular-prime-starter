@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -17,17 +17,10 @@ import {
   Activity,
   FacilityActivity,
 } from 'src/app/planning/activity/activity.model';
-import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
-import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
-import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { Facility } from 'src/app/setup/facility/facility.model';
-import { FacilityService } from 'src/app/setup/facility/facility.service';
 import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
-import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
 import { ActivityInput } from '../activity-input.model';
 import { ActivityInputService } from '../activity-input.service';
 import { ToastService } from 'src/app/shared/toast.service';
@@ -50,6 +43,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   units?: PlanrepEnum[] = [];
   gfsCodes?: GfsCode[] = [];
   facilityActivity?: FacilityActivity;
+  total = 0.0;
   /**
    * Declare form
    */
@@ -64,13 +58,18 @@ export class ActivityInputUpdateComponent implements OnInit {
     forward_year_two_amount: [null, []],
     activity_id: [null, [Validators.required]],
     activity_fund_source_id: [null, [Validators.required]],
-    activity_facility_id: [null, [Validators.required]],
     budget_class_id: [null, [Validators.required]],
     fund_source_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
     admin_hierarchy_id: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
     facility_id: [null, [Validators.required]],
+    period_one: [null, []],
+    period_two: [null, []],
+    period_three: [null, []],
+    period_four: [null, []],
+    has_breakdown: [null, []],
+    breakdowns: [this.fb.array([]), []],
   });
 
   constructor(
@@ -87,7 +86,10 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.facilityActivity = dialogData.facilityActivity;
     this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
-    this.updateForm(dialogData.activityInput); //Initialize form with data from dialog
+    const input: ActivityInput = dialogData.activityInput;
+    input?.id &&
+      this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
+    this.updateForm(input); //Initialize form with data from dialog
   }
 
   /**
@@ -95,7 +97,6 @@ export class ActivityInputUpdateComponent implements OnInit {
    * @returns
    */
   save(): void {
-    console.log(this.editForm);
     if (this.editForm.invalid) {
       this.formError = true;
       return;
@@ -111,6 +112,14 @@ export class ActivityInputUpdateComponent implements OnInit {
         this.activityInputService.create(activityInput)
       );
     }
+  }
+
+  updateTotal(
+    unit_price?: number,
+    quantity?: number,
+    frequency?: number
+  ): void {
+    this.total = (unit_price || 0) * (quantity || 0) * (frequency || 0);
   }
 
   protected subscribeToSaveResponse(
@@ -142,6 +151,26 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.isSaving = false;
   }
 
+  get breakDownControls(): FormArray {
+    return this.editForm.get('breakdowns') as FormArray;
+  }
+
+  private addControl(data?: any): void {
+    const controlArray = this.breakDownControls;
+    controlArray.push(
+      this.fb.group({
+        item: data?.item,
+        quantity: data?.quantity,
+        frequency: data?.frequency,
+        unit_price: data?.unit_price,
+      })
+    );
+  }
+
+  removeControl(index: number): void {
+    this.breakDownControls.removeAt(index);
+  }
+
   /**
    * Set/Initialize form values
    * @param activityInput
@@ -164,8 +193,16 @@ export class ActivityInputUpdateComponent implements OnInit {
       section_id: activityInput.section_id,
       budget_class_id: activityInput.budget_class_id,
       activity_fund_source_id: activityInput.activity_fund_source_id,
-      activity_facility_id: activityInput.activity_facility_id,
+      period_one: activityInput.period_one,
+      period_two: activityInput.period_two,
+      period_three: activityInput.period_three,
+      period_four: activityInput.period_four,
+      has_breakdown: activityInput.has_breakdown,
     });
+    const breakdowns = activityInput.breakdowns
+      ? JSON.parse(activityInput.breakdowns)
+      : [];
+    breakdowns.forEach((b: any) => this.addControl(b));
   }
 
   /**
@@ -173,6 +210,7 @@ export class ActivityInputUpdateComponent implements OnInit {
    * @returns ActivityInput
    */
   protected createFromForm(): ActivityInput {
+    const breakdowns = this.editForm.get(['has_breakdown'])!.value;
     return {
       ...new ActivityInput(),
       id: this.editForm.get(['id'])!.value,
@@ -192,9 +230,14 @@ export class ActivityInputUpdateComponent implements OnInit {
       facility_id: this.editForm.get(['facility_id'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
       budget_class_id: this.editForm.get(['budget_class_id'])!.value,
-      activity_facility_id: this.editForm.get(['activity_facility_id'])!.value,
       activity_fund_source_id: this.editForm.get(['activity_fund_source_id'])!
         .value,
+      period_one: this.editForm.get(['period_one'])!.value,
+      period_two: this.editForm.get(['period_two'])!.value,
+      period_three: this.editForm.get(['period_three'])!.value,
+      period_four: this.editForm.get(['period_four'])!.value,
+      has_breakdown: this.editForm.get(['has_breakdown'])!.value,
+      breakdowns: breakdowns ? JSON.stringify(breakdowns) : breakdowns,
     };
   }
 }

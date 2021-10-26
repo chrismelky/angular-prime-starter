@@ -1,15 +1,13 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { OverlayPanel } from 'primeng/overlaypanel';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
+import {
+  AdminHierarchy,
+  AdminHierarchyTarget,
+} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { FinancialYear } from '../../../setup/financial-year/financial-year.model';
 import { FinancialYearTarget } from '../financial-year-target.model';
@@ -22,138 +20,93 @@ import { LongTermTarget } from '../long-term-target.model';
   styleUrls: ['./financial-year-target-view.component.scss'],
 })
 export class FinancialYearTargetViewComponent implements OnInit {
-  @Input() longTermTarget?: LongTermTarget;
-  @Input() financialYearId?: number;
-  @Input() currentFinancialYear?: FinancialYear;
-  @Input() adminHierarchyId?: number;
-  @ViewChild('op') op?: TemplateRef<OverlayPanel>;
-  @Output() onSave: EventEmitter<any> = new EventEmitter();
+  longTermTarget?: LongTermTarget;
+  financialYearId?: number;
+  currentFinancialYear?: FinancialYear;
+  currentPosition?: number;
+  strategicPlanAdminHierarchyId?: number;
+  adminLevels?: AdminHierarchyLevel[] = [];
+  childAdminHierarchyTargets?: AdminHierarchyTarget[] = [];
+  currentAdminTarget: FinancialYearTarget = {};
 
-  editForm: FormGroup = this.fb.group({
-    description: [null, []],
-  });
   formError = false;
   isSaving = false;
   isLoading = false;
   constructor(
-    protected fyTargetService: FinancialYearTargetService,
-    protected fb: FormBuilder,
-    private toastService: ToastService
+    protected financialYearTargetService: FinancialYearTargetService,
+    public dialogRef: DynamicDialogRef,
+    public dialogConfig: DynamicDialogConfig,
+    public adminLevelService: AdminHierarchyLevelService,
+    public adminAreaService: AdminHierarchyService,
+    public toastrService: ToastService
   ) {}
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
-  ngOnInit(): void {}
-
-  loadTarget(): void {
-    if (this.currentFinancialYear?.id === this.financialYearId) {
-      this.updateForm(
-        this.longTermTarget?.financial_year_target || {
+  ngOnInit(): void {
+    const dialogData = this.dialogConfig.data;
+    this.currentFinancialYear = dialogData.currentFinancialYear;
+    this.financialYearId = dialogData.financialYearId;
+    this.longTermTarget = dialogData.longTermTarget;
+    this.currentPosition = dialogData.currentPosition;
+    this.strategicPlanAdminHierarchyId =
+      dialogData.strategicPlanAdminHierarchyId;
+    this.adminLevelService
+      .lowerLevelsCanBudget(this.currentPosition)
+      .subscribe((resp) => {
+        console.log(this.adminLevels);
+        this.adminLevels = resp.data;
+      });
+    this.financialYearTargetService
+      .findByTargetAndAdminArea(
+        this.longTermTarget?.id!,
+        this.financialYearId!,
+        this.strategicPlanAdminHierarchyId!,
+        this.longTermTarget?.section_id!
+      )
+      .subscribe((resp) => {
+        this.currentAdminTarget = resp.data || {
           ...new FinancialYearTarget(),
-          long_term_target_id: this.longTermTarget?.id,
-          section_id: this.longTermTarget?.section_id,
-          financial_year_id: this.financialYearId,
-          admin_hierarchy_id: this.adminHierarchyId,
-          objective_id: this.longTermTarget?.objective_id,
-          code: this.longTermTarget?.code,
-        },
-        true
-      );
-    } else {
-      this.isLoading = true;
-      this.fyTargetService
-        .findOneBy(
-          this.longTermTarget?.id!,
-          this.financialYearId!,
-          this.longTermTarget?.section_id!
-        )
-        .subscribe(
-          (resp) => {
-            this.isLoading = false;
-            this.updateForm(
-              resp?.data || {
-                ...new FinancialYearTarget(),
-                long_term_target_id: this.longTermTarget?.id,
-                section_id: this.longTermTarget?.section_id,
-                objective_id: this.longTermTarget?.objective_id,
-                financial_year_id: this.financialYearId,
-                code: this.longTermTarget?.code,
-                admin_hierarchy_id: this.adminHierarchyId,
-              },
-              false
-            );
-          },
-          (error: HttpErrorResponse) => {
-            this.isLoading = false;
-          }
-        );
-    }
+          admin_hierarchy_id: this.strategicPlanAdminHierarchyId,
+        };
+      });
   }
 
-  protected updateForm(target: FinancialYearTarget, active: boolean): void {
-    this.editForm = this.fb.group({
-      id: [target.id, []],
-      description: [target.description, [Validators.required]],
-      financial_year_id: [target.financial_year_id, [Validators.required]],
-      long_term_target_id: [target.long_term_target_id, [Validators.required]],
-      code: [target.code, [Validators.required]],
-      section_id: [target.section_id, [Validators.required]],
-      admin_hierarchy_id: [target.admin_hierarchy_id, [Validators.required]],
-      objective_id: [target.objective_id, [Validators.required]],
-    });
+  loadChildrenTarget(position: number): void {
+    this.adminAreaService
+      .withTargets({
+        parent: `p${this.currentPosition}`,
+        parent_id: this.strategicPlanAdminHierarchyId,
+        long_term_target_id: this.longTermTarget?.id,
+        financial_year_id: this.financialYearId,
+        position,
+      })
+      .subscribe((resp) => {
+        this.childAdminHierarchyTargets = resp.data;
+      });
   }
 
-  /**
-   * Return form values as object of type FinancialYearTarget
-   * @returns FinancialYearTarget
-   */
-  protected createFromForm(): FinancialYearTarget {
-    return {
-      ...new FinancialYearTarget(),
-      id: this.editForm.get(['id'])!.value,
-      description: this.editForm.get(['description'])!.value,
-      long_term_target_id: this.editForm.get(['long_term_target_id'])!.value,
-      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
-      code: this.editForm.get(['code'])!.value,
-      section_id: this.editForm.get(['section_id'])!.value,
-      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
-      objective_id: this.editForm.get(['objective_id'])!.value,
-    };
-  }
-
-  save(): void {
-    const target = this.createFromForm();
-    if (this.editForm.invalid) {
-      this.formError = true;
+  save(target: FinancialYearTarget): void {
+    if (!target.description || !target.description.length) {
       return;
     }
-    this.isSaving = true;
-    if (target.id !== undefined && target.id !== null) {
-      this.fyTargetService.update(target).subscribe(
-        (resp) => this.onSaveSuccess(resp),
-        (error) => this.onSaveError(error)
-      );
+
+    if (target.id) {
+      this.financialYearTargetService.update(target).subscribe((resp) => {
+        this.toastrService.info('Target updated successfully');
+      });
     } else {
-      this.fyTargetService.create(target).subscribe(
-        (resp) => this.onSaveSuccess(resp),
-        (error) => this.onSaveError(error)
-      );
+      const data = {
+        ...target,
+        long_term_target_id: this.longTermTarget?.id,
+        code: this.longTermTarget?.code,
+        section_id: this.longTermTarget?.section_id,
+        financial_year_id: this.financialYearId,
+        objective_id: this.longTermTarget?.objective_id,
+      };
+      this.financialYearTargetService.create(data).subscribe((resp) => {
+        target.id = resp.data?.id;
+        this.toastrService.info('Target created successfully');
+      });
     }
   }
-
-  /**
-   * When save successfully close dialog and display info message
-   * @param result
-   */
-  protected onSaveSuccess(result: any): void {
-    this.toastService.info(result.message);
-    this.onSave.next(result);
-    this.op?.elementRef.nativeElement.hide();
-  }
-
-  /**
-   * Error handling specific to this component
-   * Note; general error handling is done by ErrorInterceptor
-   * @param error
-   */
-  protected onSaveError(error: any): void {}
 }

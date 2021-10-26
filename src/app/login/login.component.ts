@@ -41,7 +41,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
   ) {}
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    document.getElementById('flash-page')?.remove();
+  }
 
   ngAfterViewInit(): void {
     if (this.email) {

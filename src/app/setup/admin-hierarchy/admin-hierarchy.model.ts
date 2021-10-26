@@ -1,4 +1,5 @@
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import { FinancialYearTarget } from 'src/app/planning/long-term-target/financial-year-target.model';
+import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
 
 export class AdminHierarchy {
   constructor(
@@ -18,7 +19,12 @@ export class AdminHierarchy {
     public carryover_budget_decision_level_id?: number,
     public supplementary_budget_decision_level_id?: number,
     public current_financial_year_id?: number,
-    public is_current_budget_locked?:boolean,
+    public is_current_budget_locked?: boolean,
     public parent?: AdminHierarchy
   ) {}
+}
+
+export class AdminHierarchyTarget extends FinancialYearTarget {
+  public admin_area_name?: string;
+  public admin_area_code?: string;
 }

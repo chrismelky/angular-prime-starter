@@ -36,6 +36,7 @@ import { FinancialYearService } from '../../setup/financial-year/financial-year.
 import { FinancialYearTarget } from './financial-year-target.model';
 import { PerformanceIndicator } from '../../setup/performance-indicator/performance-indicator.model';
 import { PerformanceIndicatorService } from '../../setup/performance-indicator/performance-indicator.service';
+import { FinancialYearTargetViewComponent } from './financial-year-target-view/financial-year-target-view.component';
 
 @Component({
   selector: 'app-long-term-target',
@@ -278,6 +279,30 @@ export class LongTermTargetComponent implements OnInit {
         objectives: this.objectives,
       },
       header: 'Create/Update LongTermTarget',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  financialYearTarget(
+    longTermTarget: LongTermTarget,
+    financialYearId: number,
+    currentFinancialYear: FinancialYear
+  ): void {
+    const ref = this.dialogService.open(FinancialYearTargetViewComponent, {
+      data: {
+        longTermTarget,
+        financialYearId,
+        currentFinancialYear,
+        strategicPlanAdminHierarchyId: this.strategicPlan.admin_hierarchy_id,
+        currentPosition:
+          this.currentUser?.admin_hierarchy?.admin_hierarchy_position,
+      },
+      width: '900px',
+      header: 'Financial Year Target/Priorities',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

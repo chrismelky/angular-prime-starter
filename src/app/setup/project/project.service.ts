@@ -5,18 +5,18 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { Project } from "./project.model";
-import {GfsCode} from "../gfs-code/gfs-code.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Project } from './project.model';
+import { GfsCode } from '../gfs-code/gfs-code.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ProjectService {
-  public resourceUrl = "api/projects";
+  public resourceUrl = 'api/projects';
 
   constructor(protected http: HttpClient) {}
 
@@ -42,18 +42,29 @@ export class ProjectService {
     });
   }
 
+  byBudgetClassAndSection(
+    budgetClassId: number,
+    sectionId: number
+  ): Observable<CustomResponse<Project[]>> {
+    return this.http.get<CustomResponse<Project[]>>(
+      `${this.resourceUrl}/by_budget_class_and_section/${budgetClassId}/${sectionId}`
+    );
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
   upload(data: any): Observable<CustomResponse<Project[]>> {
-    return this.http.post<CustomResponse<Project[]>>(this.resourceUrl + '/upload', data);
+    return this.http.post<CustomResponse<Project[]>>(
+      this.resourceUrl + '/upload',
+      data
+    );
   }
 
   downloadTemplate(): any {
-    return this.http.get(
-      this.resourceUrl + '/downloadUploadTemplate',
-      {responseType: 'arraybuffer'}
-    );
+    return this.http.get(this.resourceUrl + '/downloadUploadTemplate', {
+      responseType: 'arraybuffer',
+    });
   }
 }

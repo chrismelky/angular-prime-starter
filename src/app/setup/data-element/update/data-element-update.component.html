@@ -177,6 +177,38 @@
           >
         </span>
       </div>
+      <!-- Value type -->
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="value_type"
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="valueTypes!"
+            formControlName="value_type"
+          ></p-dropdown>
+          <label for="value_type">Value Type </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('value_type')!.invalid &&
+            (editForm.get('value_type')!.dirty ||
+              editForm.get('value_type')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('value_type')?.errors?.required"
+            >Value Type is required.</small
+          >
+        </span>
+      </div>
+      <!-- Option Set -->
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
@@ -208,36 +240,7 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="value_type"
-            optionValue="value"
-            optionLabel="display"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="valueTypes!"
-            formControlName="value_type"
-          ></p-dropdown>
-          <label for="value_type">Value Type </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('value_type')!.invalid &&
-            (editForm.get('value_type')!.dirty ||
-              editForm.get('value_type')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('value_type')?.errors?.required"
-            >Value Type is required.</small
-          >
-        </span>
-      </div>
+
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

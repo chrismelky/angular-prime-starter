@@ -2,7 +2,8 @@ export class ProjectOutput {
   constructor(
     public id?: number,
     public name?: string,
-    public project_id?: number,
+    public sector_id?: number,
+    public expenditure_category_id?: number,
     public is_active?: string
   ) {}
 }

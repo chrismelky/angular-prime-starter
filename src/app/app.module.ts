@@ -16,9 +16,11 @@ import {RippleModule} from 'primeng/ripple';
 import {LoaderInterceptor} from "./shared/loader-interceptor";
 import {NgxPermissionsModule} from 'ngx-permissions';
 import {DialogService} from "primeng/dynamicdialog";
+import { ProjectionAllocationComponent } from './shared/projection-allocation/projection-allocation.component';
+import {SharedPrimengModule} from "./shared/shared-primeng.module";
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ProjectionAllocationComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -33,6 +35,7 @@ import {DialogService} from "primeng/dynamicdialog";
     }),
     MessageModule,
     NgxPermissionsModule.forRoot(),
+    SharedPrimengModule,
   ],
   providers: [
     DialogService,

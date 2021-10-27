@@ -26,9 +26,8 @@ import { ActivityService } from 'src/app/planning/activity/activity.service';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
 import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
-import { Facility, FacilityView } from 'src/app/setup/facility/facility.model';
+import { FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
-import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
 import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
 
 import { ActivityInput } from './activity-input.model';
@@ -37,7 +36,6 @@ import { ActivityInputUpdateComponent } from './update/activity-input-update.com
 import { AdminHierarchyCostCentre } from 'src/app/planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
 import { GfsCodeService } from 'src/app/setup/gfs-code/gfs-code.service';
 import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-activity-input',
@@ -57,15 +55,11 @@ export class ActivityInputComponent implements OnInit {
   adminHierarchyCostCentre!: AdminHierarchyCostCentre;
   financialYear!: FinancialYear;
 
-  facilities?: Facility[] = [];
   facilityGroupByType?: any[] = [];
 
   facilityActivities?: FacilityActivity[] = [];
-  fundSources?: FundSource[] = [];
 
-  budgetClasses?: BudgetClass[] = [];
   units?: PlanrepEnum[] = [];
-  mainBudgetClasses?: BudgetClass[] = [];
   gfsCodes?: GfsCode[] = [];
 
   isLoading = false;
@@ -82,8 +76,8 @@ export class ActivityInputComponent implements OnInit {
   admin_hierarchy_id!: number;
   facility_id!: number;
   section_id!: number;
-  budget_class_id!: number;
-  fund_source_id!: number;
+  fund_source_id?: number;
+  fundSources?: FundSource[] = [];
   budget_type!: string;
 
   constructor(
@@ -99,8 +93,7 @@ export class ActivityInputComponent implements OnInit {
     protected helper: HelperService,
     protected toastService: ToastService,
     protected enumService: EnumService,
-    protected gfsCodeService: GfsCodeService,
-    private location: Location
+    protected gfsCodeService: GfsCodeService
   ) {}
 
   ngOnInit(): void {
@@ -108,7 +101,6 @@ export class ActivityInputComponent implements OnInit {
       .expenditure()
       .subscribe((resp) => (this.gfsCodes = resp.data));
     this.handleNavigation();
-    this.loadMainBudgetClassesWithChildren();
   }
 
   /**
@@ -117,11 +109,7 @@ export class ActivityInputComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (
-      !this.facilityActivity ||
-      !this.financialYear ||
-      !this.budget_class_id
-    ) {
+    if (!this.facilityActivity || !this.financialYear || !this.fund_source_id) {
       return;
     }
     this.isLoading = true;
@@ -133,9 +121,9 @@ export class ActivityInputComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         financial_year_id: this.financialYear.id,
-        activity_id: this.facilityActivity.activity_id,
-        budget_class_id: this.budget_class_id,
-        activity_facility_id: this.facilityActivity.id,
+        activity_id: this.facilityActivity.id,
+        budget_class_id: this.facilityActivity.budget_class_id,
+        fund_source_id: this.fund_source_id,
         activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
         ...this.helper.buildFilter(this.search),
       })
@@ -165,41 +153,11 @@ export class ActivityInputComponent implements OnInit {
     );
   }
 
-  /** Load main budget classess with children budget classes */
-  loadMainBudgetClassesWithChildren(): void {
-    this.budgetClassIsLoading = true;
-    this.budgetClassService.tree().subscribe(
-      (resp) => {
-        this.budgetClassIsLoading = false;
-        this.mainBudgetClasses = resp.data;
-      },
-      (errror) => (this.budgetClassIsLoading = false)
-    );
-  }
-
-  /**
-   * Load activity fund source
-   * @returns
-   */
-  loadFundSource(): void {
-    if (!this.budget_class_id) {
-      return;
-    }
-    this.fundSourceIsLoading = true;
-    this.fundSourceService.getByBudgetClass(this.budget_class_id).subscribe(
-      (resp) => {
-        this.fundSourceIsLoading = false;
-        this.fundSources = resp.data;
-      },
-      (error) => (this.fundSourceIsLoading = false)
-    );
-  }
-
   /**
    * Load activities by selected budget class and
    */
   loadFacilityActivities(): void {
-    if (!this.facility_id || !this.budget_class_id || !this.fund_source_id) {
+    if (!this.facility_id || !this.fund_source_id) {
       return;
     }
     this.activityLoading = true;
@@ -210,7 +168,6 @@ export class ActivityInputComponent implements OnInit {
         budget_type: this.budget_type,
         section_id: this.adminHierarchyCostCentre.section_id,
         facility_id: this.facility_id,
-        budget_class_id: this.budget_class_id,
         fund_source_id: this.fund_source_id,
       })
       .subscribe(
@@ -220,6 +177,14 @@ export class ActivityInputComponent implements OnInit {
         },
         (error) => (this.activityLoading = false)
       );
+  }
+
+  loadFundSource(facilityId: number): void {
+    this.fundSourceService
+      .getByYearAndFacility(this.financialYear.id!, facilityId)
+      .subscribe((resp) => {
+        this.fundSources = resp.data;
+      });
   }
 
   /**
@@ -333,11 +298,10 @@ export class ActivityInputComponent implements OnInit {
       admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
       section_id: this.adminHierarchyCostCentre.section_id,
       facility_id: this.facility_id,
-      budget_class_id: this.budget_class_id,
+      budget_class_id: this.facilityActivity.budget_class_id,
       fund_source_id: this.fund_source_id,
-      activity_id: this.facilityActivity.activity_id,
+      activity_id: this.facilityActivity.id,
       activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
-      activity_facility_id: this.facilityActivity.id,
     };
     const ref = this.dialogService.open(ActivityInputUpdateComponent, {
       data: {

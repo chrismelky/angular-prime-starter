@@ -1,14 +1,13 @@
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
-  <p-accordion>
-    <p-accordionTab [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'">
-      <ng-template pTemplate="header">
-        <span fxLayout="row" fxLayoutGap="0.5rem">
-          <i class="pi pi-filter"></i>
-          <span class="filter-text">Filter</span>
-        </span>
-      </ng-template>
-
+  <p-card class="filter filter-no-adv">
+    <ng-template pTemplate="header">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+        <i class="pi pi-filter"></i>
+        <span class="card-header-text">Filter</span>
+      </div>
+    </ng-template>
+    <div fxLayout="column" fxLayoutGap="4px">
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
           fxLayout="row wrap"
@@ -16,58 +15,26 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
-                id="name"
-                type="text"
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="category_combination_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
                 class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['name']"
-              />
-              <label for="name">Name </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['name'] = undefined; onSearch()"
-              ></i>
+                [options]="categoryCombinations!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="category_combination_id"
+              ></p-dropdown>
+              <label for="category_combination_id">Category Combination </label>
             </span>
           </div>
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
-                id="code"
-                type="text"
-                class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['code']"
-              />
-              <label for="code">Code </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['code'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-        </div>
-        <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end center">
-          <button
-            pButton
-            class="p-button-text p-button-plain"
-            icon="pi pi-times"
-            label="Clear"
-            (click)="clearSearch()"
-          ></button>
-          <button
-            pButton
-            class="p-button-text p-button-plain"
-            icon="pi pi-search"
-            label="Search"
-            (click)="onSearch()"
-          ></button>
         </div>
       </div>
-    </p-accordionTab>
-  </p-accordion>
+    </div>
+  </p-card>
 
   <!-- Table Panel -->
   <p-card>
@@ -86,14 +53,6 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Category Option Combinations</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]=""
-            (click)="createOrUpdate()"
-            label="Add Category Option Combination"
-          ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

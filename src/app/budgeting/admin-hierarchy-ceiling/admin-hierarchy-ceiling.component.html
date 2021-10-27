@@ -196,7 +196,8 @@
                   icon="pi pi-trash"
                   (click)="delete(rowData)"
                 ></button>
-                <button *ngIf="!editing && !rowData['is_locked'] && position === 1" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+                <button *ngIf="!editing && !rowData['is_locked'] && position === ceilingStartSectionPosition && !rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+                <button *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button"  icon="pi pi-pencil" (click)="editOwnSource(rowData)" class="p-button-rounded p-button-text"></button>
                 <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
                 <button *ngIf="editing"  pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(rowData, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
               </div>

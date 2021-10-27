@@ -9,7 +9,8 @@
       facilityIsLoading ||
       budgetClassIsLoading ||
       referenceIsLoading ||
-      responsibleIsLoading
+      responsibleIsLoading ||
+      categoryIsLoading
     "
   ></app-loader>
 
@@ -44,7 +45,7 @@
 
           <div fxLayout="column" fxLayoutGap="20px">
             <!-- Description field -->
-            <div class="p-field p-col-12 p-md-4" fxFlex>
+            <div class="p-field" fxFlex>
               <span class="p-float-label">
                 <input
                   id="description"
@@ -151,7 +152,7 @@
                     class="p-inputtext-sm"
                     appendTo="body"
                     [options]="projects!"
-                    (onChange)="loadProjectOutput(project.value)"
+                    (onChange)="updateProjectTypeValidation(project.value)"
                     formControlName="project_id"
                   ></p-dropdown>
                   <label for="project_id">Project </label>
@@ -246,37 +247,55 @@
               </div>
 
               <!-- Responsible perdion -->
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="responsible_person_id"
-                    optionValue="id"
-                    optionLabel="name"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    class="p-inputtext-sm"
-                    appendTo="body"
-                    [options]="responsiblePeople!"
-                    formControlName="responsible_person_id"
-                  ></p-dropdown>
-                  <label for="responsible_person_id">Responsible Person </label>
-                </span>
-                <span
-                  *ngIf="
-                    generalForm.get('responsible_person_id')!.invalid &&
-                    (generalForm.get('responsible_person_id')!.dirty ||
-                      generalForm.get('responsible_person_id')!.touched ||
-                      formError)
-                  "
-                >
-                  <small
-                    class="p-error"
+              <div
+                fxLayout="row"
+                fxFlex
+                fxLayoutGap="0px"
+                fxLayoutAlign="start center"
+              >
+                <div class="p-field" fxFlex>
+                  <span class="p-float-label">
+                    <p-dropdown
+                      id="responsible_person_id"
+                      optionValue="id"
+                      optionLabel="name"
+                      [autoDisplayFirst]="false"
+                      [filter]="true"
+                      class="p-inputtext-sm"
+                      appendTo="body"
+                      [options]="responsiblePeople!"
+                      formControlName="responsible_person_id"
+                    ></p-dropdown>
+                    <label for="responsible_person_id"
+                      >Responsible Person
+                    </label>
+                  </span>
+                  <span
                     *ngIf="
-                      generalForm.get('responsible_person_id')?.errors?.required
+                      generalForm.get('responsible_person_id')!.invalid &&
+                      (generalForm.get('responsible_person_id')!.dirty ||
+                        generalForm.get('responsible_person_id')!.touched ||
+                        formError)
                     "
-                    >Responsible Person is required.</small
                   >
-                </span>
+                    <small
+                      class="p-error"
+                      *ngIf="
+                        generalForm.get('responsible_person_id')?.errors
+                          ?.required
+                      "
+                      >Responsible Person is required.</small
+                    >
+                  </span>
+                </div>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-plus"
+                  (click)="createResponsiblePerson()"
+                  pTooltip="Add responsible  person"
+                  class="p-button p-button-text p-icon-only"
+                ></button>
               </div>
             </div>
             <div
@@ -316,7 +335,7 @@
             </div>
 
             <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
-              <div class="p-field p-col-12 p-md-4" fxFlex>
+              <div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <input
                     id="indicator"
@@ -333,6 +352,110 @@
                       formError)
                   "
                 >
+                </span>
+              </div>
+
+              <div class="p-field" fxFlex="100px">
+                <span class="p-float-label">
+                  <input
+                    id="indicator_value"
+                    formControlName="indicator_value"
+                    pInputText
+                  />
+                  <label for="indicator_value">Indicator Value </label>
+                </span>
+                <span
+                  *ngIf="
+                    generalForm.get('indicator_value')!.invalid &&
+                    (generalForm.get('indicator_value')!.dirty ||
+                      generalForm.get('indicator_value')!.touched ||
+                      formError)
+                  "
+                >
+                  <small
+                    class="p-error"
+                    *ngIf="generalForm.get('indicator_value')?.errors?.required"
+                    >Value is required.</small
+                  >
+                </span>
+              </div>
+            </div>
+
+            <div
+              *ngIf="projectTypeRequired"
+              fxLayout="row"
+              fxLayoutGap="20px"
+              fxLayoutAlign="start"
+            >
+              <!-- Project Type -->
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    #projectType
+                    id="project_type_id"
+                    optionValue="id"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    appendTo="body"
+                    [options]="projectTypes!"
+                    (onChange)="loadExpenditureCategory(projectType.value)"
+                    formControlName="project_type_id"
+                  ></p-dropdown>
+                  <label for="project_type_id">Project Type</label>
+                </span>
+                <span
+                  *ngIf="
+                    generalForm.get('project_type_id')!.invalid &&
+                    (generalForm.get('project_type_id')!.dirty ||
+                      generalForm.get('project_type_id')!.touched ||
+                      formError)
+                  "
+                >
+                  <small
+                    class="p-error"
+                    *ngIf="generalForm.get('project_type_id')?.errors?.required"
+                    >Project Type is required.</small
+                  >
+                </span>
+              </div>
+              <!-- Expenditure Type -->
+              <div class="p-field" fxFlex>
+                <span class="p-float-label">
+                  <p-dropdown
+                    #expenditureCategory
+                    id="expenditure_category_id"
+                    optionValue="id"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    appendTo="body"
+                    (onChange)="loadProjectOutput(expenditureCategory.value)"
+                    [options]="expenditureCategories!"
+                    formControlName="expenditure_category_id"
+                  ></p-dropdown>
+                  <label for="expenditure_category_id"
+                    >Expenditure Category</label
+                  >
+                </span>
+                <span
+                  *ngIf="
+                    generalForm.get('expenditure_category_id')!.invalid &&
+                    (generalForm.get('expenditure_category_id')!.dirty ||
+                      generalForm.get('expenditure_category_id')!.touched ||
+                      formError)
+                  "
+                >
+                  <small
+                    class="p-error"
+                    *ngIf="
+                      generalForm.get('expenditure_category_id')?.errors
+                        ?.required
+                    "
+                    >Expenditure Category is required.</small
+                  >
                 </span>
               </div>
               <!-- Project output-->
@@ -365,6 +488,34 @@
                       generalForm.get('project_output_id')?.errors?.required
                     "
                     >Project output is required.</small
+                  >
+                </span>
+              </div>
+              <!-- Project output value-->
+
+              <div class="p-field" fxFlex="100px">
+                <span class="p-float-label">
+                  <input
+                    id="project_output_value"
+                    formControlName="project_output_value"
+                    pInputText
+                  />
+                  <label for="project_output_value">Output Value </label>
+                </span>
+                <span
+                  *ngIf="
+                    generalForm.get('project_output_value')!.invalid &&
+                    (generalForm.get('project_output_value')!.dirty ||
+                      generalForm.get('project_output_value')!.touched ||
+                      formError)
+                  "
+                >
+                  <small
+                    class="p-error"
+                    *ngIf="
+                      generalForm.get('project_output_value')?.errors?.required
+                    "
+                    >Output Value</small
                   >
                 </span>
               </div>
@@ -420,461 +571,228 @@
             </div>
           </div>
         </mat-step>
-        <!-- Fund Source Faclity Tab -->
-        <mat-step
-          [stepControl]="facilityForm"
-          errorMessage="Facility is required"
-        >
-          <!-- Indicator and project out put -->
-          <form
-            name="facilityForm"
-            role="form"
-            novalidate
-            [formGroup]="facilityForm"
-          >
-            <ng-template matStepLabel>Facilities</ng-template>
-
-            <div fxLayout="column" fxLayoutGap="20px" fxLayoutAlign="start">
-              <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start">
-                <p-table
-                  [value]="facilityControls.controls"
-                  dataKey="controls.facility_id.value"
-                  editMode="row"
-                  responsiveLayout="scroll"
-                  styleClass="p-datatable-gridlines"
-                  formArrayName="activity_facilities"
-                >
-                  <ng-template pTemplate="header">
-                    <tr>
-                      <th>Facility</th>
-                      <th>Indicator Value</th>
-                      <th>Project Output Value</th>
-                      <th style="width: 8rem"></th>
-                    </tr>
-                    <tr class="add-table-row">
-                      <th>
-                        <p-multiSelect
-                          #facilitiesToAdd
-                          fxFlex
-                          id="facilities"
-                          [filter]="true"
-                          [maxSelectedLabels]="1"
-                          [options]="facilities!"
-                          optionLabel="name"
-                          class="p-inputtext-sm"
-                          [selectedItemsLabel]="'{0} facilities selected'"
-                          appendTo="body"
-                        ></p-multiSelect>
-                      </th>
-                      <th>
-                        <input
-                          #indicatorValueToAdd
-                          id="indicatorValueToAdd"
-                          type="text"
-                          pInputText
-                        />
-                      </th>
-                      <th>
-                        <input
-                          #projectOutputValueToAdd
-                          id="projectOutputValueToAdd"
-                          type="text"
-                          pInputText
-                        />
-                      </th>
-                      <th style="width: 8rem">
-                        <div
-                          fxFlex
-                          fxLayout="row"
-                          fxLayoutGap="2px"
-                          fxLayoutAlign="end"
-                        >
-                          <button
-                            type="button"
-                            icon="pi pi-plus"
-                            label="Add"
-                            pButton
-                            class="p-button-text p-button-rounded p-button-icon"
-                            (click)="
-                              addFacility(
-                                facilitiesToAdd,
-                                indicatorValueToAdd,
-                                projectOutputValueToAdd
-                              )
-                            "
-                          ></button>
-                        </div>
-                      </th>
-                    </tr>
-                  </ng-template>
-                  <ng-template
-                    pTemplate="body"
-                    let-activityFacility
-                    let-editing="editing"
-                    let-ri="rowIndex"
-                  >
-                    <tr [pEditableRow]="activityFacility" [formGroupName]="ri">
-                      <td>
-                        <p-cellEditor>
-                          <ng-template pTemplate="input">
-                            {{ activityFacility.get("facility_name")?.value! }}
-                          </ng-template>
-                          <ng-template pTemplate="output">
-                            {{ activityFacility.get("facility_name")?.value! }}
-                          </ng-template>
-                        </p-cellEditor>
-                      </td>
-                      <td>
-                        <p-cellEditor>
-                          <ng-template pTemplate="input">
-                            <input
-                              [ngClass]="{
-                                error:
-                                  activityFacility.get('indicator_value')!
-                                    .invalid &&
-                                  (activityFacility.get('indicator_value')!
-                                    .dirty ||
-                                    activityFacility.get('indicator_value')!
-                                      .touched ||
-                                    formError)
-                              }"
-                              id="{{ ri }}"
-                              type="text"
-                              pInputText
-                              formControlName="indicator_value"
-                            />
-                          </ng-template>
-                          <ng-template pTemplate="output">
-                            {{
-                              activityFacility.get("indicator_value")?.value!
-                            }}
-                          </ng-template>
-                        </p-cellEditor>
-                      </td>
-                      <td>
-                        <p-cellEditor>
-                          <ng-template pTemplate="input">
-                            <input
-                              [ngClass]="{
-                                error:
-                                  activityFacility.get('project_output_value')!
-                                    .invalid &&
-                                  (activityFacility.get('project_output_value')!
-                                    .dirty ||
-                                    activityFacility.get(
-                                      'project_output_value'
-                                    )!.touched ||
-                                    formError)
-                              }"
-                              id="{{ ri }}"
-                              type="text"
-                              pInputText
-                              formControlName="project_output_value"
-                            />
-                          </ng-template>
-                          <ng-template pTemplate="output">
-                            {{
-                              activityFacility.get("project_output_value")
-                                ?.value!
-                            }}
-                          </ng-template>
-                        </p-cellEditor>
-                      </td>
-
-                      <td style="text-align: center">
-                        <div
-                          fxLayout="row"
-                          fxLayoutGap="2px"
-                          fxLayoutAlign="end"
-                        >
-                          <button
-                            *ngIf="!editing"
-                            pButton
-                            pRipple
-                            type="button"
-                            pInitEditableRow
-                            icon="pi pi-pencil"
-                            class="
-                              p-button-rounded p-button-text p-button-plain
-                            "
-                          ></button>
-                          <button
-                            *ngIf="!editing"
-                            pButton
-                            pRipple
-                            type="button"
-                            (click)="
-                              confirmDeleteActivity(
-                                $event,
-                                activityFacility.get('id')?.value,
-                                ri
-                              )
-                            "
-                            icon="pi pi-trash"
-                            class="
-                              p-button-rounded p-button-text p-button-plain
-                            "
-                          ></button>
-                          <button
-                            *ngIf="editing"
-                            pButton
-                            pRipple
-                            type="button"
-                            pSaveEditableRow
-                            icon="pi pi-check"
-                            class="
-                              p-button-rounded
-                              p-button-text
-                              p-button-success
-                              p-mr-2
-                            "
-                          ></button>
-                          <button
-                            *ngIf="editing"
-                            pButton
-                            pRipple
-                            type="button"
-                            pCancelEditableRow
-                            icon="pi pi-times"
-                            class="
-                              p-button-rounded p-button-text p-button-danger
-                            "
-                          ></button>
-                        </div>
-                      </td>
-                    </tr>
-                  </ng-template>
-                </p-table>
-              </div>
-              <!-- Action  -->
-              <div fxLayout="row" fxLayoutGap="0.75rem">
-                <span fxFlex></span>
-                <button
-                  matStepperPrevious
-                  class="p-button-text"
-                  icon="pi pi-arrow-right"
-                  iconPos="left"
-                  label="Back"
-                  pButton
-                  type="button"
-                ></button>
-                <button
-                  matStepperNext
-                  class="p-button-text"
-                  icon="pi pi-arrow-right"
-                  iconPos="right"
-                  label="Next"
-                  pButton
-                  type="button"
-                ></button>
-              </div>
-            </div>
-          </form>
-        </mat-step>
         <!-- Reference Tab -->
         <mat-step [stepControl]="referenceForm">
-          <form
-            name="referenceForm"
-            role="form"
-            novalidate
-            [formGroup]="referenceForm"
-          >
-            <ng-template matStepLabel>References</ng-template>
-            <div fxLayout="column" fxLayoutGap="20px">
-              <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
-                <!-- Priority area -->
-                <div class="p-field" fxFlex>
-                  <span class="p-float-label">
-                    <p-dropdown
-                      #priorityArea
-                      id="priority_area_id"
-                      optionValue="id"
-                      optionLabel="description"
-                      [autoDisplayFirst]="false"
-                      [filter]="true"
-                      class="p-inputtext-sm"
-                      appendTo="body"
-                      (onChange)="
-                        loadInterventionAndSectorProblem(priorityArea.value)
-                      "
-                      [options]="priorityAreas!"
-                      formControlName="priority_area_id"
-                    ></p-dropdown>
-                    <label for="priority_area_id">Priority Area </label>
-                  </span>
-                  <span
-                    *ngIf="
-                      referenceForm.get('priority_area_id')!.invalid &&
-                      (referenceForm.get('priority_area_id')!.dirty ||
-                        referenceForm.get('priority_area_id')!.touched ||
-                        formError)
-                    "
-                  >
-                    <small
-                      class="p-error"
-                      *ngIf="
-                        referenceForm.get('priority_area_id')?.errors?.required
-                      "
-                      >Priority Area is required.</small
-                    >
-                  </span>
-                </div>
-
-                <!-- Intevention -->
-                <div class="p-field" fxFlex>
-                  <span class="p-float-label">
-                    <p-dropdown
-                      id="intervention_id"
-                      optionValue="id"
-                      optionLabel="description"
-                      [autoDisplayFirst]="false"
-                      [filter]="true"
-                      class="p-inputtext-sm"
-                      appendTo="body"
-                      [options]="interventions!"
-                      formControlName="intervention_id"
-                    ></p-dropdown>
-                    <label for="intervention_id">Intervention </label>
-                  </span>
-                  <span
-                    *ngIf="
-                      referenceForm.get('intervention_id')!.invalid &&
-                      (referenceForm.get('intervention_id')!.dirty ||
-                        referenceForm.get('intervention_id')!.touched ||
-                        formError)
-                    "
-                  >
-                    <small
-                      class="p-error"
-                      *ngIf="
-                        referenceForm.get('intervention_id')?.errors?.required
-                      "
-                      >Intervention is required.</small
-                    >
-                  </span>
-                </div>
-
-                <!-- Sector problem -->
-                <div class="p-field" fxFlex>
-                  <span class="p-float-label">
-                    <p-dropdown
-                      id="sector_problem_id"
-                      optionValue="id"
-                      optionLabel="description"
-                      [autoDisplayFirst]="false"
-                      [filter]="true"
-                      class="p-inputtext-sm"
-                      appendTo="body"
-                      [options]="sectorProblems!"
-                      formControlName="sector_problem_id"
-                    ></p-dropdown>
-                    <label for="sector_problem_id">Sector Problem </label>
-                  </span>
-                  <span
-                    *ngIf="
-                      referenceForm.get('sector_problem_id')!.invalid &&
-                      (referenceForm.get('sector_problem_id')!.dirty ||
-                        referenceForm.get('sector_problem_id')!.touched ||
-                        formError)
-                    "
-                  >
-                    <small
-                      class="p-error"
-                      *ngIf="
-                        referenceForm.get('sector_problem_id')?.errors?.required
-                      "
-                      >Sector Problem is required.</small
-                    >
-                  </span>
-                </div>
-              </div>
-              <div
-                formArrayName="references"
-                fxLayout="row"
-                fxLayoutGap="10px"
-                fxLayoutAlign="start wrap"
-              >
-                <div
-                  *ngIf="referenceLoading"
-                  fxLayout="row"
-                  fxLayoutGap="20px"
-                  fxLayoutAlign="center center"
-                >
-                  <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-                  <span>Loading References</span>
-                </div>
-                <div
-                  *ngFor="let c of referenceControls.controls; let i = index"
-                  fxFlex
-                >
-                  <ng-container [formGroupName]="i">
-                    <div class="p-field" fxFlex>
-                      <span class="p-float-label">
-                        <p-dropdown
-                          *ngIf="!c.get('isMultiple')?.value"
-                          id="section_id"
-                          optionLabel="description"
-                          [autoDisplayFirst]="false"
-                          [filter]="true"
-                          class="p-inputtext-sm"
-                          appendTo="body"
-                          dataKey="id"
-                          [options]="c.get('options')?.value"
-                          formControlName="value"
-                        ></p-dropdown>
-                        <p-multiSelect
-                          *ngIf="c.get('isMultiple')?.value"
-                          id="section_id"
-                          optionLabel="description"
-                          [filter]="true"
-                          dataKey="id"
-                          class="p-inputtext-sm"
-                          appendTo="body"
-                          [options]="c.get('options')?.value"
-                          formControlName="value"
-                        >
-                        </p-multiSelect>
-
-                        <label for="{{ i }}">{{ c.get("name")?.value! }}</label>
-                      </span>
-                      <span
-                        *ngIf="
-                          c.get('value')!.invalid &&
-                          (c.get('value')!.dirty ||
-                            c.get('value')!.touched ||
-                            formError)
+          <div fxLayout="column" fxLayoutGap="20px">
+            <form
+              name="referenceForm"
+              role="form"
+              novalidate
+              [formGroup]="referenceForm"
+            >
+              <ng-template matStepLabel>References</ng-template>
+              <div fxLayout="column" fxLayoutGap="20px">
+                <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start">
+                  <p-divider fxFlex class="title" align="center">
+                    <small>Priority Areas</small>
+                  </p-divider>
+                  <!-- Priority area -->
+                  <div class="p-field" fxFlex>
+                    <span class="p-float-label">
+                      <p-dropdown
+                        #priorityArea
+                        id="priority_area_id"
+                        optionValue="id"
+                        optionLabel="description"
+                        [autoDisplayFirst]="false"
+                        [filter]="true"
+                        class="p-inputtext-sm"
+                        appendTo="body"
+                        (onChange)="
+                          loadInterventionAndSectorProblem(priorityArea.value)
                         "
+                        [options]="priorityAreas!"
+                        formControlName="priority_area_id"
+                      ></p-dropdown>
+                      <label for="priority_area_id">Priority Area </label>
+                    </span>
+                    <span
+                      *ngIf="
+                        referenceForm.get('priority_area_id')!.invalid &&
+                        (referenceForm.get('priority_area_id')!.dirty ||
+                          referenceForm.get('priority_area_id')!.touched ||
+                          formError)
+                      "
+                    >
+                      <small
+                        class="p-error"
+                        *ngIf="
+                          referenceForm.get('priority_area_id')?.errors
+                            ?.required
+                        "
+                        >Priority Area is required.</small
                       >
-                        <small
-                          class="p-error"
-                          *ngIf="c.get('value')?.errors?.required"
-                          >{{ c.get("name")?.value! }} Value is required.</small
+                    </span>
+                  </div>
+
+                  <!-- Intevention -->
+                  <div class="p-field" fxFlex>
+                    <span class="p-float-label">
+                      <p-dropdown
+                        id="intervention_id"
+                        optionValue="id"
+                        optionLabel="description"
+                        [autoDisplayFirst]="false"
+                        [filter]="true"
+                        class="p-inputtext-sm"
+                        appendTo="body"
+                        [options]="interventions!"
+                        formControlName="intervention_id"
+                      ></p-dropdown>
+                      <label for="intervention_id">Intervention </label>
+                    </span>
+                    <span
+                      *ngIf="
+                        referenceForm.get('intervention_id')!.invalid &&
+                        (referenceForm.get('intervention_id')!.dirty ||
+                          referenceForm.get('intervention_id')!.touched ||
+                          formError)
+                      "
+                    >
+                      <small
+                        class="p-error"
+                        *ngIf="
+                          referenceForm.get('intervention_id')?.errors?.required
+                        "
+                        >Intervention is required.</small
+                      >
+                    </span>
+                  </div>
+
+                  <!-- Sector problem -->
+                  <div class="p-field" fxFlex>
+                    <span class="p-float-label">
+                      <p-dropdown
+                        id="sector_problem_id"
+                        optionValue="id"
+                        optionLabel="description"
+                        [autoDisplayFirst]="false"
+                        [filter]="true"
+                        class="p-inputtext-sm"
+                        appendTo="body"
+                        [options]="sectorProblems!"
+                        formControlName="sector_problem_id"
+                      ></p-dropdown>
+                      <label for="sector_problem_id">Sector Problem </label>
+                    </span>
+                    <span
+                      *ngIf="
+                        referenceForm.get('sector_problem_id')!.invalid &&
+                        (referenceForm.get('sector_problem_id')!.dirty ||
+                          referenceForm.get('sector_problem_id')!.touched ||
+                          formError)
+                      "
+                    >
+                      <small
+                        class="p-error"
+                        *ngIf="
+                          referenceForm.get('sector_problem_id')?.errors
+                            ?.required
+                        "
+                        >Sector Problem is required.</small
+                      >
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  formArrayName="references"
+                  fxLayout="column"
+                  fxLayoutGap="10px"
+                  fxLayoutAlign="start wrap"
+                >
+                  <div
+                    *ngIf="referenceLoading"
+                    fxLayout="row"
+                    fxLayoutGap="20px"
+                    fxLayoutAlign="center center"
+                  >
+                    <i
+                      class="pi pi-spin pi-spinner"
+                      style="font-size: 2rem"
+                    ></i>
+                    <span>Loading References</span>
+                  </div>
+                  <p-divider fxFlex class="title" align="center">
+                    <small>National Reference</small>
+                  </p-divider>
+                  <div
+                    *ngFor="let c of referenceControls.controls; let i = index"
+                    fxFlex
+                  >
+                    <ng-container [formGroupName]="i">
+                      <div class="p-field" fxFlex>
+                        <span class="p-float-label">
+                          <p-dropdown
+                            *ngIf="!c.get('isMultiple')?.value"
+                            id="section_id"
+                            optionLabel="description"
+                            [autoDisplayFirst]="false"
+                            [filter]="true"
+                            class="p-inputtext-sm"
+                            appendTo="body"
+                            dataKey="id"
+                            [options]="c.get('options')?.value"
+                            formControlName="value"
+                          ></p-dropdown>
+                          <p-multiSelect
+                            *ngIf="c.get('isMultiple')?.value"
+                            id="section_id"
+                            optionLabel="description"
+                            [filter]="true"
+                            dataKey="id"
+                            class="p-inputtext-sm"
+                            appendTo="body"
+                            [options]="c.get('options')?.value"
+                            formControlName="value"
+                          >
+                          </p-multiSelect>
+
+                          <label for="{{ i }}">{{
+                            c.get("name")?.value!
+                          }}</label>
+                        </span>
+                        <span
+                          *ngIf="
+                            c.get('value')!.invalid &&
+                            (c.get('value')!.dirty ||
+                              c.get('value')!.touched ||
+                              formError)
+                          "
                         >
-                      </span>
-                    </div>
-                  </ng-container>
+                          <small
+                            class="p-error"
+                            *ngIf="c.get('value')?.errors?.required"
+                            >{{ c.get("name")?.value! }} Value is
+                            required.</small
+                          >
+                        </span>
+                      </div>
+                    </ng-container>
+                  </div>
                 </div>
               </div>
+            </form>
+
+            <div fxLayout="row" fxLayoutGap="0.75rem">
+              <span fxFlex></span>
+              <button
+                matStepperPrevious
+                class="p-button-text"
+                icon="pi pi-arrow-left"
+                iconPos="left"
+                label="Back"
+                pButton
+                type="button"
+              ></button>
+              <button
+                class="p-button-raised"
+                icon="pi pi-check"
+                label="Save"
+                pButton
+                type="submit"
+              ></button>
             </div>
-          </form>
-          <div fxLayout="row" fxLayoutGap="0.75rem">
-            <span fxFlex></span>
-            <button
-              matStepperPrevious
-              class="p-button-text"
-              icon="pi pi-arrow-left"
-              iconPos="left"
-              label="Back"
-              pButton
-              type="button"
-            ></button>
-            <button
-              class="p-button-raised"
-              icon="pi pi-check"
-              label="Save"
-              pButton
-              type="submit"
-            ></button>
           </div>
         </mat-step>
       </mat-stepper>

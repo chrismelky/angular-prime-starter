@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnInit, Renderer2 } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
 import { LoaderService } from './shared/loader-service';
-import {NgxPermissionsService} from "ngx-permissions";
-import {LocalStorageService} from "ngx-webstorage";
+import { NgxPermissionsService } from 'ngx-permissions';
+import { LocalStorageService } from 'ngx-webstorage';
 
 @Component({
   selector: 'app-root',

@@ -7,105 +7,118 @@
     [formGroup]="editForm"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="name" type="text" pInputText formControlName="name" />
-          <label for="name">Name </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('name')!.invalid &&
-            (editForm.get('name')!.dirty ||
-              editForm.get('name')!.touched ||
-              formError)
-          "
-        >
-          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
-            >Name is required.</small
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <!-- Name -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <input id="name" type="text" pInputText formControlName="name" />
+            <label for="name">Name </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('name')!.invalid &&
+              (editForm.get('name')!.dirty ||
+                editForm.get('name')!.touched ||
+                formError)
+            "
           >
-        </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="mobile" type="text" pInputText formControlName="mobile" />
-          <label for="mobile">Mobile </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('mobile')!.invalid &&
-            (editForm.get('mobile')!.dirty ||
-              editForm.get('mobile')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('mobile')?.errors?.required"
-            >Mobile is required.</small
+            <small
+              class="p-error"
+              *ngIf="editForm.get('name')?.errors?.required"
+              >Name is required.</small
+            >
+          </span>
+        </div>
+        <!-- Title -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <input id="title" type="text" pInputText formControlName="title" />
+            <label for="title">Title </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('title')!.invalid &&
+              (editForm.get('title')!.dirty ||
+                editForm.get('title')!.touched ||
+                formError)
+            "
           >
-        </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="email" type="text" pInputText formControlName="email" />
-          <label for="email">Email </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('email')!.invalid &&
-            (editForm.get('email')!.dirty ||
-              editForm.get('email')!.touched ||
-              formError)
-          "
-        >
-        </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input
-            id="cheque_number"
-            type="text"
-            pInputText
-            formControlName="cheque_number"
-          />
-          <label for="cheque_number">Cheque Number </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('cheque_number')!.invalid &&
-            (editForm.get('cheque_number')!.dirty ||
-              editForm.get('cheque_number')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('cheque_number')?.errors?.required"
-            >Cheque Number is required.</small
+            <small
+              class="p-error"
+              *ngIf="editForm.get('title')?.errors?.required"
+              >Title is required.</small
+            >
+          </span>
+        </div>
+        <!-- Check number -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <input
+              id="cheque_number"
+              type="text"
+              pInputText
+              formControlName="cheque_number"
+            />
+            <label for="cheque_number">Cheque Number </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('cheque_number')!.invalid &&
+              (editForm.get('cheque_number')!.dirty ||
+                editForm.get('cheque_number')!.touched ||
+                formError)
+            "
           >
-        </span>
+            <small
+              class="p-error"
+              *ngIf="editForm.get('cheque_number')?.errors?.required"
+              >Cheque Number is required.</small
+            >
+          </span>
+        </div>
       </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="title" type="text" pInputText formControlName="title" />
-          <label for="title">Title </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('title')!.invalid &&
-            (editForm.get('title')!.dirty ||
-              editForm.get('title')!.touched ||
-              formError)
-          "
-        >
-          <small class="p-error" *ngIf="editForm.get('title')?.errors?.required"
-            >Title is required.</small
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <input id="email" type="text" pInputText formControlName="email" />
+            <label for="email">Email </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('email')!.invalid &&
+              (editForm.get('email')!.dirty ||
+                editForm.get('email')!.touched ||
+                formError)
+            "
           >
-        </span>
+          </span>
+        </div>
+
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <input
+              id="mobile"
+              type="text"
+              pInputText
+              formControlName="mobile"
+            />
+            <label for="mobile">Mobile </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('mobile')!.invalid &&
+              (editForm.get('mobile')!.dirty ||
+                editForm.get('mobile')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('mobile')?.errors?.required"
+              >Mobile is required.</small
+            >
+          </span>
+        </div>
       </div>
 
       <div fxLayout="row" fxLayoutGap="2px">
@@ -116,6 +129,7 @@
         ></p-inputSwitch>
         <label for="is_active">Is Active </label>
       </div>
+
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

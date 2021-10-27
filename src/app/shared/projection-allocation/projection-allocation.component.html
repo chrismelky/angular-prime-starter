@@ -1,0 +1,42 @@
+<script src="projection-allocation.component.ts"></script>
+<div class="ui-dialog-content">
+  <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
+    <p-table
+      #fc
+      class="ceiling"
+      [value]="ceiling!"
+      [scrollable]="true"
+      scrollHeight="35vh"
+      dataKey="id"
+    >
+      <ng-template pTemplate="caption">
+        <span><b>Own Sources</b></span>
+        <br>
+        <div fxLayout="column" fxLayoutGap="10px">
+          <div fxLayout="row wrap" fxLayoutGap="10px">
+            <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
+              <div class="p-field" fxFlex>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" >
+        <tr>
+          <th>Budget Class</th>
+          <th class="end">Amount (TSH)</th>
+          <th class="end">%</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex">
+        <tr>
+          <td>{{rowData?.ceiling.budget_class.name}}</td>
+          <td style="text-align: end">{{rowData?.amount}}</td>
+          <td style="text-align: end">{{rowData?.amount}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage"> No Ceiling Found </ng-template>
+    </p-table>
+  </div>
+</div>

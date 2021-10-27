@@ -7,6 +7,7 @@
         <span class="card-header-text">Filter</span>
       </div>
     </ng-template>
+
     <div fxLayout="column" fxLayoutGap="4px">
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
@@ -40,6 +41,7 @@
               <label for="levelId">Level</label>
             </span>
           </div>
+
         </div>
         <div
           fxLayout="row wrap"
@@ -88,7 +90,104 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            ></div>
+            >
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="first_name"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['first_name']"
+                  />
+                  <label for="first_name">First Name </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['first_name'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="middle_name"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['middle_name']"
+                  />
+                  <label for="middle_name">Middle Name </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['middle_name'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="last_name"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['last_name']"
+                  />
+                  <label for="middle_name">Last Name </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['last_name'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="email"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['email']"
+                  />
+                  <label for="email">Email</label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['email'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="cheque_number"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['cheque_number']"
+                  />
+                  <label for="cheque_number">Cheque Number</label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['cheque_number'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="title"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['title']"
+                  />
+                  <label for="title">Title</label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['title'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+            </div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -134,7 +233,7 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            (click)="create()"
+            (click)="createOrUpdate()"
             label="Add User"
           ></button>
         </div>
@@ -154,7 +253,6 @@
           <th [pSortableColumn]="'section_id'">
             Allocation<p-sortIcon [field]="'section_id'"></p-sortIcon>
           </th>
-          <th>Status</th>
           <th></th>
         </tr>
       </ng-template>
@@ -165,15 +263,6 @@
           </td>
           <td>{{ rowData.admin_hierarchy?.name }}</td>
           <td>{{ rowData.section?.name }}</td>
-          <td>
-            <p-checkbox
-              name="groupname"
-              [label]="rowData.active ? 'Active' : 'Deactivated'"
-              (onChange)="toggleActive(rowData, $event)"
-              [binary]="true"
-              [value]="rowData.active"
-            ></p-checkbox>
-          </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
@@ -218,7 +307,7 @@
                   "
                   icon="pi pi-pencil
               "
-                  (click)="edit(rowData.id)"
+                  (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
                   pButton

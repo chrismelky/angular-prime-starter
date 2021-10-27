@@ -5,44 +5,47 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
-import { CategoryOptionCombination } from "./category-option-combination.model";
-import { CategoryOptionCombinationService } from "./category-option-combination.service";
-import { CategoryOptionCombinationUpdateComponent } from "./update/category-option-combination-update.component";
+import { CategoryOptionCombination } from './category-option-combination.model';
+import { CategoryOptionCombinationService } from './category-option-combination.service';
+import { CategoryOptionCombinationUpdateComponent } from './update/category-option-combination-update.component';
+import { CategoryCombinationService } from '../category-combination/category-combination.service';
+import { CategoryCombination } from '../category-combination/category-combination.model';
 
 @Component({
-  selector: "app-category-option-combination",
-  templateUrl: "./category-option-combination.component.html",
+  selector: 'app-category-option-combination',
+  templateUrl: './category-option-combination.component.html',
 })
 export class CategoryOptionCombinationComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   categoryOptionCombinations?: CategoryOptionCombination[] = [];
+  categoryCombinations?: CategoryCombination[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: true,
     },
   ]; //Table display columns
@@ -55,11 +58,13 @@ export class CategoryOptionCombinationComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  category_combination_id?: number;
 
   //Mandatory filter
 
   constructor(
     protected categoryOptionCombinationService: CategoryOptionCombinationService,
+    protected categoryCombinationService: CategoryCombinationService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -69,6 +74,12 @@ export class CategoryOptionCombinationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.categoryCombinationService
+      .query({ columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<CategoryCombination[]>) =>
+          (this.categoryCombinations = resp.data)
+      );
     this.handleNavigation();
   }
 
@@ -78,6 +89,9 @@ export class CategoryOptionCombinationComponent implements OnInit {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.category_combination_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -86,6 +100,7 @@ export class CategoryOptionCombinationComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        category_combination_id: this.category_combination_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -109,19 +124,31 @@ export class CategoryOptionCombinationComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -176,8 +203,8 @@ export class CategoryOptionCombinationComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -193,7 +220,7 @@ export class CategoryOptionCombinationComponent implements OnInit {
       CategoryOptionCombinationUpdateComponent,
       {
         data,
-        header: "Create/Update CategoryOptionCombination",
+        header: 'Create/Update CategoryOptionCombination',
       }
     );
     ref.onClose.subscribe((result) => {
@@ -210,7 +237,7 @@ export class CategoryOptionCombinationComponent implements OnInit {
   delete(categoryOptionCombination: CategoryOptionCombination): void {
     this.confirmationService.confirm({
       message:
-        "Are you sure that you want to delete this CategoryOptionCombination?",
+        'Are you sure that you want to delete this CategoryOptionCombination?',
       accept: () => {
         this.categoryOptionCombinationService
           .delete(categoryOptionCombination.id!)
@@ -236,12 +263,12 @@ export class CategoryOptionCombinationComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/category-option-combination"], {
+      this.router.navigate(['/category-option-combination'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -254,6 +281,6 @@ export class CategoryOptionCombinationComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Category Option Combination");
+    this.toastService.error('Error loading Category Option Combination');
   }
 }

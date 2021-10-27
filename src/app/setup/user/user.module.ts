@@ -14,7 +14,7 @@ import {UserComponent} from "./user.component";
 import {UserUpdateComponent} from "./update/user-update.component";
 import {UserRoleModule} from "./user-role/user-role.module";
 import {UserGroupModule} from "./user-group/user-group.module";
-import { PasswordResetComponent } from './password-reset/password-reset.component';
+import {PasswordResetComponent} from './password-reset/password-reset.component';
 
 @NgModule({
   imports: [SharedModule, CommonModule, UserRoleModule, UserGroupModule, UserRoutingModule],

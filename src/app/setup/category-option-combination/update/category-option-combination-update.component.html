@@ -42,6 +42,61 @@
         </span>
       </div>
 
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <p-inputNumber
+            id="sort_order"
+            formControlName="sort_order"
+          ></p-inputNumber>
+          <label for="sort_order">Sort Order </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sort_order')!.invalid &&
+            (editForm.get('sort_order')!.dirty ||
+              editForm.get('sort_order')!.touched ||
+              formError)
+          "
+        >
+        </span>
+      </div>
+
+      <!-- Value type -->
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="value_type"
+            optionValue="value"
+            optionLabel="display"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="valueTypes!"
+            formControlName="value_type"
+          ></p-dropdown>
+          <label for="value_type">Value Type </label>
+        </span>
+      </div>
+      <!-- Option Set -->
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="option_set_id"
+            optionValue="id"
+            optionLabel="name"
+            [showClear]="true"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="optionSets!"
+            formControlName="option_set_id"
+          ></p-dropdown>
+          <label for="option_set_id">Option Set </label>
+        </span>
+      </div>
+
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

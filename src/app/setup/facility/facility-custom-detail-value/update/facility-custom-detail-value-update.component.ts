@@ -5,18 +5,19 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import {Component, Inject, OnInit} from "@angular/core";
+import {FormBuilder, Validators} from "@angular/forms";
+import {Observable} from "rxjs";
+import {finalize} from "rxjs/operators";
+import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 
-import { CustomResponse } from "../../../../utils/custom-response";
-import { FacilityCustomDetail } from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
-import { FacilityCustomDetailService } from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
-import { FacilityCustomDetailValue } from "../facility-custom-detail-value.model";
-import { FacilityCustomDetailValueService } from "../facility-custom-detail-value.service";
-import { ToastService } from "src/app/shared/toast.service";
+import {CustomResponse} from "../../../../utils/custom-response";
+import {FacilityCustomDetail} from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
+import {FacilityCustomDetailService} from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
+import {FacilityCustomDetailValue} from "../facility-custom-detail-value.model";
+import {FacilityCustomDetailValueService} from "../facility-custom-detail-value.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {Facility} from "../../facility.model";
 
 @Component({
   selector: "app-facility-custom-detail-value-update",
@@ -26,9 +27,8 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-
+  facility!: Facility;
   facilityCustomDetails?: FacilityCustomDetail[] = [];
-
   /**
    * Declare form
    */
@@ -45,16 +45,20 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {}
+  ) {
+    this.facility = this.dialogConfig.data.facility;
+    if (this.dialogConfig.data.facilityCustomDetailValue !== undefined) {
+      this.updateForm(this.dialogConfig.data.facilityCustomDetailValue);
+    }
+  }
 
   ngOnInit(): void {
     this.facilityCustomDetailService
-      .query({ columns: ["id", "name"] })
+      .filterByFacilityType(this.facility.facility_type_id)
       .subscribe(
         (resp: CustomResponse<FacilityCustomDetail[]>) =>
           (this.facilityCustomDetails = resp.data)
       );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
@@ -68,13 +72,14 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const facilityCustomDetailValue = this.createFromForm();
-    if (facilityCustomDetailValue.id !== undefined) {
+    facilityCustomDetailValue.facility_id = this.facility.id;
+    if (facilityCustomDetailValue.id == null || !facilityCustomDetailValue.id) {
       this.subscribeToSaveResponse(
-        this.facilityCustomDetailValueService.update(facilityCustomDetailValue)
+        this.facilityCustomDetailValueService.create(facilityCustomDetailValue)
       );
     } else {
       this.subscribeToSaveResponse(
-        this.facilityCustomDetailValueService.create(facilityCustomDetailValue)
+        this.facilityCustomDetailValueService.update(facilityCustomDetailValue)
       );
     }
   }
@@ -102,7 +107,8 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -117,8 +123,7 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
   ): void {
     this.editForm.patchValue({
       id: facilityCustomDetailValue.id,
-      facility_custom_detail_id:
-        facilityCustomDetailValue.facility_custom_detail_id,
+      facility_custom_detail_id: facilityCustomDetailValue.facility_custom_detail_id,
       value: facilityCustomDetailValue.value,
     });
   }

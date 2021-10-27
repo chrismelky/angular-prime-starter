@@ -5,25 +5,26 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
 
-import { FacilityCustomDetail } from "./facility-custom-detail.model";
-import { FacilityCustomDetailService } from "./facility-custom-detail.service";
-import { FacilityCustomDetailUpdateComponent } from "./update/facility-custom-detail-update.component";
+import {FacilityCustomDetail} from "./facility-custom-detail.model";
+import {FacilityCustomDetailService} from "./facility-custom-detail.service";
+import {FacilityCustomDetailUpdateComponent} from "./update/facility-custom-detail-update.component";
+import {FacilityCustomDetailOptionComponent} from "./facility-custom-detail-option/facility-custom-detail-option.component";
 
 @Component({
   selector: "app-facility-custom-detail",
@@ -71,7 +72,8 @@ export class FacilityCustomDetailComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.handleNavigation();
@@ -257,5 +259,21 @@ export class FacilityCustomDetailComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Facility Custom Detail");
+  }
+
+  options(rowData: FacilityCustomDetail) {
+    const data = {
+      facilityCustomDetail: rowData
+    };
+    const ref = this.dialogService.open(FacilityCustomDetailOptionComponent, {
+      data,
+      header: rowData.name,
+      width: '60%'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

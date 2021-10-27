@@ -1,13 +1,9 @@
-<div class="content" fxLayout="column" fxLayoutGap="0.75rem">
+<div class="dialog-content">
   <p-card class="filter">
     <ng-template pTemplate="header">
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
         <i class="pi pi-list"></i>
         <span class="card-header-text">User Form</span>
-      </div>
-      <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
-        <button pButton type="button" label="Close" (click)="close()" icon="pi pi-times"
-                class="p-button-plain"></button>
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
@@ -284,11 +280,11 @@
           </div>
           <div fxLayout="row" fxLayoutGap="2px">
             <p-inputSwitch
-              id="activated"
-              name="activated"
-              formControlName="activated"
+              id="active"
+              name="active"
+              formControlName="active"
             ></p-inputSwitch>
-            <label for="activated">Activated </label>
+            <label for="active">Active</label>
           </div>
 
           <div fxLayout="row" fxLayoutGap="2px">
@@ -297,7 +293,7 @@
               name="is_facility_user"
               formControlName="is_facility_user"
             ></p-inputSwitch>
-            <label for="is_facility_user">Facility User </label>
+            <label for="is_facility_user">Facility User</label>
           </div>
           <div fxLayout="row" fxLayoutGap="2px">
             <p-inputSwitch
@@ -305,7 +301,7 @@
               name="is_super_user"
               formControlName="is_super_user"
             ></p-inputSwitch>
-            <label for="is_super_user">Super User </label>
+            <label for="is_super_user">Super User</label>
           </div>
           <div fxLayout="row" fxLayoutGap="0.75rem">
             <span fxFlex></span>

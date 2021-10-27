@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -69,7 +69,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     period_three: [null, []],
     period_four: [null, []],
     has_breakdown: [null, []],
-    breakdowns: [this.fb.array([]), []],
+    breakdowns: this.fb.array([]),
   });
 
   constructor(
@@ -152,10 +152,23 @@ export class ActivityInputUpdateComponent implements OnInit {
   }
 
   get breakDownControls(): FormArray {
-    return this.editForm.get('breakdowns') as FormArray;
+    return this.editForm.controls['breakdowns'] as FormArray;
   }
 
-  private addControl(data?: any): void {
+  addItem(item: any, unit_price: any, quantity: any, frequency: any): void {
+    this.addControl({
+      item: item.value,
+      unit_price: unit_price.value,
+      quantity: quantity.value,
+      frequency: frequency.value,
+    });
+    item.value = undefined;
+    unit_price.value = undefined;
+    quantity.value = undefined;
+    frequency.value = undefined;
+  }
+
+  addControl(data?: any): void {
     const controlArray = this.breakDownControls;
     controlArray.push(
       this.fb.group({
@@ -210,7 +223,7 @@ export class ActivityInputUpdateComponent implements OnInit {
    * @returns ActivityInput
    */
   protected createFromForm(): ActivityInput {
-    const breakdowns = this.editForm.get(['has_breakdown'])!.value;
+    const breakdowns = this.editForm.get(['breakdowns'])!.value;
     return {
       ...new ActivityInput(),
       id: this.editForm.get(['id'])!.value,

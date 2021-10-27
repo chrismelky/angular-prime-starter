@@ -46,20 +46,22 @@ export class ActivityImplementationUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    admin_hierarchy_id: [null, [Validators.required]],
-    financial_year_id: [null, [Validators.required]],
-    period_id: [null, [Validators.required]],
-    facility_type_id: [null, [Validators.required]],
-    facility_id: [null, [Validators.required]],
-    code: [null, [Validators.required]],
-    description: [null, [Validators.required]],
-    budget: [null, [Validators.required]],
-    expenditure: [null, [Validators.required]],
-    balance: [null, [Validators.required]],
-    status_id: [null, [Validators.required]],
-    procurement_method_id: [null, [Validators.required]],
-    indicator: [null, [Validators.required]],
-    indicator_value: [null, [Validators.required]],
+    admin_hierarchy_id: [null, []],
+    financial_year_id: [null, []],
+    period_id: [null, []],
+    facility_type_id: [null, []],
+    facility_id: [null, []],
+    code: [null, []],
+    description: [null, []],
+    budget: [null, []],
+    expenditure: [null, []],
+    balance: [null, []],
+    status: [null, []],
+    procurement_method: [null, []],
+    indicator: [null, []],
+    url: [null, []],
+    file: [null, []],
+    indicator_value: [null, []],
     project_output: [null, []],
     project_output_implemented: [null, []],
     actual_implementation: [null, []],
@@ -70,13 +72,12 @@ export class ActivityImplementationUpdateComponent implements OnInit {
     achievement: [null, []],
   });
    procurementMethods?: ProcurementMethod[] = [];
-  implementationStatus?: ImplementationStatus[] = [];
+   implementationStatus?: ImplementationStatus[] = [];
 
   constructor(
     protected activityImplementationService: ActivityImplementationService,
     protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
-    protected periodService: PeriodService,
     protected facilityTypeService: FacilityTypeService,
     protected facilityService: FacilityService,
     public dialogRef: DynamicDialogRef,
@@ -99,35 +100,6 @@ export class ActivityImplementationUpdateComponent implements OnInit {
       {name:'Force Account'},
       {name:'Single Source'},
     ];
-
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
-    this.periodService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
-      );
-    this.facilityTypeService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FacilityType[]>) =>
-          (this.facilityTypes = resp.data)
-      );
-    this.facilityService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -142,6 +114,7 @@ export class ActivityImplementationUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const activityImplementation = this.createFromForm();
+
     if (activityImplementation.id !== undefined) {
       this.subscribeToSaveResponse(
         this.activityImplementationService.update(activityImplementation)
@@ -195,12 +168,14 @@ export class ActivityImplementationUpdateComponent implements OnInit {
       facility_type_id: activityImplementation.facility_type_id,
       facility_id: activityImplementation.facility_id,
       code: activityImplementation.code,
+      url: activityImplementation.url,
+      file: activityImplementation.file,
       description: activityImplementation.facility_id,
       budget: activityImplementation.budget,
       expenditure: activityImplementation.expenditure,
       balance: activityImplementation.balance,
-      status_id: activityImplementation.status_id,
-      procurement_method_id: activityImplementation.procurement_method_id,
+      status: activityImplementation.status,
+      procurement_method: activityImplementation.procurement_method,
       indicator: activityImplementation.indicator,
       indicator_value: activityImplementation.indicator_value,
       project_output: activityImplementation.project_output,
@@ -219,6 +194,7 @@ export class ActivityImplementationUpdateComponent implements OnInit {
       this.editForm.patchValue({
         file: event.files[0],
       });
+    // this.uploadFile();
   }
   /**
    * Return form values as object of type ActivityImplementation
@@ -228,18 +204,20 @@ export class ActivityImplementationUpdateComponent implements OnInit {
     return {
       ...new ActivityImplementation(),
       id: this.editForm.get(["id"])!.value,
+      activity_id: this.activity?.activity_id,
       admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
       financial_year_id: this.editForm.get(["financial_year_id"])!.value,
       period_id: this.editForm.get(["period_id"])!.value,
       facility_type_id: this.editForm.get(["facility_type_id"])!.value,
       facility_id: this.editForm.get(["facility_id"])!.value,
       code: this.editForm.get(["code"])!.value,
+      file: this.editForm.get(["file"])!.value,
       description: this.editForm.get(["description"])!.value,
       budget: this.editForm.get(["budget"])!.value,
       expenditure: this.editForm.get(["expenditure"])!.value,
       balance: this.editForm.get(["balance"])!.value,
-      status_id: this.editForm.get(["status_id"])!.value,
-      procurement_method_id: this.editForm.get(["procurement_method_id"])!.value,
+      status: this.editForm.get(["status"])!.value,
+      procurement_method: this.editForm.get(["procurement_method"])!.value,
       indicator: this.editForm.get(["indicator"])!.value,
       indicator_value: this.editForm.get(["indicator_value"])!.value,
       project_output: this.editForm.get(["project_output"])!.value,
@@ -251,5 +229,26 @@ export class ActivityImplementationUpdateComponent implements OnInit {
       remarks: this.editForm.get(["remarks"])!.value,
       achievement: this.editForm.get(["achievement"])!.value,
     };
+  }
+
+  saveImplementation() {
+    let data = {
+      activity_id:this.activity?.activity_id,
+      admin_hierarchy_id:this.activity?.admin_hierarchy_id,
+      financial_year_id:this.activity?.financial_year_id,
+      period_id:this.activity?.period_id,
+      facility_id:this.activity?.facility_id,
+      remarks:this.editForm.value.remarks,
+      status:this.editForm.value.status,
+      procurement_method:this.editForm.value.procurement_method,
+      achievement:this.editForm.value.achievement,
+      project_output_implemented_value:this.editForm.value.project_output_implemented,
+      completion_percentage:this.editForm.value.physical_actual_implementation,
+      actual_implementation:this.editForm.value.actual_implementation
+    };
+
+    this.subscribeToSaveResponse(
+      this.activityImplementationService.create(data)
+    );
   }
 }

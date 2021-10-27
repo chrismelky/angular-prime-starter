@@ -5,19 +5,13 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
 
 import { CustomResponse } from '../../utils/custom-response';
-import {
-  ITEMS_PER_PAGE,
-  PER_PAGE_OPTIONS,
-} from '../../config/pagination.constants';
+import { PER_PAGE_OPTIONS } from '../../config/pagination.constants';
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { DataElement } from 'src/app/setup/data-element/data-element.model';
@@ -33,7 +27,6 @@ import { CategoryOptionCombinationService } from 'src/app/setup/category-option-
 
 import { DataValue } from './data-value.model';
 import { DataValueService } from './data-value.service';
-import { DataValueUpdateComponent } from './update/data-value-update.component';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.model';
 import { CasPlanService } from '../cas-plan/cas-plan.service';
@@ -125,13 +118,6 @@ export class DataValueComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
-      );
-
-    this.categoryOptionCombinationService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<CategoryOptionCombination[]>) =>
-          (this.categoryOptionCombinations = resp.data)
       );
   }
 
@@ -240,22 +226,27 @@ export class DataValueComponent implements OnInit {
     this.dataElements?.forEach((de) => {
       this.dataValuesArray[de.id!] = {};
       this.categoryCombinations?.forEach((co) => {
-        co.category_option_combinations?.forEach((coc) => {
-          const existing = this.dataValues?.find((dv) => {
-            return (
-              dv.data_element_id === de.id &&
-              dv.category_option_combination_id === coc.id
-            );
+        if (de.category_combination_id === co.id) {
+          co.category_option_combinations?.forEach((coc) => {
+            coc.value_type = coc.value_type || de.value_type;
+            coc.option_set_id = coc.option_set_id || de.option_set_id;
+
+            const existing = this.dataValues?.find((dv) => {
+              return (
+                dv.data_element_id === de.id &&
+                dv.category_option_combination_id === coc.id
+              );
+            });
+            this.dataValuesArray[de.id!][coc.id!] = {
+              id: existing ? existing.id : undefined,
+              value: existing ? existing.value : undefined,
+              oldValue: existing ? existing.value : undefined,
+              isSaving: false,
+              data_element_id: de.id,
+              category_option_combination_id: coc.id,
+            };
           });
-          this.dataValuesArray[de.id!][coc.id!] = {
-            id: existing ? existing.id : undefined,
-            value: existing ? existing.value : undefined,
-            oldValue: existing ? existing.value : undefined,
-            isSaving: false,
-            data_element_id: de.id,
-            category_option_combination_id: coc.id,
-          };
-        });
+        }
       });
     });
   }

@@ -56,6 +56,16 @@ export class AdminHierarchyCeilingService {
       { params: options }
     );
   }
+
+  ceilingByFundSource(req?: any): Observable<CustomResponse<any[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/ceiling_by_fund_source';
+    return this.http.get<CustomResponse<any[]>>(
+      url,
+      { params: options }
+    );
+  }
+
   ceilingByPosition(
     positions: any
   ): Observable<CustomResponse<any>> {
@@ -65,6 +75,7 @@ export class AdminHierarchyCeilingService {
       positions
     );
   }
+
 
   ceilingStartPosition(): Observable<CustomResponse<any>> {
     const url = 'api/ceiling_start_position';

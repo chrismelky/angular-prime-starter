@@ -19,14 +19,6 @@ const routes: Routes = [
       defaultSort: "id:asc",
     },
   },
-  {
-    path: "create",
-    component: UserUpdateComponent,
-  },
-  {
-    path: "edit/:id",
-    component: UserUpdateComponent,
-  },
 ];
 
 @NgModule({

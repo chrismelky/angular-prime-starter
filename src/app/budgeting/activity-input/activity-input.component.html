@@ -7,7 +7,7 @@
           icon="pi pi-arrow-left"
           pButton
           (click)="back()"
-          class="p-button-rounded p-button-icon-only"
+          class="p-button-rounded p-button-text p-button-icon-only"
         ></button>
         <p-divider fxFlex class="title" align="center">
           <span fxLayout="column" fxLayoutAlign="centre center">
@@ -70,17 +70,18 @@
           "
         ></app-loader>
         <div fxLayout="column" fxLayoutGap="20px">
-          <div fxLayout="row wrap" fxLayoutGap="20px">
+          <div fxLayout="row" fxLayoutGap="20px">
             <div
-              fxLayout="row wrap"
-              fxLayoutGap="0.75rem"
+              fxLayout="row"
+              fxLayoutGap="10px"
               fxFlex
               fxLayoutAlign="start center"
             >
               <!-- Facility -->
-              <div class="p-field" fxFlex>
+              <div class="p-field" fxFlex="0 1 30%">
                 <span class="p-float-label">
                   <p-dropdown
+                    #facility
                     id="facility_id"
                     optionValue="id"
                     optionLabel="name"
@@ -91,35 +92,15 @@
                     [filter]="true"
                     class="p-inputtext-sm"
                     [options]="facilityGroupByType!"
-                    (onChange)="filterChanged()"
+                    (onChange)="loadFundSource(facility.value)"
                     [(ngModel)]="facility_id"
                   ></p-dropdown>
                   <label for="facility_id">Facility </label>
                 </span>
               </div>
 
-              <!-- Budget class -->
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="budget_class_id"
-                    [group]="true"
-                    optionGroupLabel="name"
-                    optionGroupChildren="children"
-                    optionValue="id"
-                    optionLabel="name"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    class="p-inputtext-sm"
-                    [options]="mainBudgetClasses!"
-                    (onChange)="loadFundSource()"
-                    [(ngModel)]="budget_class_id"
-                  ></p-dropdown>
-                  <label for="budget_class_id">Budget Class </label>
-                </span>
-              </div>
               <!-- Fund source -->
-              <div class="p-field" fxFlex>
+              <div class="p-field" fxFlex="0 1 70%">
                 <span class="p-float-label">
                   <p-dropdown
                     id="fund_source_id"
@@ -140,7 +121,7 @@
           </div>
           <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
             <!-- Activity -->
-            <div class="p-field" fxFlex="2 2 calc(10px)">
+            <div class="p-field" fxFlex="0 0 100%">
               <span class="p-float-label">
                 <p-dropdown
                   id="activity_id"
@@ -169,6 +150,23 @@
               </span>
             </div>
           </div>
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+            <span fxFlex="0 1 50%"></span>
+            <p-fieldset
+              class="total-fieldset"
+              fxFlex="0 0 25%"
+              legend="Total Ceiling"
+            >
+              {{ 1000000 | currency: " " }}
+            </p-fieldset>
+            <p-fieldset
+              class="total-fieldset"
+              fxFlex="0 0 25%"
+              legend="Total Balance"
+            >
+              {{ 20000 | currency: " " }}
+            </p-fieldset>
+          </div>
         </div>
       </div>
     </ng-template>
@@ -193,7 +191,7 @@
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="!facilityActivity || !financialYear || !budget_class_id"
+            [disabled]="!facilityActivity || !financialYear || !fund_source_id"
             (click)="createOrUpdate()"
             label="Add Input"
           ></button>

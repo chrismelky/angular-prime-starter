@@ -56,9 +56,9 @@ export class FacilityCustomDetailService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  filterByTypeAndOwnership(facilityTypeId: number | undefined, ownership: string | undefined): Observable<CustomResponse<FacilityCustomDetail[]>> {
+  filterByFacilityType(facilityTypeId: number | undefined): Observable<CustomResponse<FacilityCustomDetail[]>> {
     return this.http.get<CustomResponse<FacilityCustomDetail[]>>(
-      `${this.resourceUrl}/filterByTypeAndOwnership/${facilityTypeId}/${ownership}`
+      `${this.resourceUrl}/filterByFacilityType/${facilityTypeId}`
     );
   }
 }

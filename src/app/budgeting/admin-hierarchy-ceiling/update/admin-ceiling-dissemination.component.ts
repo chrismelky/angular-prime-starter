@@ -54,6 +54,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   councilCeilingGroup?: any[]=[];
   facilityCeiling?: any[]=[];
   clonedCeiling?:  any[]= [];
+  clonedFacilityCeiling?:  any[]= [];
   facilities?: Facility[]=[];
   budgetCeiling?: BudgetCeiling[]=[];
   councilCeiling?: AdminHierarchyCeiling[]=[];
@@ -135,7 +136,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
       if(ceiling.ceiling.length > 0){
         if(startIndex == 0){this.defaultSelected![ceiling.position] = {...ceiling.ceiling[0]};}else{
           let ceilingId = this.defaultSelected![parentPosition]?this.defaultSelected![parentPosition]:this.councilCeilingGroup![startIndex-1].ceiling[0];
-          this.councilCeilingGroup![startIndex].ceiling = this.councilCeiling!.filter((c) => c.parent_id === ceilingId.id);
+          let ceilingSectors = ceilingId.ceiling.sector.map((s: { id: any; }) => (s.id));
+          this.councilCeilingGroup![startIndex].ceiling = this.councilCeiling!.filter((c) => (c.parent_id === ceilingId.id && ceilingSectors.includes(c.section?.sector_id)));
           this.defaultSelected![ceiling.position] = {...this.councilCeilingGroup![startIndex].ceiling[0]};
           if(!ceiling.chain.next){
             this.finalCeiling = this.defaultSelected![ceiling.position];
@@ -168,14 +170,15 @@ export class AdminCeilingDisseminationComponent implements OnInit {
 
 
   allocateCeiling(position:number,table:any,event:any,ceiling:AdminHierarchyCeiling,chain:any):void{
+    console.log(ceiling.ceiling)
     this.allocationPosition = position;
-    this.sectionChange(ceiling,chain);
     if(ceiling!.amount!>0){
       this.toAllocate = this.councilCeiling!.filter(cc => cc.parent_id == ceiling.id)
       this.toAllocate = this.toAllocate!.map((c) => Object.assign(c,
         {percent: ceiling.amount!>0?((c.amount!/ceiling!.amount!)*100):(0)}));
-      table.toggle(event,this.overlayTarget?.nativeElement);
       this.clonedCeiling = this.toAllocate!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent,section:c.section }));
+      table.toggle(event,this.overlayTarget?.nativeElement);
+      this.sectionChange(ceiling,chain);
     }else{
       this.toastService.info('No Ceiling To allocate')
     }
@@ -191,7 +194,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   //Update Facility Ceiling
   updateFacilityCeiling(row:any):void{
     const index = this.facilityCeiling!.findIndex(item => item.id === row.id);
-    if(this.clonedCeiling![index].amount != row.amount){
+    if(this.clonedFacilityCeiling![index].amount != row.amount){
       if(this.totalFacilityAllocatedAmount! <= this.finalCeiling!.amount!) {
         const facilityCeiling = this.facilityUpdateCeilingFrom(row);
         if(facilityCeiling.id !== null){
@@ -204,9 +207,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
           );
         }
       }else{
-        this.facilityCeiling![index].amount=this.clonedCeiling![index].amount;
-        this.facilityCeiling![index].percent=this.clonedCeiling![index].percent;
-        this.getFacilityPercent(this.clonedCeiling![index],this.clonedCeiling![index].percent!);
+        this.facilityCeiling![index].amount=this.clonedFacilityCeiling![index].amount;
+        this.facilityCeiling![index].percent=this.clonedFacilityCeiling![index].percent;
+        this.getFacilityPercent(this.clonedFacilityCeiling![index],this.clonedFacilityCeiling![index].percent!);
       }
     }
   }
@@ -215,16 +218,16 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   updateCeiling(adminHierarchyCeiling: AdminHierarchyCeiling){
     const index = this.toAllocate!.findIndex(item => item.id === adminHierarchyCeiling.id);
     if(this.clonedCeiling![index].amount != adminHierarchyCeiling.amount){
-    if(this.totalAllocatedCeiling[this.allocationPosition!].amount <= this.selectedCeiling[this.allocationPosition!]!.amount!) {
-      const ceiling = this.updateFromForm(adminHierarchyCeiling);
-      this.subscribeToSaveResponse(
-        this.adminHierarchyCeilingService.update(ceiling),adminHierarchyCeiling
-      );
-    }else{
-      this.toAllocate![index].amount=this.clonedCeiling![index].amount;
-      this.toAllocate![index].percent=this.clonedCeiling![index].percent;
-      this.getPercent(this.clonedCeiling![index],this.clonedCeiling![index].percent!);
-    }
+      if(this.totalAllocatedCeiling[this.allocationPosition!].amount <= this.selectedCeiling[this.allocationPosition!]!.amount!) {
+        const ceiling = this.updateFromForm(adminHierarchyCeiling);
+        this.subscribeToSaveResponse(
+          this.adminHierarchyCeilingService.update(ceiling),adminHierarchyCeiling
+        );
+      }else{
+        this.toAllocate![index].amount=this.clonedCeiling![index].amount;
+        this.toAllocate![index].percent=this.clonedCeiling![index].percent;
+        this.getPercent(this.clonedCeiling![index],this.clonedCeiling![index].percent!);
+      }
     }
   }
 
@@ -381,7 +384,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
             percent:budgetCeiling==undefined?0.00:((budgetCeiling.amount!)>0?(((budgetCeiling.amount!)/ceiling.amount)*100):0.00)
           }
         });
-        this.clonedCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
+        this.clonedFacilityCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
         this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
         });
     });

@@ -36,7 +36,7 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
   facilityCustomDetailValues?: FacilityCustomDetailValue[] = [];
-
+  facility!: Facility
   facilityCustomDetails?: FacilityCustomDetail[] = [];
 
   cols = [
@@ -55,7 +55,6 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-  facility: Facility | undefined;
   facilityTypeId: number | undefined;
   ownership: string | undefined;
 
@@ -79,13 +78,7 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.facilityCustomDetailService
-      .filterByTypeAndOwnership(this.facilityTypeId, this.ownership)
-      .subscribe(
-        (resp: CustomResponse<FacilityCustomDetail[]>) =>
-          (this.facilityCustomDetails = resp.data)
-      );
-    this.handleNavigation();
+    this.loadPage();
   }
 
   /**
@@ -93,7 +86,7 @@ export class FacilityCustomDetailValueComponent implements OnInit {
    * @param page = page number
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
-  loadPage(page?: number, dontNavigate?: boolean): void {
+  loadPage(page?: number): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -101,43 +94,19 @@ export class FacilityCustomDetailValueComponent implements OnInit {
       .query({
         page: pageToLoad,
         per_page: this.per_page,
-        sort: this.sort(),
+        facility_id: this.facility.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
         (res: CustomResponse<FacilityCustomDetailValue[]>) => {
           this.isLoading = false;
-          this.onSuccess(res, pageToLoad, !dontNavigate);
+          this.onSuccess(res, pageToLoad);
         },
         () => {
           this.isLoading = false;
           this.onError();
         }
       );
-  }
-
-  /**
-   * Called initialy/onInit to
-   * Restore page, sort option from url query params if exist and load page
-   */
-  protected handleNavigation(): void {
-    combineLatest([
-      this.activatedRoute.data,
-      this.activatedRoute.queryParamMap,
-    ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
-      const predicate = sort[0];
-      const ascending = sort[1] === "asc";
-      this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
-      this.page = page !== null ? parseInt(page) : 1;
-      if (predicate !== this.predicate || ascending !== this.ascending) {
-        this.predicate = predicate;
-        this.ascending = ascending;
-      }
-      this.loadPage(this.page, true);
-    });
   }
 
   /**
@@ -164,20 +133,6 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   }
 
   /**
-   * Sorting changed
-   * predicate = column to sort by
-   * ascending = sort ascending else descending
-   * @param $event
-   */
-  onSortChange($event: LazyLoadEvent): void {
-    if ($event.sortField) {
-      this.predicate = $event.sortField!;
-      this.ascending = $event.sortOrder === 1;
-      this.loadPage();
-    }
-  }
-
-  /**
    * When page changed
    * @param event page event
    */
@@ -188,23 +143,14 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   }
 
   /**
-   * Impletement sorting Set/Reurn the sorting option for data
-   * @returns dfefault ot id sorting
-   */
-  protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
-    return [`${predicate}:${direction}`];
-  }
-
-  /**
    * Creating or updating FacilityCustomDetailValue
    * @param facilityCustomDetailValue ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(facilityCustomDetailValue?: FacilityCustomDetailValue): void {
-    const data: FacilityCustomDetailValue = facilityCustomDetailValue ?? {
-      ...new FacilityCustomDetailValue(),
-    };
+    const data = {
+      facilityCustomDetailValue: facilityCustomDetailValue ? facilityCustomDetailValue : undefined,
+      facility: this.facility
+    }
     const ref = this.dialogService.open(
       FacilityCustomDetailValueUpdateComponent,
       {
@@ -247,20 +193,9 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   protected onSuccess(
     resp: CustomResponse<FacilityCustomDetailValue[]> | null,
     page: number,
-    navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
-    if (navigate) {
-      this.router.navigate(["/facility-custom-detail-value"], {
-        queryParams: {
-          page: this.page,
-          per_page: this.per_page,
-          sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
-        },
-      });
-    }
     this.facilityCustomDetailValues = resp?.data ?? [];
   }
 

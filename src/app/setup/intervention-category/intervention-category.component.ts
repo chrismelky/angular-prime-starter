@@ -39,12 +39,7 @@ export class InterventionCategoryComponent implements OnInit {
       field: 'name',
       header: 'Name',
       sort: true,
-    },
-    {
-      field: 'parent_id',
-      header: 'Parent ',
-      sort: false,
-    },
+    }
   ]; //Table display columns
 
   isLoading = false;

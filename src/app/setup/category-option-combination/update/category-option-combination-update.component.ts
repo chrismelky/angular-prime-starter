@@ -15,6 +15,9 @@ import { CustomResponse } from '../../../utils/custom-response';
 import { CategoryOptionCombination } from '../category-option-combination.model';
 import { CategoryOptionCombinationService } from '../category-option-combination.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { OptionSetService } from '../../option-set/option-set.service';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { OptionSet } from '../../option-set/option-set.model';
 
 @Component({
   selector: 'app-category-option-combination-update',
@@ -24,14 +27,19 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
+  optionSets?: OptionSet[] = [];
+  valueTypes?: PlanrepEnum[] = [];
 
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
+    name: [{ value: null, disabled: true }, [Validators.required]],
     code: [null, []],
+    option_set_id: [null, []],
+    sort_order: [null, []],
+    value_type: [null, []],
   });
 
   constructor(
@@ -39,10 +47,18 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    protected optionSetService: OptionSetService,
+    private toastService: ToastService,
+    protected enumService: EnumService
   ) {}
 
   ngOnInit(): void {
+    this.optionSetService
+      .query({ columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<OptionSet[]>) => (this.optionSets = resp.data)
+      );
+    this.valueTypes = this.enumService.get('valueTypes');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -108,6 +124,9 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
       id: categoryOptionCombination.id,
       name: categoryOptionCombination.name,
       code: categoryOptionCombination.code,
+      sort_order: categoryOptionCombination.sort_order,
+      value_type: categoryOptionCombination.value_type,
+      option_set_id: categoryOptionCombination.option_set_id,
     });
   }
 
@@ -121,6 +140,9 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
       code: this.editForm.get(['code'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
+      value_type: this.editForm.get(['value_type'])!.value,
+      option_set_id: this.editForm.get(['option_set_id'])!.value,
     };
   }
 }

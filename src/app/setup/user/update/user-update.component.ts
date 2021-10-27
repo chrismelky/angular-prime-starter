@@ -25,6 +25,7 @@ import {Role} from '../../role/role.model';
 import {RoleService} from '../../role/role.service';
 import {SectionLevelService} from '../../section-level/section-level.service';
 import {SectionLevel} from '../../section-level/section-level.model';
+import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 
 @Component({
   selector: 'app-user-update',
@@ -34,7 +35,6 @@ export class UserUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-  id: number;
   user: User;
   levelControl = new FormControl(null, [Validators.required]);
   sectionLevels?: SectionLevel[] = [];
@@ -72,12 +72,11 @@ export class UserUpdateComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService,
     protected facilityService: FacilityService,
     protected fb: FormBuilder,
-    protected router: Router,
-    private activatedRoute: ActivatedRoute,
+    public dialogRef: DynamicDialogRef,
+    public dialogConfig: DynamicDialogConfig,
     private toastService: ToastService
   ) {
-    this.user = {};
-    this.id = this.activatedRoute.snapshot.params.id;
+    this.user = this.dialogConfig.data.user;
   }
 
   ngOnInit(): void {
@@ -87,11 +86,7 @@ export class UserUpdateComponent implements OnInit {
         (resp: CustomResponse<SectionLevel[]>) =>
           (this.sectionLevels = resp.data)
       );
-    if (this.id != null) {
-      this.userService.find(this.id).subscribe((resp: CustomResponse<User>) => {
-        this.updateForm(resp.data);
-      });
-    }
+    this.updateForm(this.user);
   }
 
   /**
@@ -112,11 +107,11 @@ export class UserUpdateComponent implements OnInit {
     } as Role;
     roles.push(role);
     user.roles = roles;
-    if (this.id !== undefined) {
-      user.id = this.id;
-      this.subscribeToSaveResponse(this.userService.update(user));
-    } else {
+    if (this.user === null || this.user === undefined) {
       this.subscribeToSaveResponse(this.userService.create(user));
+    } else {
+      user.id = this.user.id;
+      this.subscribeToSaveResponse(this.userService.update(user));
     }
   }
 
@@ -130,7 +125,7 @@ export class UserUpdateComponent implements OnInit {
   }
 
   close() {
-    this.router.navigate(['/user']);
+    this.dialogRef.close();
   }
 
   /**

@@ -131,7 +131,7 @@
             pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            (click)="create()"
+            (click)="createOrUpdate()"
             label="Add User"
           ></button>
         </div>
@@ -205,7 +205,7 @@
                   "
                   icon="pi pi-pencil
               "
-                  (click)="edit(rowData.id)"
+                  (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
                   pButton

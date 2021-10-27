@@ -52,7 +52,7 @@ export class UserUpdateComponent implements OnInit {
     last_name: [null, [Validators.required]],
     email: [null, [Validators.required]],
     cheque_number: [null, [Validators.required]],
-    activated: [false, []],
+    active: [false, []],
     title: [null, []],
     mobile_number: [null, []],
     username: [null, [Validators.required]],
@@ -161,7 +161,7 @@ export class UserUpdateComponent implements OnInit {
       email: user?.email,
       cheque_number: user?.cheque_number,
       username: user?.username,
-      activated: user?.activated,
+      active: user?.active,
       title: user?.title,
       mobile_number: user?.mobile_number,
       section_id: user?.section_id,
@@ -188,7 +188,7 @@ export class UserUpdateComponent implements OnInit {
       email: this.editForm.get(['email'])!.value,
       username: this.editForm.get(['username'])!.value,
       cheque_number: this.editForm.get(['cheque_number'])!.value,
-      activated: this.editForm.get(['activated'])!.value,
+      active: this.editForm.get(['active'])!.value,
       title: this.editForm.get(['title'])!.value,
       mobile_number: this.editForm.get(['mobile_number'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
@@ -229,9 +229,6 @@ export class UserUpdateComponent implements OnInit {
     const sectionId = this.editForm.get('section_id')?.value as number;
     const parentName = 'p' + this.adminHierarchy?.admin_hierarchy_position;
     const parentId = this.adminHierarchy?.id;
-    console.log('sectionId', sectionId)
-    console.log('parentName', parentName)
-    console.log('parentId', parentId)
     if (parentId != null) {
       this.facilityService
         .planning(parentName, parentId, sectionId)

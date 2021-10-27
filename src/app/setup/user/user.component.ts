@@ -50,42 +50,36 @@ export class UserComponent implements OnInit {
   sections?: Section[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
-
   cols = [
     {
       field: 'first_name',
       header: 'First Name',
-      sort: false,
+      sort: true,
     },
     {
       field: 'last_name',
       header: 'Last Name',
-      sort: false,
+      sort: true,
     },
     {
       field: 'email',
       header: 'Email',
-      sort: false,
+      sort: true,
     },
     {
       field: 'cheque_number',
       header: 'Cheque Number',
-      sort: false,
-    },
-    {
-      field: 'activated',
-      header: 'Activated',
-      sort: false,
+      sort: true,
     },
     {
       field: 'title',
       header: 'Title',
-      sort: false,
+      sort: true,
     },
     {
       field: 'mobile_number',
       header: 'Mobile Number',
-      sort: false,
+      sort: true,
     },
   ]; //Table display columns
 

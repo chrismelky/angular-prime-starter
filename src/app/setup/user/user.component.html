@@ -21,7 +21,7 @@
               <app-admin-hierarchy-tree
                 [returnType]="'object'"
                 id="admin_hierarchy_id"
-                label="Parent Admin Hierarchy"
+                label="Admin Hierarchy"
                 (onSelect)="onAdminHierarchySelection($event)"
               ></app-admin-hierarchy-tree>
             </span>
@@ -213,6 +213,10 @@
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Users</span>
           <button
+            [disabled]="
+              adminHierarchy?.admin_hierarchy_position !==
+              admin_hierarchy_position
+            "
             pButton
             pRipple
             icon="pi pi-plus"

@@ -223,6 +223,7 @@ export class UserUpdateComponent implements OnInit {
         facilities: [],
       });
       this.editForm.get('facilities')?.clearValidators();
+      this.loadFacilities();
     } else {
       this.editForm.get('facility_id')?.clearValidators();
       this.editForm.patchValue({
@@ -238,12 +239,14 @@ export class UserUpdateComponent implements OnInit {
     const hasLimit = this.editForm.get('has_facility_limit')?.value;
     if (hasLimit) {
       this.editForm.get('facilities')?.setValidators([Validators.required]);
+      this.loadFacilities();
     } else {
       this.editForm.get('facilities')?.clearValidators();
       this.editForm.get('facility_id')?.clearValidators();
       this.editForm.patchValue({
         facilities: [],
         facility_id: null,
+        is_facility_user: false,
       });
     }
     this.editForm.get('facilities')?.updateValueAndValidity();
@@ -275,7 +278,11 @@ export class UserUpdateComponent implements OnInit {
     const isFacilityUser = this.editForm.get('is_facility_user')?.value;
     const parentName = 'p' + this.adminHierarchy?.admin_hierarchy_position;
     const parentId = this.adminHierarchy?.id;
-    if (parentId != null && (isFacilityUser || hasFacilityLimit)) {
+    if (
+      sectionId != null &&
+      parentId != null &&
+      (isFacilityUser || hasFacilityLimit)
+    ) {
       this.facilityService
         .planning(parentName, parentId, sectionId)
         .subscribe(

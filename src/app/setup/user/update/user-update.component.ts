@@ -59,7 +59,7 @@ export class UserUpdateComponent implements OnInit {
     section_id: [null, []],
     admin_hierarchy_id: [null, [Validators.required]],
     facilities: [null, []],
-    roles: [null, []],
+    /*roles: [null, []],*/
     is_facility_user: [false, []],
     is_super_user: [false, []],
   });
@@ -86,6 +86,17 @@ export class UserUpdateComponent implements OnInit {
         (resp: CustomResponse<SectionLevel[]>) =>
           (this.sectionLevels = resp.data)
       );
+    if(this.user !== undefined){
+      if (this.user.admin_hierarchy) {
+        this.onAdminHierarchySelection(this.user.admin_hierarchy);
+        this.levelControl.setValue(this.user.section?.position);
+        if(this.user.section){
+          if (typeof this.user?.section?.position === "number") {
+            this.getSections(this.user?.section?.position);
+          }
+        }
+      }
+    }
     this.updateForm(this.user);
   }
 
@@ -166,7 +177,7 @@ export class UserUpdateComponent implements OnInit {
       mobile_number: user?.mobile_number,
       section_id: user?.section_id,
       admin_hierarchy_id: user?.admin_hierarchy_id,
-      roles: user?.roles,
+      /*roles: user?.roles,*/
       facilities:
         user?.facilities !== undefined
           ? JSON.parse(user.facilities!)
@@ -193,7 +204,7 @@ export class UserUpdateComponent implements OnInit {
       mobile_number: this.editForm.get(['mobile_number'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
       admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
-      roles: this.editForm.get(['roles'])!.value,
+      /*roles: this.editForm.get(['roles'])!.value,*/
       facilities:
         this.editForm.get(['facilities'])!.value !== undefined
           ? JSON.stringify(this.editForm.get(['facilities'])!.value)
@@ -206,23 +217,27 @@ export class UserUpdateComponent implements OnInit {
   onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
     this.adminHierarchy = adminHierarchy;
     this.editForm.get('admin_hierarchy_id')?.setValue(adminHierarchy.id);
-    this.roleService
+    /*this.roleService
       .query({
         columns: ['id', 'name'],
         admin_hierarchy_position: adminHierarchy.admin_hierarchy_position,
       })
-      .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));
+      .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));*/
   }
 
   loadSections(): void {
     const position = this.levelControl.value as number;
     if (position > 0) {
-      this.sectionService
-        .query({columns: ['id', 'name', 'code'], position: position})
-        .subscribe(
-          (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
-        );
+      this.getSections(position);
     }
+  }
+
+  private getSections(position: number) {
+    this.sectionService
+      .query({columns: ['id', 'name', 'code'], position: position})
+      .subscribe(
+        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+      );
   }
 
   loadFacilities(): void {

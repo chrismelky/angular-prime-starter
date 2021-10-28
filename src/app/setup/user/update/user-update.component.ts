@@ -31,6 +31,10 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 })
 export class UserUpdateComponent implements OnInit {
   isSaving = false;
+  facilityIsLoading = false;
+  roleIsLoading = false;
+  sectionIsLoading = false;
+
   formError = false;
   errors = [];
   sectionLevels?: SectionLevel[] = [];
@@ -144,7 +148,7 @@ export class UserUpdateComponent implements OnInit {
    */
   protected onSaveSuccess(result: any): void {
     this.toastService.info(result.message);
-    this.close();
+    this.dialogRef.close(result);
   }
 
   /**
@@ -204,12 +208,19 @@ export class UserUpdateComponent implements OnInit {
   }
 
   loadRoleByAdminLevel(adminHierarchyPosition: number): void {
+    this.roleIsLoading = true;
     this.roleService
       .query({
         columns: ['id', 'name'],
         admin_hierarchy_position: adminHierarchyPosition,
       })
-      .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));
+      .subscribe(
+        (resp: CustomResponse<Role[]>) => {
+          this.roles = resp.data;
+          this.roleIsLoading = false;
+        },
+        (error) => (this.roleIsLoading = false)
+      );
   }
 
   isFacilityUserChanged(): void {
@@ -258,6 +269,7 @@ export class UserUpdateComponent implements OnInit {
    * @param sectionLevelId
    */
   loadSections(position: number): void {
+    this.sectionIsLoading = true;
     this.sectionService
       .query({
         columns: ['id', 'name', 'code'],
@@ -265,7 +277,11 @@ export class UserUpdateComponent implements OnInit {
         position: position,
       })
       .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+        (resp: CustomResponse<Section[]>) => {
+          this.sections = resp.data;
+          this.sectionIsLoading = false;
+        },
+        (error) => (this.sectionIsLoading = false)
       );
   }
 
@@ -283,11 +299,14 @@ export class UserUpdateComponent implements OnInit {
       parentId != null &&
       (isFacilityUser || hasFacilityLimit)
     ) {
-      this.facilityService
-        .planning(parentName, parentId, sectionId)
-        .subscribe(
-          (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-        );
+      this.facilityIsLoading = true;
+      this.facilityService.planning(parentName, parentId, sectionId).subscribe(
+        (resp: CustomResponse<Facility[]>) => {
+          this.facilities = resp.data;
+          this.facilityIsLoading = false;
+        },
+        (error) => (this.facilityIsLoading = false)
+      );
     }
   }
 }

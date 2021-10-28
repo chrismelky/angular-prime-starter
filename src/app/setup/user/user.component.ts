@@ -45,6 +45,7 @@ import { RoleUpdateComponent } from '../role/update/role-update.component';
 export class UserComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
+  levelIsLoading = false;
   users?: User[] = [];
   isSaving = false;
   sections?: Section[] = [];
@@ -319,12 +320,14 @@ export class UserComponent implements OnInit {
   }
 
   loadLowerLevel(position: number | undefined) {
-    this.adminHierarchyLevelService
-      .lowerLevels(position)
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
-      );
+    this.levelIsLoading = true;
+    this.adminHierarchyLevelService.lowerLevels(position).subscribe(
+      (resp: CustomResponse<AdminHierarchyLevel[]>) => {
+        this.adminHierarchyLevels = resp.data;
+        this.levelIsLoading = false;
+      },
+      (error) => (this.levelIsLoading = false)
+    );
   }
 
   roles(rowData: User): void {

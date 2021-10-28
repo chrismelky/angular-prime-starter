@@ -1,5 +1,9 @@
 <div class="dialog-content">
-  <app-loader [isLoading]="false"></app-loader>
+  <app-loader
+    [isLoading]="
+      isSaving || facilityIsLoading || roleIsLoading || sectionIsLoading
+    "
+  ></app-loader>
   <div fxLayout="column" fxLayoutGap="4px">
     <form
       name="editForm"

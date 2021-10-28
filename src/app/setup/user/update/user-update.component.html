@@ -1,232 +1,332 @@
 <div class="dialog-content">
-  <p-card class="filter">
-    <ng-template pTemplate="header">
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-        <i class="pi pi-list"></i>
-        <span class="card-header-text">User Form</span>
-      </div>
-    </ng-template>
-    <div fxLayout="column" fxLayoutGap="4px">
-      <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-        <div fxLayout="column" fxLayoutGap="1rem">
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-            <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <app-admin-hierarchy-tree [returnType]="'object'" id="admin_hierarchy_id"
-                                    (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('admin_hierarchy_id')!.invalid &&
-            (editForm.get('admin_hierarchy_id')!.dirty ||
-              editForm.get('admin_hierarchy_id')!.touched ||
-              formError)
-          "
-              >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
-          >Admin Hierarchy is required.</small
-          >
-        </span>
-            </div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-            <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input
-            id="first_name"
-            type="text"
-            pInputText
-            formControlName="first_name"
-          />
-          <label for="first_name">First Name </label>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('first_name')!.invalid &&
-            (editForm.get('first_name')!.dirty ||
-              editForm.get('first_name')!.touched ||
-              formError)
-          "
-              >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('first_name')?.errors?.required"
-          >First Name is required.</small
-          >
-        </span>
-            </div>
-            <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input
-            id="last_name"
-            type="text"
-            pInputText
-            formControlName="last_name"
-          />
-          <label for="last_name">Last Name </label>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('last_name')!.invalid &&
-            (editForm.get('last_name')!.dirty ||
-              editForm.get('last_name')!.touched ||
-              formError)
-          "
-              >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('last_name')?.errors?.required"
-          >Last Name is required.</small
-          >
-        </span>
-            </div>
-            <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="email" type="text" pInputText formControlName="email"/>
-          <label for="email">Email </label>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('email')!.invalid &&
-            (editForm.get('email')!.dirty ||
-              editForm.get('email')!.touched ||
-              formError)
-          "
-              >
-          <small class="p-error" *ngIf="editForm.get('email')?.errors?.required"
-          >Email is required.</small
-          >
-        </span>
-            </div>
-            <div class="p-field p-col-12 p-md-4" fxFlex>
+  <app-loader [isLoading]="false"></app-loader>
+  <div fxLayout="column" fxLayoutGap="4px">
+    <form
+      name="editForm"
+      role="form"
+      novalidate
+      (ngSubmit)="save()"
+      [formGroup]="editForm"
+    >
+      <div fxLayout="column" fxLayoutGap="1rem">
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <!-- Email -->
+          <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <input id="username" type="text" pInputText formControlName="username"/>
-              <label for="email">Username</label>
+              <input
+                id="email"
+                type="text"
+                pInputText
+                formControlName="email"
+              />
+              <label for="email">Email </label>
             </span>
-              <span
-                *ngIf="
-            editForm.get('username')!.invalid &&
-            (editForm.get('username')!.dirty ||
-              editForm.get('username')!.touched ||
-              formError)
-          "
+            <span
+              *ngIf="
+                editForm.get('email')!.invalid &&
+                (editForm.get('email')!.dirty ||
+                  editForm.get('email')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('email')?.errors?.required"
+                >Email is required.</small
               >
-          <small class="p-error" *ngIf="editForm.get('username')?.errors?.required"
-          >Username is required.</small
-          >
-        </span>
-            </div>
+              <small
+                class="p-error"
+                *ngIf="editForm.get('email')?.errors?.email"
+                >Invalid Email</small
+              >
+            </span>
           </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-            <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input
-            id="cheque_number"
-            type="text"
-            pInputText
-            formControlName="cheque_number"
-          />
-          <label for="cheque_number">Cheque Number </label>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('cheque_number')!.invalid &&
-            (editForm.get('cheque_number')!.dirty ||
-              editForm.get('cheque_number')!.touched ||
-              formError)
-          "
+          <!-- First Name -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <input
+                id="first_name"
+                type="text"
+                pInputText
+                formControlName="first_name"
+              />
+              <label for="first_name">First Name </label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('first_name')!.invalid &&
+                (editForm.get('first_name')!.dirty ||
+                  editForm.get('first_name')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('first_name')?.errors?.required"
+                >First Name is required.</small
               >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('cheque_number')?.errors?.required"
-          >Cheque Number is required.</small
-          >
-        </span>
-            </div>
-            <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="title" type="text" pInputText formControlName="title"/>
-          <label for="title">Title </label>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('title')!.invalid &&
-            (editForm.get('title')!.dirty ||
-              editForm.get('title')!.touched ||
-              formError)
-          "
-              >
-        </span>
-            </div>
-            <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input
-            id="mobile_number"
-            type="text"
-            pInputText
-            formControlName="mobile_number"
-          />
-          <label for="mobile_number">Mobile Number </label>
-        </span>
-              <span
-                *ngIf="
-            editForm.get('mobile_number')!.invalid &&
-            (editForm.get('mobile_number')!.dirty ||
-              editForm.get('mobile_number')!.touched ||
-              formError)
-          "
-              >
-        </span>
-            </div>
+            </span>
           </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-            <div class="p-field  p-col-12 p-md-4" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="position"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  optionValue="position"
-                  optionLabel="name"
-                  class="p-inputtext-sm"
-                  appendTo="body"
-                  (onChange)="loadSections()"
-                  [formControl]="levelControl"
-                  [options]="sectionLevels!"></p-dropdown>
-                <label for="position">Level</label>
-              </span>
-            </div>
-            <div class="p-field p-col-12 p-md-4" *ngIf="levelControl.value" fxFlex>
-              <span class="p-float-label">
-                <p-dropdown
-                  id="section_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  appendTo="body"
-                  [options]="sections!"
-                  (onChange)="loadFacilities()"
-                  formControlName="section_id"
-                ></p-dropdown>
-                <label for="section_id">Section</label>
-              </span>
-              <span
-                *ngIf="
+          <!-- Last Name -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <input
+                id="last_name"
+                type="text"
+                pInputText
+                formControlName="last_name"
+              />
+              <label for="last_name">Last Name </label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('last_name')!.invalid &&
+                (editForm.get('last_name')!.dirty ||
+                  editForm.get('last_name')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('last_name')?.errors?.required"
+                >Last Name is required.</small
+              >
+            </span>
+          </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <!-- Check number -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <input
+                id="cheque_number"
+                type="text"
+                pInputText
+                formControlName="cheque_number"
+              />
+              <label for="cheque_number">Cheque Number </label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('cheque_number')!.invalid &&
+                (editForm.get('cheque_number')!.dirty ||
+                  editForm.get('cheque_number')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('cheque_number')?.errors?.required"
+                >Cheque Number is required.</small
+              >
+            </span>
+          </div>
+          <!-- Title -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <input
+                id="title"
+                type="text"
+                pInputText
+                formControlName="title"
+              />
+              <label for="title">Title </label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('title')!.invalid &&
+                (editForm.get('title')!.dirty ||
+                  editForm.get('title')!.touched ||
+                  formError)
+              "
+            >
+            </span>
+          </div>
+          <!-- Mobile number -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <input
+                id="mobile_number"
+                type="text"
+                pInputText
+                formControlName="mobile_number"
+              />
+              <label for="mobile_number">Mobile Number </label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('mobile_number')!.invalid &&
+                (editForm.get('mobile_number')!.dirty ||
+                  editForm.get('mobile_number')!.touched ||
+                  formError)
+              "
+            >
+            </span>
+          </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="admin_area"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                optionValue="id"
+                optionLabel="name"
+                class="p-inputtext-sm"
+                appendTo="body"
+                formControlName="admin_hierarchy_id"
+                [options]="adminHierarchies!"
+              ></p-dropdown>
+              <label for="admin_area">Admin Hierarchy</label>
+            </span>
+          </div>
+          <!-- Planning Unit -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                #sectionLevel
+                id="position"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                optionValue="position"
+                optionLabel="name"
+                class="p-inputtext-sm"
+                appendTo="body"
+                (onChange)="loadSections(sectionLevel.value)"
+                formControlName="section_position"
+                [options]="sectionLevels!"
+              ></p-dropdown>
+              <label for="position">Planning Unit level</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('section_position')!.invalid &&
+                (editForm.get('section_position')!.dirty ||
+                  editForm.get('section_position')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('section_position')?.errors?.required"
+                >Planning Unit Level is required.</small
+              >
+            </span>
+          </div>
+
+          <!-- Section -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="section_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                appendTo="body"
+                [options]="sections!"
+                (onChange)="loadFacilities()"
+                formControlName="section_id"
+              ></p-dropdown>
+              <label for="section_id">Planning Unit</label>
+            </span>
+            <span
+              *ngIf="
                 editForm.get('section_id')!.invalid &&
                 (editForm.get('section_id')!.dirty ||
                   editForm.get('section_id')!.touched ||
                   formError)
-          "
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('section_id')?.errors?.required"
+                >Planning Unit is required.</small
               >
-        </span>
-            </div>
+            </span>
           </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-            <div class="p-field" fxFlex>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <!-- Roles -->
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="roles"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                appendTo="body"
+                [options]="roles!"
+                formControlName="role_id"
+              ></p-dropdown>
+              <label for="roles">Role</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('role_id')!.invalid &&
+                (editForm.get('role_id')!.dirty ||
+                  editForm.get('role_id')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('role_id')?.errors?.required"
+                >Role required.</small
+              >
+            </span>
+          </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="4px">
+          <p-inputSwitch
+            id="active"
+            name="active"
+            formControlName="active"
+          ></p-inputSwitch>
+          <label for="active">Active</label>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+          <p-checkbox
+            (onChange)="isFacilityUserChanged()"
+            name="is_facility_user"
+            [binary]="true"
+            label="Is Facility User?"
+            formControlName="is_facility_user"
+          ></p-checkbox>
+          <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start">
+            <p-radioButton
+              (onClick)="hasFacilityLimitChanged()"
+              name="has_facility_limit"
+              [value]="false"
+              label="All Facilities"
+              formControlName="has_facility_limit"
+            ></p-radioButton>
+            <p-radioButton
+              (onClick)="hasFacilityLimitChanged()"
+              name="has_facility_limit"
+              [value]="true"
+              label="Assign Facilities"
+              formControlName="has_facility_limit"
+            ></p-radioButton>
+          </div>
+          <!-- Supervised Facilities -->
+          <div
+            class="p-field"
+            fxFlex
+            *ngIf="
+              !editForm.get('is_facility_user')?.value &&
+              editForm.get('has_facility_limit')?.value
+            "
+          >
             <span class="p-float-label">
               <p-multiSelect
                 id="facilities"
@@ -240,83 +340,71 @@
               </p-multiSelect>
               <label for="facilities">Facilities </label>
             </span>
-              <span
-                *ngIf="
-            editForm.get('facilities')!.invalid &&
-            (editForm.get('facilities')!.dirty ||
-              editForm.get('facilities')!.touched ||
-              formError)
-          "
+            <span
+              *ngIf="
+                editForm.get('facilities')!.invalid &&
+                (editForm.get('facilities')!.dirty ||
+                  editForm.get('facilities')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('facilities')?.errors?.required"
+                >Facilities are required</small
               >
-        </span>
-            </div>
+            </span>
           </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-            <div class="p-field" fxFlex>
+          <!-- Facility -->
+          <div
+            class="p-field"
+            fxFlex
+            *ngIf="editForm.get('is_facility_user')?.value"
+          >
             <span class="p-float-label">
               <p-dropdown
-                id="roles"
+                id="facility_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
                 appendTo="body"
-                [options]="roles!"
-                formControlName="roles"
+                [options]="facilities!"
+                formControlName="facility_id"
               ></p-dropdown>
-              <label for="roles">Roles</label>
+              <label for="facility_id">Facility</label>
             </span>
-              <span
-                *ngIf="
-            editForm.get('roles')!.invalid &&
-            (editForm.get('roles')!.dirty ||
-              editForm.get('roles')!.touched ||
-              formError)
-          "
+            <span
+              *ngIf="
+                editForm.get('facility_id')!.invalid &&
+                (editForm.get('facility_id')!.dirty ||
+                  editForm.get('facility_id')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('facility_id')?.errors?.required"
+                >Facility is required</small
               >
-        </span>
-            </div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="2px">
-            <p-inputSwitch
-              id="active"
-              name="active"
-              formControlName="active"
-            ></p-inputSwitch>
-            <label for="active">Active</label>
-          </div>
-
-          <div fxLayout="row" fxLayoutGap="2px">
-            <p-inputSwitch
-              id="is_facility_user"
-              name="is_facility_user"
-              formControlName="is_facility_user"
-            ></p-inputSwitch>
-            <label for="is_facility_user">Facility User</label>
-          </div>
-          <div fxLayout="row" fxLayoutGap="2px">
-            <p-inputSwitch
-              id="is_super_user"
-              name="is_super_user"
-              formControlName="is_super_user"
-            ></p-inputSwitch>
-            <label for="is_super_user">Super User</label>
-          </div>
-          <div fxLayout="row" fxLayoutGap="0.75rem">
-            <span fxFlex></span>
-            <button
-              class="p-button-raised"
-              icon="pi pi-check"
-              label="Save"
-              pButton
-              [disabled]="editForm.invalid"
-              pRipple
-              type="submit"
-            ></button>
+            </span>
           </div>
         </div>
-      </form>
-    </div>
-  </p-card>
+
+        <div fxLayout="row" fxLayoutGap="0.75rem">
+          <span fxFlex></span>
+          <button
+            class="p-button-raised"
+            icon="pi pi-check"
+            label="Save"
+            pButton
+            [disabled]="editForm.invalid"
+            pRipple
+            type="submit"
+          ></button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>

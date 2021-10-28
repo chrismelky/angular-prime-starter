@@ -21,6 +21,7 @@
               <app-admin-hierarchy-tree
                 [returnType]="'object'"
                 id="admin_hierarchy_id"
+                label="Parent Admin Hierarchy"
                 (onSelect)="onAdminHierarchySelection($event)"
               ></app-admin-hierarchy-tree>
             </span>
@@ -38,10 +39,9 @@
                 (onChange)="filterChanged()"
                 [(ngModel)]="admin_hierarchy_position"
               ></p-dropdown>
-              <label for="levelId">Level</label>
+              <label for="levelId">User Admin Level</label>
             </span>
           </div>
-
         </div>
         <div
           fxLayout="row wrap"
@@ -104,22 +104,6 @@
                   <i
                     class="pi pi-times clear"
                     (click)="search['first_name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="middle_name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['middle_name']"
-                  />
-                  <label for="middle_name">Middle Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['middle_name'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>
@@ -247,12 +231,8 @@
             {{ col.header }}
             <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'admin_hierarchy_id'">
-            Duty Station<p-sortIcon [field]="'admin_hierarchy_id'"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'section_id'">
-            Allocation<p-sortIcon [field]="'section_id'"></p-sortIcon>
-          </th>
+          <th>Admin Area</th>
+          <th>Planning Unit</th>
           <th></th>
         </tr>
       </ng-template>

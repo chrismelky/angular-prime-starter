@@ -5,47 +5,44 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
+import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
-import { CustomResponse } from '../../utils/custom-response';
+import { CustomResponse } from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { Menu } from './menu.model';
-import { MenuService } from './menu.service';
-import { MenuUpdateComponent } from './update/menu-update.component';
-import { MenuPermissionComponent } from './menu-permission/menu-permission.component';
-import { SubComponent } from './sub/sub.component';
+} from "../../config/pagination.constants";
+import { HelperService } from "src/app/utils/helper.service";
+import { ToastService } from "src/app/shared/toast.service";
+
+import { DataElementGroupSet } from "./data-element-group-set.model";
+import { DataElementGroupSetService } from "./data-element-group-set.service";
+import { DataElementGroupSetUpdateComponent } from "./update/data-element-group-set-update.component";
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
+  selector: "app-data-element-group-set",
+  templateUrl: "./data-element-group-set.component.html",
 })
-export class MenuComponent implements OnInit {
-  @ViewChild('paginator') paginator!: Paginator;
-  @ViewChild('table') table!: Table;
-  menus?: Menu[] = [];
-
-  parents?: Menu[] = [];
+export class DataElementGroupSetComponent implements OnInit {
+  @ViewChild("paginator") paginator!: Paginator;
+  @ViewChild("table") table!: Table;
+  dataElementGroupSets?: DataElementGroupSet[] = [];
 
   cols = [
     {
-      field: 'label',
-      header: 'Label',
+      field: "name",
+      header: "Name",
       sort: true,
     },
     {
-      field: 'sort_order',
-      header: 'Sort Order',
+      field: "code",
+      header: "Code",
       sort: true,
     },
   ]; //Table display columns
@@ -62,7 +59,7 @@ export class MenuComponent implements OnInit {
   //Mandatory filter
 
   constructor(
-    protected menuService: MenuService,
+    protected dataElementGroupSetService: DataElementGroupSetService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -72,22 +69,19 @@ export class MenuComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.menuService
-      .query({ columns: ['id', 'label', 'router_link'] })
-      .subscribe((resp: CustomResponse<Menu[]>) => (this.parents = resp.data));
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.menuService
+    this.dataElementGroupSetService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
@@ -95,7 +89,7 @@ export class MenuComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<Menu[]>) => {
+        (res: CustomResponse<DataElementGroupSet[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -115,11 +109,11 @@ export class MenuComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+      const page = params.get("page");
+      const perPage = params.get("per_page");
+      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
       const predicate = sort[0];
-      const ascending = sort[1] === 'asc';
+      const ascending = sort[1] === "asc";
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -182,22 +176,22 @@ export class MenuComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : 'id';
-    const direction = this.ascending ? 'asc' : 'desc';
+    const predicate = this.predicate ? this.predicate : "id";
+    const direction = this.ascending ? "asc" : "desc";
     return [`${predicate}:${direction}`];
   }
 
   /**
-   * Creating or updating Menu
-   * @param menu ; If undefined initize new model to create else edit existing model
+   * Creating or updating DataElementGroupSet
+   * @param dataElementGroupSet ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(menu?: Menu): void {
-    const data: Menu = menu ?? {
-      ...new Menu(),
+  createOrUpdate(dataElementGroupSet?: DataElementGroupSet): void {
+    const data: DataElementGroupSet = dataElementGroupSet ?? {
+      ...new DataElementGroupSet(),
     };
-    const ref = this.dialogService.open(MenuUpdateComponent, {
+    const ref = this.dialogService.open(DataElementGroupSetUpdateComponent, {
       data,
-      header: 'Create/Update Menu',
+      header: "Create/Update DataElementGroupSet",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -207,17 +201,19 @@ export class MenuComponent implements OnInit {
   }
 
   /**
-   * Delete Menu
-   * @param menu
+   * Delete DataElementGroupSet
+   * @param dataElementGroupSet
    */
-  delete(menu: Menu): void {
+  delete(dataElementGroupSet: DataElementGroupSet): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this Menu?',
+      message: "Are you sure that you want to delete this DataElementGroupSet?",
       accept: () => {
-        this.menuService.delete(menu.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.dataElementGroupSetService
+          .delete(dataElementGroupSet.id!)
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }
@@ -229,61 +225,31 @@ export class MenuComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<Menu[]> | null,
+    resp: CustomResponse<DataElementGroupSet[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/menu'], {
+      this.router.navigate(["/data-element-group-set"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
         },
       });
     }
-    this.menus = resp?.data ?? [];
+    this.dataElementGroupSets = resp?.data ?? [];
   }
 
   /**
-   * When error on loading data set data to empty and reset page to load
+   * When error on loading data set data to empt and resert page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error('Error loading Menu');
-  }
-
-  permissions(rowData: Menu): void {
-    const data = {
-      menu: rowData,
-    };
-    const ref = this.dialogService.open(MenuPermissionComponent, {
-      data,
-      width: '60%',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
-  }
-
-  subMenu(rowData: Menu): void {
-    const data = {
-      menu: rowData,
-    };
-    const ref = this.dialogService.open(SubComponent, {
-      data,
-      width: '60%',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
+    this.toastService.error("Error loading Data Element Group Set");
   }
 }

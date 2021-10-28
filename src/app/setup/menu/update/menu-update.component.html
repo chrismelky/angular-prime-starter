@@ -90,6 +90,7 @@
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
+            #parent
             id="parent_id"
             optionValue="id"
             optionLabel="label"
@@ -99,7 +100,12 @@
             appendTo="body"
             [options]="parents!"
             formControlName="parent_id"
-          ></p-dropdown>
+          >
+            <ng-template let-parentMenu pTemplate="item">
+              {{ parentMenu.parent?.parent?.label }} -
+              {{ parentMenu.parent?.label }} - {{ parentMenu?.label }}
+            </ng-template>
+          </p-dropdown>
           <label for="parent_id">Parent </label>
         </span>
         <span

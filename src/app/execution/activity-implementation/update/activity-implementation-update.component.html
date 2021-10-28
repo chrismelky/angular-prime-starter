@@ -3,39 +3,37 @@
     name="editForm"
     role="form"
     novalidate
-    (ngSubmit)="save()"
+    (ngSubmit)="saveImplementation()"
     [formGroup]="editForm"
   >
     <p-divider></p-divider>
     <div fxLayout="column" fxLayoutGap="1rem">
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
          Activity: {{activity?.code}} - {{activity?.description}}
         </span>
-      </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Facility: {{activity?.code}}
+         Facility: {{activity?.facility_code}} - {{activity?.facility_name}}
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div fxLayout="row" fxLayoutGap="1rem">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Quarter: {{activity?.quarter}}
+         Budget: {{activity?.budget | currency:'TZS  '}}
         </span>
-      </div><div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Budget: {{activity?.budget}}
+         Expenditure: {{activity?.expenditure | currency:'TZS  '}}
         </span>
-      </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Expenditure: {{activity?.expenditure}}
+         Balance: {{activity?.budget! - activity?.expenditure! | currency:'TZS  '}}
         </span>
-      </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-         Balance: {{activity?.balance}}
-        </span>
+        </div>
       </div>
       <p-divider></p-divider>
       </div>
@@ -45,7 +43,7 @@
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="status_id"
+            id="status"
             optionValue="name"
             optionLabel="name"
             [autoDisplayFirst]="false"
@@ -53,21 +51,21 @@
             class="p-inputtext-sm"
             appendTo="body"
             [options]="implementationStatus!"
-            formControlName="status_id"
+            formControlName="status"
           ></p-dropdown>
-          <label for="status_id">Status</label>
+          <label for="status">Status</label>
         </span>
         <span
           *ngIf="
-            editForm.get('status_id')!.invalid &&
-            (editForm.get('status_id')!.dirty ||
-              editForm.get('status_id')!.touched ||
+            editForm.get('status')!.invalid &&
+            (editForm.get('status')!.dirty ||
+              editForm.get('status')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('status_id')?.errors?.required"
+            *ngIf="editForm.get('status')?.errors?.required"
           >Status is required.</small
           >
         </span>
@@ -76,7 +74,7 @@
       <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
-              id="procurement_method_id"
+              id="procurement_method"
               optionValue="name"
               optionLabel="name"
               [autoDisplayFirst]="false"
@@ -84,21 +82,21 @@
               class="p-inputtext-sm"
               appendTo="body"
               [options]="procurementMethods!"
-              formControlName="procurement_method_id"
+              formControlName="procurement_method"
             ></p-dropdown>
-            <label for="procurement_method_id">Procurement Method </label>
+            <label for="procurement_method">Procurement Method </label>
           </span>
         <span
           *ngIf="
-              editForm.get('procurement_method_id')!.invalid &&
-              (editForm.get('procurement_method_id')!.dirty ||
-                editForm.get('procurement_method_id')!.touched ||
+              editForm.get('procurement_method')!.invalid &&
+              (editForm.get('procurement_method')!.dirty ||
+                editForm.get('procurement_method')!.touched ||
                 formError)
             "
         >
             <small
               class="p-error"
-              *ngIf="editForm.get('procurement_method_id')?.errors?.required"
+              *ngIf="editForm.get('procurement_method')?.errors?.required"
             >Procurement Method is required.</small
             >
           </span>
@@ -246,7 +244,7 @@
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
-            <input id="financial_actual_implementation" type="number" value="{{activity?.expenditure!/activity?.budget!*100}}" pInputText readonly/>
+            <input id="financial_actual_implementation" type="number" value="{{activity?.expenditure!/activity?.budget!*100 | number : '1.0-1'}}"  pInputText readonly/>
             <label for="financial_actual_implementation">Financial Actual Implementation(%)</label>
           </span>
         <span
@@ -321,7 +319,7 @@
 
     <div fxLayout="row" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
-        <p-fileUpload [showUploadButton]="false" name="url" id="url" url="" [maxFileSize]="4000000"  (onSelect)="onSelect($event)" accept="application/pdf" >
+        <p-fileUpload [showUploadButton]="false" name="url" id="url" url="" [maxFileSize]="15000000"  (onSelect)="onSelect($event)" accept="application/pdf" >
         </p-fileUpload>
       </div>
     </div>

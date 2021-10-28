@@ -5,6 +5,7 @@
     novalidate
   >
     <p-divider></p-divider>
+
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
@@ -13,27 +14,25 @@
       </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Facility: {{activity?.code}}
+         Facility: {{activity?.facility_code}} - {{activity?.facility_name}}
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div fxLayout="row" fxLayoutGap="1rem">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Quarter: {{activity?.quarter}}
+         Budget: {{activity?.budget | currency:'TZS  '}}
         </span>
-      </div><div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Budget: {{activity?.budget}}
+         Expenditure: {{activity?.expenditure | currency:'TZS  '}}
         </span>
-    </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Expenditure: {{activity?.expenditure}}
+         Balance: {{activity?.budget! - activity?.expenditure! | currency:'TZS  '}}
         </span>
-      </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-         Balance: {{activity?.balance}}
-        </span>
+        </div>
       </div>
       <p-divider></p-divider>
     </div>

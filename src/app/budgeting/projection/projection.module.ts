@@ -13,10 +13,11 @@ import { SharedModule } from "../../shared/shared.module";
 import { ProjectionComponent } from "./projection.component";
 import { ProjectionUpdateComponent } from "./update/projection-update.component";
 import {SplitButtonModule} from "primeng/splitbutton";
+import { InitiateProjectionComponent } from './initiate-projection/initiate-projection.component';
 
 @NgModule({
     imports: [SharedModule, CommonModule, ProjectionRoutingModule, SplitButtonModule],
-  declarations: [ProjectionComponent, ProjectionUpdateComponent],
+  declarations: [ProjectionComponent, ProjectionUpdateComponent, InitiateProjectionComponent],
   entryComponents: [ProjectionUpdateComponent],
 })
 export class ProjectionModule {}

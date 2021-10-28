@@ -513,7 +513,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: 'WRITE_COMPREHENSIVE_PLAN_SETTING',
+            only: 'WRITE_ADMIN_AREA_SETTING',
           },
         },
       },
@@ -952,9 +952,9 @@ const routes: Routes = [
       {
         path: 'projection',
         loadChildren: () =>
-          import(
-            '../budgeting/projection/projection.module'
-            ).then((m) => m.ProjectionModule),
+          import('../budgeting/projection/projection.module').then(
+            (m) => m.ProjectionModule
+          ),
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
@@ -1236,6 +1236,20 @@ const routes: Routes = [
         loadChildren: () =>
           import('../setup/project-output/project-output.module').then(
             (m) => m.ProjectOutputModule
+          ),
+      },
+      {
+        path: 'data-element-group-set',
+        loadChildren: () =>
+          import(
+            '../setup/data-element-group-set/data-element-group-set.module'
+          ).then((m) => m.DataElementGroupSetModule),
+      },
+      {
+        path: 'data-element-group',
+        loadChildren: () =>
+          import('../setup/data-element-group/data-element-group.module').then(
+            (m) => m.DataElementGroupModule
           ),
       },
       /**====Planrep router Generator Hook: Dont Delete====*/

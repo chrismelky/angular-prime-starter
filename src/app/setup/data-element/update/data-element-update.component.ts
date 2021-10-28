@@ -22,6 +22,10 @@ import { OptionSetService } from 'src/app/setup/option-set/option-set.service';
 import { DataElement } from '../data-element.model';
 import { DataElementService } from '../data-element.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { DataElementGroupSetService } from '../../data-element-group-set/data-element-group-set.service';
+import { DataElementGroupService } from '../../data-element-group/data-element-group.service';
+import { DataElementGroupSet } from '../../data-element-group-set/data-element-group-set.model';
+import { DataElementGroup } from '../../data-element-group/data-element-group.model';
 
 @Component({
   selector: 'app-data-element-update',
@@ -36,6 +40,9 @@ export class DataElementUpdateComponent implements OnInit {
   categoryCombinations?: CategoryCombination[] = [];
   optionSets?: OptionSet[] = [];
   valueTypes?: PlanrepEnum[] = [];
+
+  groupSets?: DataElementGroupSet[] = [];
+  groups?: DataElementGroup[] = [];
 
   /**
    * Declare form
@@ -52,6 +59,8 @@ export class DataElementUpdateComponent implements OnInit {
     sort_order: [null, []],
     value_type: [null, [Validators.required]],
     is_required: [false, []],
+    data_element_group_set_id: [null, []],
+    data_element_group_id: [null, []],
   });
 
   constructor(
@@ -63,28 +72,37 @@ export class DataElementUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected enumService: EnumService
+    protected enumService: EnumService,
+    protected groupSetService: DataElementGroupSetService,
+    protected groupService: DataElementGroupService
   ) {}
 
   ngOnInit(): void {
-    this.dataSetService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<DataSet[]>) => (this.dataSets = resp.data)
-      );
     this.categoryCombinationService
       .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CategoryCombination[]>) =>
           (this.categoryCombinations = resp.data)
       );
+    this.groupSetService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe((resp) => {
+        this.groupSets = resp.data;
+      });
     this.optionSetService
       .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<OptionSet[]>) => (this.optionSets = resp.data)
       );
     this.valueTypes = this.enumService.get('valueTypes');
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const dialogData = this.dialogConfig.data;
+    const dataElement: DataElement = dialogData.dataElement;
+    this.dataSets = dialogData.dataSets;
+    dataElement.data_element_group_set_id &&
+      this.loadGroups(dataElement.data_element_group_set_id);
+    this.updateForm(dataElement); //Initialize form with data from dialog
   }
 
   /**
@@ -124,6 +142,21 @@ export class DataElementUpdateComponent implements OnInit {
   }
 
   /**
+   * Load Data element groups  by group set
+   * @param groupSetId
+   */
+  loadGroups(groupSetId: number): void {
+    this.groupService
+      .query({
+        data_element_group_set_id: groupSetId,
+        columns: ['id', 'name', 'data_element_group_set_id'],
+      })
+      .subscribe((resp) => {
+        this.groups = resp.data;
+      });
+  }
+
+  /**
    * Error handling specific to this component
    * Note; general error handling is done by ErrorInterceptor
    * @param error
@@ -151,6 +184,8 @@ export class DataElementUpdateComponent implements OnInit {
       sort_order: dataElement.sort_order,
       value_type: dataElement.value_type,
       is_required: dataElement.is_required,
+      data_element_group_id: dataElement.data_element_group_id,
+      data_element_group_set_id: dataElement.data_element_group_set_id,
     });
   }
 
@@ -173,6 +208,11 @@ export class DataElementUpdateComponent implements OnInit {
       sort_order: this.editForm.get(['sort_order'])!.value,
       value_type: this.editForm.get(['value_type'])!.value,
       is_required: this.editForm.get(['is_required'])!.value,
+      data_element_group_set_id: this.editForm.get([
+        'data_element_group_set_id',
+      ])!.value,
+      data_element_group_id: this.editForm.get(['data_element_group_id'])!
+        .value,
     };
   }
 }

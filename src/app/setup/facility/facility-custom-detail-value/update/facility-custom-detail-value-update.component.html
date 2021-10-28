@@ -17,6 +17,7 @@
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
+            (onChange)="loadOptions($event)"
             [options]="facilityCustomDetails!"
             formControlName="facility_custom_detail_id"
           ></p-dropdown>
@@ -37,7 +38,7 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex>
+      <div class="p-field" fxFlex *ngIf="!options">
         <span class="p-float-label">
           <input id="value" type="text" pInputText formControlName="value" />
           <label for="value">Value </label>
@@ -51,6 +52,36 @@
           "
         >
           <small class="p-error" *ngIf="editForm.get('value')?.errors?.required"
+          >Value is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex *ngIf="options">
+        <span class="p-float-label">
+          <p-dropdown
+            id="facility_custom_detail_id_option"
+            optionValue="value"
+            optionLabel="label"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="options!"
+            formControlName="value"
+          ></p-dropdown>
+          <label for="facility_custom_detail_id_option">Value </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('value')!.invalid &&
+            (editForm.get('value')!.dirty ||
+              editForm.get('value')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('value')?.errors?.required"
           >Value is required.</small
           >
         </span>

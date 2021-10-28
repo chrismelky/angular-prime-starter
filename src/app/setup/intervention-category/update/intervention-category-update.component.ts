@@ -33,7 +33,6 @@ export class InterventionCategoryUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    parent_id: [null, []],
   });
 
   constructor(
@@ -113,7 +112,6 @@ export class InterventionCategoryUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: interventionCategory.id,
       name: interventionCategory.name,
-      parent_id: interventionCategory.parent_id,
     });
   }
 
@@ -126,7 +124,6 @@ export class InterventionCategoryUpdateComponent implements OnInit {
       ...new InterventionCategory(),
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
-      parent_id: this.editForm.get(['parent_id'])!.value,
     };
   }
 }

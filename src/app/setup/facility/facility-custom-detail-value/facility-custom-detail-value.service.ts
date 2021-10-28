@@ -19,9 +19,7 @@ export class FacilityCustomDetailValueService {
 
   constructor(protected http: HttpClient) {}
 
-  create(
-    facilityCustomDetailValue: FacilityCustomDetailValue
-  ): Observable<CustomResponse<FacilityCustomDetailValue>> {
+  create(facilityCustomDetailValue: FacilityCustomDetailValue): Observable<CustomResponse<FacilityCustomDetailValue>> {
     return this.http.post<CustomResponse<FacilityCustomDetailValue>>(
       this.resourceUrl,
       facilityCustomDetailValue

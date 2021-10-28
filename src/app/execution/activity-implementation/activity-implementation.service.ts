@@ -12,6 +12,8 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { ActivityImplementation } from "./activity-implementation.model";
+import {FundSource} from "../../setup/fund-source/fund-source.model";
+import {Period} from "../../setup/period/period.model";
 
 @Injectable({ providedIn: "root" })
 export class ActivityImplementationService {
@@ -53,5 +55,37 @@ export class ActivityImplementationService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  loadActivities( req?: any): Observable<CustomResponse<ActivityImplementation[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<ActivityImplementation[]>>(
+      `${this.resourceUrl}/load_activities`,
+      { params: options }
+    );
+  }
+
+  loadFundSources(req?: any): Observable<CustomResponse<FundSource[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<FundSource[]>>(
+      `${this.resourceUrl}/load_funds`,
+      { params: options }
+    );
+  }
+
+  uploadFiles(req?: any): Observable<CustomResponse<ActivityImplementation[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<ActivityImplementation[]>>(
+      `${this.resourceUrl}/upload_files`,
+      { params: options }
+    );
+  }
+
+  getProgressReport(req?: any) {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<ActivityImplementation[]>>(
+      `${this.resourceUrl}/progress_reports`,
+      { params: options }
+    );
   }
 }

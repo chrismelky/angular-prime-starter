@@ -41,15 +41,8 @@ export class FacilityCustomDetailMappingComponent implements OnInit {
 
   facilityCustomDetails?: FacilityCustomDetail[] = [];
   facilityTypes?: FacilityType[] = [];
-  ownerships?: PlanrepEnum[] = [];
 
-  cols = [
-    {
-      field: "ownership",
-      header: "Ownership",
-      sort: true,
-    },
-  ]; //Table display columns
+  cols = []; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -89,7 +82,6 @@ export class FacilityCustomDetailMappingComponent implements OnInit {
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
       );
-    this.ownerships = this.enumService.get("ownerships");
     this.handleNavigation();
   }
 

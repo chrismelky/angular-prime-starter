@@ -75,6 +75,7 @@ export class ActivityImplementationComponent implements OnInit {
   facility_type_id!: number;
   facility_id!: number;
   fund_source_id!: number;
+  admin_hierarchy_position!: number;
 
 
   constructor(
@@ -96,80 +97,6 @@ export class ActivityImplementationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.activityImplementations = [
-      {
-        id: 1,
-        code: 'C01S01',
-        description: 'To conduct annual training to 1health care provider from Soya dispensary on proper  use of patograph by June 2020',
-        budget: 2000000,
-        expenditure: 500000,
-        balance: 1500000
-      },{
-        id: 2,
-        code: 'D01S02',
-        description: 'To provide Capitation Grant to 691 students at Sogesca Secondary School',
-        budget: 1000000,
-        expenditure: 500000,
-        balance: 500000
-      },{
-        id: 3,
-        code: 'C01S22',
-        description: 'To provide monthly employees benefits for 1 casual labourers in Kidoka Dispensary  by June 2020',
-        budget: 2000000,
-        expenditure: 1000000,
-        balance: 1000000
-      },{
-        id: 4,
-        code: 'C01S12',
-        description: 'To facilitate good working environment to 5 staffs by June 2020',
-        budget: 200000,
-        expenditure: 50000,
-        balance: 150000
-      },{
-        id: 5,
-        code: 'C01S05',
-        description: 'To facilitate Construction of Samazi Health Centre at Samazi Ward by, June 2019',
-        budget: 2000000,
-        expenditure: 500000,
-        balance: 1500000
-      },{
-        id: 6,
-        code: 'C01S06',
-        description: 'To facilitate quarterly Economics, and infrastructure committee meeting by june  2020',
-        budget: 2000000,
-        expenditure: 500000,
-        balance: 1500000
-      },{
-        id: 7,
-        code: 'C01S11',
-        description: 'To conduct mothly QIT meeting to 12 Health care providers at Hamai RHC by june 2020',
-        budget: 2000000,
-        expenditure: 500000,
-        balance: 1500000
-      },{
-        id: 8,
-        code: 'C01S91',
-        description: 'To provide Capitation Grant to 1166 students at Ngasamo Secondary School',
-        budget: 2000000,
-        expenditure: 500000,
-        balance: 1500000
-      },{
-        id: 9,
-        code: 'C01S09',
-        description: 'To purchase 1 kit of supplementary drugs and medical supplies for RCH  services   by june 2020',
-        budget: 2000000,
-        expenditure: 500000,
-        balance: 1500000
-      },{
-        id: 10,
-        code: 'C01S10',
-        description: 'To provide Responsibility Allowance to 68 Head Teachers  by June 2020',
-        budget: 2000000,
-        expenditure: 500000,
-        balance: 1500000
-      },
-    ];
-
     this.adminHierarchyService
       .query({ columns: ["id", "name"] })
       .subscribe(
@@ -194,17 +121,6 @@ export class ActivityImplementationComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
-      );
-    this.fundSourceService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FundSource[]>) =>
-          (this.fundSources = resp.data)
-      );
-    this.facilityService
-      .query({ facility_type_id: this.facility_type_id })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
       );
     this.handleNavigation();
   }
@@ -286,7 +202,78 @@ export class ActivityImplementationComponent implements OnInit {
       this.loadPage(1);
     }
   }
+  /**
+   *
+   * @param event adminhierarchyId or Ids
+   */
+  onAdminHierarchySelection(event: any): void {
 
+    this.admin_hierarchy_id = event.id;
+    this.admin_hierarchy_position =event.admin_hierarchy_position;
+  }
+  /**
+   * load facilities based on admin hierarchy and facility type
+  * */
+ loadFacilities(){
+    if (
+      !this.admin_hierarchy_id ||
+      !this.facility_type_id
+    ) {
+      return;
+    }
+    this.facilityService.query(
+      {
+        facility_type_id: this.facility_type_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,}
+    ).subscribe((res: CustomResponse<Facility[]>)=>(this.facilities = res.data));
+ }
+ /**
+  * load fund sources used during planning and budgeting for selected facility and budget type
+ * */
+  loadFundSources(){
+   if (
+     !this.financial_year_id ||
+     !this.facility_id
+   ) {
+     return;
+   }
+   this.activityImplementationService.loadFundSources({
+     financial_year_id: this.financial_year_id,
+     budget_type: this.activatedRoute.snapshot.params.budgetType,
+     facility_id: this.facility_id})
+     .subscribe((res: CustomResponse<FundSource[]>) =>(this.fundSources = res.data));
+   }
+  /**
+   * load activities by facility,admin hierarchy and fund source
+   */
+
+  loadActivities(){
+    if (
+      !this.admin_hierarchy_id ||
+      !this.financial_year_id ||
+      !this.period_id ||
+      !this.facility_type_id ||
+      !this.fund_source_id ||
+      !this.facility_id
+    ) {
+      return;
+    }
+    this.isLoading = true;
+    this.per_page = this.per_page ?? ITEMS_PER_PAGE;
+    this.activityImplementationService
+      .loadActivities(
+      {
+        per_page: this.per_page,
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        financial_year_id: this.financial_year_id,
+        period_id: this.period_id,
+        facility_type_id: this.facility_type_id,
+        facility_id: this.facility_id,
+        fund_source_id: this.fund_source_id,
+        budget_type: this.activatedRoute.snapshot.params.budgetType,
+      }
+    ).subscribe((res:CustomResponse<ActivityImplementation[]>)=>(this.activityImplementations = res.data));
+  }
   /**
    * search items by @var search params
    */
@@ -423,6 +410,10 @@ export class ActivityImplementationComponent implements OnInit {
   }
 
   track(item: any) {
+    item.period_id=this.period_id;
+    item.admin_hierarchy_id=this.admin_hierarchy_id;
+    item.financial_year_id=this.financial_year_id;
+    item.facility_id=this.facility_id;
     const data: ActivityImplementation = item ?? {
       ...new ActivityImplementation(),
       admin_hierarchy_id: this.admin_hierarchy_id,
@@ -439,12 +430,13 @@ export class ActivityImplementationComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadPage(this.page);
+         this.loadActivities();
       }
     });
   }
 
   history(item: any) {
+    item.period_id = this.period_id;
     const data: ActivityImplementation = item ?? {
       ...new ActivityImplementation(),
       admin_hierarchy_id: this.admin_hierarchy_id,
@@ -460,7 +452,7 @@ export class ActivityImplementationComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadPage(this.page);
+        this.loadActivities();
       }
     });
   }
@@ -481,7 +473,7 @@ export class ActivityImplementationComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadPage(this.page);
+        this.loadActivities();
       }
     });
   }

@@ -5,6 +5,7 @@
     novalidate
   >
     <p-divider></p-divider>
+
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
@@ -13,30 +14,29 @@
       </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Facility: {{activity?.code}}
+         Facility: {{activity?.facility_code}} - {{activity?.facility_name}}
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div fxLayout="row" fxLayoutGap="1rem">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Quarter: {{activity?.quarter}}
+         Budget: {{activity?.budget | currency:'TZS  '}}
         </span>
-      </div><div class="p-field p-col-12 p-md-4" fxFlex>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-         Budget: {{activity?.budget}}
+         Expenditure: {{activity?.expenditure | currency:'TZS  '}}
         </span>
+        </div>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+         Balance: {{activity?.budget! - activity?.expenditure! | currency:'TZS  '}}
+        </span>
+        </div>
+      </div>
+      <p-divider></p-divider>
     </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-         Expenditure: {{activity?.expenditure}}
-        </span>
-      </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-         Balance: {{activity?.balance}}
-        </span>
-      </div>
-    </div>
-    <p-table [value]="activities!" responsiveLayout="scroll">
+    <p-table [value]="implementationStatus!" responsiveLayout="scroll">
       <ng-template pTemplate="header">
         <tr>
           <th>Quarter</th>
@@ -50,12 +50,12 @@
       </ng-template>
       <ng-template pTemplate="body" let-act>
         <tr>
-          <td>{{act.period}}</td>
+          <td>{{act.quarter}}</td>
           <td>{{act.status}}</td>
           <td>{{act.achievement}}</td>
-          <td>{{act.achievement_value}}</td>
-          <td>{{act.completion}}</td>
-          <td>{{act.updated_at}}</td>
+          <td>{{act.project_output_implemented_value}}</td>
+          <td>{{act.completion_percentage?act.completion_percentage:0}}%</td>
+          <td>{{act.created_at | date:'fullDate'}}</td>
           <td>{{act.remarks}}</td>
         </tr>
       </ng-template>

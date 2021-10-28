@@ -5,36 +5,38 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {combineLatest, Observable} from 'rxjs';
+import {ConfirmationService, LazyLoadEvent, MenuItem} from 'primeng/api';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Paginator} from 'primeng/paginator';
+import {Table} from 'primeng/table';
 
-import { CustomResponse } from '../../utils/custom-response';
+import {CustomResponse} from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import {HelperService} from 'src/app/utils/helper.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {Section} from 'src/app/setup/section/section.model';
+import {SectionService} from 'src/app/setup/section/section.service';
+import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 
-import { User } from './user.model';
-import { UserService } from './user.service';
-import { UserUpdateComponent } from './update/user-update.component';
-import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
-import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
-import { UserRoleComponent } from './user-role/user-role.component';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { finalize } from 'rxjs/operators';
-import { UserGroupComponent } from './user-group/user-group.component';
-import { PasswordResetComponent } from './password-reset/password-reset.component';
+import {User} from './user.model';
+import {UserService} from './user.service';
+import {UserUpdateComponent} from './update/user-update.component';
+import {AdminHierarchyLevelService} from '../admin-hierarchy-level/admin-hierarchy-level.service';
+import {AdminHierarchyLevel} from '../admin-hierarchy-level/admin-hierarchy-level.model';
+import {UserRoleComponent} from './user-role/user-role.component';
+import {MatCheckboxChange} from '@angular/material/checkbox';
+import {finalize} from 'rxjs/operators';
+import {UserGroupComponent} from './user-group/user-group.component';
+import {PasswordResetComponent} from './password-reset/password-reset.component';
+import {Role} from "../role/role.model";
+import {RoleUpdateComponent} from "../role/update/role-update.component";
 
 @Component({
   selector: 'app-user',
@@ -48,42 +50,36 @@ export class UserComponent implements OnInit {
   sections?: Section[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
-
   cols = [
     {
       field: 'first_name',
       header: 'First Name',
-      sort: false,
+      sort: true,
     },
     {
       field: 'last_name',
       header: 'Last Name',
-      sort: false,
+      sort: true,
     },
     {
       field: 'email',
       header: 'Email',
-      sort: false,
+      sort: true,
     },
     {
       field: 'cheque_number',
       header: 'Cheque Number',
-      sort: false,
-    },
-    {
-      field: 'activated',
-      header: 'Activated',
-      sort: false,
+      sort: true,
     },
     {
       field: 'title',
       header: 'Title',
-      sort: false,
+      sort: true,
     },
     {
       field: 'mobile_number',
       header: 'Mobile Number',
-      sort: false,
+      sort: true,
     },
   ]; //Table display columns
 
@@ -111,7 +107,8 @@ export class UserComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.handleNavigation();
@@ -249,13 +246,13 @@ export class UserComponent implements OnInit {
    * @param user ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(user?: User): void {
-    const data: User = user ?? {
-      ...new User(),
+    const data = {
+      user: user ? user : undefined,
       admin_hierarchy_id: this.adminHierarchy.id,
     };
     const ref = this.dialogService.open(UserUpdateComponent, {
       data,
-      width: '50%',
+      width: '80%',
       header: 'Create/Update User',
     });
     ref.onClose.subscribe((result) => {
@@ -265,13 +262,6 @@ export class UserComponent implements OnInit {
     });
   }
 
-  create(): void {
-    this.router.navigate(['/user/create']);
-  }
-
-  edit(id: number): void {
-    this.router.navigate(['/user/edit', id]);
-  }
 
   /**
    * Delete User
@@ -387,7 +377,8 @@ export class UserComponent implements OnInit {
     this.toastService.info(result.message);
   }
 
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

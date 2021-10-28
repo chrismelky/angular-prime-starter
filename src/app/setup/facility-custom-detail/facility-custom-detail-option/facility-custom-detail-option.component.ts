@@ -23,27 +23,29 @@ import {ToastService} from "src/app/shared/toast.service";
 import {FacilityCustomDetail} from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
 import {FacilityCustomDetailService} from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
 
-import {FacilityCustomDetailValue} from "./facility-custom-detail-value.model";
-import {FacilityCustomDetailValueService} from "./facility-custom-detail-value.service";
-import {FacilityCustomDetailValueUpdateComponent} from "./update/facility-custom-detail-value-update.component";
-import {Facility} from "../facility.model";
+import {FacilityCustomDetailOption} from "./facility-custom-detail-option.model";
+import {FacilityCustomDetailOptionService} from "./facility-custom-detail-option.service";
+import {FacilityCustomDetailOptionUpdateComponent} from "./update/facility-custom-detail-option-update.component";
 
 @Component({
-  selector: "app-facility-custom-detail-value",
-  templateUrl: "./facility-custom-detail-value.component.html",
+  selector: "app-facility-custom-detail-option",
+  templateUrl: "./facility-custom-detail-option.component.html",
 })
-export class FacilityCustomDetailValueComponent implements OnInit {
+export class FacilityCustomDetailOptionComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
-  facilityCustomDetailValues?: FacilityCustomDetailValue[] = [];
-  facility!: Facility
-  facilityCustomDetails?: FacilityCustomDetail[] = [];
-
+  facilityCustomDetailOptions?: FacilityCustomDetailOption[] = [];
+  facilityCustomDetail!: FacilityCustomDetail;
   cols = [
     {
       field: "value",
       header: "Value",
-      sort: true,
+      sort: false,
+    },
+    {
+      field: "label",
+      header: "Label",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -55,26 +57,22 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-  facilityTypeId: number | undefined;
-  ownership: string | undefined;
 
   //Mandatory filter
 
   constructor(
-    protected facilityCustomDetailValueService: FacilityCustomDetailValueService,
+    protected facilityCustomDetailOptionService: FacilityCustomDetailOptionService,
     protected facilityCustomDetailService: FacilityCustomDetailService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    public dialogRef: DynamicDialogRef,
-    public dialogConfig: DynamicDialogConfig,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    public dialogRef: DynamicDialogRef,
+    public dialogConfig: DynamicDialogConfig,
   ) {
-    this.facility = this.dialogConfig.data.facility;
-    this.facilityTypeId = this.facility?.facility_type?.id
-    this.ownership = this.facility?.ownership;
+    this.facilityCustomDetail = this.dialogConfig.data.facilityCustomDetail;
   }
 
   ngOnInit(): void {
@@ -84,21 +82,20 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number): void {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.facilityCustomDetailValueService
+    this.facilityCustomDetailOptionService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
-        facility_id: this.facility.id,
+        facility_custom_detail_id: this.facilityCustomDetail.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<FacilityCustomDetailValue[]>) => {
+        (res: CustomResponse<FacilityCustomDetailOption[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad);
         },
@@ -143,19 +140,37 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   }
 
   /**
-   * Creating or updating FacilityCustomDetailValue
-   * @param facilityCustomDetailValue ; If undefined initize new model to create else edit existing model
+   * Creating or updating FacilityCustomDetailOption
+   * @param facilityCustomDetailOption ; If undefined initialize new model to create else edit existing model
    */
-  createOrUpdate(facilityCustomDetailValue?: FacilityCustomDetailValue): void {
+  create(): void {
     const data = {
-      facilityCustomDetailValue: facilityCustomDetailValue ? facilityCustomDetailValue : undefined,
-      facility: this.facility
-    }
+      facilityCustomDetail: this.facilityCustomDetail
+    };
     const ref = this.dialogService.open(
-      FacilityCustomDetailValueUpdateComponent,
+      FacilityCustomDetailOptionUpdateComponent,
       {
         data,
-        header: "Create/Update FacilityCustomDetailValue",
+        header: "Create Option",
+      }
+    );
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  update(facilityCustomDetailOption?: FacilityCustomDetailOption): void {
+    const data = {
+      facilityCustomDetail: this.facilityCustomDetail,
+      facilityCustomDetailOption: facilityCustomDetailOption
+    };
+    const ref = this.dialogService.open(
+      FacilityCustomDetailOptionUpdateComponent,
+      {
+        data,
+        header: "Update Option",
       }
     );
     ref.onClose.subscribe((result) => {
@@ -166,16 +181,16 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   }
 
   /**
-   * Delete FacilityCustomDetailValue
-   * @param facilityCustomDetailValue
+   * Delete FacilityCustomDetailOption
+   * @param facilityCustomDetailOption
    */
-  delete(facilityCustomDetailValue: FacilityCustomDetailValue): void {
+  delete(facilityCustomDetailOption: FacilityCustomDetailOption): void {
     this.confirmationService.confirm({
       message:
-        "Are you sure that you want to delete this FacilityCustomDetailValue?",
+        "Are you sure that you want to delete this Option?",
       accept: () => {
-        this.facilityCustomDetailValueService
-          .delete(facilityCustomDetailValue.id!)
+        this.facilityCustomDetailOptionService
+          .delete(facilityCustomDetailOption.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -188,15 +203,14 @@ export class FacilityCustomDetailValueComponent implements OnInit {
    * When successfully data loaded
    * @param resp
    * @param page
-   * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<FacilityCustomDetailValue[]> | null,
+    resp: CustomResponse<FacilityCustomDetailOption[]> | null,
     page: number,
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
-    this.facilityCustomDetailValues = resp?.data ?? [];
+    this.facilityCustomDetailOptions = resp?.data ?? [];
   }
 
   /**
@@ -205,6 +219,6 @@ export class FacilityCustomDetailValueComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Facility Custom Detail Value");
+    this.toastService.error("Error loading Facility Custom Detail Option");
   }
 }

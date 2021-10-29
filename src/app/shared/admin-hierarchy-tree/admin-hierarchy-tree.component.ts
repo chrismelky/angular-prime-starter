@@ -21,6 +21,7 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Input() stateKey?: string;
+  @Input() label: string = 'Admin Hierarchy';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @ViewChild('op') panel!: OverlayPanel;
 

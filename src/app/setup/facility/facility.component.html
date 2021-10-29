@@ -16,7 +16,9 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <app-admin-hierarchy-tree (onSelect)="onAdminHierarchySelection($event)"></app-admin-hierarchy-tree>
+          <app-admin-hierarchy-tree
+            (onSelect)="onAdminHierarchySelection($event)"
+          ></app-admin-hierarchy-tree>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -33,7 +35,6 @@
               <label for="facility_type_id">Facility Type </label>
             </span>
           </div>
-
         </div>
         <div
           fxLayout="row wrap"
@@ -186,24 +187,34 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Facilities</span>
-          <span class="card-header-text">
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised p-button-text"
-            [disabled]="!admin_hierarchy_id"
-            (click)="createOrUpdate()"
-            label="Add Facility"
-          ></button>
+          <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end">
+            <button
+              pButton
+              [icon]="
+                isUpdatingView ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'
+              "
+              class="p-button-text"
+              [disabled]="isUpdatingView"
+              (click)="updateView()"
+              label="Sync Section"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-plus"
+              class="p-button-raised p-button-text"
+              [disabled]="!admin_hierarchy_id"
+              (click)="createOrUpdate()"
+              label="Add Facility"
+            ></button>
             &nbsp;
-          <button
-            pButton
-            icon="pi pi-upload"
-            class="p-button-raised"
-            (click)="upload()"
-            label="Upload Facilities"
-          ></button>
-          </span>
+            <button
+              pButton
+              icon="pi pi-upload"
+              class="p-button-raised"
+              (click)="upload()"
+              label="Upload Facilities"
+            ></button>
+          </div>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
@@ -212,7 +223,8 @@
             *ngFor="let col of columns"
             [pSortableColumn]="col.sort ? col.field : null"
           >
-            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -230,7 +242,9 @@
                   pRipple
                   pTooltip="Transfer"
                   tooltipPosition="bottom"
-                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
                   icon="pi pi-map"
                   (click)="transfer(rowData)"
                 ></button>

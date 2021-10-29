@@ -259,7 +259,7 @@ export class ActivityComponent implements OnInit {
     if (this.page !== 1) {
       setTimeout(() => this.paginator.changePage(0));
     } else {
-      this.loadPage(1);
+      this.loadPage(1, true);
     }
   }
 
@@ -400,19 +400,6 @@ export class ActivityComponent implements OnInit {
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
-    if (navigate) {
-      this.router.navigate(
-        ['/activity', this.budget_type, this.adminHierarchyCostCentre?.id],
-        {
-          queryParams: {
-            page: this.page,
-            per_page: this.per_page,
-            sort:
-              this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
-          },
-        }
-      );
-    }
     this.activities = resp?.data ?? [];
   }
 

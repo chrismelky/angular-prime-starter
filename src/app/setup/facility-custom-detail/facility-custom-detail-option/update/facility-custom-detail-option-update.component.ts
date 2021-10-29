@@ -64,15 +64,15 @@ export class FacilityCustomDetailOptionUpdateComponent implements OnInit {
     this.isSaving = true;
     const facilityCustomDetailOption = this.createFromForm();
     facilityCustomDetailOption.facility_custom_detail_id = this.facilityCustomDetail.id;
-    if (facilityCustomDetailOption.id !== undefined) {
+    if (facilityCustomDetailOption.id === undefined || facilityCustomDetailOption.id === null || !facilityCustomDetailOption.id) {
       this.subscribeToSaveResponse(
-        this.facilityCustomDetailOptionService.update(
+        this.facilityCustomDetailOptionService.create(
           facilityCustomDetailOption
         )
       );
     } else {
       this.subscribeToSaveResponse(
-        this.facilityCustomDetailOptionService.create(
+        this.facilityCustomDetailOptionService.update(
           facilityCustomDetailOption
         )
       );
@@ -116,9 +116,9 @@ export class FacilityCustomDetailOptionUpdateComponent implements OnInit {
     facilityCustomDetailOption: FacilityCustomDetailOption
   ): void {
     this.editForm.patchValue({
-      id: facilityCustomDetailOption.id,
-      value: facilityCustomDetailOption.value,
-      label: facilityCustomDetailOption.label
+      id: facilityCustomDetailOption?.id,
+      value: facilityCustomDetailOption?.value,
+      label: facilityCustomDetailOption?.label
     });
   }
 

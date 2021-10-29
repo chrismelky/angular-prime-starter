@@ -5,37 +5,34 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest} from 'rxjs';
-import {
-  ConfirmationService,
-  LazyLoadEvent
-} from 'primeng/api';
-import {DialogService} from 'primeng/dynamicdialog';
-import {Paginator} from 'primeng/paginator';
-import {Table} from 'primeng/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from '../../utils/custom-response';
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import {HelperService} from 'src/app/utils/helper.service';
-import {ToastService} from 'src/app/shared/toast.service';
-import {EnumService, PlanrepEnum} from 'src/app/shared/enum.service';
-import {FacilityType} from 'src/app/setup/facility-type/facility-type.model';
-import {FacilityTypeService} from 'src/app/setup/facility-type/facility-type.service';
-import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
+import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 
-import {Facility} from './facility.model';
-import {FacilityService} from './facility.service';
-import {FacilityUpdateComponent} from './update/facility-update.component';
-import {UserService} from '../user/user.service';
-import {FacilityCustomDetailValueComponent} from "./facility-custom-detail-value/facility-custom-detail-value.component";
-import {TransferComponent} from "./transfer/transfer.component";
-import {UploadComponent} from "./upload/upload.component";
+import { Facility } from './facility.model';
+import { FacilityService } from './facility.service';
+import { FacilityUpdateComponent } from './update/facility-update.component';
+import { UserService } from '../user/user.service';
+import { FacilityCustomDetailValueComponent } from './facility-custom-detail-value/facility-custom-detail-value.component';
+import { TransferComponent } from './transfer/transfer.component';
+import { UploadComponent } from './upload/upload.component';
 
 @Component({
   selector: 'app-facility',
@@ -45,6 +42,7 @@ export class FacilityComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
   facilities?: Facility[] = [];
+  isUpdatingView = false;
 
   facilityTypes?: FacilityType[] = [];
   regions?: AdminHierarchy[] = [];
@@ -104,12 +102,11 @@ export class FacilityComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected userService: UserService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.facilityTypeService
-      .query({columns: ['id', 'name', 'code']})
+      .query({ columns: ['id', 'name', 'code'] })
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
@@ -265,8 +262,8 @@ export class FacilityComponent implements OnInit {
       facility: facility ? facility : undefined,
       facility_type_id: this.facility_type_id,
       admin_hierarchy_id: this.admin_hierarchy_id,
-      facilityTypes: this.facilityTypes
-    }
+      facilityTypes: this.facilityTypes,
+    };
     const ref = this.dialogService.open(FacilityUpdateComponent, {
       data,
       header: 'Create/Update Facility',
@@ -292,6 +289,16 @@ export class FacilityComponent implements OnInit {
         });
       },
     });
+  }
+
+  updateView(): void {
+    this.isUpdatingView = true;
+    this.facilityService.updateView().subscribe(
+      (resp) => {
+        this.isUpdatingView = false;
+      },
+      (error) => (this.isUpdatingView = false)
+    );
   }
 
   /**
@@ -336,7 +343,7 @@ export class FacilityComponent implements OnInit {
     const ref = this.dialogService.open(FacilityCustomDetailValueComponent, {
       data,
       width: '60%',
-      header: "Custom Details",
+      header: 'Custom Details',
     });
     ref.onClose.subscribe((result) => {
       this.loadPage(this.page);
@@ -350,7 +357,7 @@ export class FacilityComponent implements OnInit {
     const ref = this.dialogService.open(TransferComponent, {
       data,
       width: '60%',
-      header: "Facility Transfer Form",
+      header: 'Facility Transfer Form',
     });
     ref.onClose.subscribe((result) => {
       this.loadPage(this.page);
@@ -360,7 +367,7 @@ export class FacilityComponent implements OnInit {
   upload(): void {
     const ref = this.dialogService.open(UploadComponent, {
       width: '60%',
-      header: 'Facility Upload Form'
+      header: 'Facility Upload Form',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

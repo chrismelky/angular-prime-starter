@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {Menu} from "../menu.model";
-import {MenuService} from "../menu.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { Menu } from '../menu.model';
+import { MenuService } from '../menu.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-menu-update",
-  templateUrl: "./menu-update.component.html",
+  selector: 'app-menu-update',
+  templateUrl: './menu-update.component.html',
 })
 export class MenuUpdateComponent implements OnInit {
   isSaving = false;
@@ -46,16 +46,22 @@ export class MenuUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
+    const menu = this.dialogConfig.data;
+
+    this.updateForm(menu); //Initialize form with data from dialog
     this.menuService
-      .query({columns: ["id", "label", "router_link"]})
-      .subscribe(
-        (resp: CustomResponse<Menu[]>) => (this.parents = resp.data)
-      );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+      .query({
+        columns: ['id', 'label', 'router_link', 'parent_id'],
+        with: ['parent', 'parent.parent', 'parent.parent.parent'],
+      })
+      .subscribe((resp: CustomResponse<Menu[]>) => {
+        this.parents = menu.id
+          ? (this.parents = resp.data?.filter((m) => m.id !== menu.id))
+          : resp.data;
+      });
   }
 
   /**
@@ -109,8 +115,7 @@ export class MenuUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -128,7 +133,7 @@ export class MenuUpdateComponent implements OnInit {
       separator: menu.separator,
       router_link: menu.router_link,
       parent_id: menu.parent_id,
-      sort_order: menu.sort_order
+      sort_order: menu.sort_order,
     });
   }
 
@@ -139,13 +144,13 @@ export class MenuUpdateComponent implements OnInit {
   protected createFromForm(): Menu {
     return {
       ...new Menu(),
-      id: this.editForm.get(["id"])!.value,
-      label: this.editForm.get(["label"])!.value,
-      icon: this.editForm.get(["icon"])!.value,
-      separator: this.editForm.get(["separator"])!.value,
-      router_link: this.editForm.get(["router_link"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      sort_order: this.editForm.get(["sort_order"])!.value
+      id: this.editForm.get(['id'])!.value,
+      label: this.editForm.get(['label'])!.value,
+      icon: this.editForm.get(['icon'])!.value,
+      separator: this.editForm.get(['separator'])!.value,
+      router_link: this.editForm.get(['router_link'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
     };
   }
 }

@@ -1,17 +1,16 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import {createRequestOption} from '../../utils/request-util';
-import {CustomResponse} from '../../utils/custom-response';
-import {Section} from './section.model';
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Section } from './section.model';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class SectionService {
   public resourceUrl = 'api/sections';
 
-  constructor(protected http: HttpClient) {
-  }
+  constructor(protected http: HttpClient) {}
 
   create(section: Section): Observable<CustomResponse<Section>> {
     return this.http.post<CustomResponse<Section>>(this.resourceUrl, section);
@@ -64,14 +63,26 @@ export class SectionService {
   }
 
   departmentCostCenter(): Observable<CustomResponse<any>> {
-    return this.http.get<CustomResponse<any>>(`${this.resourceUrl}/department-cost-centers`);
+    return this.http.get<CustomResponse<any>>(
+      `${this.resourceUrl}/department-cost-centers`
+    );
   }
 
   departments(): Observable<CustomResponse<any>> {
-    return this.http.get<CustomResponse<any>>(`${this.resourceUrl}/departments`);
+    return this.http.get<CustomResponse<any>>(
+      `${this.resourceUrl}/departments`
+    );
   }
 
   departmentAndCostCentreTree(): Observable<CustomResponse<any>> {
-    return this.http.get<CustomResponse<any>>(`${this.resourceUrl}/departmentAndCostCentreTree`);
+    return this.http.get<CustomResponse<any>>(
+      `${this.resourceUrl}/departmentAndCostCentreTree`
+    );
+  }
+
+  updateView(): Observable<CustomResponse<null>> {
+    return this.http.get<CustomResponse<null>>(
+      `${this.resourceUrl}/update_view`
+    );
   }
 }

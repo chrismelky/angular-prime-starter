@@ -47,19 +47,6 @@ export class NationalReferenceComponent implements OnInit {
   parents?: NationalReference[] = [];
   linkLevels?: PlanrepEnum[] = [];
 
-  cols = [
-    {
-      field: 'description',
-      header: 'Description',
-      sort: true,
-    },
-    {
-      field: 'code',
-      header: 'Code',
-      sort: true,
-    },
-  ]; //Table display columns
-
   isLoading = false;
   page?: number = 1;
   per_page!: number;
@@ -229,15 +216,23 @@ export class NationalReferenceComponent implements OnInit {
    * Creating or updating NationalReference
    * @param nationalReference ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(nationalReference?: NationalReference): void {
+  createOrUpdate(
+    nationalReference?: NationalReference,
+    parent?: NationalReference
+  ): void {
     const data: NationalReference = nationalReference ?? {
       ...new NationalReference(),
       reference_type_id: this.reference_type_id,
       link_level: this.link_level,
+      parent_id: parent?.id,
     };
     const ref = this.dialogService.open(NationalReferenceUpdateComponent, {
-      data,
+      data: {
+        reference: data,
+        parents: parent ? [parent] : [],
+      },
       header: 'Create/Update NationalReference',
+      width: '900px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -371,6 +366,7 @@ export class NationalReferenceComponent implements OnInit {
     this.nationalReferenceService
       .query({
         parent_id: node.data.id,
+        with: ['sectors'],
         sort: ['code:asc'],
       })
       .subscribe(

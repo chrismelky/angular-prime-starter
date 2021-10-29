@@ -5,25 +5,25 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { ReferenceType } from "src/app/setup/reference-type/reference-type.model";
-import { ReferenceTypeService } from "src/app/setup/reference-type/reference-type.service";
-import { NationalReference } from "../national-reference.model";
-import { NationalReferenceService } from "../national-reference.service";
-import { ToastService } from "src/app/shared/toast.service";
-import {SectorService} from "../../sector/sector.service";
-import {Sector} from "../../sector/sector.model";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { ReferenceType } from 'src/app/setup/reference-type/reference-type.model';
+import { ReferenceTypeService } from 'src/app/setup/reference-type/reference-type.service';
+import { NationalReference } from '../national-reference.model';
+import { NationalReferenceService } from '../national-reference.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { SectorService } from '../../sector/sector.service';
+import { Sector } from '../../sector/sector.model';
 
 @Component({
-  selector: "app-national-reference-update",
-  templateUrl: "./national-reference-update.component.html",
+  selector: 'app-national-reference-update',
+  templateUrl: './national-reference-update.component.html',
 })
 export class NationalReferenceUpdateComponent implements OnInit {
   isSaving = false;
@@ -45,7 +45,7 @@ export class NationalReferenceUpdateComponent implements OnInit {
     reference_type_id: [null, [Validators.required]],
     parent_id: [null, []],
     link_level: [null, [Validators.required]],
-    sectors: [null, []],
+    sectors: [[], [Validators.required]],
   });
 
   constructor(
@@ -56,7 +56,7 @@ export class NationalReferenceUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected enumService: EnumService,
-  protected sectorService: SectorService
+    protected sectorService: SectorService
   ) {}
 
   ngOnInit(): void {
@@ -66,18 +66,16 @@ export class NationalReferenceUpdateComponent implements OnInit {
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
     this.referenceTypeService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<ReferenceType[]>) =>
           (this.referenceTypes = resp.data)
       );
-    this.nationalReferenceService
-      .query({ columns: ["id", "description"] })
-      .subscribe(
-        (resp: CustomResponse<NationalReference[]>) => (this.parents = resp.data)
-      );
-    this.linkLevels = this.enumService.get("linkLevels");
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.linkLevels = this.enumService.get('linkLevels');
+    const dialogData = this.dialogConfig.data;
+
+    this.parents = dialogData.parents;
+    this.updateForm(dialogData.reference); //Initialize form with data from dialog
   }
 
   /**
@@ -137,7 +135,6 @@ export class NationalReferenceUpdateComponent implements OnInit {
    */
   protected updateForm(nationalReference: NationalReference): void {
     // object Array to int array
-    const sectorIds =  nationalReference.sectors?.map((sector: { id: any; })=>sector.id);
     this.editForm.patchValue({
       id: nationalReference.id,
       code: nationalReference.code,
@@ -145,7 +142,7 @@ export class NationalReferenceUpdateComponent implements OnInit {
       reference_type_id: nationalReference.reference_type_id,
       parent_id: nationalReference.parent_id,
       link_level: nationalReference.link_level,
-      sectors: sectorIds,
+      sectors: nationalReference.sectors,
     });
   }
 
@@ -156,13 +153,13 @@ export class NationalReferenceUpdateComponent implements OnInit {
   protected createFromForm(): NationalReference {
     return {
       ...new NationalReference(),
-      id: this.editForm.get(["id"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      description: this.editForm.get(["description"])!.value,
-      reference_type_id: this.editForm.get(["reference_type_id"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      link_level: this.editForm.get(["link_level"])!.value,
-      sectors: this.editForm.get(["sectors"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      description: this.editForm.get(['description'])!.value,
+      reference_type_id: this.editForm.get(['reference_type_id'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      link_level: this.editForm.get(['link_level'])!.value,
+      sectors: this.editForm.get(['sectors'])!.value,
     };
   }
 }

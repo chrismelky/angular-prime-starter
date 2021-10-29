@@ -34,8 +34,8 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td>{{ rowData.group?.name}}</td>
-          <td>{{ rowData.expire_date|date:'mediumDate'}}</td>
+          <td>{{ rowData.group?.name }}</td>
+          <td>{{ rowData.expire_date | date: "mediumDate" }}</td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

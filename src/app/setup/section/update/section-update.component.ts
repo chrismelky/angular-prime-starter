@@ -34,8 +34,8 @@ export class SectionUpdateComponent implements OnInit {
     code: [null, [Validators.required]],
     name: [null, [Validators.required]],
     sector_id: [null, []],
-    position: [null, [Validators.required]],
-    parent_id: [null, [Validators.required]],
+    position: [{ value: null, disabled: true }, [Validators.required]],
+    parent_id: [{ value: null, disabled: true }, [Validators.required]],
   });
 
   constructor(

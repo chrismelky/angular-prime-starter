@@ -109,17 +109,33 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text" *ngIf="position === 2">Sectors</span>
-          <span class="card-header-text" *ngIf="position === 3">Departments</span>
-          <span class="card-header-text" *ngIf="position === 4">Cost Centres</span>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!position || !parent_id"
-            (click)="createOrUpdate()"
-            label="Add Planning Unit"
-          ></button>
+          <span class="card-header-text" *ngIf="position === 3"
+            >Departments</span
+          >
+          <span class="card-header-text" *ngIf="position === 4"
+            >Cost Centres</span
+          >
+
+          <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end">
+            <button
+              pButton
+              [icon]="
+                isUpdatingView ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'
+              "
+              class="p-button-text"
+              [disabled]="isUpdatingView"
+              (click)="updateView()"
+              label="Sync Section"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-plus"
+              class="p-button-raised"
+              [disabled]="!position || !parent_id"
+              (click)="createOrUpdate()"
+              label="Add Planning Unit"
+            ></button>
+          </div>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

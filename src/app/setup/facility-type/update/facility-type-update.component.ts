@@ -44,6 +44,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
     name: ['', [Validators.required]],
     lga_level: ['LLG', [Validators.required]],
     admin_hierarchy_level_id: [null, [Validators.required]],
+    planning_admin_hierarchy_level: [null, [Validators.required]],
     sections: [this.fb.array([]), [Validators.required]],
   });
 
@@ -138,6 +139,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
       name: facilityType.name,
       lga_level: facilityType.lga_level,
       admin_hierarchy_level_id: facilityType.admin_hierarchy_level_id,
+      planning_admin_hierarchy_level:facilityType.planning_admin_hierarchy_level,
       sections: facilityType.sections,
     });
   }
@@ -154,6 +156,8 @@ export class FacilityTypeUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       lga_level: this.editForm.get(['lga_level'])!.value,
       admin_hierarchy_level_id: this.editForm.get(['admin_hierarchy_level_id'])!
+        .value,
+      planning_admin_hierarchy_level:this.editForm.get(['planning_admin_hierarchy_level'])!
         .value,
       sections: this.editForm.get(['sections'])!.value,
     };

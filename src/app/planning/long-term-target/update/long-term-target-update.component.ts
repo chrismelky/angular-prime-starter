@@ -37,6 +37,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
   sections?: Section[] = [];
   referenceTypes?: ReferenceType[] = [];
   referenceLoading = false;
+  target?: LongTermTarget;
 
   /**
    * Declare form
@@ -65,13 +66,14 @@ export class LongTermTargetUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     const dialogData = this.dialogConfig.data;
+    this.target = { ...dialogData.target };
     this.sections = dialogData.sections;
     this.objectives = dialogData.objectives;
 
-    if (this.sections?.length === 1) {
-      this.loadReferences(this.sections[0].id!, dialogData.target?.id);
-    }
-    this.updateForm(dialogData.target); //Initialize form with data from dialog
+    this.target?.id &&
+      this.loadReferences(this.target?.section_id!, this.target?.id);
+
+    this.updateForm(this.target!); //Initialize form with data from dialog
   }
 
   /**

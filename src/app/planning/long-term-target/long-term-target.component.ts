@@ -279,6 +279,7 @@ export class LongTermTargetComponent implements OnInit {
         objectives: this.objectives,
       },
       header: 'Create/Update LongTermTarget',
+      width: '900px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

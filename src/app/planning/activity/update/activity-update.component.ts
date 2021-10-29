@@ -60,6 +60,8 @@ import { ResponsiblePersonUpdateComponent } from '../../responsible-person/updat
   templateUrl: './activity-update.component.html',
 })
 export class ActivityUpdateComponent implements OnInit {
+  budgetIsLocked? = false;
+
   isSaving = false;
   fundSourceIsLoading = false;
   taskNatureIsLoading = false;
@@ -215,13 +217,23 @@ export class ActivityUpdateComponent implements OnInit {
     this.updateForm(activity);
 
     /** Load National references  */
-    this.loadReferences(activity.id, activity.financial_year_id);
+    this.loadReferences(
+      activity.long_term_target_id!,
+      activity.id,
+      activity.financial_year_id
+    );
 
     this.loadPriorityAreas(
       dialogData.objectiveId,
       activity.admin_hierarchy_id!,
       activity.priority_area_id
     );
+    this.budgetIsLocked = dialogData?.budgetIsLocked;
+
+    if (this.budgetIsLocked) {
+      this.generalForm.disable();
+      this.referenceForm.disable();
+    }
   }
 
   /** Load main budget classess with children budget classes */
@@ -289,7 +301,11 @@ export class ActivityUpdateComponent implements OnInit {
   /**
    * Load reference type filtered by this cost centre sectorId
    */
-  loadReferences(activityId?: number, financialYearId?: number): void {
+  loadReferences(
+    targetId: number,
+    activityId?: number,
+    financialYearId?: number
+  ): void {
     const sectorId = this.adminHierarchyCostCentre?.section?.sector_id;
     if (!sectorId) {
       this.toastService.warn(
@@ -299,7 +315,7 @@ export class ActivityUpdateComponent implements OnInit {
     }
     this.referenceLoading = true;
     this.referenceTypeService
-      .byLinkLevelWithReferences('Activity', sectorId!)
+      .byLinkLevelWithReferences('Activity', sectorId!, { targetId })
       .subscribe(
         (resp) => {
           this.referenceLoading = false;
@@ -354,7 +370,10 @@ export class ActivityUpdateComponent implements OnInit {
           options: [type.references],
           isMultiple: [type.multi_select],
           name: [type.name],
-          value: [value, [Validators.required]],
+          value: [
+            { value, disabled: this.budgetIsLocked },
+            [Validators.required],
+          ],
         })
       );
     });

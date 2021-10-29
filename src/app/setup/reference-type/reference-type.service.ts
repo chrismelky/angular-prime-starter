@@ -56,10 +56,16 @@ export class ReferenceTypeService {
 
   byLinkLevelWithReferences(
     linkLevel: string,
-    sectorId: number
+    sectorId: number,
+    req?: any
   ): Observable<CustomResponse<ReferenceType[]>> {
+    const options = createRequestOption(req);
+
     return this.http.get<CustomResponse<ReferenceType[]>>(
-      `${this.resourceUrl}/with_references/${linkLevel}/${sectorId}`
+      `${this.resourceUrl}/with_references/${linkLevel}/${sectorId}`,
+      {
+        params: options,
+      }
     );
   }
 }

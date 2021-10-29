@@ -1,3 +1,5 @@
+import { Sector } from '../sector/sector.model';
+
 export class NationalReference {
   constructor(
     public id?: number,
@@ -7,6 +9,7 @@ export class NationalReference {
     public parent_id?: number,
     public link_level?: string,
     public active?: boolean,
-    public sectors?: any
+    public sectors?: Sector[],
+    public parent?: NationalReference
   ) {}
 }

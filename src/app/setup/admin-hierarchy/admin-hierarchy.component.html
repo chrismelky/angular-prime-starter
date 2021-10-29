@@ -142,15 +142,27 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">{{ title }}</span>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!parent_id || !admin_hierarchy_position"
-            (click)="createOrUpdate()"
-            label="Add Admin Hierarchy"
-          ></button>
+          <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end">
+            <button
+              pButton
+              [icon]="
+                isUpdatingView ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'
+              "
+              class="p-button-text"
+              [disabled]="isUpdatingView"
+              (click)="updateView()"
+              label="Sync Admin Areas"
+            ></button>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-plus"
+              class="p-button-raised"
+              [disabled]="!parent_id || !admin_hierarchy_position"
+              (click)="createOrUpdate()"
+              label="Add Admin Hierarchy"
+            ></button>
+          </div>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

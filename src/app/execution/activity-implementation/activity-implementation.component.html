@@ -17,18 +17,10 @@
         >
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown
-                id="admin_hierarchy_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="adminHierarchies!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_id"
-              ></p-dropdown>
-              <label for="admin_hierarchy_id">Admin Hierarchy </label>
+              <app-admin-hierarchy-tree
+                (onSelect)="onAdminHierarchySelection($event)"
+                [returnType]="'object'">
+              </app-admin-hierarchy-tree>
             </span>
           </div>
           <div class="p-field" fxFlex>
@@ -41,7 +33,7 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="periods!"
-                (onChange)="filterChanged()"
+                (onChange)="loadActivities()"
                 [(ngModel)]="period_id"
               ></p-dropdown>
               <label for="period_id">Period </label>
@@ -57,7 +49,7 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="facilityTypes!"
-                (onChange)="filterChanged()"
+                (onChange)="loadFacilities()"
                 [(ngModel)]="facility_type_id"
               ></p-dropdown>
               <label for="facility_type_id">Facility Type </label>
@@ -73,7 +65,7 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="facilities!"
-                (onChange)="filterChanged()"
+                (onChange)="loadFundSources()"
                 [(ngModel)]="facility_id"
               ></p-dropdown>
               <label for="facility_id">Facility </label>
@@ -89,7 +81,7 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="fundSources!"
-                (onChange)="filterChanged()"
+                (onChange)="loadActivities()"
                 [(ngModel)]="fund_source_id"
               ></p-dropdown>
               <label for="fund_source_id">Fund Source </label>
@@ -181,17 +173,17 @@
             <th>Expenditure</th>
             <th>Balance</th>
             <th>Status</th>
-            <th>Action</th>
+            <th style="flex: 0 0 1rem"></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-activityImplementation>
           <tr>
             <td>{{ activityImplementation.code}}</td>
             <td>{{ activityImplementation.description}}</td>
-            <td></td>
-            <td>{{ activityImplementation.budget}}</td>
-            <td>{{ activityImplementation.expenditure}}</td>
-            <td>{{ activityImplementation.balance}}</td>
+            <td>{{ activityImplementation.facility_name}}</td>
+            <td>{{ activityImplementation.budget | currency:'TZS  '}}</td>
+            <td>{{ activityImplementation.expenditure | currency:'TZS  '}}</td>
+            <td>{{ activityImplementation.budget | currency:'TZS  '}}</td>
             <td></td>
             <td style="flex: 0 0 1rem">
               <div fxLayout="row" fxLayoutAlign="end">

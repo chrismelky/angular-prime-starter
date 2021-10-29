@@ -263,29 +263,32 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-
-    this.adminHierarchyCeilingService
-      .queryCeilingWithChildren({
-        page: pageToLoad,
-        per_page: this.per_page,
-        sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        financial_year_id: this.financial_year_id,
-        budget_type: this.budget_type,
-        section_id: this.section_id,
-        position: this.position,
-        ...this.helper.buildFilter(this.search),
-      })
-      .subscribe(
-        (res: CustomResponse<AdminHierarchyCeiling[]>) => {
-          this.isLoading = false;
-          this.onSuccess(res, pageToLoad, !dontNavigate);
-        },
-        () => {
-          this.isLoading = false;
-          this.onError();
-        }
-      );
+    if(this.section_id !==undefined){
+      this.adminHierarchyCeilingService
+        .queryCeilingWithChildren({
+          page: pageToLoad,
+          per_page: this.per_page,
+          sort: this.sort(),
+          admin_hierarchy_id: this.admin_hierarchy_id,
+          financial_year_id: this.financial_year_id,
+          budget_type: this.budget_type,
+          section_id: this.section_id,
+          position: this.position,
+          ...this.helper.buildFilter(this.search),
+        })
+        .subscribe(
+          (res: CustomResponse<AdminHierarchyCeiling[]>) => {
+            this.isLoading = false;
+            this.onSuccess(res, pageToLoad, !dontNavigate);
+          },
+          () => {
+            this.isLoading = false;
+            this.onError();
+          }
+        );
+    }else{
+      this.adminHierarchyCeilings = [];
+    }
   }
 
   /**
@@ -625,7 +628,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         section_id:rowData.section_id,
         financial_year_id:rowData.financial_year_id,
         admin_hierarchy_id:rowData.admin_hierarchy_id,
-        budget_type:rowData.budget_type
+        budget_type:rowData.budget_type,
+        facility_id:rowData.facility_id
       }
     });
     ref.onClose.subscribe((result) => {});

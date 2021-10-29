@@ -26,6 +26,13 @@ export class ProjectionService {
     );
   }
 
+  initiate(projection: any): Observable<CustomResponse<any>> {
+    return this.http.post<CustomResponse<any>>(
+      'api/initiate_projection',
+      projection
+    );
+  }
+
   update(projection: Projection): Observable<CustomResponse<Projection>> {
     return this.http.put<CustomResponse<Projection>>(
       `${this.resourceUrl}/${projection.id}`,

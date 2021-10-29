@@ -786,6 +786,7 @@
                 type="button"
               ></button>
               <button
+                *ngIf="!budgetIsLocked"
                 class="p-button-raised"
                 icon="pi pi-check"
                 label="Save"

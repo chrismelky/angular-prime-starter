@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 import { createRequestOption } from '../../utils/request-util';
 import { CustomResponse } from '../../utils/custom-response';
 import { Facility, FacilityView } from './facility.model';
-import {GfsCode} from "../gfs-code/gfs-code.model";
+import { GfsCode } from '../gfs-code/gfs-code.model';
 
 @Injectable({ providedIn: 'root' })
 export class FacilityService {
@@ -85,13 +85,21 @@ export class FacilityService {
   }
 
   upload(data: any): Observable<CustomResponse<Facility[]>> {
-    return this.http.post<CustomResponse<Facility[]>>(this.resourceUrl + '/upload', data);
+    return this.http.post<CustomResponse<Facility[]>>(
+      this.resourceUrl + '/upload',
+      data
+    );
   }
 
   downloadTemplate(): any {
-    return this.http.get(
-      this.resourceUrl + '/downloadUploadTemplate',
-      {responseType: 'arraybuffer'}
+    return this.http.get(this.resourceUrl + '/downloadUploadTemplate', {
+      responseType: 'arraybuffer',
+    });
+  }
+
+  updateView(): Observable<CustomResponse<null>> {
+    return this.http.get<CustomResponse<null>>(
+      `${this.resourceUrl}/update_view`
     );
   }
 }

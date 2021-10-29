@@ -9,12 +9,14 @@ import { SectionTreeComponent } from './section-tree/section-tree.component';
 import { ObjectiveTreeComponent } from './objective-tree/objective-tree.component';
 import { AssessmentTreeComponent } from './assessment-tree/assessment-tree.component';
 import { NgxPermissionsModule } from 'ngx-permissions';
-import { LoaderComponent } from '../shared/loader/loader.component';
-import { DraggableDirective } from '../shared/draggable.directive';
+import { LoaderComponent } from './loader/loader.component';
+import { DraggableDirective } from './draggable.directive';
+import {MenuTreeComponent} from "./menu-tree/menu-tree.component";
 
 @NgModule({
   declarations: [
     AdminHierarchyTreeComponent,
+    MenuTreeComponent,
     SectionTreeComponent,
     ObjectiveTreeComponent,
     AssessmentTreeComponent,
@@ -26,6 +28,7 @@ import { DraggableDirective } from '../shared/draggable.directive';
     SharedMaterialModule,
     SharedPrimengModule,
     AdminHierarchyTreeComponent,
+    MenuTreeComponent,
     SectionTreeComponent,
     ObjectiveTreeComponent,
     AssessmentTreeComponent,

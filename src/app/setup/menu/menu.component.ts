@@ -5,67 +5,47 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {Menu} from "./menu.model";
-import {MenuService} from "./menu.service";
-import {MenuUpdateComponent} from "./update/menu-update.component";
-import {MenuPermissionComponent} from "./menu-permission/menu-permission.component";
-import {SubComponent} from "./sub/sub.component";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Menu } from './menu.model';
+import { MenuService } from './menu.service';
+import { MenuUpdateComponent } from './update/menu-update.component';
+import { MenuPermissionComponent } from './menu-permission/menu-permission.component';
+import { SubComponent } from './sub/sub.component';
 
 @Component({
-  selector: "app-menu",
-  templateUrl: "./menu.component.html",
+  selector: 'app-menu',
+  templateUrl: './menu.component.html',
 })
 export class MenuComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   menus?: Menu[] = [];
 
   parents?: Menu[] = [];
 
   cols = [
     {
-      field: "label",
-      header: "Label",
+      field: 'label',
+      header: 'Label',
       sort: true,
     },
     {
-      field: "icon",
-      header: "Icon",
-      sort: true,
-    },
-    {
-      field: "separator",
-      header: "Separator",
-      sort: false,
-    },
-    {
-      field: "router_link",
-      header: "Router Link",
-      sort: true,
-    },
-    {
-      field: "sort_order",
-      header: "Sort Order",
-      sort: true,
-    },
-    {
-      field: "code",
-      header: "Code",
+      field: 'sort_order',
+      header: 'Sort Order',
       sort: true,
     },
   ]; //Table display columns
@@ -89,15 +69,12 @@ export class MenuComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.menuService
-      .query({columns: ["id", "label", "router_link"]})
-      .subscribe(
-        (resp: CustomResponse<Menu[]>) => (this.parents = resp.data)
-      );
+      .query({ columns: ['id', 'label', 'router_link'] })
+      .subscribe((resp: CustomResponse<Menu[]>) => (this.parents = resp.data));
     this.handleNavigation();
   }
 
@@ -138,11 +115,11 @@ export class MenuComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -205,8 +182,8 @@ export class MenuComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -220,7 +197,7 @@ export class MenuComponent implements OnInit {
     };
     const ref = this.dialogService.open(MenuUpdateComponent, {
       data,
-      header: "Create/Update Menu",
+      header: 'Create/Update Menu',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -235,7 +212,7 @@ export class MenuComponent implements OnInit {
    */
   delete(menu: Menu): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Menu?",
+      message: 'Are you sure that you want to delete this Menu?',
       accept: () => {
         this.menuService.delete(menu.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -259,12 +236,12 @@ export class MenuComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/menu"], {
+      this.router.navigate(['/menu'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -277,13 +254,13 @@ export class MenuComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Menu");
+    this.toastService.error('Error loading Menu');
   }
 
   permissions(rowData: Menu): void {
     const data = {
-      menu: rowData
-    }
+      menu: rowData,
+    };
     const ref = this.dialogService.open(MenuPermissionComponent, {
       data,
       width: '60%',
@@ -297,8 +274,8 @@ export class MenuComponent implements OnInit {
 
   subMenu(rowData: Menu): void {
     const data = {
-      menu: rowData
-    }
+      menu: rowData,
+    };
     const ref = this.dialogService.open(SubComponent, {
       data,
       width: '60%',

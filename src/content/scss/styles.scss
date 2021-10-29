@@ -650,4 +650,15 @@ p-divider.title .p-divider.p-divider-horizontal {
     cursor: wait !important;
   }
 }
+.p-dropdown-panel {
+  max-width: 900px;
+  .p-dropdown-items .p-dropdown-item {
+    white-space: normal;
+  }
 
+}
+
+.p-inputtext {
+  max-width: 900px;
+  white-space: normal;
+}

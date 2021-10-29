@@ -101,7 +101,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
         (resp: CustomResponse<CeilingChain[]>) =>{
           this.ceilingChain = (resp.data??[]);
           const filteredChain = (resp.data??[]).filter(c => c.section_level_position.position >= (this.section_level_position!)
-          ||(c.section_level_position.position == (this.section_level_position!-1) && c.next_id))
+          ||(c.section_level_position.position == (this.section_level_position!-1) && c.next_id));
           const positions = filteredChain.map((c) => {return c.section_level_position.position});
           let payload = {
             position:positions,
@@ -173,7 +173,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     console.log(ceiling.ceiling)
     this.allocationPosition = position;
     if(ceiling!.amount!>0){
-      this.toAllocate = this.councilCeiling!.filter(cc => cc.parent_id == ceiling.id)
+      let ceilingSectors = ceiling.ceiling.sector.map((s: { id: any; }) => (s.id));
+      this.toAllocate = this.councilCeiling!.filter(cc => cc.parent_id == ceiling.id && ceilingSectors.includes(cc.section?.sector_id))
       this.toAllocate = this.toAllocate!.map((c) => Object.assign(c,
         {percent: ceiling.amount!>0?((c.amount!/ceiling!.amount!)*100):(0)}));
       this.clonedCeiling = this.toAllocate!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent,section:c.section }));
@@ -197,6 +198,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     if(this.clonedFacilityCeiling![index].amount != row.amount){
       if(this.totalFacilityAllocatedAmount! <= this.finalCeiling!.amount!) {
         const facilityCeiling = this.facilityUpdateCeilingFrom(row);
+        console.log(facilityCeiling);
         if(facilityCeiling.id !== null){
           this.subscribeToSaveResponse(
             this.budgetCeilingService.update(facilityCeiling),row
@@ -281,6 +283,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
       financial_year_id: this.finalCeiling!.financial_year_id,
       section_id: this.finalCeiling!.section_id,
       is_locked: row.is_locked,
+      planning_admin_hierarchy_id: row.planning_admin_hierarchy_id,
+      fund_source_id:row.fund_source_id,
+      budget_class_id:row.budget_class_id,
       budget_type:this.finalCeiling!.budget_type,
       amount:row.amount,
       facility_id:row.id,
@@ -363,31 +368,39 @@ export class AdminCeilingDisseminationComponent implements OnInit {
 
   //Load Facility Ceiling
   loadFacilityCeiling(ceiling:any) :void{
-    this.facilityService
-      .planning(('p'+ this.position),ceiling.admin_hierarchy_id!,ceiling.section_id!).subscribe((resp:any) => {
-      this.facilities = resp.data ?? [];
-      this.budgetCeilingService
-        .query({
-          admin_ceiling_id:ceiling?.id,
-          per_page:10000
-        }).subscribe((res:any) =>{
-        this.budgetCeiling=res.data ?? [];
-        this.facilityCeiling = this.facilities!.map((facility) => {
-          const budgetCeiling = this.budgetCeiling!.find(ceiling => ceiling.facility_id === facility.id)
-          return{
-            id:facility.id,
-            ceilingId:budgetCeiling==undefined?null:budgetCeiling!.id,
-            council:ceiling.admin_hierarchy.name,
-            facility: '['+facility.code+'] ' + facility.name,
-            amount:budgetCeiling==undefined?0.00:budgetCeiling.amount,
-            is_locked:budgetCeiling==undefined?false:budgetCeiling!.is_locked,
-            percent:budgetCeiling==undefined?0.00:((budgetCeiling.amount!)>0?(((budgetCeiling.amount!)/ceiling.amount)*100):0.00)
-          }
+    if(ceiling !== undefined){
+      this.facilityService
+        .planning(('p'+ this.position),ceiling.admin_hierarchy_id!,ceiling.section_id!).subscribe((resp:any) => {
+        this.facilities = resp.data ?? [];
+        this.budgetCeilingService
+          .query({
+            admin_ceiling_id:ceiling?.id,
+            per_page:10000
+          }).subscribe((res:any) =>{
+          this.budgetCeiling=res.data ?? [];
+          this.facilityCeiling = this.facilities!.map((facility) => {
+            const budgetCeiling = this.budgetCeiling!.find(ceiling => ceiling.facility_id === facility.id);
+            const position = 'p'+facility.planning_hierarchy_position;
+            return{
+              id:facility.id,
+              ceilingId:budgetCeiling==undefined?null:budgetCeiling!.id,
+              ceiling_id:this.ceiling!.ceiling_id,
+              // @ts-ignore
+              planning_admin_hierarchy_id:facility[position],
+              budget_class_id:this.ceiling!.ceiling.budget_class_id,
+              fund_source_id:this.ceiling!.ceiling.fund_source_id,
+              council:ceiling.admin_hierarchy.name,
+              facility: '['+facility.code+'] ' + facility.name,
+              amount:budgetCeiling==undefined?0.00:budgetCeiling.amount,
+              is_locked:budgetCeiling==undefined?false:budgetCeiling!.is_locked,
+              percent:budgetCeiling==undefined?0.00:((budgetCeiling.amount!)>0?(((budgetCeiling.amount!)/ceiling.amount)*100):0.00)
+            }
+          });
+          this.clonedFacilityCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
+          this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
         });
-        this.clonedFacilityCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
-        this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
-        });
-    });
+      });
+    }
   }
   close():void{
     this.dialogRef.close();

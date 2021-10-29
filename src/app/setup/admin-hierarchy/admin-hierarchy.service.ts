@@ -75,4 +75,10 @@ export class AdminHierarchyService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  updateView(): Observable<CustomResponse<null>> {
+    return this.http.get<CustomResponse<null>>(
+      `${this.resourceUrl}/update_view`
+    );
+  }
 }

@@ -44,9 +44,9 @@
             [ngSwitch]="budget_type"
           >
             <small>Decision Level</small>
-            <strong *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
+            <p-tag severity="success" *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
               adminHierarchyCostCentre?.current_budget_decision_level?.name
-            }}</strong>
+            }}</p-tag>
             <strong *ngSwitchCase="'CARRYOVER'">{{
               adminHierarchyCostCentre?.carryover_budget_decision_level?.name
             }}</strong>
@@ -56,6 +56,17 @@
             }}</strong>
           </span>
         </p-divider>
+        <button
+          *ngIf="!budgetIsLocked"
+          icon="pi pi-arrow-right"
+          pButton
+          class="
+            p-button-rounded
+            p-button-success
+            p-button-outline
+            p-button-icon-only
+          "
+        ></button>
         <!-- <i class="pi pi-lock"></i> -->
       </div>
     </ng-template>

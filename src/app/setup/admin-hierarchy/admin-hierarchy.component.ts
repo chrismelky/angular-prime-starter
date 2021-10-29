@@ -32,6 +32,7 @@ export class AdminHierarchyComponent implements OnInit {
   @ViewChild('table') table!: Table;
   adminHierarchies?: AdminHierarchy[] = [];
   title = 'Administration Hierarchies';
+  isUpdatingView = false;
 
   parents?: AdminHierarchy[] = [];
 
@@ -152,7 +153,8 @@ export class AdminHierarchyComponent implements OnInit {
   onAdminHierarchySelection(parentAdminHierarchy: AdminHierarchy): void {
     this.parent_id = parentAdminHierarchy.id!;
     this.parent = parentAdminHierarchy!;
-    this.admin_hierarchy_position = parentAdminHierarchy.admin_hierarchy_position! + 1;
+    this.admin_hierarchy_position =
+      parentAdminHierarchy.admin_hierarchy_position! + 1;
     this.filterChanged();
   }
 
@@ -251,6 +253,16 @@ export class AdminHierarchyComponent implements OnInit {
           });
       },
     });
+  }
+
+  updateView(): void {
+    this.isUpdatingView = true;
+    this.adminHierarchyService.updateView().subscribe(
+      (resp) => {
+        this.isUpdatingView = false;
+      },
+      (error) => (this.isUpdatingView = false)
+    );
   }
 
   /**

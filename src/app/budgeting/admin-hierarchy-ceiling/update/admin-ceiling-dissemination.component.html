@@ -12,9 +12,11 @@
                <span class="p-float-label">
                   <div  fxLayout="row" fxLayoutAlign="space-between center">
                     <span><b>{{ceiling.label}}</b></span>
-                    <span ><b [className]="(((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
+                    <span ><b [className]="((((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
                       >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00
-                    ))===100?'success':'error'">{{ (ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
+                    )) >0 && (((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
+                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00
+                    )) <=100) ?'success':'error'">{{ (ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
                       | currency:"TZS":"TSH"}} ({{((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
                       >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00
                     ) | number : '1.2-2'}})%</b>Allocated</span>

@@ -7,7 +7,7 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
@@ -35,10 +35,21 @@ import { ProjectionUpdateComponent } from "./update/projection-update.component"
 import {UserService} from "../../setup/user/user.service";
 import {Section} from "../../setup/section/section.model";
 import {User} from "../../setup/user/user.model";
+import {FacilityType} from "../../setup/facility-type/facility-type.model";
+import {FacilityTypeService} from "../../setup/facility-type/facility-type.service";
+import {FacilityService} from "../../setup/facility/facility.service";
+import {Facility} from "../../setup/facility/facility.model";
+import {AdminCeilingDisseminationComponent} from "../admin-hierarchy-ceiling/update/admin-ceiling-dissemination.component";
+import {InitiateProjectionComponent} from "./initiate-projection/initiate-projection.component";
+import {AdminHierarchyLevel} from "../../setup/admin-hierarchy-level/admin-hierarchy-level.model";
+import {AdminHierarchyLevelService} from "../../setup/admin-hierarchy-level/admin-hierarchy-level.service";
+import {ProjectionAllocationComponent} from "../../shared/projection-allocation/projection-allocation.component";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: "app-projection",
   templateUrl: "./projection.component.html",
+  styleUrls: ['./projection.component.scss']
 })
 export class ProjectionComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
@@ -50,84 +61,6 @@ export class ProjectionComponent implements OnInit {
   gfsCodes?: GfsCode[] = [];
   fundSources?: FundSource[] = [];
 
-  cols = [
-    {
-      field: "gfs_code_id",
-      header: "Gfs Code ",
-      sort: true,
-    },
-    {
-      field: "active",
-      header: "Active",
-      sort: false,
-    },
-    {
-      field: "deleted",
-      header: "Deleted",
-      sort: false,
-    },
-    {
-      field: "q1_amount",
-      header: "Q 1 Amount",
-      sort: false,
-    },
-    {
-      field: "q2_amount",
-      header: "Q 2 Amount",
-      sort: false,
-    },
-    {
-      field: "q3_amount",
-      header: "Q 3 Amount",
-      sort: false,
-    },
-    {
-      field: "q4_amount",
-      header: "Q 4 Amount",
-      sort: false,
-    },
-    {
-      field: "amount",
-      header: "Amount",
-      sort: false,
-    },
-    {
-      field: "forwad_year1_amount",
-      header: "Forwad Year 1 Amount",
-      sort: false,
-    },
-    {
-      field: "forwad_year2_amount",
-      header: "Forwad Year 2 Amount",
-      sort: false,
-    },
-    {
-      field: "chart_of_account",
-      header: "Chart Of Account",
-      sort: true,
-    },
-    {
-      field: "export_to",
-      header: "Export To",
-      sort: true,
-    },
-    {
-      field: "is_sent",
-      header: "Is Sent",
-      sort: false,
-    },
-    {
-      field: "delivered",
-      header: "Delivered",
-      sort: false,
-    },
-    {
-      field: "deleted",
-      header: "Deleted",
-      sort: false,
-    },
-  ]; //Table display columns
-
   isLoading = false;
   page?: number = 1;
   per_page!: number;
@@ -138,10 +71,17 @@ export class ProjectionComponent implements OnInit {
   search: any = {}; // items search objects
   currentUser!: User;
   //Mandatory filter
-  projection_type_id!: number;
+  facility_id!:number;
+  facility_type_id!: number;
   admin_hierarchy_id!: number;
   financial_year_id!: number;
   fund_source_id!: number;
+  facilityTypes: FacilityType[] = [];
+  facilities: Facility[] =[];
+  admin_hierarchy_level_id!: number;
+  section_id!:number;
+  clonedProjection: { [s: string]: Projection; } = {};
+  totalProjectionAmount: number = 0.00;
 
   constructor(
     protected projectionService: ProjectionService,
@@ -155,10 +95,14 @@ export class ProjectionComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected userService: UserService
+    protected userService: UserService,
+    protected facilityTypeService: FacilityTypeService,
+    protected facilityService: FacilityService,
+    protected adminLevelHierarchyService: AdminHierarchyLevelService
   ) {
     this.currentUser = userService.getCurrentUser();
     this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
+    this.section_id = this.currentUser?.section_id!;
   }
 
   ngOnInit(): void {
@@ -187,7 +131,6 @@ export class ProjectionComponent implements OnInit {
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
-      !this.projection_type_id ||
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
       !this.fund_source_id
@@ -202,10 +145,10 @@ export class ProjectionComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        projection_type_id: this.projection_type_id,
         admin_hierarchy_id: this.admin_hierarchy_id,
         financial_year_id: this.financial_year_id,
         fund_source_id: this.fund_source_id,
+        facility_id:this.facility_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -320,7 +263,6 @@ export class ProjectionComponent implements OnInit {
   createOrUpdate(projection?: Projection): void {
     const data: Projection = projection ?? {
       ...new Projection(),
-      projection_type_id: this.projection_type_id,
       admin_hierarchy_id: this.admin_hierarchy_id,
       financial_year_id: this.financial_year_id,
       fund_source_id: this.fund_source_id,
@@ -393,10 +335,174 @@ export class ProjectionComponent implements OnInit {
    */
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
+    this.adminLevelHierarchyService
+      .query({columns: ['id', 'name'],position:event.admin_hierarchy_position})
+      .subscribe(
+        (resp: CustomResponse<AdminHierarchyLevel[]>) =>{
+          this.admin_hierarchy_level_id = (resp.data??[])[0].id!;
+          this.facilityTypeService
+            .query({columns: ['id', 'name', 'code'],admin_hierarchy_level_id:this.admin_hierarchy_level_id})
+            .subscribe(
+              (resp: CustomResponse<FacilityType[]>) =>{
+                this.facilityTypes = resp.data??[];
+              }
+            );
+        }
+      );
     this.loadPage();
   }
 
   initiateProjection(): void{
+    const ref = this.dialogService.open(InitiateProjectionComponent, {
+      header: 'Initiate Projections',
+      width: '60%',
+      styleClass:'planrep-dialogy',
+      data:{
+        facility_id:this.facility_id,
+        fund_source_id: this.fund_source_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        financial_year_id: this.financial_year_id,
+        projection:this.projections
+      }
+    });
+    ref.onClose.subscribe((result) => {
+      if(result){
+        this.loadPage();
+      }
+    });
+  }
+  loadFacilities(){
+    this.facilityService
+      .query({columns: ['id', 'name', 'code'],facility_type_id:this.facility_type_id,admin_hierarchy_id:this.admin_hierarchy_id})
+      .subscribe(
+        (resp: CustomResponse<Facility[]>) =>{
+          this.facilities = resp.data??[];
+        }
+      );
+  }
 
+  onRowEditInit(projection: Projection) {
+    this.clonedProjection[projection.id!] = {...projection};
+  }
+
+  onRowEditSave(projection: Projection ,index: number) {
+    let valid = this.projectionValidity(projection);
+    if(valid.success){
+      this.subscribeToSaveResponse(this.projectionService.update(projection));
+    }else{
+      this.toastService.warn(valid.massage);
+      this.projections![index] = this.clonedProjection[projection.id!];
+    }
+  }
+
+  onRowEditCancel(projection: Projection, index: number) {
+    this.projections![index] = this.clonedProjection[projection.id!];
+    delete this.clonedProjection[projection.id!];
+  }
+
+  allocateProjection() : void{
+    this.totalProjectionAmount = this.getTotalAllocated(this.projections);
+    if(this.totalProjectionAmount > 0){
+      const ref = this.dialogService.open(ProjectionAllocationComponent, {
+        header: 'Allocate Ceiling',
+        width: '60%',
+        data:{
+          fund_source_id:this.fund_source_id,
+          financial_year_id:this.financial_year_id,
+          admin_hierarchy_id:this.admin_hierarchy_id,
+          budget_type:'CURRENT',
+          section_id:this.section_id,
+          facility_id:this.facility_id
+        }
+      });
+      ref.onClose.subscribe((result) => {});
+    }else{
+      this.toastService.warn('Projection Amount Should Be Greater Than 0');
+    }
+  }
+
+  getTotalAllocated(data:any){
+    return data.reduce((total: any, ceiling: any) => (Number(total) + Number(ceiling!.amount)), 0)
+  }
+
+  /**
+   * Return form values as object of type Projection
+   * @returns Projection
+   */
+  protected createFromForm(projection: Projection): Projection {
+    let totalAmount = projection.q1_amount! + projection.q2_amount! + projection.q4_amount! + projection.q3_amount!;
+    return {
+      ...new Projection(),
+      id: projection.id,
+      admin_hierarchy_id: projection.admin_hierarchy_id,
+      financial_year_id: projection.financial_year_id,
+      gfs_code_id: projection.gfs_code_id,
+      fund_source_id: projection.fund_source_id,
+      facility_id:projection.facility_id,
+      q1_amount: projection.q1_amount,
+      q2_amount: projection.q2_amount,
+      q3_amount: projection.q3_amount,
+      q4_amount: projection.q4_amount,
+      amount: totalAmount,
+      forwad_year1_amount: projection.forwad_year1_amount,
+      forwad_year2_amount: projection.forwad_year2_amount,
+    };
+  }
+
+  projectionValidity(projection: Projection){
+    let existProjection = this.clonedProjection[projection.id!];
+    if(
+      projection.q1_amount === existProjection.q1_amount &&
+      projection.q2_amount === existProjection.q2_amount &&
+      projection.q3_amount === existProjection.q3_amount &&
+      projection.q4_amount === existProjection.q4_amount &&
+      projection.forwad_year1_amount === existProjection.forwad_year1_amount &&
+      projection.forwad_year2_amount === existProjection.forwad_year2_amount
+    ){
+      return {success:false,massage:'No any Change On projection'}
+    }else if(
+      projection.forwad_year1_amount === 0 ||
+      projection.forwad_year2_amount === 0
+    ){
+      return {success:false,massage:'Forward Projection Is Important'}
+    }
+    return {success:true,massage:'Every Thing Is ok'}
+  }
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<Projection>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
+  }
+
+  calculateTotal(q:string) {
+    let total = 0;
+    let p = q + '_amount';
+    for(let proj of this.projections!) {
+      // @ts-ignore
+      total += proj.p;
+    }
+    return total;
   }
 }

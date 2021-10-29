@@ -19,6 +19,7 @@ export class AdminHierarchyCeiling {
     public amount?: number,
     public deleted?: boolean,
     public is_facility?:any,
+    public facility_id?:any,
     public allocatedAmount?:any,
   ) {}
 }

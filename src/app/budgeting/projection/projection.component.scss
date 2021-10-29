@@ -1,0 +1,22 @@
+.projection::ng-deep {
+  background-color: red !important;
+  th{
+    background-color: #F3F3F3  !important;
+    //min-width: 200px !important;
+    //border: none !important;
+  }
+  td{
+    //border: none !important;
+    //min-width: 200px !important;
+    text-align: end;
+    background-color: transparent !important;
+    input{
+      text-align: end !important;
+      float: right !important;
+    }
+    .end{
+      text-align: end !important;
+      width: 100% !important;
+    }
+  }
+}

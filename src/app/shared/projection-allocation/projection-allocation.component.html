@@ -4,13 +4,13 @@
     <p-table
       #fc
       class="ceiling"
-      [value]="ceiling!"
+      [value]="ceilingMapped!"
       [scrollable]="true"
-      scrollHeight="35vh"
       dataKey="id"
     >
       <ng-template pTemplate="caption">
         <span><b>Own Sources</b></span>
+        <span>{{totalAllocatedAmount}}</span>
         <br>
         <div fxLayout="column" fxLayoutGap="10px">
           <div fxLayout="row wrap" fxLayoutGap="10px">
@@ -31,12 +31,19 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex">
         <tr>
-          <td>{{rowData?.ceiling.budget_class.name}}</td>
-          <td style="text-align: end">{{rowData?.amount}}</td>
-          <td style="text-align: end">{{rowData?.amount}}</td>
+          <td>{{rowData?.budget_class.name}}</td>
+          <td style="text-align: end">
+            <p-inputNumber [(ngModel)]="rowData.amount" prefix=" TSH"></p-inputNumber>
+          </td>
+          <td style="text-align: end">
+            <p-inputNumber [(ngModel)]="rowData.percent" suffix=" %"></p-inputNumber>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No Ceiling Found </ng-template>
     </p-table>
   </div>
+</div>
+<div class="p-dialog-footer" style="bottom: 0">
+  <p-button (click)="saveAllocation()"  label="Save & Close" icon="pi pi-save"></p-button>
 </div>

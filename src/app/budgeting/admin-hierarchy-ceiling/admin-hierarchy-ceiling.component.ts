@@ -628,7 +628,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         section_id:rowData.section_id,
         financial_year_id:rowData.financial_year_id,
         admin_hierarchy_id:rowData.admin_hierarchy_id,
-        budget_type:rowData.budget_type
+        budget_type:rowData.budget_type,
+        facility_id:rowData.facility_id
       }
     });
     ref.onClose.subscribe((result) => {});

@@ -74,4 +74,8 @@ export class SectionService {
   departmentAndCostCentreTree(): Observable<CustomResponse<any>> {
     return this.http.get<CustomResponse<any>>(`${this.resourceUrl}/departmentAndCostCentreTree`);
   }
+
+  peCostCenters():Observable<CustomResponse<Section[]>> {
+    return this.http.get<CustomResponse<Section[]>>( `${this.resourceUrl}/pe-cost-centers`);
+  }
 }

@@ -145,9 +145,11 @@ export class PeItemComponent implements OnInit {
         (resp: CustomResponse<PeSubForm[]>) => (this.peSubForms = resp.data)
       );
 
-    this.sectionService.departmentCostCenter().subscribe((resp) => {
-      this.sections = resp.data;
-    });
+    this.sectionService.peCostCenters().subscribe(
+      (resp: CustomResponse<Section[]>) => {
+        this.sections = resp.data
+      }
+    )
 
     if (this.admin_hierarchy_id) {
       this.facilityService
@@ -397,9 +399,9 @@ export class PeItemComponent implements OnInit {
     }
   }
 
-  fetchBudgetAmount(){
+  fetchBudgetAmount() {
     this.activityInputService.query({
-      columns: ['id', 'unit_price','quantity','frequency'],
+      columns: ['id', 'unit_price', 'quantity', 'frequency'],
       admin_hierarchy_id: this.admin_hierarchy_id,
       facility_id: this.facilities[0]?.id,
       financial_year_id: this.financial_year_id,
@@ -407,7 +409,7 @@ export class PeItemComponent implements OnInit {
       budget_class_id: this.budget_class_id,
       fund_source_id: this.fund_source_id,
       per_page: 1000
-    }).subscribe((resp)=>{
+    }).subscribe((resp) => {
       let amount = 0;
       if (resp.data?.length) {
         resp.data?.forEach((d: any) => {

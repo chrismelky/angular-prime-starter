@@ -15,7 +15,7 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div fxLayout="column" fxLayoutGap="10px" fxFlex>
+          <div fxLayout="column" fxLayoutGap="25px" fxFlex>
             <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
@@ -41,7 +41,7 @@
               </div>
             </div>
 
-            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
               <span class="p-float-label">
                 <p-dropdown
@@ -82,26 +82,15 @@
                   optionLabel="name"
                   optionGroupLabel="name"
                   appendTo="body"
-                  optionGroupChildren="children"
                   [options]="sections!"
-                  [group]="true"
                   (onChange)="filterChanged()"
                   [autoDisplayFirst]=false
                   [filter]="true"
                   [(ngModel)]="section_id"
                 >
-                  <ng-template let-group pTemplate="group">
-                      <div class="p-d-flex p-ai-center">
-                        <i class="pi pi-folder-open">&nbsp;</i>
+                  <ng-template let-group pTemplate="sections">
                           <span>[ {{group.code}} ] - {{group.name}}</span>
-                      </div>
                   </ng-template>
-
-                  <ng-template let-costCenter pTemplate="item">
-                    <div class="country-item">
-                        <div>[ {{costCenter.code}} ] - {{costCenter.name}}</div>
-                    </div>
-                </ng-template>
                 </p-dropdown>
                 <label for="section_id">Planning Unit </label>
               </span>

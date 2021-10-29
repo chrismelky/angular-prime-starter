@@ -259,28 +259,24 @@
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
-                <button
-                  pButton
-                  pRipple
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
+                <div *ngIf="rowData?.unit !=='Annually'">
+                  <button
+                    pButton
+                    pRipple
+                    pTooltip="Edit"
+                    tooltipPosition="bottom"
+                    class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                    icon="pi pi-pencil"
+                    (click)="createOrUpdate(rowData)"
+                  ></button>
+                </div>
                 <button
                   pButton
                   pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-trash
-              "
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  icon="pi pi-trash"
                   (click)="delete(rowData)"
                 ></button>
               </div>

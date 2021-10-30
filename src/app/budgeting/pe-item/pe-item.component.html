@@ -15,8 +15,8 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div fxLayout="column" fxLayoutGap="25px" fxFlex>
-            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <div fxLayout="column" fxLayoutGap="15px" fxFlex>
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <p-dropdown
@@ -39,9 +39,6 @@
                   <label for="pe_sub_form_id">Personal Emolument Sub Form </label>
                 </span>
               </div>
-            </div>
-
-            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
               <span class="p-float-label">
                 <p-dropdown
@@ -58,6 +55,9 @@
                 <label for="budget_class_id">Budget Class </label>
               </span>
               </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
               <span class="p-float-label">
                 <p-dropdown
@@ -105,8 +105,9 @@
 
   <p-toolbar>
     <div class="p-toolbar-group-left">
-      <span class="card-header-text">Personal Emolument Budget <i
-        class="pi {{is_current_budget_locked?' pi-lock':' pi-lock-open'}}"></i><br/></span>
+      <span class="card-header-text">
+        Personal Emolument Budget
+        <i class="pi {{is_current_budget_locked?' pi-lock':' pi-lock-open'}}"></i><br/></span>
     </div>
 
     <div class="p-toolbar-goup">
@@ -128,7 +129,8 @@
         <tr class="p-datatable-header	">
           <th rowspan="2">#</th>
           <th *ngFor="let parent of peTableFields?.parentDefinitions" [attr.colspan]="parent.cols_span"
-              [attr.rowspan]="parent.row_span">{{parent.field_name}}</th>
+              [attr.rowspan]="parent.row_span">{{parent.field_name}}
+          </th>
         </tr>
         <tr class="p-datatable-header	">
           <th *ngFor="let child of peTableFields?.childrenDefinitions">{{child.field_name}}</th>
@@ -136,17 +138,19 @@
 
         <tr *ngFor="let i of round">
           <td title="{{i.uid}}">
-            <p-radioButton *ngIf="round.length > 1" name="city" value="{{i.uid}}" [(ngModel)]="city" inputId="{{i.uid}}"
-                           (onClick)="selectedRows($event,i.uid,i.id)"></p-radioButton>
+            <p-radioButton *ngIf="round.length > 1"
+             name="selectedRow" value="{{i.uid}}"
+             [(ngModel)]="city" inputId="{{i.uid}}"
+             (onClick)="selectedRows($event,i.uid,i.id)"
+            ></p-radioButton>
             {{i.id + 1}}
           </td>
 
           <td *ngFor="let input of inputTexts[i.id]">
             <div *ngIf="input.select_option === null">
-
               <div *ngIf="input?.output_type === 'CURRENCY'; else notCurrencyBlock">
                 <p-inputNumber
-                  [size]="10"
+                  [size]="14"
                   [disabled]="!!input.formula || is_current_budget_locked"
                   [(ngModel)]="peValuesArray[i.uid!][input.id].value"
                   (onBlur)="updateValue(peValuesArray[i.uid!][input.id])"
@@ -228,7 +232,7 @@
               [(ngModel)]="verticalTotal[total.id!]"
             /-->
             <p-inputNumber
-              [size]="10"
+              [size]="14"
               [(ngModel)]="verticalTotal[total.id!]"
               inputId="{{total.id}}"
               [disabled]=true

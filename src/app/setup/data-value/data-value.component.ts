@@ -332,6 +332,7 @@ export class DataValueComponent implements OnInit {
     this.dataValuesArray[dataValue.data_element_id][
       dataValue.category_option_combination_id
     ].hasError = false;
+    this.toastService.info('Value saved');
   }
 
   protected onError(dataValue: any): void {
@@ -342,6 +343,7 @@ export class DataValueComponent implements OnInit {
     this.dataValuesArray[dataValue.data_element_id][
       dataValue.category_option_combination_id
     ].hasError = true;
+    this.toastService.error('Error value not saved');
   }
 
   fileUploader($event: any, dataValue: DataValue): void {

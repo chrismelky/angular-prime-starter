@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomResponse } from 'coverage/planrep-frontend/src/app/utils/custom-response';
 import { AdminHierarchy } from '../setup/admin-hierarchy/admin-hierarchy.model';
 import { FinancialYear } from '../setup/financial-year/financial-year.model';
 import { FinancialYearService } from '../setup/financial-year/financial-year.service';

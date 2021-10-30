@@ -1,4 +1,44 @@
 <div class="dialog-content">
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+    <div class="p-field p-col-12 p-md-4" fxFlex>
+
+      <span class="p-float-label">
+          <p-dropdown
+            id="columnType"
+            optionValue="value"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="columnTypes!"
+            [(ngModel)]="ColumnType"
+            (onChange)="columnTypeChanged($event.value)"
+            [style]="{'color':'red'}"          ></p-dropdown>
+          <label for="unit">Column Type </label>
+        </span>
+
+      <!--p-radioButton
+        name="columnType"
+        value="CUSTOM"
+        (onClick)="columnTypeChanged('CUSTOM')"
+        inputId="custom"
+        [(ngModel)]="ColumnType"
+        label="Custom Column"
+      ></p-radioButton>
+    </div>
+    <div class="p-field p-col-12 p-md-4" fxFlex>
+      <p-radioButton
+        name="columnType"
+        value="FY"
+        (onClick)="columnTypeChanged('FY')"
+        inputId="fy"
+        [(ngModel)]="ColumnType"
+        label="Financial Year Column"
+      ></p-radioButton-->
+    </div>
+  </div>
+  <br/>
   <form
     name="editForm"
     role="form"
@@ -8,7 +48,6 @@
     autocomplete="off"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
-
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
@@ -62,7 +101,7 @@
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
 
         <div class="p-field p-col-12 p-md-4" fxFlex>
-          <span class="p-float-label" >
+          <span class="p-float-label">
           <p-inputNumber
             id="sort_order"
             formControlName="sort_order"
@@ -157,7 +196,7 @@
               editForm.get('type')!.touched ||
                 formError)
             "
-            >
+          >
             <small class="p-error" *ngIf="editForm.get('type')?.errors?.required"
             >Input type is required.</small
             >
@@ -212,13 +251,11 @@
             *ngIf="
             editForm.get('output_type')!.invalid &&
             (editForm.get('output_type')!.dirty ||
-              editForm.get('output_type')!.touched ||
-                formError)
-            "
+            editForm.get('output_type')!.touched ||
+            formError)"
           >
-            <small class="p-error" *ngIf="editForm.get('output_type')?.errors?.required"
-            >Out put type is required.</small
-            >
+            <small class="p-error"
+                   *ngIf="editForm.get('output_type')?.errors?.required">Out put type is required.</small>
           </span>
         </div>
       </div>
@@ -246,8 +283,7 @@
             editForm.get('parent_id')!.invalid &&
             (editForm.get('parent_id')!.dirty ||
               editForm.get('parent_id')!.touched ||
-              formError)
-          "
+              formError)"
           >
         </span>
         </div>
@@ -276,8 +312,7 @@
             editForm.get('gfs_code_id')!.invalid &&
             (editForm.get('gfs_code_id')!.dirty ||
               editForm.get('gfs_code_id')!.touched ||
-              formError)
-          "
+              formError)"
           >
         </span>
         </div>
@@ -301,14 +336,11 @@
             editForm.get('pe_form_id')!.invalid &&
             (editForm.get('pe_form_id')!.dirty ||
               editForm.get('pe_form_id')!.touched ||
-              formError)
-          "
+              formError)"
           >
           <small
             class="p-error"
-            *ngIf="editForm.get('pe_form_id')?.errors?.required"
-          >Pe Form is required.</small
-          >
+            *ngIf="editForm.get('pe_form_id')?.errors?.required">Pe Form is required.</small>
         </span>
         </div>
       </div>
@@ -329,8 +361,6 @@
           <label for="is_active"> Is Active </label>
         </div>
 
-
-
         <!--div class="p-field p-col-12 p-md-4" fxFlex>
          <p-inputSwitch
            id="has_breakdown"
@@ -349,19 +379,28 @@
           <label for="is_vertical">Vertical total </label>
         </div-->
       </div>
-
-        <div fxLayout="row" fxLayoutGap="0.75rem">
-          <span fxFlex></span>
-          <button
-            class="p-button-raised"
-            icon="pi pi-check"
-            label="Save"
-            pButton
-            pRipple
-            type="submit"
-          ></button>
-        </div>
-
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          *ngIf="isNotFinancialYear"
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          pRipple
+          type="submit"
+        ></button>
+        <button
+          *ngIf="!isNotFinancialYear"
+          class="p-button-raised"
+          icon="pi pi-calendar-plus"
+          label="initialize FY Colums"
+          pButton
+          pRipple
+          (click)="initializeFinancialYear()"
+          type="button"
+        ></button>
+      </div>
     </div>
   </form>
 </div>

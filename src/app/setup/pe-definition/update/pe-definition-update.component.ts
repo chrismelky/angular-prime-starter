@@ -43,6 +43,10 @@ export class PeDefinitionUpdateComponent implements OnInit {
   pe_selected_definition_id:number = 0
   is_input_status:boolean = false;
   select_option_status:boolean = false;
+  ColumnType?: string = 'CUSTOM';
+  columnTypes = [{'value':'CUSTOM','name':'Custom Column'},{'value':'FY','name':'Financial Year Column'}];
+  isNotFinancialYear:boolean = true;
+
   /**
    * Declare form
    */
@@ -122,7 +126,7 @@ export class PeDefinitionUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const peDefinition = this.createFromForm();
-    if (peDefinition.id !== undefined) {
+    if (peDefinition.id !== undefined && peDefinition.id !== null) {
       this.subscribeToSaveResponse(
         this.peDefinitionService.update(peDefinition)
       );
@@ -152,6 +156,49 @@ export class PeDefinitionUpdateComponent implements OnInit {
       this.editForm.get('is_input')?.disable()
       this.editForm.get('gfs_code_id')?.disable()
       this.editForm.get('select_option')?.disable()
+    }
+  }
+
+  /** handle if column Type changes  */
+  columnTypeChanged(event:any){
+    if(event === 'CUSTOM'){
+      this.editForm.enable()
+      this.isNotFinancialYear = true;
+      this.inputTypeChanged(null);
+    } else if(event === 'FY'){
+      this.isNotFinancialYear = false;
+      this.disableInputsAndReset();
+    }
+  }
+
+  /** disable some input and clear content if financialYear column selected */
+  disableInputsAndReset(){
+    const inputs = Object.keys(this.editForm.value);
+    inputs.forEach(field => {
+      if(
+        field !== 'parent_id'
+        && field !== 'pe_form_id'
+        && field !== 'type'
+        && field !== 'select_option'
+        && field !== 'output_type') {
+        this.editForm.get(field)?.disable()
+        this.editForm.get(field)?.reset()
+      }
+    })
+  }
+
+  /** Financial Year columns (Current & 2 Forwards) is initialized on selected PE Form */
+  initializeFinancialYear(): void {
+    const form = this.editForm.value;
+    if(form.parent_id !== undefined && form.parent_id !== null){
+      form.columnType = "FY";
+      form.field_name = "FY";
+      form.unit = "FY";
+      this.subscribeToSaveResponse(
+        this.peDefinitionService.create(form)
+      );
+    } else {
+      this.toastService.error('Please select PE Parent Column')
     }
   }
 

@@ -85,4 +85,8 @@ export class SectionService {
       `${this.resourceUrl}/update_view`
     );
   }
+
+  peCostCenters():Observable<CustomResponse<Section[]>> {
+    return this.http.get<CustomResponse<Section[]>>( `${this.resourceUrl}/pe-cost-centers`);
+  }
 }

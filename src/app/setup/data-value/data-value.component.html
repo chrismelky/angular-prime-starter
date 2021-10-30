@@ -128,7 +128,7 @@
         *ngFor="let catComb of categoryCombinations"
       >
         <!-- <p-divider *ngIf="catComb.name !== 'None'"> -->
-        <span *ngIf="catComb.name !== 'None'">By {{ catComb.name }}</span>
+        <span *ngIf="catComb.name !== 'None'">{{ catComb.name }}</span>
         <!-- </p-divider> -->
         <table
           cellspacing="0"

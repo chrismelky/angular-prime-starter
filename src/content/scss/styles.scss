@@ -366,7 +366,7 @@ p-card.filter-no-adv {
 }
 
 .p-dropdown, .p-multiselect, .p-inputnumber, .p-calendar, .p-password, .p-treeselect {
-  min-width: 100px;
+  // min-width: 100px;
   width: 100%;
 }
 .period .p-inputnumber {
@@ -477,6 +477,12 @@ i.clear {
       line-height: 12px;
     }
   }
+}
+
+
+.breakdown.p-datatable .p-datatable-thead > tr > th:first-of-type, .breakdown.p-datatable .p-datatable-tbody > tr > td{
+    height: 36px !important;
+    padding: 4px !important;
 }
 
 .p-tooltip {
@@ -659,6 +665,6 @@ p-divider.title .p-divider.p-divider-horizontal {
 }
 
 .p-inputtext {
-  max-width: 900px;
+  // max-width: 900px;
   white-space: normal;
 }

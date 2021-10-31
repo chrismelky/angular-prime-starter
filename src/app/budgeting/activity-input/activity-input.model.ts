@@ -11,6 +11,7 @@ export class ActivityInput {
     public period_three?: number,
     public period_four?: number,
     public has_breakdown: boolean = false,
+    public is_inkind: boolean = false,
     public breakdowns?: string,
     public forward_year_one_amount?: string,
     public forward_year_two_amount?: string,

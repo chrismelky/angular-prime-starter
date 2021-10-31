@@ -257,6 +257,7 @@ export class DataValueComponent implements OnInit {
           co.category_option_combinations?.forEach((coc) => {
             coc.value_type = coc.value_type || de.value_type;
             coc.option_set_id = coc.option_set_id || de.option_set_id;
+            coc.option_set = coc.option_set || de.option_set;
 
             const existing = this.dataValues?.find((dv) => {
               return (
@@ -278,27 +279,6 @@ export class DataValueComponent implements OnInit {
         }
       });
     });
-  }
-
-  prepareHeaders(catCombo: CategoryCombination): any[] {
-    const tableHeaders: any[] = [];
-    catCombo.categories?.forEach((c) => {
-      const option = c.category_options?.map((o1) => o1);
-      let tr: any[] = [];
-      catCombo.category_option_combinations?.forEach((coc) => {
-        const optionIds2 = coc.category_options?.map((o2) => o2.id);
-        const column = option?.find((x) => optionIds2?.indexOf(x.id));
-        let existColumn = tr.find((y: any) => y?.idscolumn?.id);
-        if (existColumn) {
-          existColumn.colspan++;
-        } else {
-          tr.push({ id: column?.id, colspan: 1, name: column?.name });
-        }
-      });
-      tableHeaders.push(tr);
-    });
-    console.log(tableHeaders);
-    return tableHeaders;
   }
 
   saveValue(event: any, dataValue: any): void {
@@ -352,6 +332,7 @@ export class DataValueComponent implements OnInit {
     this.dataValuesArray[dataValue.data_element_id][
       dataValue.category_option_combination_id
     ].hasError = false;
+    this.toastService.info('Value saved');
   }
 
   protected onError(dataValue: any): void {
@@ -362,6 +343,7 @@ export class DataValueComponent implements OnInit {
     this.dataValuesArray[dataValue.data_element_id][
       dataValue.category_option_combination_id
     ].hasError = true;
+    this.toastService.error('Error value not saved');
   }
 
   fileUploader($event: any, dataValue: DataValue): void {

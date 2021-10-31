@@ -92,7 +92,9 @@ export class PeItemComponent implements OnInit {
   cellingAmount: any = 0;
   budgetedAmount: any = 0;
   balanceAmount: any = 0;
+  defaultValue: any = null;
   city?: string;
+
 
   //Mandatory filter
   admin_hierarchy_id!: number;
@@ -354,7 +356,7 @@ export class PeItemComponent implements OnInit {
           );
         });
         this.peValuesArray[fetched.row_uid!][fetched.pe_definition_id!].value =
-          fetched?.field_value ? fetched?.field_value : '';
+          fetched?.field_value ? fetched?.field_value : 0;
 
         /** Assign data Value used as to hold value for backEnd uses by using Index */
         const index = this.peDataValues?.findIndex((pedv: any) => {
@@ -362,9 +364,7 @@ export class PeItemComponent implements OnInit {
             pedv.uid === fetched.row_uid && pedv.id === fetched.pe_definition_id
           );
         });
-        this.peDataValues[index].value = fetched.field_value
-          ? fetched.field_value
-          : '';
+        this.peDataValues[index].value = fetched.field_value ? fetched.field_value : 0;
 
         /** if row number is greater than one */
         // if (this.round.length > 1) {
@@ -691,7 +691,7 @@ export class PeItemComponent implements OnInit {
   }
 
   updateValue(data: any) {
-    if (data?.value !== undefined) {
+    if (data?.value !== undefined && data?.value >= 0) {
       const objectIndex = this.peDataValues?.findIndex((pdv: any) => {
         return pdv.uid === data.uid && pdv.id === data.id;
       });
@@ -704,12 +704,11 @@ export class PeItemComponent implements OnInit {
       if (this.round.length > 1) {
         this.getVerticalTotal(data); // per last row
       }
+      /** For accuracy, Re update function call, to make sure if any skipped value is there
+       *But this functions has not importance
+       * */
+      this.reUpdateValue(data);
     }
-
-    /** For accuracy, Re update function call, to make sure if any skipped value is there
-     *But this functions has not importance
-     * */
-    this.reUpdateValue(data);
   }
 
   reUpdateValue(data: any) {

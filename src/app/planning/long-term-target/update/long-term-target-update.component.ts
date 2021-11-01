@@ -290,6 +290,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
       objective_id: longTermTarget.objective_id,
       code: longTermTarget.code,
       section_id: longTermTarget.section_id,
+      generic_target_id: longTermTarget.generic_target_id,
     });
   }
 
@@ -306,6 +307,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
       objective_id: this.editForm.get(['objective_id'])!.value,
       code: this.editForm.get(['code'])!.value,
       section_id: this.editForm.get(['section_id'])!.value,
+      generic_target_id: this.editForm.get(['generic_target_id'])!.value,
       references: this.editForm
         .get(['references'])!
         .value.map((ref: any) => {

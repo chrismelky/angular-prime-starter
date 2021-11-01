@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -54,12 +54,15 @@ import { ProjectType } from 'src/app/setup/project-type/project-type.model';
 import { ExpenditureCategory } from 'src/app/setup/expenditure-category/expenditure-category.model';
 import { ExpenditureCategoryService } from 'src/app/setup/expenditure-category/expenditure-category.service';
 import { ResponsiblePersonUpdateComponent } from '../../responsible-person/update/responsible-person-update.component';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-activity-update',
   templateUrl: './activity-update.component.html',
 })
 export class ActivityUpdateComponent implements OnInit {
+  @ViewChild('genericActivityPanel') genericTargetPanel!: OverlayPanel;
+
   budgetIsLocked? = false;
 
   isSaving = false;
@@ -104,6 +107,11 @@ export class ActivityUpdateComponent implements OnInit {
   expenditureCategories?: ExpenditureCategory[] = [];
   projectOutputs?: ProjectOutput[] = [];
   projectTypeRequired = false;
+  genericActivity?: any;
+  genericActivities: any[] = [];
+  paramValues: any = {};
+  params: any[] = [];
+  paramsError = false;
 
   /**
    * Declare form
@@ -296,6 +304,41 @@ export class ActivityUpdateComponent implements OnInit {
           this.loadInterventionAndSectorProblem(selectedPriorityAreaId);
         }
       });
+  }
+
+  prepareParams(): void {
+    if (this.genericActivity && this.genericActivity.params) {
+      this.params = this.genericActivity.params.split(',');
+    }
+  }
+
+  createFromGeneric(): void {
+    // Validate params
+    this.paramsError = false;
+    if (!this.genericActivity) {
+      this.paramsError = true;
+    }
+    this.params.forEach((p) => {
+      if (!this.paramValues[p]) {
+        this.paramsError = true;
+      }
+    });
+    if (this.paramsError) {
+      return;
+    }
+
+    let description = this.genericActivity?.description;
+    this.params.forEach((p) => {
+      description = description?.replace(p, this.paramValues[p]);
+    });
+
+    /** Patch values */
+    this.generalForm.patchValue({
+      description,
+      generic_activity_id: this.genericActivity?.id,
+    });
+
+    this.genericTargetPanel?.hide();
   }
 
   /**

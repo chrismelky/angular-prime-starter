@@ -1,11 +1,13 @@
 <div class="dialog-content">
   <div fxLayout="column" fxLayoutGap="20px">
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-      <p-button
-        icon="pi pi-plus"
+      <button
+        pButton
+        class="p-button-sm p-button-outlined"
+        icon="pi pi-clone"
         label="Generic Target"
         (click)="genericTargetPanel.toggle($event)"
-      ></p-button>
+      ></button>
     </div>
     <form
       name="editForm"

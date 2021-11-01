@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -23,14 +23,20 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { ReferenceTypeService } from 'src/app/setup/reference-type/reference-type.service';
 import { ReferenceType } from 'src/app/setup/reference-type/reference-type.model';
 import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
+import { GenericTarget } from 'src/app/setup/generic-target/generic-target.model';
+import { GenericTargetService } from 'src/app/setup/generic-target/generic-target.service';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-long-term-target-update',
   templateUrl: './long-term-target-update.component.html',
 })
 export class LongTermTargetUpdateComponent implements OnInit {
+  @ViewChild('genericTargetPanel') genericTargetPanel!: OverlayPanel;
+
   isSaving = false;
   formError = false;
+  paramsError = false;
   errors = [];
 
   objectives?: Objective[] = [];
@@ -38,6 +44,12 @@ export class LongTermTargetUpdateComponent implements OnInit {
   referenceTypes?: ReferenceType[] = [];
   referenceLoading = false;
   target?: LongTermTarget;
+  genericTarget?: GenericTarget;
+  genericTargetSectionId?: number;
+  genericTargets?: GenericTarget[] = [];
+
+  paramValues: any = {};
+  params: any[] = [];
 
   /**
    * Declare form
@@ -47,6 +59,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
     description: [null, [Validators.required]],
     strategic_plan_id: [null, [Validators.required]],
     objective_id: [null, [Validators.required]],
+    generic_target_id: [null, []],
     code: [null, []],
     section_id: [null, [Validators.required]],
     references: this.fb.array([]),
@@ -61,7 +74,8 @@ export class LongTermTargetUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected referenceTypeService: ReferenceTypeService
+    protected referenceTypeService: ReferenceTypeService,
+    protected genericTargetService: GenericTargetService
   ) {}
 
   ngOnInit(): void {
@@ -127,6 +141,55 @@ export class LongTermTargetUpdateComponent implements OnInit {
           this.referenceLoading = false;
         }
       );
+  }
+
+  loadGenerciTargets(sectionId: number): void {
+    this.genericTargetService
+      .byObjectioveAndSection(this.target?.objective_id!, sectionId)
+      .subscribe((resp) => {
+        this.genericTargets = resp.data;
+      });
+  }
+
+  prepareParams(): void {
+    if (this.genericTarget && this.genericTarget.params) {
+      this.params = this.genericTarget.params.split(',');
+    }
+  }
+
+  createFromGeneric(): void {
+    // Validate params
+    this.paramsError = false;
+    if (!this.genericTarget) {
+      this.paramsError = true;
+    }
+    this.params.forEach((p) => {
+      if (!this.paramValues[p]) {
+        this.paramsError = true;
+      }
+    });
+    if (this.paramsError) {
+      return;
+    }
+
+    let description = this.genericTarget?.description;
+    this.params.forEach((p) => {
+      description = description?.replace(p, this.paramValues[p]);
+    });
+
+    /** Patch values */
+    this.editForm.patchValue({
+      description,
+      generic_target_id: this.genericTarget?.id,
+      section_id: this.genericTargetSectionId,
+    });
+
+    //TODO add perfomance indicators with default values
+    //TODO add refernce if exist
+
+    this.loadReferences(this.genericTargetSectionId!);
+
+    this.genericTargetPanel?.hide();
   }
 
   /**

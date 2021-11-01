@@ -152,7 +152,7 @@
                 <p-inputNumber
                   [size]="14"
                   [disabled]="!!input.formula || is_current_budget_locked"
-                  [(ngModel)]="peValuesArray[i.uid!][input.id]?.value ? peValuesArray[i.uid!][input.id]?.value : defaultValue"
+                  [(ngModel)]="peValuesArray[i.uid!][input.id].value"
                   (onBlur)="updateValue(peValuesArray[i.uid!][input.id])"
                   autocomplete="off"
                   inputId="{{ i.uid! }}-{{ input.id! }}"

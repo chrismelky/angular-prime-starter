@@ -695,7 +695,9 @@ export class PeItemComponent implements OnInit {
       const objectIndex = this.peDataValues?.findIndex((pdv: any) => {
         return pdv.uid === data.uid && pdv.id === data.id;
       });
-      console.log('');
+      console.log('v');
+      console.log(data);
+      console.log(this.round.length);
       this.peDataValues[objectIndex].value = data.value ? data.value : '';
       /** Remove select_option */
       delete this.peDataValues[objectIndex]?.select_option;

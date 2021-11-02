@@ -19,7 +19,7 @@
             <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown
+                  <p-dropdown [showClear]="true"
                     id="pe_sub_form_id"
                     optionValue="value"
                     [options]="peSubForms!"
@@ -41,7 +41,7 @@
               </div>
               <div class="p-field" fxFlex>
               <span class="p-float-label">
-                <p-dropdown
+                <p-dropdown [showClear]="true"
                   id="budget_class_id"
                   optionValue="id"
                   optionLabel="name"
@@ -60,7 +60,7 @@
             <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
               <span class="p-float-label">
-                <p-dropdown
+                <p-dropdown [showClear]="true"
                   id="fund_source_id"
                   optionValue="id"
                   optionLabel="name"
@@ -76,7 +76,7 @@
               </div>
               <div class="p-field" fxFlex>
               <span class="p-float-label">
-                <p-dropdown
+                <p-dropdown [showClear]="true"
                   id="section_id"
                   optionValue="id"
                   optionLabel="name"
@@ -198,7 +198,7 @@
               -->
             </div>
             <div *ngIf="input.select_option !== null">
-              <p-dropdown
+              <p-dropdown [showClear]="true"
                 [options]="input.select_option"
                 [showClear]="true"
                 [filter]="true"

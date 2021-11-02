@@ -35,7 +35,7 @@
 
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="objective_id"
             optionValue="id"
             optionLabel="description"
@@ -65,7 +65,7 @@
       </div>
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             #sectionId
             id="section_id"
             optionValue="id"
@@ -116,7 +116,7 @@
           <ng-container [formGroupName]="i">
             <div class="p-field" fxFlex>
               <span class="p-float-label">
-                <p-dropdown
+                <p-dropdown [showClear]="true"
                   *ngIf="!c.get('isMultiple')?.value"
                   id="section_id"
                   optionLabel="description"

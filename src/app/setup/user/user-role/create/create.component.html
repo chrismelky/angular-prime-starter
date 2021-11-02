@@ -16,7 +16,7 @@
       <div class="p-field" fxFlex *ngIf="admin_hierarchy_position !== undefined">
         <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown
+              <p-dropdown [showClear]="true"
                 id="roles"
                 optionValue="id"
                 optionLabel="name"

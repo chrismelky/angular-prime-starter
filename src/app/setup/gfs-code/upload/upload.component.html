@@ -18,7 +18,7 @@
       <div fxLayout="column" fxLayoutGap="1rem">
         <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="account_type_id"
             optionValue="id"
             optionLabel="name"
@@ -48,7 +48,7 @@
         </div>
         <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown [options]="categories!" id="category_id"
+              <p-dropdown [showClear]="true"  [options]="categories!" id="category_id"
                           formControlName="category_id" placeholder="Select Category" [group]="true">
                 <ng-template let-group pTemplate="group">
                     <div class="p-d-flex p-ai-center">

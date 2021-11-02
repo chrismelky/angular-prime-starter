@@ -3,7 +3,7 @@
     <div class="p-field p-col-12 p-md-4" fxFlex>
 
       <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="columnType"
             optionValue="value"
             optionLabel="name"
@@ -54,6 +54,7 @@
             <input
               id="field_name"
               type="text"
+              [style]="!isNotFinancialYear ? { background: '#e6e6e6' }:{ background: '#ffffff' }"
               pInputText
               formControlName="field_name"
             />
@@ -64,8 +65,7 @@
               editForm.get('field_name')!.invalid &&
               (editForm.get('field_name')!.dirty ||
                 editForm.get('field_name')!.touched ||
-                formError)
-            "
+                formError)"
           >
             <small
               class="p-error"
@@ -79,6 +79,7 @@
             <input
               id="column_number"
               type="text"
+              [style]="!isNotFinancialYear ? { background: '#e6e6e6' }:{ background: '#ffffff' }"
               pInputText
               formControlName="column_number"
             />
@@ -88,24 +89,20 @@
             *ngIf="
             editForm.get('column_number')!.invalid &&
             (editForm.get('column_number')!.dirty ||
-              editForm.get('column_number')!.touched ||
-              formError)
-          "
+              editForm.get('column_number')!.touched ||formError)"
           >
          </span>
         </div>
-
-
       </div>
 
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
           <p-inputNumber
             id="sort_order"
             formControlName="sort_order"
-            [size]=90
+            [size]="90"
+            [inputStyle]="!isNotFinancialYear ? { background: '#e6e6e6' }:{ background: '#ffffff' }"
           >
           </p-inputNumber>
           <label for="sort_order">Sort Order </label>
@@ -114,8 +111,7 @@
             *ngIf="
             editForm.get('sort_order')!.invalid &&
             (editForm.get('sort_order')!.dirty ||
-              editForm.get('sort_order')!.touched ||
-              formError)
+              editForm.get('sort_order')!.touched ||formError)
           "
           >
          </span>
@@ -126,6 +122,7 @@
           <input
             id="formula"
             type="text"
+            [style]="!isNotFinancialYear ? { background: '#e6e6e6' }:{ background: '#ffffff' }"
             pInputText
             formControlName="formula"
           />
@@ -142,10 +139,11 @@
         </div>
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="unit"
             optionValue="value"
             optionLabel="display"
+            [style]="!isNotFinancialYear ? { background: '#e6e6e6' }:{ background: '#ffffff' }"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
@@ -175,7 +173,7 @@
 
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
-            <p-dropdown
+            <p-dropdown [showClear]="true"
               id="inputType"
               optionValue="value"
               optionLabel="display"
@@ -205,7 +203,7 @@
 
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
-            <p-dropdown
+            <p-dropdown [showClear]="true"
               id="select_option"
               optionValue="id"
               optionLabel="name"
@@ -234,7 +232,7 @@
 
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
-            <p-dropdown
+            <p-dropdown [showClear]="true"
               id="output_type"
               optionValue="value"
               optionLabel="display"
@@ -264,7 +262,7 @@
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
         <div class="p-field p-col-12 p-md-4" fxFlex>
            <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="parent_id"
             optionValue="id"
             optionLabel="field_name"
@@ -289,7 +287,7 @@
         </div>
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="gfs_code_id"
             optionValue="id"
             optionLabel="name"
@@ -318,7 +316,7 @@
         </div>
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="pe_form_id"
             optionValue="id"
             optionLabel="name"

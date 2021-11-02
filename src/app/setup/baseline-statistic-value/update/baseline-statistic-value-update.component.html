@@ -9,7 +9,7 @@
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="baseline_statistic_id"
             optionValue="id"
             optionLabel="description"
@@ -57,7 +57,7 @@
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown
+            <p-dropdown [showClear]="true"
               id="admin_hierarchy_id"
               optionValue="id"
               optionLabel="name"
@@ -88,7 +88,7 @@
 
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown
+            <p-dropdown [showClear]="true"
               id="financial_year_id"
               optionValue="id"
               optionLabel="name"

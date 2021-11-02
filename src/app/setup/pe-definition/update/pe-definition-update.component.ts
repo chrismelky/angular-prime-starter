@@ -22,6 +22,7 @@ import { PeDefinitionService } from "../pe-definition.service";
 import { ToastService } from "src/app/shared/toast.service";
 import {PeSelectOption} from "../../pe-select-option/pe-select-option.model";
 import {PeSelectOptionService} from "../../pe-select-option/pe-select-option.service";
+import {style} from "@angular/animations";
 
 @Component({
   selector: "app-pe-definition-update",

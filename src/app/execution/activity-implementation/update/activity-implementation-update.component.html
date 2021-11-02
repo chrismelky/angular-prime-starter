@@ -42,7 +42,7 @@
     <div fxLayout="row" fxLayoutGap="1rem">
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-dropdown
+          <p-dropdown [showClear]="true"
             id="status"
             optionValue="name"
             optionLabel="name"
@@ -73,7 +73,7 @@
 
       <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown
+            <p-dropdown [showClear]="true"
               id="procurement_method"
               optionValue="name"
               optionLabel="name"

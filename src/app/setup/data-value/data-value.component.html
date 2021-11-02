@@ -14,7 +14,7 @@
       <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown [showClear]="true"
+            <p-dropdown
               id="cas_plan_id"
               optionValue="id"
               optionLabel="name"
@@ -30,7 +30,7 @@
         </div>
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown [showClear]="true"
+            <p-dropdown
               id="data_set"
               optionLabel="name"
               [autoDisplayFirst]="false"
@@ -48,7 +48,7 @@
       <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown [showClear]="true"
+            <p-dropdown
               id="financial_year_id"
               optionValue="id"
               optionLabel="name"
@@ -64,7 +64,7 @@
         </div>
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown [showClear]="true"
+            <p-dropdown
               id="period_id"
               optionValue="id"
               optionLabel="name"
@@ -83,7 +83,7 @@
       <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown [showClear]="true"
+            <p-dropdown
               id="facility_type_id"
               optionValue="id"
               optionLabel="name"
@@ -99,7 +99,7 @@
         </div>
         <div class="p-field" fxFlex>
           <span class="p-float-label">
-            <p-dropdown [showClear]="true"
+            <p-dropdown
               id="facility_id"
               optionValue="id"
               optionLabel="name"
@@ -171,7 +171,7 @@
                     [disabled]="!valueLoaded"
                     [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                   />
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     *ngIf="coc.value_type === 'TEXT' && coc.option_set_id"
                     id="{{ de.id! }}-{{ coc.id! }}"
                     [autoDisplayFirst]="false"

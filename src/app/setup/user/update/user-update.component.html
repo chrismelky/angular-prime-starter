@@ -173,7 +173,7 @@
         <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown [showClear]="true"
+              <p-dropdown
                 id="admin_area"
                 [autoDisplayFirst]="false"
                 [filter]="true"
@@ -190,7 +190,7 @@
           <!-- Planning Unit -->
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown [showClear]="true"
+              <p-dropdown
                 #sectionLevel
                 id="position"
                 [autoDisplayFirst]="false"
@@ -224,7 +224,7 @@
           <!-- Section -->
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown [showClear]="true"
+              <p-dropdown
                 id="section_id"
                 optionValue="id"
                 optionLabel="name"
@@ -259,7 +259,7 @@
           <!-- Roles -->
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown [showClear]="true"
+              <p-dropdown
                 id="roles"
                 optionValue="id"
                 optionLabel="name"
@@ -366,7 +366,7 @@
             *ngIf="editForm.get('is_facility_user')?.value"
           >
             <span class="p-float-label">
-              <p-dropdown [showClear]="true"
+              <p-dropdown
                 id="facility_id"
                 optionValue="id"
                 optionLabel="name"

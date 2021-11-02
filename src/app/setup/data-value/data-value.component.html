@@ -10,9 +10,10 @@
         </p-divider>
       </div>
     </ng-template>
-    <div fxLayout="row">
-      <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
-        <div class="p-field" fxFlex>
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
+        <!-- Plan -->
+        <div class="p-field" fxFlex="0 1 30%">
           <span class="p-float-label">
             <p-dropdown
               id="cas_plan_id"
@@ -28,7 +29,7 @@
             <label for="cas_plan_id">Comprehensive Plan </label>
           </span>
         </div>
-        <div class="p-field" fxFlex>
+        <div class="p-field" fxFlex="0 0 70%">
           <span class="p-float-label">
             <p-dropdown
               id="data_set"
@@ -44,8 +45,7 @@
           </span>
         </div>
       </div>
-      <p-divider layout="vertical"></p-divider>
-      <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
+      <div fxLayout="row" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -62,6 +62,7 @@
             <label for="financial_year_id">Financial Year </label>
           </span>
         </div>
+
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -78,9 +79,7 @@
             <label for="period_id">Period</label>
           </span>
         </div>
-      </div>
-      <p-divider layout="vertical"></p-divider>
-      <div fxLayout="column" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
+
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -139,9 +138,15 @@
             <tr>
               <th *ngIf="catComb?.dataElementGroups?.length! > 1">Group</th>
               <th>Data Elements</th>
-              <th *ngFor="let coc of catComb.category_option_combinations">
+              <th
+                [ngClass]="{
+                  rotated: catComb.category_option_combinations?.length! > 10
+                }"
+                *ngFor="let coc of catComb.category_option_combinations"
+              >
                 {{ coc.name }}
               </th>
+              <th *ngIf="!catComb.skip_total">Total</th>
             </tr>
           </thead>
           <tbody class="p-datatable-tbody">
@@ -157,6 +162,7 @@
                 </td>
                 <td *ngFor="let coc of catComb.category_option_combinations">
                   <input
+                    [style]="{ width: '100%' }"
                     *ngIf="coc.value_type === 'TEXT' && !coc.option_set_id"
                     autocomplete="off"
                     id="{{ de.id! }}-{{ coc.id! }}"
@@ -172,6 +178,8 @@
                     [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                   />
                   <p-dropdown
+                    [style]="{ width: '100%' }"
+                    [showClear]="true"
                     *ngIf="coc.value_type === 'TEXT' && coc.option_set_id"
                     id="{{ de.id! }}-{{ coc.id! }}"
                     [autoDisplayFirst]="false"
@@ -189,6 +197,7 @@
                     [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                   ></p-dropdown>
                   <p-inputNumber
+                    [style]="{ width: '100%' }"
                     mode="decimal"
                     [inputStyle]="
                       dataValuesArray[de.id!][coc.id!].isSaved
@@ -197,6 +206,9 @@
                     "
                     *ngIf="coc.value_type === 'NUMBER'"
                     autocomplete="off"
+                    (onInput)="
+                      calculateTotal($event.value, de, catComb, coc.id!)
+                    "
                     [disabled]="!valueLoaded"
                     id="{{ de.id! }}-{{ coc.id! }}"
                     (onBlur)="
@@ -206,6 +218,7 @@
                     [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                   ></p-inputNumber>
                   <p-inputNumber
+                    [style]="{ width: '100%' }"
                     *ngIf="coc.value_type === 'POSITIVE_INTEGER'"
                     [inputStyle]="
                       dataValuesArray[de.id!][coc.id!].isSaved
@@ -234,6 +247,13 @@
                       <a>{{ dataValuesArray[de.id!][coc.id!].value }}</a>
                     </ng-template>
                   </p-fileUpload>
+                </td>
+                <td *ngIf="!catComb.skip_total">
+                  <p-inputNumber
+                    [disabled]="true"
+                    type="text"
+                    [(ngModel)]="dataValuesTotalArray[de.id!][catComb.id!]"
+                  ></p-inputNumber>
                 </td>
               </tr>
             </ng-container>

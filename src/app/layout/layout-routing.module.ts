@@ -1259,6 +1259,13 @@ const routes: Routes = [
             (m) => m.GenericTargetModule
           ),
       },
+      {
+        path: "generic-activity",
+        loadChildren: () =>
+          import("../setup/generic-activity/generic-activity.module").then(
+            (m) => m.GenericActivityModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

@@ -15,7 +15,15 @@
   ></app-loader>
 
   <div fxLayout="column" fxLayoutGap="10px">
-    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start"></div>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+      <button
+        icon="pi pi-clone"
+        pButton
+        class="p-button-sm p-button-outlined"
+        label="Generic Activity"
+        (click)="genericActivityPanel.toggle($event)"
+      ></button>
+    </div>
     <form
       name="generalForm"
       role="form"
@@ -802,3 +810,64 @@
 </div>
 
 <p-confirmPopup key="deletePopup"></p-confirmPopup>
+
+<p-overlayPanel
+  #genericActivityPanel
+  [dismissable]="false"
+  [showCloseIcon]="true"
+  appendTo="body"
+>
+  <ng-template pTemplate>
+    <div style="width: 840px" fxLayout="column" fxLayoutGap="20px">
+      <!-- Generic Target -->
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="genetic_target"
+            optionLabel="description"
+            [autoDisplayFirst]="false"
+            (onChange)="prepareParams()"
+            [filter]="true"
+            dataKey="id"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="genericActivities!"
+            [(ngModel)]="genericActivity"
+          ></p-dropdown>
+          <label for="genetic_target">Generic Activity</label>
+        </span>
+        <span *ngIf="paramsError && !genericActivity">
+          <small class="p-error">Generic activity is required.</small>
+        </span>
+      </div>
+      <!-- Params -->
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field" fxFlex *ngFor="let p of params">
+          <span class="p-float-label">
+            <input
+              id="code"
+              type="text"
+              pInputText
+              [(ngModel)]="paramValues[p]"
+            />
+            <label for="code">{{ p }} </label>
+          </span>
+          <span *ngIf="paramsError && !paramValues[p]">
+            <small class="p-error">{{ p }} value is required.</small>
+          </span>
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Apply"
+          (click)="createFromGeneric()"
+          pButton
+          pRipple
+          type="button"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-overlayPanel>

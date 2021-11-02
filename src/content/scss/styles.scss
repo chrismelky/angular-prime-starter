@@ -480,6 +480,7 @@ i.clear {
 }
 
 
+
 .breakdown.p-datatable .p-datatable-thead > tr > th:first-of-type, .breakdown.p-datatable .p-datatable-tbody > tr > td{
     height: 36px !important;
     padding: 4px !important;
@@ -667,4 +668,12 @@ p-divider.title .p-divider.p-divider-horizontal {
 .p-inputtext {
   // max-width: 900px;
   white-space: normal;
+}
+
+.p-datatable .p-datatable-thead > tr > th.rotated {
+  writing-mode: tb-rl;
+  transform: rotate(-180deg);
+  max-height: 240px;
+  white-space: normal;
+  padding: 10px 4px !important;
 }

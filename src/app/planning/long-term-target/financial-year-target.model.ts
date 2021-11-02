@@ -8,6 +8,7 @@ export class FinancialYearTarget {
     public objective_id?: number,
     public code?: string,
     public section_id?: number,
+    public generic_target_id?: number,
     public objective_code?: string,
     public objective?: string
   ) {}

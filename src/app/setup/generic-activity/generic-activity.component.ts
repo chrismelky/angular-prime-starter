@@ -20,37 +20,46 @@ import {
 } from '../../config/pagination.constants';
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { PlanningMatrix } from 'src/app/setup/planning-matrix/planning-matrix.model';
+import { PlanningMatrixService } from 'src/app/setup/planning-matrix/planning-matrix.service';
+import { GenericTarget } from 'src/app/setup/generic-target/generic-target.model';
+import { GenericTargetService } from 'src/app/setup/generic-target/generic-target.service';
+import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
+import { PriorityAreaService } from 'src/app/setup/priority-area/priority-area.service';
+import { Intervention } from 'src/app/setup/intervention/intervention.model';
+import { InterventionService } from 'src/app/setup/intervention/intervention.service';
+import { GenericSectorProblem } from 'src/app/setup/generic-sector-problem/generic-sector-problem.model';
+import { GenericSectorProblemService } from 'src/app/setup/generic-sector-problem/generic-sector-problem.service';
 
-import { CategoryCombination } from './category-combination.model';
-import { CategoryCombinationService } from './category-combination.service';
-import { CategoryCombinationUpdateComponent } from './update/category-combination-update.component';
-import { CategoryService } from '../category/category.service';
-import { Category } from '../category/category.model';
+import { GenericActivity } from './generic-activity.model';
+import { GenericActivityService } from './generic-activity.service';
+import { GenericActivityUpdateComponent } from './update/generic-activity-update.component';
 
 @Component({
-  selector: 'app-category-combination',
-  templateUrl: './category-combination.component.html',
+  selector: 'app-generic-activity',
+  templateUrl: './generic-activity.component.html',
 })
-export class CategoryCombinationComponent implements OnInit {
+export class GenericActivityComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
-  categoryCombinations?: CategoryCombination[] = [];
+  genericActivities?: GenericActivity[] = [];
+
+  planningMatrices?: PlanningMatrix[] = [];
+  genericTargets?: GenericTarget[] = [];
+  priorityAreas?: PriorityArea[] = [];
+  interventions?: Intervention[] = [];
+  genericSectorProblems?: GenericSectorProblem[] = [];
 
   cols = [
     {
-      field: 'name',
-      header: 'Name',
+      field: 'description',
+      header: 'Description',
       sort: true,
     },
     {
-      field: 'code',
-      header: 'Code',
+      field: 'params',
+      header: 'Params',
       sort: true,
-    },
-    {
-      field: 'skip_total',
-      header: 'Skip Total',
-      sort: false,
     },
   ]; //Table display columns
 
@@ -64,9 +73,17 @@ export class CategoryCombinationComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  planning_matrix_id!: number;
+  generic_target_id!: number;
+  objective_id?: number;
 
   constructor(
-    protected categoryCombinationService: CategoryCombinationService,
+    protected genericActivityService: GenericActivityService,
+    protected planningMatrixService: PlanningMatrixService,
+    protected genericTargetService: GenericTargetService,
+    protected priorityAreaService: PriorityAreaService,
+    protected interventionService: InterventionService,
+    protected genericSectorProblemService: GenericSectorProblemService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -76,27 +93,42 @@ export class CategoryCombinationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.planningMatrixService
+      .query({ columns: ['id', 'name'] })
+      .subscribe(
+        (resp: CustomResponse<PlanningMatrix[]>) =>
+          (this.planningMatrices = resp.data)
+      );
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
+    if (
+      !this.planning_matrix_id ||
+      !this.generic_target_id ||
+      !this.objective_id
+    ) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.categoryCombinationService
+    this.genericActivityService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
+        planning_matrix_id: this.planning_matrix_id,
+        generic_target_id: this.generic_target_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<CategoryCombination[]>) => {
+        (res: CustomResponse<GenericActivity[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -127,8 +159,20 @@ export class CategoryCombinationComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.loadPage(this.page, true);
     });
+  }
+
+  /**
+   * Mandatory filter field changed;
+   * Mandatory filter= fields that must be specified when requesting data
+   * @param event
+   */
+  filterChanged(): void {
+    if (this.page !== 1) {
+      setTimeout(() => this.paginator.changePage(0));
+    } else {
+      this.loadPage(1);
+    }
   }
 
   /**
@@ -168,6 +212,20 @@ export class CategoryCombinationComponent implements OnInit {
     }
   }
 
+  onObjectiveSeletion(id: number): void {
+    this.objective_id = id;
+    this.genericTargetService
+      .query({
+        objective_id: this.objective_id,
+        planning_matrix_id: this.planning_matrix_id,
+        columns: ['id', 'description'],
+      })
+      .subscribe(
+        (resp: CustomResponse<GenericTarget[]>) =>
+          (this.genericTargets = resp.data)
+      );
+  }
+
   /**
    * When page changed
    * @param event page event
@@ -189,17 +247,23 @@ export class CategoryCombinationComponent implements OnInit {
   }
 
   /**
-   * Creating or updating CategoryCombination
-   * @param categoryCombination ; If undefined initize new model to create else edit existing model
+   * Creating or updating GenericActivity
+   * @param genericActivity ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(categoryCombination?: CategoryCombination): void {
-    const data: CategoryCombination = categoryCombination ?? {
-      ...new CategoryCombination(),
-      skip_total: true,
+  createOrUpdate(genericActivity?: GenericActivity): void {
+    const genericActivityData: GenericActivity = genericActivity ?? {
+      ...new GenericActivity(),
+      planning_matrix_id: this.planning_matrix_id,
+      generic_target_id: this.generic_target_id,
+      objective_id: this.objective_id,
     };
-    const ref = this.dialogService.open(CategoryCombinationUpdateComponent, {
-      data,
-      header: 'Create/Update CategoryCombination',
+    const ref = this.dialogService.open(GenericActivityUpdateComponent, {
+      data: {
+        genericActivity: genericActivityData,
+        genericTargets: this.genericTargets,
+      },
+      width: '900px',
+      header: 'Create/Update Generic Activity',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -209,15 +273,15 @@ export class CategoryCombinationComponent implements OnInit {
   }
 
   /**
-   * Delete CategoryCombination
-   * @param categoryCombination
+   * Delete GenericActivity
+   * @param genericActivity
    */
-  delete(categoryCombination: CategoryCombination): void {
+  delete(genericActivity: GenericActivity): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this CategoryCombination?',
+      message: 'Are you sure that you want to delete this GenericActivity?',
       accept: () => {
-        this.categoryCombinationService
-          .delete(categoryCombination.id!)
+        this.genericActivityService
+          .delete(genericActivity.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
             this.toastService.info(resp.message);
@@ -233,14 +297,14 @@ export class CategoryCombinationComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<CategoryCombination[]> | null,
+    resp: CustomResponse<GenericActivity[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/category-combination'], {
+      this.router.navigate(['/generic-activity'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -249,15 +313,15 @@ export class CategoryCombinationComponent implements OnInit {
         },
       });
     }
-    this.categoryCombinations = resp?.data ?? [];
+    this.genericActivities = resp?.data ?? [];
   }
 
   /**
-   * When error on loading data set data to empty and reset page to load
+   * When error on loading data set data to empt and resert page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error('Error loading Category Combination');
+    this.toastService.error('Error loading Generic Activity');
   }
 }

@@ -80,8 +80,8 @@
             fundSourceIsLoading
           "
         ></app-loader>
-        <div fxLayout="column" fxLayoutGap="20px">
-          <div fxLayout="row" fxLayoutGap="20px">
+        <div fxLayout="column" fxLayoutGap="10px">
+          <div fxLayout="row" fxLayoutGap="10px">
             <div
               fxLayout="row"
               fxLayoutGap="10px"
@@ -92,6 +92,7 @@
               <div class="p-field" fxFlex="0 1 30%">
                 <span class="p-float-label">
                   <p-dropdown
+                    [showClear]="true"
                     #facility
                     id="facility_id"
                     optionValue="id"
@@ -114,6 +115,7 @@
               <div class="p-field" fxFlex="0 1 70%">
                 <span class="p-float-label">
                   <p-dropdown
+                    [showClear]="true"
                     id="fund_source_id"
                     optionLabel="name"
                     optionValue="id"
@@ -135,6 +137,7 @@
             <div class="p-field" fxFlex="0 0 100%">
               <span class="p-float-label">
                 <p-dropdown
+                  [showClear]="true"
                   id="activity_id"
                   optionLabel="description"
                   [autoDisplayFirst]="false"

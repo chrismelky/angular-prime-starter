@@ -81,7 +81,7 @@
               <!-- Main Budget class -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     #mainBudgetClass
                     id="main_budget_class_id"
                     appendTo="body"
@@ -117,7 +117,7 @@
               <!-- Sub  Budget class -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     #budgetClass
                     id="budget_class_id"
                     [autoDisplayFirst]="false"
@@ -150,7 +150,7 @@
               <!-- Project -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     #project
                     id="project_id"
                     optionValue="id"
@@ -185,7 +185,7 @@
               <!-- Activity type -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     #activityType
                     id="activity_type_id"
                     optionValue="id"
@@ -220,7 +220,7 @@
               <!-- Activity task nature -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     id="activity_task_nature_id"
                     optionValue="id"
                     optionLabel="name"
@@ -263,7 +263,7 @@
               >
                 <div class="p-field" fxFlex>
                   <span class="p-float-label">
-                    <p-dropdown [showClear]="true"
+                    <p-dropdown
                       id="responsible_person_id"
                       optionValue="id"
                       optionLabel="name"
@@ -398,7 +398,7 @@
               <!-- Project Type -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     #projectType
                     id="project_type_id"
                     optionValue="id"
@@ -431,7 +431,7 @@
               <!-- Expenditure Type -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     #expenditureCategory
                     id="expenditure_category_id"
                     optionValue="id"
@@ -469,7 +469,7 @@
               <!-- Project output-->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     id="project_output_id"
                     optionValue="id"
                     optionLabel="name"
@@ -597,7 +597,7 @@
                   <!-- Priority area -->
                   <div class="p-field" fxFlex>
                     <span class="p-float-label">
-                      <p-dropdown [showClear]="true"
+                      <p-dropdown
                         #priorityArea
                         id="priority_area_id"
                         optionValue="id"
@@ -636,7 +636,7 @@
                   <!-- Intevention -->
                   <div class="p-field" fxFlex>
                     <span class="p-float-label">
-                      <p-dropdown [showClear]="true"
+                      <p-dropdown
                         id="intervention_id"
                         optionValue="id"
                         optionLabel="description"
@@ -670,7 +670,7 @@
                   <!-- Sector problem -->
                   <div class="p-field" fxFlex>
                     <span class="p-float-label">
-                      <p-dropdown [showClear]="true"
+                      <p-dropdown
                         id="sector_problem_id"
                         optionValue="id"
                         optionLabel="description"
@@ -731,7 +731,7 @@
                     <ng-container [formGroupName]="i">
                       <div class="p-field" fxFlex>
                         <span class="p-float-label">
-                          <p-dropdown [showClear]="true"
+                          <p-dropdown
                             *ngIf="!c.get('isMultiple')?.value"
                             id="section_id"
                             optionLabel="description"

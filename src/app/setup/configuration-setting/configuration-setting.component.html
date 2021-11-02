@@ -39,7 +39,7 @@
               <tr>
                 <td style="width:50%">{{item.name}}</td>
                 <td>
-                  <p-dropdown [showClear]="true"
+                  <p-dropdown
                     [(ngModel)]="item.value"
                     *ngIf="item.html_type === 'SELECT'"
                     [options]="item.options"

@@ -162,6 +162,7 @@
                 </td>
                 <td *ngFor="let coc of catComb.category_option_combinations">
                   <input
+                    [style]="{ width: '100%' }"
                     *ngIf="coc.value_type === 'TEXT' && !coc.option_set_id"
                     autocomplete="off"
                     id="{{ de.id! }}-{{ coc.id! }}"
@@ -177,6 +178,7 @@
                     [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                   />
                   <p-dropdown
+                    [style]="{ width: '100%' }"
                     [showClear]="true"
                     *ngIf="coc.value_type === 'TEXT' && coc.option_set_id"
                     id="{{ de.id! }}-{{ coc.id! }}"
@@ -195,6 +197,7 @@
                     [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                   ></p-dropdown>
                   <p-inputNumber
+                    [style]="{ width: '100%' }"
                     mode="decimal"
                     [inputStyle]="
                       dataValuesArray[de.id!][coc.id!].isSaved
@@ -215,6 +218,7 @@
                     [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                   ></p-inputNumber>
                   <p-inputNumber
+                    [style]="{ width: '100%' }"
                     *ngIf="coc.value_type === 'POSITIVE_INTEGER'"
                     [inputStyle]="
                       dataValuesArray[de.id!][coc.id!].isSaved

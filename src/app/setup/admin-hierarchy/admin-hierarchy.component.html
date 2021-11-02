@@ -156,6 +156,14 @@
             <button
               pButton
               pRipple
+              icon="pi pi-upload"
+              class="p-button-text"
+              (click)="upload()"
+              label="Upload Admin Hierarchies"
+            ></button>
+            <button
+              pButton
+              pRipple
               icon="pi pi-plus"
               class="p-button-raised"
               [disabled]="!parent_id || !admin_hierarchy_position"

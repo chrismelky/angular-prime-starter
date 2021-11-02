@@ -5,23 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Table } from 'primeng/table';
-import { AdminHierarchyUpdateComponent } from './update/admin-hierarchy-update.component';
-import { AdminHierarchy } from './admin-hierarchy.model';
-import { ToastService } from '../../shared/toast.service';
+import {ConfirmationService, LazyLoadEvent} from 'primeng/api';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Table} from 'primeng/table';
+import {AdminHierarchyUpdateComponent} from './update/admin-hierarchy-update.component';
+import {AdminHierarchy} from './admin-hierarchy.model';
+import {ToastService} from '../../shared/toast.service';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { HelperService } from '../../utils/helper.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Paginator } from 'primeng/paginator';
-import { combineLatest } from 'rxjs';
-import { CustomResponse } from '../../utils/custom-response';
-import { AdminHierarchyService } from './admin-hierarchy.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {HelperService} from '../../utils/helper.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Paginator} from 'primeng/paginator';
+import {combineLatest} from 'rxjs';
+import {CustomResponse} from '../../utils/custom-response';
+import {AdminHierarchyService} from './admin-hierarchy.service';
+import {UploadComponent} from "./upload/upload.component";
 
 @Component({
   selector: 'app-admin-hierarchy',
@@ -71,7 +72,8 @@ export class AdminHierarchyComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.handleNavigation();
@@ -322,5 +324,17 @@ export class AdminHierarchyComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) => (this.parents = resp.data)
       );
+  }
+
+  upload(): void {
+    const ref = this.dialogService.open(UploadComponent, {
+      width: '60%',
+      header: 'Admin Hierarchy Upload Form'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

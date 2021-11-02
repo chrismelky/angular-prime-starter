@@ -31,7 +31,7 @@
               </div>
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown
+                  <p-dropdown [showClear]="true"
                     id="levelId"
                     optionValue="position"
                     optionLabel="name"
@@ -259,6 +259,7 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  label="Roles"
                   pTooltip="Roles"
                   tooltipPosition="bottom"
                   class="
@@ -269,6 +270,7 @@
                 ></button>
                 <button
                   pButton
+                  label="Password Reset"
                   pTooltip="Password Reset"
                   tooltipPosition="bottom"
                   class="
@@ -279,6 +281,7 @@
                 ></button>
                 <button
                   pButton
+                  label="Groups"
                   pTooltip="Groups"
                   tooltipPosition="bottom"
                   class="

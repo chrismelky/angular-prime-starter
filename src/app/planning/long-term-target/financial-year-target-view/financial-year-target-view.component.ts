@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
 import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
-import {
-  AdminHierarchy,
-  AdminHierarchyTarget,
-} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyTarget } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { FinancialYear } from '../../../setup/financial-year/financial-year.model';
@@ -95,13 +91,14 @@ export class FinancialYearTargetViewComponent implements OnInit {
         this.toastrService.info('Target updated successfully');
       });
     } else {
-      const data = {
+      const data: FinancialYearTarget = {
         ...target,
         long_term_target_id: this.longTermTarget?.id,
         code: this.longTermTarget?.code,
         section_id: this.longTermTarget?.section_id,
         financial_year_id: this.financialYearId,
         objective_id: this.longTermTarget?.objective_id,
+        generic_target_id: this.longTermTarget?.generic_target_id,
       };
       this.financialYearTargetService.create(data).subscribe((resp) => {
         target.id = resp.data?.id;

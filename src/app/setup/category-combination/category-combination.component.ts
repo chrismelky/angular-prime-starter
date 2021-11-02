@@ -195,6 +195,7 @@ export class CategoryCombinationComponent implements OnInit {
   createOrUpdate(categoryCombination?: CategoryCombination): void {
     const data: CategoryCombination = categoryCombination ?? {
       ...new CategoryCombination(),
+      skip_total: true,
     };
     const ref = this.dialogService.open(CategoryCombinationUpdateComponent, {
       data,

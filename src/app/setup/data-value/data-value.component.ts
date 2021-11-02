@@ -56,6 +56,7 @@ export class DataValueComponent implements OnInit {
   casPlans?: CasPlan[] = [];
   dataSets?: DataSet[] = [];
   dataValuesArray: any = {};
+  dataValuesTotalArray: any = {};
   parentAdminName!: string;
   valueLoaded = false;
 
@@ -202,7 +203,6 @@ export class DataValueComponent implements OnInit {
       }
     });
     this.categoryCombinationService.getByIds({ ids }).subscribe((resp) => {
-      console.log(resp.data);
       this.categoryCombinations = resp.data?.map((cc) => {
         return {
           ...cc,
@@ -252,7 +252,12 @@ export class DataValueComponent implements OnInit {
   prepareDataValuesArray(): void {
     this.dataElements?.forEach((de) => {
       this.dataValuesArray[de.id!] = {};
+
+      this.dataValuesTotalArray[de.id!] = {};
+
       this.categoryCombinations?.forEach((co) => {
+        let rowTotal = 0;
+
         if (de.category_combination_id === co.id) {
           co.category_option_combinations?.forEach((coc) => {
             coc.value_type = coc.value_type || de.value_type;
@@ -265,6 +270,9 @@ export class DataValueComponent implements OnInit {
                 dv.category_option_combination_id === coc.id
               );
             });
+            if (coc.value_type === 'NUMBER') {
+              rowTotal = rowTotal + parseFloat(existing?.value || '0');
+            }
             this.dataValuesArray[de.id!][coc.id!] = {
               id: existing ? existing.id : undefined,
               value: existing ? existing.value : undefined,
@@ -277,13 +285,31 @@ export class DataValueComponent implements OnInit {
             };
           });
         }
+        this.dataValuesTotalArray[de.id!][co.id!] = rowTotal;
       });
     });
   }
 
+  calculateTotal(
+    valueChanged: number,
+    de: DataElement,
+    catComb: CategoryCombination,
+    cocId: number
+  ): void {
+    let total = valueChanged || 0;
+    catComb.category_option_combinations?.forEach((coc) => {
+      const value_type = coc.value_type || de.value_type;
+      if (value_type === 'NUMBER' && coc.id != cocId) {
+        total =
+          total + parseFloat(this.dataValuesArray[de.id!][coc.id!].value || 0);
+        console.log(this.dataValuesArray[de.id!][coc.id!].value);
+        console.log(total);
+      }
+    });
+    this.dataValuesTotalArray[de.id!][catComb.id!] = total;
+  }
+
   saveValue(event: any, dataValue: any): void {
-    console.log(event);
-    console.log(dataValue);
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||

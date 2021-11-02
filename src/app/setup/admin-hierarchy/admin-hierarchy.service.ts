@@ -5,19 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
-import { createRequestOption } from '../../utils/request-util';
-import { CustomResponse } from '../../utils/custom-response';
-import { AdminHierarchy, AdminHierarchyTarget } from './admin-hierarchy.model';
+import {createRequestOption} from '../../utils/request-util';
+import {CustomResponse} from '../../utils/custom-response';
+import {AdminHierarchy, AdminHierarchyTarget} from './admin-hierarchy.model';
+import {FundSourceCategory} from "../fund-source-category/fund-source-category.model";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AdminHierarchyService {
   public resourceUrl = 'api/admin_hierarchies';
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient) {
+  }
 
   create(
     adminHierarchy: AdminHierarchy
@@ -62,6 +64,10 @@ export class AdminHierarchyService {
     );
   }
 
+  upload(data: any): Observable<CustomResponse<AdminHierarchy[]>> {
+    return this.http.post<CustomResponse<AdminHierarchy[]>>(this.resourceUrl + '/upload', data);
+  }
+
   withTargets(req?: any): Observable<CustomResponse<AdminHierarchyTarget[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<AdminHierarchyTarget[]>>(
@@ -79,6 +85,13 @@ export class AdminHierarchyService {
   updateView(): Observable<CustomResponse<null>> {
     return this.http.get<CustomResponse<null>>(
       `${this.resourceUrl}/update_view`
+    );
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
     );
   }
 }

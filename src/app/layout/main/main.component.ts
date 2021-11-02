@@ -645,6 +645,11 @@ export class MainComponent implements OnInit {
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "generic-target",
     },
+    {
+      label: "Generic Activities",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "generic-activity",
+    },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {
       label: "Planning",

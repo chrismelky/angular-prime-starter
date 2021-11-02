@@ -21,7 +21,7 @@
           ></app-admin-hierarchy-tree>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <p-dropdown
+              <p-dropdown [showClear]="true"
                 id="facility_type_id"
                 optionValue="id"
                 optionLabel="name"
@@ -118,7 +118,7 @@
               </div>
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown
+                  <p-dropdown [showClear]="true"
                     id="ownership"
                     optionValue="value"
                     optionLabel="display"
@@ -133,7 +133,7 @@
               </div>
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
-                  <p-dropdown
+                  <p-dropdown [showClear]="true"
                     id="physical_state"
                     optionValue="value"
                     optionLabel="display"
@@ -240,6 +240,7 @@
                 <button
                   pButton
                   pRipple
+                  label="Transfer"
                   pTooltip="Transfer"
                   tooltipPosition="bottom"
                   class="
@@ -251,6 +252,7 @@
                 <button
                   pButton
                   pRipple
+                  label="Custom Details"
                   pTooltip="Custom Details"
                   tooltipPosition="bottom"
                   class="

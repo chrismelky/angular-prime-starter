@@ -44,10 +44,17 @@ export class ProjectService {
 
   byBudgetClassAndSection(
     budgetClassId: number,
-    sectionId: number
+    sectionIds: any
   ): Observable<CustomResponse<Project[]>> {
+    console.log(sectionIds);
+    const options = createRequestOption(sectionIds);
+    console.log(options);
+
     return this.http.get<CustomResponse<Project[]>>(
-      `${this.resourceUrl}/by_budget_class_and_section/${budgetClassId}/${sectionId}`
+      `${this.resourceUrl}/by_budget_class_and_section_ids/${budgetClassId}`,
+      {
+        params: options,
+      }
     );
   }
 

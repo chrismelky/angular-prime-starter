@@ -389,6 +389,7 @@ export class ActivityComponent implements OnInit {
         activity: data,
         facilities: this.facilities,
         objectiveId: this.financialYearTarget?.objective_id,
+        genericTargetId: this.financialYearTarget?.generic_target_id,
         adminHierarchyCostCentre: this.adminHierarchyCostCentre,
         activityTypes: this.activityTypes,
         projectTypes: this.projectTypes,

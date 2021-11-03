@@ -103,16 +103,27 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Personal Emoluments Select Options</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]=""
-            (click)="createOrUpdate()"
-            label="Add Pe Select Option"
-          ></button>
+          <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end">
+            <button
+              pButton
+              icon="pi pi-plus"
+              class="p-button-raised p-button-text"
+              (click)="createOrUpdate()"
+              label="Add PE Select Option"
+            ></button>
+            &nbsp;
+            <button
+              pButton
+              icon="pi pi-upload"
+              class="p-button-raised"
+              (click)="upload()"
+              label="Upload PE Select Options"
+            ></button>
+          </div>
         </div>
       </ng-template>
+
+
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="peSelectOptionsNodeTree?.length">
           <th *ngFor="let col of columns">

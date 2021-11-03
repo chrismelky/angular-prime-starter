@@ -242,7 +242,7 @@ export class PeDefinitionComponent implements OnInit {
     };
     const ref = this.dialogService.open(PeDefinitionUpdateComponent, {
       data,
-      width:"1000px",
+      width:"800px",
       header: "Create/Update PE Columns",
     });
     ref.onClose.subscribe((result) => {

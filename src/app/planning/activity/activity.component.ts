@@ -49,6 +49,8 @@ export class ActivityComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
 
+  budgetIsLocked? = false;
+
   facilityIsLoading = false;
   targetIsLoading = false;
   objectiveIsLoading = false;
@@ -198,10 +200,40 @@ export class ActivityComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.setBudgetStatus();
+
       this.loadTargets();
 
       this.loadFacilities();
     });
+  }
+
+  private setBudgetStatus(): void {
+    switch (this.budget_type) {
+      case 'CURRENT':
+        this.budgetIsLocked =
+          this.adminHierarchyCostCentre?.is_current_budget_locked ||
+          this.adminHierarchyCostCentre?.is_current_budget_approved;
+        break;
+      case 'APPROVED':
+        this.budgetIsLocked =
+          this.adminHierarchyCostCentre?.is_current_budget_locked ||
+          this.adminHierarchyCostCentre?.is_current_budget_approved;
+        break;
+      case 'CARRYOVER':
+        this.budgetIsLocked =
+          this.adminHierarchyCostCentre?.is_carryover_budget_locked ||
+          this.adminHierarchyCostCentre?.is_carryover_budget_approved;
+        break;
+      case 'SUPPLEMENTARY':
+        this.budgetIsLocked =
+          this.adminHierarchyCostCentre?.is_supplementary_budget_locked ||
+          this.adminHierarchyCostCentre?.is_supplementary_budget_approved;
+        break;
+      default:
+        this.budgetIsLocked = false;
+        break;
+    }
   }
 
   /**
@@ -357,9 +389,11 @@ export class ActivityComponent implements OnInit {
         activity: data,
         facilities: this.facilities,
         objectiveId: this.financialYearTarget?.objective_id,
+        genericTargetId: this.financialYearTarget?.generic_target_id,
         adminHierarchyCostCentre: this.adminHierarchyCostCentre,
         activityTypes: this.activityTypes,
         projectTypes: this.projectTypes,
+        budgetIsLocked: this.budgetIsLocked,
       },
       header: 'Create/Update Activity',
       width: '900px',

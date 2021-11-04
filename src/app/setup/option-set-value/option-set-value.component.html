@@ -150,14 +150,24 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Option Set Values</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!option_set_id"
-            (click)="createOrUpdate()"
-            label="Add Option Set Value"
-          ></button>
+          <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end">
+            <button
+              pButton
+              icon="pi pi-plus"
+              class="p-button-raised p-button-text"
+              [disabled]="!option_set_id"
+              (click)="createOrUpdate()"
+              label="Add Option Set Value"
+            ></button>
+            &nbsp;
+            <button
+              pButton
+              icon="pi pi-upload"
+              class="p-button-raised"
+              (click)="upload()"
+              label="Upload Option Set Values"
+            ></button>
+          </div>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

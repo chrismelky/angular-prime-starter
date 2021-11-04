@@ -195,10 +195,12 @@ export class CategoryCombinationComponent implements OnInit {
   createOrUpdate(categoryCombination?: CategoryCombination): void {
     const data: CategoryCombination = categoryCombination ?? {
       ...new CategoryCombination(),
+      skip_total: true,
     };
     const ref = this.dialogService.open(CategoryCombinationUpdateComponent, {
       data,
       header: 'Create/Update CategoryCombination',
+      width: '900px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

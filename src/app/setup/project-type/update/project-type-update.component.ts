@@ -31,8 +31,8 @@ export class ProjectTypeUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    code: [null, []],
-    is_active: [false, []],
+    code: [null, [Validators.required]],
+    is_active: [true, []],
   });
 
   constructor(

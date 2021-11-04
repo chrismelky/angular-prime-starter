@@ -44,9 +44,9 @@
             [ngSwitch]="budget_type"
           >
             <small>Decision Level</small>
-            <strong *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
+            <p-tag severity="success" *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
               adminHierarchyCostCentre?.current_budget_decision_level?.name
-            }}</strong>
+            }}</p-tag>
             <strong *ngSwitchCase="'CARRYOVER'">{{
               adminHierarchyCostCentre?.carryover_budget_decision_level?.name
             }}</strong>
@@ -56,6 +56,17 @@
             }}</strong>
           </span>
         </p-divider>
+        <button
+          *ngIf="!budgetIsLocked"
+          icon="pi pi-arrow-right"
+          pButton
+          class="
+            p-button-rounded
+            p-button-success
+            p-button-outline
+            p-button-icon-only
+          "
+        ></button>
         <!-- <i class="pi pi-lock"></i> -->
       </div>
     </ng-template>
@@ -69,8 +80,8 @@
             fundSourceIsLoading
           "
         ></app-loader>
-        <div fxLayout="column" fxLayoutGap="20px">
-          <div fxLayout="row" fxLayoutGap="20px">
+        <div fxLayout="column" fxLayoutGap="10px">
+          <div fxLayout="row" fxLayoutGap="10px">
             <div
               fxLayout="row"
               fxLayoutGap="10px"
@@ -81,6 +92,7 @@
               <div class="p-field" fxFlex="0 1 30%">
                 <span class="p-float-label">
                   <p-dropdown
+                    [showClear]="true"
                     #facility
                     id="facility_id"
                     optionValue="id"
@@ -103,6 +115,7 @@
               <div class="p-field" fxFlex="0 1 70%">
                 <span class="p-float-label">
                   <p-dropdown
+                    [showClear]="true"
                     id="fund_source_id"
                     optionLabel="name"
                     optionValue="id"
@@ -124,6 +137,7 @@
             <div class="p-field" fxFlex="0 0 100%">
               <span class="p-float-label">
                 <p-dropdown
+                  [showClear]="true"
                   id="activity_id"
                   optionLabel="description"
                   [autoDisplayFirst]="false"

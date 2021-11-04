@@ -10,12 +10,12 @@
     <div fxLayout="column" fxLayoutGap="4px">
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
-          fxLayout="row wrap"
+          fxLayout="row"
           fxLayoutGap="0.75rem"
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
+          <div class="p-field" fxFlex="0 1 30%">
             <span class="p-float-label">
               <p-dropdown
                 id="planning_matrix_id"
@@ -34,7 +34,7 @@
           <app-objective-tree
             [selectionMode]="'single'"
             (onSelect)="onObjectiveSeletion($event)"
-            fxFlex
+            fxFlex="0 0 70%"
           ></app-objective-tree>
         </div>
         <div

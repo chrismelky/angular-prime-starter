@@ -141,8 +141,6 @@
       [resizableColumns]="true"
       [autoLayout]="true"
       [loading]="isLoading"
-      [columns]="cols"
-      [scrollable]="true"
       [value]="nationalReferences!"
       (onLazyLoad)="onSortChange($event)"
       (onNodeExpand)="onNodeExpand($event)"
@@ -156,18 +154,17 @@
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]="!reference_type_id"
-            (click)="createOrUpdate()"
+            (click)="createOrUpdate(undefined, undefined)"
             label="Add National Reference"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="nationalReferences?.length">
-          <th *ngFor="let col of columns">
-            {{ col.header }}
-          </th>
-          <th>Active</th>
-          <th></th>
+          <th class="fit" style="padding-right: 24px"></th>
+          <th>Description</th>
+          <th style="width: 150px; padding-right: 24px"></th>
+          <th class="fit"></th>
         </tr>
       </ng-template>
       <ng-template
@@ -177,18 +174,33 @@
         let-columns="columns"
       >
         <tr>
-          <td *ngFor="let col of columns; let i = index">
-            <p-treeTableToggler
-              [rowNode]="rowNode"
-              *ngIf="i === 0"
-            ></p-treeTableToggler>
-            {{ rowData[col.field] }}
-          </td>
           <td>
+            <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
+              <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+              <span>{{ rowData.code }}</span>
+            </span>
+          </td>
+          <td style="white-space: normal">
+            <span>{{ rowData.description }}</span>
+          </td>
+          <!-- <td>
             <p-inputSwitch
               (onChange)="toggleActivation(rowData)"
               [(ngModel)]="rowData['active']"
             ></p-inputSwitch>
+          </td> -->
+          <td>
+            <button
+              *ngIf="rowData.link_level !== 'Activity'"
+              pButton
+              pTooltip="Add Child reference"
+              tooltipPosition="bottom"
+              label="Add Child"
+              class="p-button-text p-button-primary p-button-text p-button-icon"
+              icon="pi pi-plus
+              "
+              (click)="createOrUpdate(undefined, rowData)"
+            ></button>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
@@ -202,7 +214,7 @@
                   "
                   icon="pi pi-pencil
               "
-                  (click)="createOrUpdate(rowData)"
+                  (click)="createOrUpdate(rowData, rowData?.parent)"
                 ></button>
                 <button
                   pButton
@@ -220,7 +232,11 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td style="text-align: center" colspan="4">No data found</td>
+        </tr>
+      </ng-template>
     </p-treeTable>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator

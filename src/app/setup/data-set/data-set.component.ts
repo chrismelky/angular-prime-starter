@@ -257,13 +257,16 @@ export class DataSetComponent implements OnInit {
    * @param dataSet ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(dataSet?: DataSet): void {
-    const data: DataSet = dataSet ?? {
+    const dataSetData: DataSet = dataSet ?? {
       ...new DataSet(),
       cas_plan_content_id: this.cas_plan_content_id,
       cas_plan_id: this.cas_plan_id,
     };
     const ref = this.dialogService.open(DataSetUpdateComponent, {
-      data,
+      data: {
+        dataSet: dataSetData,
+        casPlans: this.casPlans,
+      },
       header: 'Create/Update DataSet',
     });
     ref.onClose.subscribe((result) => {

@@ -578,6 +578,11 @@ export class MainComponent implements OnInit {
             },
           ],
         },
+        {
+          label: "Reports Setup",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "report-setup",
+        },
       ],
     },
     {
@@ -644,6 +649,11 @@ export class MainComponent implements OnInit {
       label: "Generic Targets",
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "generic-target",
+    },
+    {
+      label: "Generic Activities",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "generic-activity",
     },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {
@@ -795,6 +805,18 @@ export class MainComponent implements OnInit {
           routerLink: "assessment-criteria",
         },
         /**====Planrep Assessment Menu Generator Hook: Dont Delete====*/
+      ],
+    },
+    {
+      label: "Reports",
+      icon: "pi pi-pw pi-play",
+      items: [
+        {
+          label: "Comprehensive Reports",
+          icon: "pi pi-fw pi-arrow-right",
+          routerLink: "report",
+        },
+        /**====Planrep Comphrehensive Report Menu Generator Hook: Dont Delete====*/
       ],
     },
   ];

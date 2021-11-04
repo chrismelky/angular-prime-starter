@@ -29,30 +29,31 @@
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="national_reference_id"
+            id="reference_document_id"
             optionValue="id"
-            optionLabel="description"
+            optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="referenceDocuments!"
-            formControlName="national_reference_id"
+            formControlName="reference_document_id"
           ></p-dropdown>
-          <label for="national_reference_id">National Reference</label>
+          <label for="reference_document_id">Reference document</label>
         </span>
         <span
           *ngIf="
-            editForm.get('national_reference_id')!.invalid &&
-            (editForm.get('national_reference_id')!.dirty ||
-              editForm.get('national_reference_id')!.touched ||
+            editForm.get('reference_document_id')!.invalid &&
+            (editForm.get('reference_document_id')!.dirty ||
+              editForm.get('reference_document_id')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('national_reference_id')?.errors?.required"
-            >National Reference is required.</small
+            *ngIf="editForm.get('reference_document_id')?.errors?.required"
+          >
+            Reference document is required.</small
           >
         </span>
       </div>

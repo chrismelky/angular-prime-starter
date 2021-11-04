@@ -5,37 +5,37 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { PriorityArea } from "src/app/setup/priority-area/priority-area.model";
-import { PriorityAreaService } from "src/app/setup/priority-area/priority-area.service";
-import { PlanningMatrix } from "src/app/setup/planning-matrix/planning-matrix.model";
-import { PlanningMatrixService } from "src/app/setup/planning-matrix/planning-matrix.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
+import { PriorityAreaService } from 'src/app/setup/priority-area/priority-area.service';
+import { PlanningMatrix } from 'src/app/setup/planning-matrix/planning-matrix.model';
+import { PlanningMatrixService } from 'src/app/setup/planning-matrix/planning-matrix.service';
 
-import { GenericSectorProblem } from "./generic-sector-problem.model";
-import { GenericSectorProblemService } from "./generic-sector-problem.service";
-import { GenericSectorProblemUpdateComponent } from "./update/generic-sector-problem-update.component";
+import { GenericSectorProblem } from './generic-sector-problem.model';
+import { GenericSectorProblemService } from './generic-sector-problem.service';
+import { GenericSectorProblemUpdateComponent } from './update/generic-sector-problem-update.component';
 
 @Component({
-  selector: "app-generic-sector-problem",
-  templateUrl: "./generic-sector-problem.component.html",
+  selector: 'app-generic-sector-problem',
+  templateUrl: './generic-sector-problem.component.html',
 })
 export class GenericSectorProblemComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   genericSectorProblems?: GenericSectorProblem[] = [];
 
   priorityAreas?: PriorityArea[] = [];
@@ -43,18 +43,18 @@ export class GenericSectorProblemComponent implements OnInit {
 
   cols = [
     {
-      field: "code",
-      header: "Code",
+      field: 'code',
+      header: 'Code',
       sort: true,
     },
     {
-      field: "description",
-      header: "Description",
+      field: 'description',
+      header: 'Description',
       sort: false,
     },
     {
-      field: "params",
-      header: "Params",
+      field: 'params',
+      header: 'Params',
       sort: false,
     },
   ]; //Table display columns
@@ -86,13 +86,13 @@ export class GenericSectorProblemComponent implements OnInit {
 
   ngOnInit(): void {
     this.priorityAreaService
-      .query({ columns: ["id", "description"] })
+      .query({ columns: ['id', 'description'] })
       .subscribe(
         (resp: CustomResponse<PriorityArea[]>) =>
           (this.priorityAreas = resp.data)
       );
     this.planningMatrixService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<PlanningMatrix[]>) =>
           (this.planningMatrices = resp.data)
@@ -142,11 +142,11 @@ export class GenericSectorProblemComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -221,8 +221,8 @@ export class GenericSectorProblemComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -238,7 +238,8 @@ export class GenericSectorProblemComponent implements OnInit {
     };
     const ref = this.dialogService.open(GenericSectorProblemUpdateComponent, {
       data,
-      header: "Create/Update GenericSectorProblem",
+      header: 'Create/Update GenericSectorProblem',
+      width: '900px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -254,7 +255,7 @@ export class GenericSectorProblemComponent implements OnInit {
   delete(genericSectorProblem: GenericSectorProblem): void {
     this.confirmationService.confirm({
       message:
-        "Are you sure that you want to delete this GenericSectorProblem?",
+        'Are you sure that you want to delete this GenericSectorProblem?',
       accept: () => {
         this.genericSectorProblemService
           .delete(genericSectorProblem.id!)
@@ -280,12 +281,12 @@ export class GenericSectorProblemComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/generic-sector-problem"], {
+      this.router.navigate(['/generic-sector-problem'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -298,6 +299,6 @@ export class GenericSectorProblemComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Generic Sector Problem");
+    this.toastService.error('Error loading Generic Sector Problem');
   }
 }

@@ -98,12 +98,11 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="planningMatrices?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'national_reference_id'">
+            National Reference <p-sortIcon *ngIf="true" [field]="'national_reference_id'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -113,6 +112,7 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
+          <td>{{ rowData.national_reference?.description }}</td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

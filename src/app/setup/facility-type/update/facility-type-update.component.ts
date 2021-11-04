@@ -31,6 +31,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
   errors = [];
 
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
+  planningLevels?: AdminHierarchyLevel[] = [];
   departments?: Section[] = [];
   sections?: Section[] = [];
   lgaLevels?: PlanrepEnum[] = [];
@@ -45,7 +46,6 @@ export class FacilityTypeUpdateComponent implements OnInit {
     lga_level: ['LLG', [Validators.required]],
     admin_hierarchy_level_id: [null, [Validators.required]],
     planning_admin_hierarchy_level: [null, [Validators.required]],
-    sections: [this.fb.array([]), [Validators.required]],
   });
 
   departmentControl = new FormControl(null, [Validators.required])
@@ -66,8 +66,10 @@ export class FacilityTypeUpdateComponent implements OnInit {
     this.adminHierarchyLevelService
       .query({columns: ['id', 'name']})
       .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
+        (resp: CustomResponse<AdminHierarchyLevel[]>) => {
+          this.adminHierarchyLevels = resp.data;
+          this.planningLevels = resp.data;
+        }
       );
     this.sectionService
       .departments()
@@ -139,8 +141,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
       name: facilityType.name,
       lga_level: facilityType.lga_level,
       admin_hierarchy_level_id: facilityType.admin_hierarchy_level_id,
-      planning_admin_hierarchy_level:facilityType.planning_admin_hierarchy_level,
-      sections: facilityType.sections,
+      planning_admin_hierarchy_level: facilityType.planning_admin_hierarchy_level,
     });
   }
 
@@ -157,9 +158,8 @@ export class FacilityTypeUpdateComponent implements OnInit {
       lga_level: this.editForm.get(['lga_level'])!.value,
       admin_hierarchy_level_id: this.editForm.get(['admin_hierarchy_level_id'])!
         .value,
-      planning_admin_hierarchy_level:this.editForm.get(['planning_admin_hierarchy_level'])!
+      planning_admin_hierarchy_level: this.editForm.get(['planning_admin_hierarchy_level'])!
         .value,
-      sections: this.editForm.get(['sections'])!.value,
     };
   }
 

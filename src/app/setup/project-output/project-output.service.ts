@@ -53,4 +53,18 @@ export class ProjectOutputService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+
+  upload(data: any): Observable<CustomResponse<ProjectOutput[]>> {
+    return this.http.post<CustomResponse<ProjectOutput[]>>(
+      this.resourceUrl + '/upload',
+      data
+    );
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(this.resourceUrl + '/downloadUploadTemplate', {
+      responseType: 'arraybuffer',
+    });
+  }
 }

@@ -54,4 +54,17 @@ export class NationalReferenceService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  upload(data: any): Observable<CustomResponse<NationalReference[]>> {
+    return this.http.post<CustomResponse<NationalReference[]>>(
+      this.resourceUrl + '/upload',
+      data
+    );
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(this.resourceUrl + '/downloadUploadTemplate', {
+      responseType: 'arraybuffer',
+    });
+  }
 }

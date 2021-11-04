@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {Objective} from "../objective.model";
-import {ObjectiveService} from "../objective.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { Objective } from '../objective.model';
+import { ObjectiveService } from '../objective.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-objective-update",
-  templateUrl: "./objective-update.component.html",
+  selector: 'app-objective-update',
+  templateUrl: './objective-update.component.html',
 })
 export class ObjectiveUpdateComponent implements OnInit {
   isSaving = false;
@@ -30,7 +30,10 @@ export class ObjectiveUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    code: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
+    code: [
+      null,
+      [Validators.required, Validators.minLength(1), Validators.maxLength(1)],
+    ],
     description: [null, [Validators.required]],
   });
 
@@ -40,8 +43,7 @@ export class ObjectiveUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
@@ -88,8 +90,7 @@ export class ObjectiveUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -114,9 +115,9 @@ export class ObjectiveUpdateComponent implements OnInit {
   protected createFromForm(): Objective {
     return {
       ...new Objective(),
-      id: this.editForm.get(["id"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      description: this.editForm.get(["description"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      description: this.editForm.get(['description'])!.value,
     };
   }
 }

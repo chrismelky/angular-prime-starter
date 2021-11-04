@@ -205,7 +205,9 @@
             <td  styleClass="col-button">
               <div  class="p-field" fxFlex style="text-align: end;">
                       <span *ngIf="rowData.is_locked">
+                         <div class="p-field" fxFlex style="text-align:end">
                         {{rowData!.amount | currency:"TZS":"TSH"}}
+                         </div>
                       </span>
                     <p-inputNumber
                       *ngIf="!rowData.is_locked"
@@ -223,7 +225,9 @@
             <td>
               <div  class="p-field" fxFlex style="text-align: end;">
                 <span *ngIf="rowData.is_locked">
+                   <div class="p-field" fxFlex style="text-align:end">
                   {{rowData!.amount | currency:"TZS":"TSH"}}
+                   </div>
                 </span>
                 <p-inputNumber
                   *ngIf="!rowData.is_locked"

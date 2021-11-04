@@ -2,12 +2,16 @@
   background-color: red !important;
   th{
     background-color: #F3F3F3  !important;
+    border-left: 1px solid white !important;
+    border-right: 1px solid white !important;
     //min-width: 200px !important;
     //border: none !important;
   }
   td{
     //border: none !important;
     //min-width: 200px !important;
+    border: 1px solid  #f2f3f4 !important;
+    padding: 5px !important;
     text-align: end;
     background-color: transparent !important;
     input{

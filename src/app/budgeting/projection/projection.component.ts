@@ -45,6 +45,9 @@ import {AdminHierarchyLevel} from "../../setup/admin-hierarchy-level/admin-hiera
 import {AdminHierarchyLevelService} from "../../setup/admin-hierarchy-level/admin-hierarchy-level.service";
 import {ProjectionAllocationComponent} from "../../shared/projection-allocation/projection-allocation.component";
 import {finalize} from "rxjs/operators";
+import {AdminHierarchyCeilingService} from "../admin-hierarchy-ceiling/admin-hierarchy-ceiling.service";
+import {CeilingChainService} from "../../setup/ceiling-chain/ceiling-chain.service";
+import {CeilingChain} from "../../setup/ceiling-chain/ceiling-chain.model";
 
 @Component({
   selector: "app-projection",
@@ -58,9 +61,10 @@ export class ProjectionComponent implements OnInit {
   items: MenuItem[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
+  planningFinancialYears?:any = {};
   gfsCodes?: GfsCode[] = [];
   fundSources?: FundSource[] = [];
-
+  searchKey?: string = '';
   isLoading = false;
   page?: number = 1;
   per_page!: number;
@@ -81,7 +85,10 @@ export class ProjectionComponent implements OnInit {
   admin_hierarchy_level_id!: number;
   section_id!:number;
   clonedProjection: { [s: string]: Projection; } = {};
+  sectionIds: number[] = [];
   totalProjectionAmount: number = 0.00;
+  totalAllocatedAmount: number = 0.00;
+  adminHierarchyPosition!:number
 
   constructor(
     protected projectionService: ProjectionService,
@@ -98,7 +105,9 @@ export class ProjectionComponent implements OnInit {
     protected userService: UserService,
     protected facilityTypeService: FacilityTypeService,
     protected facilityService: FacilityService,
-    protected adminLevelHierarchyService: AdminHierarchyLevelService
+    protected adminLevelHierarchyService: AdminHierarchyLevelService,
+    protected adminHierarchyCeilingService:AdminHierarchyCeilingService,
+    protected ceilingChainService: CeilingChainService
   ) {
     this.currentUser = userService.getCurrentUser();
     this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
@@ -110,12 +119,15 @@ export class ProjectionComponent implements OnInit {
       {label: 'Download Template', icon: 'pi pi-download', command: () => {}},
       {label: 'Upload Projection', icon: 'pi pi-upload', command: () => {}},
     ];
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
+    if(this.financial_year_id){
+      this.financialYearService
+        .financialYearAndForward(this.financial_year_id)
+        .subscribe(
+          (resp: CustomResponse<FinancialYear[]>) =>{
+            this.planningFinancialYears = Object.assign({}, (resp.data??[]));
+          }
+        );
+    }
     this.fundSourceService
       .query({ columns: ["id", "name"],can_project:true })
       .subscribe(
@@ -152,7 +164,7 @@ export class ProjectionComponent implements OnInit {
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<Projection[]>) => {
+        (res: CustomResponse<any>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -301,7 +313,7 @@ export class ProjectionComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<Projection[]> | null,
+    resp: CustomResponse<any> | null,
     page: number,
     navigate: boolean
   ): void {
@@ -318,6 +330,9 @@ export class ProjectionComponent implements OnInit {
       });
     }
     this.projections = resp?.data ?? [];
+    if(this.projections!.length >0){
+      this.loadAllocated();
+    }
   }
 
   /**
@@ -334,7 +349,10 @@ export class ProjectionComponent implements OnInit {
    * @param event adminhierarchyId or Ids
    */
   onAdminHierarchySelection(event: any): void {
+    // this.financial_year_id = event.current_financial_year_id;
+    this.adminHierarchyPosition = event.admin_hierarchy_position;
     this.admin_hierarchy_id = event.id;
+    this.loadCeilingChain();
     this.adminLevelHierarchyService
       .query({columns: ['id', 'name'],position:event.admin_hierarchy_position})
       .subscribe(
@@ -387,10 +405,17 @@ export class ProjectionComponent implements OnInit {
 
   onRowEditSave(projection: Projection ,index: number) {
     let valid = this.projectionValidity(projection);
+    this.totalProjectionAmount = this.getTotalAllocatedProjection(this.projections);
+    let payload = this.createFrom(projection)
     if(valid.success){
-      this.subscribeToSaveResponse(this.projectionService.update(projection));
+      if(this.totalAllocatedAmount <= this.totalProjectionAmount){
+        this.subscribeToSaveResponse(this.projectionService.update(payload),projection,index);
+      }else{
+        this.projections![index] = this.clonedProjection[projection.id!];
+        this.toastService.error('Allocated Amount Is Higher than Total Projection Amount');
+      }
     }else{
-      this.toastService.warn(valid.massage);
+      this.toastService.error(valid.massage);
       this.projections![index] = this.clonedProjection[projection.id!];
     }
   }
@@ -401,23 +426,39 @@ export class ProjectionComponent implements OnInit {
   }
 
   allocateProjection() : void{
-    this.totalProjectionAmount = this.getTotalAllocated(this.projections);
+    this.totalProjectionAmount = this.getTotalAllocatedProjection(this.projections);
     if(this.totalProjectionAmount > 0){
-      const ref = this.dialogService.open(ProjectionAllocationComponent, {
-        header: 'Allocate Ceiling',
-        width: '60%',
-        data:{
-          fund_source_id:this.fund_source_id,
-          financial_year_id:this.financial_year_id,
-          admin_hierarchy_id:this.admin_hierarchy_id,
-          budget_type:'CURRENT',
-          section_id:this.section_id,
-          facility_id:this.facility_id
-        }
-      });
-      ref.onClose.subscribe((result) => {});
+      this.ceilingChainService
+        .queryWithChild({
+          for_admin_hierarchy_level_position:this.adminHierarchyPosition,
+          is_active:true,
+          per_page:1000,
+        })
+        .subscribe(
+          (resp: CustomResponse<any>) => {
+            if((resp.data ?? []).length>0){
+              const ref = this.dialogService.open(ProjectionAllocationComponent, {
+                header: 'Allocate Ceiling',
+                width: '50%',
+                data: {
+                  fund_source_id: this.fund_source_id,
+                  financial_year_id: this.financial_year_id,
+                  admin_hierarchy_id: this.admin_hierarchy_id,
+                  adminHierarchyPosition:this.adminHierarchyPosition,
+                  budget_type: 'CURRENT',
+                  section_id: this.section_id,
+                  facility_id: this.facility_id,
+                  ceilingChain:resp.data[0]
+                }
+              });
+              ref.onClose.subscribe((result) => {
+              });
+            }else{
+              this.toastService.error('No ceiling Chain Configured');
+            }
+          });
     }else{
-      this.toastService.warn('Projection Amount Should Be Greater Than 0');
+      this.toastService.error('Projection Amount Should Be Greater Than 0');
     }
   }
 
@@ -429,8 +470,8 @@ export class ProjectionComponent implements OnInit {
    * Return form values as object of type Projection
    * @returns Projection
    */
-  protected createFromForm(projection: Projection): Projection {
-    let totalAmount = projection.q1_amount! + projection.q2_amount! + projection.q4_amount! + projection.q3_amount!;
+  protected createFrom(projection: Projection): Projection {
+    let totalAmount = (+projection.q1_amount!) + (+projection.q2_amount!) + (+projection.q4_amount!) + (+projection.q3_amount!);
     return {
       ...new Projection(),
       id: projection.id,
@@ -470,11 +511,13 @@ export class ProjectionComponent implements OnInit {
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<Projection>>
+    result: Observable<CustomResponse<Projection>>,
+    projection:Projection,
+    index:number
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      (result) => this.onSaveSuccess(result),
-      (error) => this.onSaveError(error)
+      (result) => this.onSaveSuccess(result,projection,index),
+      (error) => this.onSaveError(error,projection,index)
     );
   }
 
@@ -482,7 +525,9 @@ export class ProjectionComponent implements OnInit {
    * When save successfully close dialog and display info message
    * @param result
    */
-  protected onSaveSuccess(result: any): void {
+  protected onSaveSuccess(result: any,projection:Projection,index:number): void {
+    delete this.clonedProjection[projection.id!];
+    this.loadPage();
     this.toastService.info(result.message);
   }
 
@@ -491,18 +536,62 @@ export class ProjectionComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any,projection:Projection,index:number): void {
+    this.projections![index] = this.clonedProjection[projection.id!];
+    this.toastService.error(error.message);
+  }
 
   protected onSaveFinalize(): void {
   }
 
-  calculateTotal(q:string) {
+  calculateTotal(column:string) {
     let total = 0;
-    let p = q + '_amount';
     for(let proj of this.projections!) {
       // @ts-ignore
-      total += proj.p;
+      total += +proj[column];
     }
     return total;
   }
+
+
+  clear(table: Table) {
+    table.clear();
+  }
+
+  loadAllocated(){
+    this.adminHierarchyCeilingService
+      .ceilingByFundSource({
+        fund_source_id:this.fund_source_id,
+        section_ids:this.sectionIds,
+        financial_year_id:this.financial_year_id,
+        admin_hierarchy_id:this.admin_hierarchy_id,
+        budget_type:'CURRENT'
+      })
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.totalAllocatedAmount = this.getTotalAllocated(
+            (resp.data ?? []));
+          });
+  }
+  getTotalAllocatedProjection(data:any){
+    return data.reduce((total: any, ceiling: any) => (Number(total) + Number(ceiling!.amount)), 0)
+  }
+
+  loadCeilingChain(){
+    this.ceilingChainService
+      .queryWithChild({
+        for_admin_hierarchy_level_position:this.adminHierarchyPosition,
+        is_active:true,
+        per_page:1000,
+      })
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          if((resp.data??[]).length > 0){
+            this.sectionIds=resp.data[0].section.map((c: { id: any; }) => (c.id))
+          }else{
+            this.sectionIds=[];
+          }
+        });
+  }
+
 }

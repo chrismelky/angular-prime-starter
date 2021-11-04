@@ -8,6 +8,11 @@ import {AdminHierarchyCeiling} from "../../budgeting/admin-hierarchy-ceiling/adm
 import {FundSourceBudgetClassService} from "../../setup/fund-source-budget-class/fund-source-budget-class.service";
 import {Projection} from "../../budgeting/projection/projection.model";
 import {ProjectionService} from "../../budgeting/projection/projection.service";
+import {Observable} from "rxjs";
+import {finalize} from "rxjs/operators";
+import {UserService} from "../../setup/user/user.service";
+import {User} from "../../setup/user/user.model";
+import {CeilingChain} from "../../setup/ceiling-chain/ceiling-chain.model";
 
 @Component({
   selector: 'app-projection-allocation',
@@ -19,13 +24,17 @@ export class ProjectionAllocationComponent implements OnInit {
   section_id?: number;
   financial_year_id?: number;
   admin_hierarchy_id?: number;
+  adminHierarchyPosition?: number;
   facility_id?: number;
   ceiling: AdminHierarchyCeiling []=[];
   ceilingMapped: any[]=[];
   budget_type: string;
   totalAllocatedAmount: number = 0.00;
   projectionAmount: number = 0.00;
-
+  clonedAllocation: { [s: string]: any; } = {};
+  ceilingChain: CeilingChain = {};
+  completeCeiling: any[] = [];
+  currentUser!: User;
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
     protected financialYearService: FinancialYearService,
@@ -34,13 +43,18 @@ export class ProjectionAllocationComponent implements OnInit {
     private toastService: ToastService,
     private fundSourceBudgetClassService: FundSourceBudgetClassService,
     protected projectionService: ProjectionService,
+    protected userService:UserService,
   ) {
     this.fund_source_id=this.dialogConfig.data.fund_source_id;
     this.section_id = this.dialogConfig.data.section_id;
     this.financial_year_id = this.dialogConfig.data.financial_year_id;
     this.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
-    this.budget_type = this.dialogConfig.data.budget_type,
-    this.facility_id = this.dialogConfig.data.facility_id
+    this.budget_type = this.dialogConfig.data.budget_type;
+    this.facility_id = this.dialogConfig.data.facility_id;
+    this.currentUser = userService.getCurrentUser();
+    this.section_id = this.currentUser?.section_id;
+    this.adminHierarchyPosition = this.dialogConfig.data.adminHierarchyPosition;
+    this.ceilingChain = this.dialogConfig.data.ceilingChain
   }
 
   ngOnInit(): void {
@@ -49,45 +63,96 @@ export class ProjectionAllocationComponent implements OnInit {
   }
 
   loadData(): void{
-    this.adminHierarchyCeilingService
-      .ceilingByFundSource({
+    //this.totalAllocatedAmount = this.getTotalAllocated(this.ceiling);
+    this.fundSourceBudgetClassService
+      .query({
         fund_source_id:this.fund_source_id,
-        section_id:this.section_id,
-        financial_year_id:this.financial_year_id,
-        admin_hierarchy_id:this.admin_hierarchy_id,
-        budget_type:this.budget_type
+        is_active:true,
+        per_page:1000,
       })
       .subscribe(
         (resp: CustomResponse<any>) => {
-          this.ceiling = resp.data ?? [];
-          this.totalAllocatedAmount = this.getTotalAllocated(this.ceiling);
-          this.fundSourceBudgetClassService
-            .query({
-              fund_source_id:this.fund_source_id,per_page:1000
+          let budgetClasses = resp.data??[];
+          this.adminHierarchyCeilingService
+            .ceilingByFundSource({
+              fund_source_id:this.fund_source_id,
+              financial_year_id:this.financial_year_id,
+              admin_hierarchy_id:this.admin_hierarchy_id,
+              budget_type:this.budget_type,
+              facility_id:this.facility_id,
+              section_ids:this.ceilingChain.section.map((c: { id: any; }) => (c.id))
             })
             .subscribe(
               (resp: CustomResponse<any>) => {
-                let budgetClasses = resp.data??[];
-                this.ceilingMapped = budgetClasses.map((bc: { budget_class_id: any; id: any; budget_class: any; }) => {
-                  const ceiling = this.ceiling!.find(c => c.ceiling.budget_class_id === bc.budget_class_id && c.active === true)
-                  return{
-                    ceiling_id: bc.id,
-                    budget_class:bc.budget_class,
-                    amount:ceiling !== undefined?ceiling.amount:0.00,
-                    percent:100,
-                    is_locked:ceiling !== undefined?ceiling!.is_locked:false,
-                  }
-                });
+                this.ceiling = resp.data ?? [];
+                this.completeCeiling = this.ceilingChain.section.map((s: any) => ({id:s.id,name:s.name,ceiling_chain_id:this.ceilingChain.id,next:this.ceilingChain.next_id!==null?true:false,ceiling:
+                    budgetClasses.map((bc: { budget_class_id: any; id: any; budget_class: any; }) => {
+                      const ceiling = this.ceiling!.find(c => c.ceiling.budget_class_id === bc.budget_class_id && s.id === c.section_id);
+                      let data = {
+                        ceiling_id: bc.id,
+                        budget_class:bc.budget_class,
+                        amount:ceiling !== undefined?ceiling.amount:0.00,
+                        percent:ceiling !== undefined?((ceiling.amount!/this.projectionAmount)*100):0.00,
+                        is_locked:ceiling !== undefined?ceiling!.is_locked:false,
+                        facility_id:this.facility_id,
+                        financial_year_id:this.financial_year_id,
+                        admin_hierarchy_id:this.admin_hierarchy_id,
+                        adminHierarchyPosition:this.adminHierarchyPosition,
+                        section_id:s.id,
+                        admin_hierarchy_ceiling_id:ceiling !== undefined?ceiling.id:undefined
+                      };
+                      this.clonedAllocation[bc.id] = {...data};
+                      return data;
+                    })
+                }))
+                this.totalAllocatedAmount = this.getTotalAllocated(this.completeCeiling);
               }
             );
         }
       );
   }
-  saveAllocation(){
 
+  saveAllocation(){
+    if(!(this.projectionAmount < this.totalAllocatedAmount)){
+      if(this.totalAllocatedAmount > 0){
+        let payload = {
+          admin_ceilings:this.completeCeiling,
+          adminHierarchyPosition: this.adminHierarchyPosition,
+        }
+        this.subscribeToSaveResponse(this.adminHierarchyCeilingService.projectionAllocation(payload));
+      }else{
+        this.toastService.error('Total Allocated Amount Should be grater than zero')
+      }
+    }else{
+      this.toastService.error('Allocation Exceeded Total Projection Amount')
+    }
   }
   getTotalAllocated(data:any){
-    return data.reduce((total: any, ceiling: any) => (Number(total) + Number(ceiling!.amount)), 0)
+    let ceiling: any[] = [];
+    for (let val of data) {
+      for (let v of val.ceiling) {
+        ceiling.push(v);
+      }
+    }
+    return ceiling.reduce((total: any, ceiling: any) => (Number(total) + Number(ceiling!.amount)), 0);
+  }
+  getTotalAllocatedProjection(data:any){
+    return data.reduce((total: any, ceiling: any) => (Number(total) + Number(ceiling!.amount)), 0);
+  }
+
+  getPercent(percent:number,data:any,section_id:number,ceilingIndex:number,secIndex:number){
+    const x = this.completeCeiling.findIndex((s)=>s.id ===section_id);
+    const i = this.completeCeiling[x].ceiling.findIndex((item: { ceiling_id: any; }) => item.ceiling_id === data.ceiling_id);
+    console.log(i);
+    this.completeCeiling[secIndex].ceiling[i].percent=percent;
+    this.completeCeiling[secIndex].ceiling[i].amount=(percent * this.projectionAmount)/100;
+    this.totalAllocatedAmount = this.getTotalAllocated(this.completeCeiling);
+  }
+  amountChange(amount:number,data:any,section_id:number,ceilingIndex:number,secIndex:number){
+    const i = this.completeCeiling[secIndex].ceiling.findIndex((item: { ceiling_id: any; }) => item.ceiling_id === data.ceiling_id);
+    this.completeCeiling[secIndex].ceiling[i].amount=amount;
+    this.completeCeiling[secIndex].ceiling[i].percent=(amount/this.projectionAmount)*100;
+    this.totalAllocatedAmount = this.getTotalAllocated(this.completeCeiling);
   }
 
   loadProjection():void{
@@ -102,9 +167,37 @@ export class ProjectionAllocationComponent implements OnInit {
       .subscribe(
         (res: CustomResponse<Projection[]>) => {
           let projection = res.data??[];
-          this.projectionAmount = this.getTotalAllocated(projection);
+          this.projectionAmount = this.getTotalAllocatedProjection(projection);
         },
       );
+  }
+
+  public subscribeToSaveResponse(
+    result: Observable<CustomResponse<any>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+    this.dialogRef.close();
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
   }
 
 }

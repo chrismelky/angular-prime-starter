@@ -10,28 +10,12 @@
     <div fxLayout="column" fxLayoutGap="4px">
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div
-          fxLayout="row wrap"
+          fxLayout="row"
           fxLayoutGap="0.75rem"
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="priority_area_id"
-                optionValue="id"
-                optionLabel="description"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="priorityAreas!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="priority_area_id"
-              ></p-dropdown>
-              <label for="priority_area_id">Priority Area </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
+          <div class="p-field" fxFlex="0 1 30%">
             <span class="p-float-label">
               <p-dropdown
                 id="planning_matrix_id"
@@ -45,6 +29,22 @@
                 [(ngModel)]="planning_matrix_id"
               ></p-dropdown>
               <label for="planning_matrix_id">Planning Matrix </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex="0 0 70%">
+            <span class="p-float-label">
+              <p-dropdown
+                id="priority_area_id"
+                optionValue="id"
+                optionLabel="description"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="priorityAreas!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="priority_area_id"
+              ></p-dropdown>
+              <label for="priority_area_id">Priority Area </label>
             </span>
           </div>
         </div>

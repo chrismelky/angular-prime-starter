@@ -71,7 +71,7 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
     this.adminHierarchyService
       .query({
         parent_id: selected.data.id,
-        columns: ['id', 'name', 'code', 'admin_hierarchy_position'],
+        columns: ['id', 'name', 'code', 'admin_hierarchy_position','current_financial_year_id','carryover_financial_year_id','supplementary_financial_year_id'],
       })
       .subscribe(
         (resp) => {

@@ -200,6 +200,7 @@ export class CategoryCombinationComponent implements OnInit {
     const ref = this.dialogService.open(CategoryCombinationUpdateComponent, {
       data,
       header: 'Create/Update CategoryCombination',
+      width: '900px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

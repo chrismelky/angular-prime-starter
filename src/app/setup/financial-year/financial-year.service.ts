@@ -58,6 +58,13 @@ export class FinancialYearService {
       `${this.resourceUrl}/by_range/${startFinancialYearId}/${endFinancialYearId}`
     );
   }
+  financialYearAndForward(
+    financialYearId: number,
+  ): Observable<CustomResponse<FinancialYear[]>> {
+    return this.http.get<CustomResponse<FinancialYear[]>>(
+      `${this.resourceUrl}/forward/${financialYearId}`
+    );
+  }
 
   findByStatus(status: number): Observable<CustomResponse<FinancialYear>> {
     return this.http.get<CustomResponse<FinancialYear>>(

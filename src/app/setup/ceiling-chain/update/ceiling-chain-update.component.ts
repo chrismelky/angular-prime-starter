@@ -19,6 +19,8 @@ import {AdminHierarchyLevel} from "../../admin-hierarchy-level/admin-hierarchy-l
 import {SectionLevel} from "../../section-level/section-level.model";
 import {AdminHierarchyLevelService} from "../../admin-hierarchy-level/admin-hierarchy-level.service";
 import {SectionLevelService} from "../../section-level/section-level.service";
+import {Section} from "../../section/section.model";
+import {SectionService} from "../../section/section.service";
 
 @Component({
   selector: "app-ceiling-chain-update",
@@ -33,6 +35,7 @@ export class CeilingChainUpdateComponent implements OnInit {
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
   nexts?: CeilingChain[] = [];
   sectionLevels?: SectionLevel[] = [];
+  sections?:Section[] = [];
 
   /**
    * Declare form
@@ -43,6 +46,7 @@ export class CeilingChainUpdateComponent implements OnInit {
     admin_hierarchy_level_position: [null, [Validators.required]],
     next_id: [null, []],
     section_level_position: [null, [Validators.required]],
+    section:[null, []],
     active: [false, []],
   });
 
@@ -53,6 +57,7 @@ export class CeilingChainUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
+    protected sectionService : SectionService,
     private toastService: ToastService
   ) {}
 
@@ -79,6 +84,9 @@ export class CeilingChainUpdateComponent implements OnInit {
           (this.sectionLevels = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    if(this.dialogConfig.data.id !== undefined){
+      this.loadSectionByPosition(this.dialogConfig.data.section_level_position.position)
+    }
   }
 
   /**
@@ -92,6 +100,7 @@ export class CeilingChainUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const ceilingChain = this.createFromForm();
+    console.log(ceilingChain);
     if (ceilingChain.id !== undefined) {
       this.subscribeToSaveResponse(
         this.ceilingChainService.update(ceilingChain)
@@ -146,6 +155,7 @@ export class CeilingChainUpdateComponent implements OnInit {
       next_id: ceilingChain.next_id,
       section_level_position: ceilingChain.section_level_position?.position,
       active: ceilingChain.active,
+      section:ceilingChain!.section!==undefined?ceilingChain!.section.map((c: { id: any; }) =>(c.id)):[]
     });
   }
 
@@ -167,6 +177,18 @@ export class CeilingChainUpdateComponent implements OnInit {
       section_level_position: this.editForm.get(["section_level_position"])!
         .value,
       active: this.editForm.get(["active"])!.value,
+      section:this.editForm.get(["section"])!.value,
     };
+  }
+  loadSectionByPosition(position: number){
+    this.sectionService
+      .query({
+        position:position,
+      })
+      .subscribe(
+        (res: CustomResponse<Section[]>) => {
+          this.sections = res.data ?? [];
+        }
+      );
   }
 }

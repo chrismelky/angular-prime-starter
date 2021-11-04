@@ -226,7 +226,10 @@ export class CasPlanContentComponent implements OnInit {
       cas_plan_id: this.cas_plan_id,
     };
     const ref = this.dialogService.open(CasPlanContentUpdateComponent, {
-      data,
+      data: {
+        casPlanContent: data,
+        casPlans: this.casPlans,
+      },
       header: 'Create/Update CasPlanContent',
     });
     ref.onClose.subscribe((result) => {

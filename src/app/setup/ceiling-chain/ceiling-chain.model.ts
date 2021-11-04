@@ -6,6 +6,7 @@ export class CeilingChain {
     public next_id?: number,
     public next?:any,
     public section_level_position?: any,
-    public active?: string
+    public active?: string,
+    public section?: any
   ) {}
 }

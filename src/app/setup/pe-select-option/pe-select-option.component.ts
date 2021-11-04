@@ -8,10 +8,9 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
 
 import { CustomResponse } from "../../utils/custom-response";
 import {
@@ -26,6 +25,7 @@ import { PeSelectOption } from "./pe-select-option.model";
 import { PeSelectOptionService } from "./pe-select-option.service";
 import { PeSelectOptionUpdateComponent } from "./update/pe-select-option-update.component";
 import {TreeTable} from "primeng/treetable";
+import {UploadComponent} from "./upload/upload.component";
 
 @Component({
   selector: "app-pe-select-option",
@@ -312,6 +312,18 @@ export class PeSelectOptionComponent implements OnInit {
           this.isLoading = false;
         }
       );
+  }
+
+  upload(): void {
+    const ref = this.dialogService.open(UploadComponent, {
+      width: '60%',
+      header: 'PE Select Option Upload Form'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 
 }

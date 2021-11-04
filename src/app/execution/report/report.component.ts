@@ -7,10 +7,11 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import {combineLatest, Observable} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
 import { CustomResponse } from "../../utils/custom-response";
 import {
@@ -19,44 +20,31 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { GfsCode } from "src/app/setup/gfs-code/gfs-code.model";
-import { GfsCodeService } from "src/app/setup/gfs-code/gfs-code.service";
-import { PeForm } from "src/app/setup/pe-form/pe-form.model";
-import { PeFormService } from "src/app/setup/pe-form/pe-form.service";
+import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
+import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
+import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
+import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
+import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
+import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
 
-import { PeDefinition } from "./pe-definition.model";
-import { PeDefinitionService } from "./pe-definition.service";
-import { PeDefinitionUpdateComponent } from "./update/pe-definition-update.component";
-import {NationalReference} from "../national-reference/national-reference.model";
-import {finalize} from "rxjs/operators";
-import {TreeTable} from "primeng/treetable";
-import {PeSelectOption} from "../pe-select-option/pe-select-option.model";
+import {BudgetType, Report} from "./report.model";
+import { ReportService } from "./report.service";
+import { ReportUpdateComponent } from "./update/report-update.component";
 
 @Component({
-  selector: "app-pe-definition",
-  templateUrl: "./pe-definition.component.html",
+  selector: "app-report",
+  templateUrl: "./report.component.html",
 })
-export class PeDefinitionComponent implements OnInit {
+export class ReportComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: TreeTable;
-  peDefinitions?: PeDefinition[] = [];
-  peDefinitionsNodeTree?: TreeNode[] = [];
+  @ViewChild("table") table!: Table;
+  reports?: Report[] = [];
 
-  parents?: PeDefinition[] = [];
-  gfsCodes?: GfsCode[] = [];
-  peForms?: PeForm[] = [];
-  units?: PlanrepEnum[] = [];
-  valueTypes?: PlanrepEnum[] = [];
-  peSelectOption?: PeSelectOption[] = [];
+  casPlanContents?: CasPlanContent[] = [];
+  adminHierarchies?: AdminHierarchy[] = [];
+  financialYears?: FinancialYear[] = [];
 
-  cols = [
-    {
-      field: "field_name",
-      header: "Field Name",
-      sort: true,
-    }
-  ]; //Table display columns
+  cols = []; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -68,66 +56,101 @@ export class PeDefinitionComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  pe_form_id!: number;
+  cas_plan_content_id!: number;
+  admin_hierarchy_id!: number;
+  financial_year_id!: number;
+  // items search objects
+  items: MenuItem[] | undefined;
+  budgetTypes?: BudgetType[] = [];
+  budgetType!: string;
+  admin_hierarchy_position!: number;
 
   constructor(
-    protected peDefinitionService: PeDefinitionService,
-    protected gfsCodeService: GfsCodeService,
-    protected peFormService: PeFormService,
+    protected reportService: ReportService,
+    protected casPlanContentService: CasPlanContentService,
+    protected adminHierarchyService: AdminHierarchyService,
+    protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
+    protected toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.peDefinitionService
-      .query({ columns: ["id", "field_name"] })
-      .subscribe(
-        (resp: CustomResponse<PeDefinition[]>) => (this.parents = resp.data)
-      );
-    this.gfsCodeService
+    this.budgetTypes = [
+      {id:1, name:'CURRENT'},
+      {id:2, name:'APPROVED'},
+      {id:3, name:'CARRYOVER'},
+      {id:4, name:'SUPPLEMENTARY'},
+    ];
+    this.casPlanContentService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
+        (resp: CustomResponse<CasPlanContent[]>) =>
+          (this.casPlanContents = resp.data)
       );
-    this.peFormService
+    this.adminHierarchyService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
+        (resp: CustomResponse<AdminHierarchy[]>) =>
+          (this.adminHierarchies = resp.data)
       );
-
-    this.units = this.enumService.get("units");
-    this.valueTypes = this.enumService.get("valueTypes");
+    this.financialYearService
+      .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>
+          (this.financialYears = resp.data)
+      );
+    this.items = [
+      {
+        label: 'PDF Format',
+        icon: 'pi pi-file-pdf',
+        command: () => {
+          this.getReport('PDF');
+        },
+      },
+      {
+        label: 'Excel Format',
+        icon: 'pi pi-file-excel',
+        command: () => {
+          this.getReport('XLSX');
+        },
+      },
+    ];
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.pe_form_id) {
+    if (
+      !this.cas_plan_content_id ||
+      !this.admin_hierarchy_id ||
+      !this.financial_year_id||
+      !this.budgetType
+    ) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.peDefinitionService
+    this.reportService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        pe_form_id: this.pe_form_id,
-        parent_id: null,
+        cas_plan_content_id: this.cas_plan_content_id,
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        financial_year_id: this.financial_year_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<PeDefinition[]>) => {
+        (res: CustomResponse<Report[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -232,18 +255,19 @@ export class PeDefinitionComponent implements OnInit {
   }
 
   /**
-   * Creating or updating PeDefinition
-   * @param peDefinition ; If undefined initize new model to create else edit existing model
+   * Creating or updating Report
+   * @param report ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(peDefinition?: PeDefinition): void {
-    const data: PeDefinition = peDefinition ?? {
-      ...new PeDefinition(),
-      pe_form_id: this.pe_form_id,
+  createOrUpdate(report?: Report): void {
+    const data: Report = report ?? {
+      ...new Report(),
+      cas_plan_content_id: this.cas_plan_content_id,
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
     };
-    const ref = this.dialogService.open(PeDefinitionUpdateComponent, {
+    const ref = this.dialogService.open(ReportUpdateComponent, {
       data,
-      width:"800px",
-      header: "Create/Update PE Columns",
+      header: "Create/Update Report",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -253,14 +277,14 @@ export class PeDefinitionComponent implements OnInit {
   }
 
   /**
-   * Delete PeDefinition
-   * @param peDefinition
+   * Delete Report
+   * @param report
    */
-  delete(peDefinition: PeDefinition): void {
+  delete(report: Report): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this PeDefinition?",
+      message: "Are you sure that you want to delete this Report?",
       accept: () => {
-        this.peDefinitionService.delete(peDefinition.id!).subscribe((resp) => {
+        this.reportService.delete(report.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -275,14 +299,14 @@ export class PeDefinitionComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<PeDefinition[]> | null,
+    resp: CustomResponse<Report[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/pe-definition"], {
+      this.router.navigate(["/report"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -291,72 +315,43 @@ export class PeDefinitionComponent implements OnInit {
         },
       });
     }
-    this.peDefinitionsNodeTree = (resp?.data ?? []).map((c) => {
-      return {
-        data: c,
-        children: [],
-        leaf: false,
-      };
-    });
+    this.reports = resp?.data ?? [];
   }
 
   /**
-   * When error on loading data set data to empty and reset page to load
+   * When error on loading data set data to empt and resert page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Pe Definition");
+    this.toastService.error("Error loading Report");
   }
-  protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<NationalReference>>
-  ): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      (result) => this.onSaveSuccess(result),
-      (error) => this.onSaveError(error)
-    );
-  }
-
   /**
-   * When save successfully close dialog and display info message
-   * @param result
+   *
+   * @param event adminhierarchyId or Ids
    */
-  protected onSaveSuccess(result: any): void {
-    this.toastService.info(result.message);
+  onAdminHierarchySelection(event: any): void {
+
+    this.admin_hierarchy_id = event.id;
+    this.admin_hierarchy_position =event.admin_hierarchy_position;
   }
 
-  protected onSaveError(error: any): void {}
-
-  protected onSaveFinalize(): void {
+  private getReport(format: string) {
+  if (
+    !this.cas_plan_content_id ||
+    !this.admin_hierarchy_id ||
+    !this.financial_year_id ||
+    !this.budgetType){
+    return;
   }
-
-  onNodeExpand(event: any): void {
-    const node = event.node;
-    this.isLoading = true;
-    // Load children by parent_id= node.data.id
-    this.peDefinitionService
-      .query({
-        parent_id: node.data.id,
-        sort: ['id:asc'],
-      })
-      .subscribe(
-        (resp) => {
-          this.isLoading = false;
-          // Map response data to @TreeNode type
-          node.children = (resp?.data ?? []).map((c) => {
-            return {
-              data: c,
-              children: [],
-              leaf: false,
-            };
-          });
-          // Update Tree state
-          this.peDefinitionsNodeTree = [...this.peDefinitionsNodeTree!];
-        },
-        (error) => {
-          this.isLoading = false;
-        }
-      );
+  this.reportService.getReport({
+    cas_plan_content_id:this.cas_plan_content_id,
+    admin_hierarchy_id:this.admin_hierarchy_id,
+    financial_year_id:this.financial_year_id,
+    budgetType:this.budgetType,
+    format:format
+  }).subscribe((resp)=>{
+    console.log(resp.data);
+  });
   }
-
 }

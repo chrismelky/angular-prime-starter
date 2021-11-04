@@ -513,7 +513,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: "WRITE_ADMIN_AREA_SETTING",
+            only: "WRITE_COMPREHENSIVE_PLAN_SETTING",
           },
         },
       },
@@ -1239,7 +1239,22 @@ const routes: Routes = [
           ),
       },
       {
-        path: "data-element-group-set",
+        path: "report",
+        loadChildren: () =>
+          import("../execution/report/report.module").then(
+            (m) => m.ReportModule
+          ),
+      },
+      {
+        path: "report-setup",
+        loadChildren: () =>
+          import("../setup/report-setup/report-setup.module").then(
+            (m) => m.ReportSetupModule
+          ),
+      },
+        {
+          path: "data-element-group-set"
+        ,
         loadChildren: () =>
           import(
             "../setup/data-element-group-set/data-element-group-set.module"

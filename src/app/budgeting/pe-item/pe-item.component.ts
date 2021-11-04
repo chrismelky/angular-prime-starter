@@ -385,6 +385,8 @@ export class PeItemComponent implements OnInit {
           financial_year_id: this.financial_year_id,
           section_id: this.section_id,
           budget_type: 'CURRENT',
+          fund_source_id:this.fund_source_id,
+          budget_class_id: this.budget_class_id,
           per_page: 1000
         })
         .subscribe((resp) => {
@@ -695,9 +697,6 @@ export class PeItemComponent implements OnInit {
       const objectIndex = this.peDataValues?.findIndex((pdv: any) => {
         return pdv.uid === data.uid && pdv.id === data.id;
       });
-      console.log('v');
-      console.log(data);
-      console.log(this.round.length);
       this.peDataValues[objectIndex].value = data.value ? data.value : '';
       /** Remove select_option */
       delete this.peDataValues[objectIndex]?.select_option;

@@ -68,6 +68,13 @@ export class AdminHierarchyService {
     return this.http.post<CustomResponse<AdminHierarchy[]>>(this.resourceUrl + '/upload', data);
   }
 
+  downloadTemplate(): any {
+    return this.http.get(
+      this.resourceUrl + '/downloadUploadTemplate',
+      {responseType: 'arraybuffer'}
+    );
+  }
+
   withTargets(req?: any): Observable<CustomResponse<AdminHierarchyTarget[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<AdminHierarchyTarget[]>>(
@@ -85,13 +92,6 @@ export class AdminHierarchyService {
   updateView(): Observable<CustomResponse<null>> {
     return this.http.get<CustomResponse<null>>(
       `${this.resourceUrl}/update_view`
-    );
-  }
-
-  downloadTemplate(): any {
-    return this.http.get(
-      this.resourceUrl + '/downloadUploadTemplate',
-      {responseType: 'arraybuffer'}
     );
   }
 }

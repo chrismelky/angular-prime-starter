@@ -7,10 +7,11 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import {combineLatest, Observable} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
 import { CustomResponse } from "../../utils/custom-response";
 import {
@@ -19,43 +20,45 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { GfsCode } from "src/app/setup/gfs-code/gfs-code.model";
-import { GfsCodeService } from "src/app/setup/gfs-code/gfs-code.service";
-import { PeForm } from "src/app/setup/pe-form/pe-form.model";
-import { PeFormService } from "src/app/setup/pe-form/pe-form.service";
+import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
+import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
 
-import { PeDefinition } from "./pe-definition.model";
-import { PeDefinitionService } from "./pe-definition.service";
-import { PeDefinitionUpdateComponent } from "./update/pe-definition-update.component";
-import {NationalReference} from "../national-reference/national-reference.model";
-import {finalize} from "rxjs/operators";
-import {TreeTable} from "primeng/treetable";
-import {PeSelectOption} from "../pe-select-option/pe-select-option.model";
+import { ReportSetup } from "./report-setup.model";
+import { ReportSetupService } from "./report-setup.service";
+import { ReportSetupUpdateComponent } from "./update/report-setup-update.component";
 
 @Component({
-  selector: "app-pe-definition",
-  templateUrl: "./pe-definition.component.html",
+  selector: "app-report-setup",
+  templateUrl: "./report-setup.component.html",
 })
-export class PeDefinitionComponent implements OnInit {
+export class ReportSetupComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: TreeTable;
-  peDefinitions?: PeDefinition[] = [];
-  peDefinitionsNodeTree?: TreeNode[] = [];
+  @ViewChild("table") table!: Table;
+  reportSetups?: ReportSetup[] = [];
 
-  parents?: PeDefinition[] = [];
-  gfsCodes?: GfsCode[] = [];
-  peForms?: PeForm[] = [];
-  units?: PlanrepEnum[] = [];
-  valueTypes?: PlanrepEnum[] = [];
-  peSelectOption?: PeSelectOption[] = [];
+  casPlanContents?: CasPlanContent[] = [];
 
   cols = [
     {
-      field: "field_name",
-      header: "Field Name",
+      field: "name",
+      header: "Name",
       sort: true,
-    }
+    },
+    {
+      field: "template_name",
+      header: "Template Name",
+      sort: true,
+    },
+    {
+      field: "query_params",
+      header: "Query Params",
+      sort: false,
+    },
+    {
+      field: "sql_query",
+      header: "Sql Query",
+      sort: false,
+    },
   ]; //Table display columns
 
   isLoading = false;
@@ -68,66 +71,51 @@ export class PeDefinitionComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  pe_form_id!: number;
+  cas_plan_content_id!: number;
 
   constructor(
-    protected peDefinitionService: PeDefinitionService,
-    protected gfsCodeService: GfsCodeService,
-    protected peFormService: PeFormService,
+    protected reportSetupService: ReportSetupService,
+    protected casPlanContentService: CasPlanContentService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-    protected enumService: EnumService
+    protected toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.peDefinitionService
-      .query({ columns: ["id", "field_name"] })
-      .subscribe(
-        (resp: CustomResponse<PeDefinition[]>) => (this.parents = resp.data)
-      );
-    this.gfsCodeService
+    this.casPlanContentService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
+        (resp: CustomResponse<CasPlanContent[]>) =>
+          (this.casPlanContents = resp.data)
       );
-    this.peFormService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
-      );
-
-    this.units = this.enumService.get("units");
-    this.valueTypes = this.enumService.get("valueTypes");
     this.handleNavigation();
   }
 
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.pe_form_id) {
+    if (!this.cas_plan_content_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.peDefinitionService
+    this.reportSetupService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        pe_form_id: this.pe_form_id,
-        parent_id: null,
+        cas_plan_content_id: this.cas_plan_content_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<PeDefinition[]>) => {
+        (res: CustomResponse<ReportSetup[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -232,18 +220,17 @@ export class PeDefinitionComponent implements OnInit {
   }
 
   /**
-   * Creating or updating PeDefinition
-   * @param peDefinition ; If undefined initize new model to create else edit existing model
+   * Creating or updating ReportSetup
+   * @param reportSetup ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(peDefinition?: PeDefinition): void {
-    const data: PeDefinition = peDefinition ?? {
-      ...new PeDefinition(),
-      pe_form_id: this.pe_form_id,
+  createOrUpdate(reportSetup?: ReportSetup): void {
+    const data: ReportSetup = reportSetup ?? {
+      ...new ReportSetup(),
+      cas_plan_content_id: this.cas_plan_content_id,
     };
-    const ref = this.dialogService.open(PeDefinitionUpdateComponent, {
+    const ref = this.dialogService.open(ReportSetupUpdateComponent, {
       data,
-      width:"800px",
-      header: "Create/Update PE Columns",
+      header: "Create/Update ReportSetup",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -253,14 +240,14 @@ export class PeDefinitionComponent implements OnInit {
   }
 
   /**
-   * Delete PeDefinition
-   * @param peDefinition
+   * Delete ReportSetup
+   * @param reportSetup
    */
-  delete(peDefinition: PeDefinition): void {
+  delete(reportSetup: ReportSetup): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this PeDefinition?",
+      message: "Are you sure that you want to delete this ReportSetup?",
       accept: () => {
-        this.peDefinitionService.delete(peDefinition.id!).subscribe((resp) => {
+        this.reportSetupService.delete(reportSetup.id!).subscribe((resp) => {
           this.loadPage(this.page);
           this.toastService.info(resp.message);
         });
@@ -275,14 +262,14 @@ export class PeDefinitionComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<PeDefinition[]> | null,
+    resp: CustomResponse<ReportSetup[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/pe-definition"], {
+      this.router.navigate(["/report-setup"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -291,72 +278,15 @@ export class PeDefinitionComponent implements OnInit {
         },
       });
     }
-    this.peDefinitionsNodeTree = (resp?.data ?? []).map((c) => {
-      return {
-        data: c,
-        children: [],
-        leaf: false,
-      };
-    });
+    this.reportSetups = resp?.data ?? [];
   }
 
   /**
-   * When error on loading data set data to empty and reset page to load
+   * When error on loading data set data to empt and resert page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Pe Definition");
+    this.toastService.error("Error loading Report Setup");
   }
-  protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<NationalReference>>
-  ): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      (result) => this.onSaveSuccess(result),
-      (error) => this.onSaveError(error)
-    );
-  }
-
-  /**
-   * When save successfully close dialog and display info message
-   * @param result
-   */
-  protected onSaveSuccess(result: any): void {
-    this.toastService.info(result.message);
-  }
-
-  protected onSaveError(error: any): void {}
-
-  protected onSaveFinalize(): void {
-  }
-
-  onNodeExpand(event: any): void {
-    const node = event.node;
-    this.isLoading = true;
-    // Load children by parent_id= node.data.id
-    this.peDefinitionService
-      .query({
-        parent_id: node.data.id,
-        sort: ['id:asc'],
-      })
-      .subscribe(
-        (resp) => {
-          this.isLoading = false;
-          // Map response data to @TreeNode type
-          node.children = (resp?.data ?? []).map((c) => {
-            return {
-              data: c,
-              children: [],
-              leaf: false,
-            };
-          });
-          // Update Tree state
-          this.peDefinitionsNodeTree = [...this.peDefinitionsNodeTree!];
-        },
-        (error) => {
-          this.isLoading = false;
-        }
-      );
-  }
-
 }

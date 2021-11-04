@@ -46,8 +46,13 @@
       </div>
 
       <p-pickList
+        filterBy="name"
+        [responsive]="true"
+        [sourceStyle]="{ 'max-height': '15rem', 'min-height': '15rem' }"
+        [targetStyle]="{ 'max-height': '15rem', 'min-height': '15rem' }"
         [source]="newCategoryCombCategories!"
         [target]="existingCategoryCombCategories!"
+        [showSourceControls]="false"
       >
         <ng-template let-cat pTemplate="item">
           <div>

@@ -61,7 +61,23 @@ export class CasPlanContentUpdateComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
       );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const dialogData = this.dialogConfig.data;
+    const casPlanContent: CasPlanContent = dialogData.casPlanContent;
+    this.casPlans = dialogData.casPlans;
+    casPlanContent.cas_plan_id &&
+      this.loadCasPlanContent(casPlanContent.cas_plan_id!, casPlanContent.id);
+    this.updateForm(casPlanContent); //Initialize form with data from dialog
+  }
+
+  /**
+   * Load by cas plan id
+   */
+  loadCasPlanContent(casPlanId: number, excludeId?: number): void {
+    this.casPlanContentService
+      .query({ cas_plan_id: casPlanId, columns: ['id', 'name'] })
+      .subscribe((resp: CustomResponse<CasPlanContent[]>) => {
+        this.parents = resp.data?.filter((co) => co.id !== excludeId);
+      });
   }
 
   /**

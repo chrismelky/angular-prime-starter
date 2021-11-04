@@ -21,6 +21,8 @@ import { FacilityType } from '../../facility-type/facility-type.model';
 import { FacilityTypeService } from '../../facility-type/facility-type.service';
 import { Period } from '../../period/period.model';
 import { PeriodService } from '../../period/period.service';
+import { CasPlanService } from '../../cas-plan/cas-plan.service';
+import { CasPlan } from '../../cas-plan/cas-plan.model';
 
 @Component({
   selector: 'app-data-set-update',
@@ -32,6 +34,7 @@ export class DataSetUpdateComponent implements OnInit {
   errors = [];
 
   casPlanContents?: CasPlanContent[] = [];
+  casPlans?: CasPlan[] = [];
   facilityTypes?: FacilityType[] = [];
   periods?: Period[] = [];
 
@@ -58,7 +61,8 @@ export class DataSetUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     private toastService: ToastService,
     protected facilityTypeService: FacilityTypeService,
-    protected periodService: PeriodService
+    protected periodService: PeriodService,
+    protected casPlanService: CasPlanService
   ) {}
 
   ngOnInit(): void {
@@ -68,13 +72,16 @@ export class DataSetUpdateComponent implements OnInit {
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data || [])
       );
+
     this.periodService
       .query({
         columns: ['id', 'name', 'period_group'],
       })
       .subscribe((resp) => (this.periods = resp.data));
-    const dataSet: DataSet = this.dialogConfig.data;
-    this.loadCasPlanContent(dataSet.cas_plan_id!);
+    const dialogData = this.dialogConfig.data;
+    const dataSet: DataSet = dialogData.dataSet;
+    this.casPlans = dialogData.casPlans;
+    dataSet.cas_plan_id && this.loadCasPlanContent(dataSet.cas_plan_id!);
     this.updateForm(dataSet); //Initialize form with data from dialog
   }
 

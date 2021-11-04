@@ -2,6 +2,9 @@ export class BudgetCeiling{
   constructor(
     public id?: number,
     public admin_ceiling_id?: number,
+    public fund_source_id?:number,
+    public budget_class_id?:number,
+    public planning_admin_hierarchy_id?:number,
     public admin_hierarchy_id?: number,
     public financial_year_id?: number,
     public section_id?: number,

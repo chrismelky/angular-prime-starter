@@ -5,40 +5,40 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {EnumService, PlanrepEnum} from "src/app/shared/enum.service";
-import {DataSet} from "src/app/setup/data-set/data-set.model";
-import {DataSetService} from "src/app/setup/data-set/data-set.service";
-import {CategoryCombination} from "src/app/setup/category-combination/category-combination.model";
-import {CategoryCombinationService} from "src/app/setup/category-combination/category-combination.service";
-import {OptionSet} from "src/app/setup/option-set/option-set.model";
-import {OptionSetService} from "src/app/setup/option-set/option-set.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { DataSet } from 'src/app/setup/data-set/data-set.model';
+import { DataSetService } from 'src/app/setup/data-set/data-set.service';
+import { CategoryCombination } from 'src/app/setup/category-combination/category-combination.model';
+import { CategoryCombinationService } from 'src/app/setup/category-combination/category-combination.service';
+import { OptionSet } from 'src/app/setup/option-set/option-set.model';
+import { OptionSetService } from 'src/app/setup/option-set/option-set.service';
 
-import {DataElement} from "./data-element.model";
-import {DataElementService} from "./data-element.service";
-import {DataElementUpdateComponent} from "./update/data-element-update.component";
+import { DataElement } from './data-element.model';
+import { DataElementService } from './data-element.service';
+import { DataElementUpdateComponent } from './update/data-element-update.component';
 
 @Component({
-  selector: "app-data-element",
-  templateUrl: "./data-element.component.html",
+  selector: 'app-data-element',
+  templateUrl: './data-element.component.html',
 })
 export class DataElementComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   dataElements?: DataElement[] = [];
 
   dataSets?: DataSet[] = [];
@@ -48,49 +48,24 @@ export class DataElementComponent implements OnInit {
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
     {
-      field: "display_name",
-      header: "Display Name",
+      field: 'question_number',
+      header: 'Question Number',
       sort: true,
     },
     {
-      field: "code",
-      header: "Code",
-      sort: true,
-    },
-    {
-      field: "question_number",
-      header: "Question Number",
-      sort: true,
-    },
-    /*{
-      field: "category_combination_id",
-      header: "Category Combination ",
-      sort: true,
-    },
-    {
-      field: "option_set_id",
-      header: "Option Set ",
-      sort: true,
-    },*/
-    {
-      field: "sort_order",
-      header: "Sort Order",
+      field: 'sort_order',
+      header: 'Sort Order',
       sort: false,
     },
     {
-      field: "value_type",
-      header: "Value Type",
+      field: 'value_type',
+      header: 'Value Type',
       sort: true,
-    },
-    {
-      field: "is_required",
-      header: "Required",
-      sort: false,
     },
   ]; //Table display columns
 
@@ -118,27 +93,26 @@ export class DataElementComponent implements OnInit {
     protected helper: HelperService,
     protected toastService: ToastService,
     protected enumService: EnumService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.dataSetService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<DataSet[]>) => (this.dataSets = resp.data)
       );
     this.categoryCombinationService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CategoryCombination[]>) =>
           (this.categoryCombinations = resp.data)
       );
     this.optionSetService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<OptionSet[]>) => (this.optionSets = resp.data)
       );
-    this.valueTypes = this.enumService.get("valueTypes");
+    this.valueTypes = this.enumService.get('valueTypes');
     this.handleNavigation();
   }
 
@@ -183,11 +157,11 @@ export class DataElementComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -262,8 +236,8 @@ export class DataElementComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -277,8 +251,12 @@ export class DataElementComponent implements OnInit {
       data_set_id: this.data_set_id,
     };
     const ref = this.dialogService.open(DataElementUpdateComponent, {
-      data,
-      header: "Create/Update DataElement",
+      data: {
+        dataElement: data,
+        dataSets: this.dataSets,
+      },
+      header: 'Create/Update Data Element',
+      width: '850px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -293,7 +271,7 @@ export class DataElementComponent implements OnInit {
    */
   delete(dataElement: DataElement): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this DataElement?",
+      message: 'Are you sure that you want to delete this DataElement?',
       accept: () => {
         this.dataElementService.delete(dataElement.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -317,12 +295,12 @@ export class DataElementComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/data-element"], {
+      this.router.navigate(['/data-element'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -335,6 +313,6 @@ export class DataElementComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Data Element");
+    this.toastService.error('Error loading Data Element');
   }
 }

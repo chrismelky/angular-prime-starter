@@ -56,7 +56,9 @@ export class DataValueComponent implements OnInit {
   casPlans?: CasPlan[] = [];
   dataSets?: DataSet[] = [];
   dataValuesArray: any = {};
+  dataValuesTotalArray: any = {};
   parentAdminName!: string;
+  valueLoaded = false;
 
   isLoading = false;
   page?: number = 1;
@@ -173,11 +175,17 @@ export class DataValueComponent implements OnInit {
           'option_set_id',
           'is_required',
           'value_type',
+          'data_element_group_id',
         ],
-        with: ['optionSet', 'optionSet.options'],
+        with: ['optionSet', 'optionSet.options', 'group'],
       })
       .subscribe((resp: CustomResponse<DataElement[]>) => {
-        this.dataElements = resp.data;
+        this.dataElements = resp.data?.map((de) => {
+          return {
+            ...de,
+            groupName: de.group ? de.group.name : 'NONE',
+          };
+        });
         this.loadCategoryCombinations();
       });
   }
@@ -195,12 +203,24 @@ export class DataValueComponent implements OnInit {
       }
     });
     this.categoryCombinationService.getByIds({ ids }).subscribe((resp) => {
-      this.categoryCombinations = resp.data;
+      this.categoryCombinations = resp.data?.map((cc) => {
+        return {
+          ...cc,
+          dataElementGroups: this.helper.groupBy(
+            this.dataElements?.filter(
+              (de) => de.category_combination_id === cc.id
+            )!,
+            'groupName'
+          ),
+        };
+      });
       this.prepareDataValuesArray();
     });
   }
 
   loadDataValues(): void {
+    this.valueLoaded = false;
+    this.dataValues = [];
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
@@ -216,20 +236,33 @@ export class DataValueComponent implements OnInit {
         facility_id: this.facility_id,
         period_id: this.period_id,
       })
-      .subscribe((resp) => {
-        this.dataValues = resp.data;
-        this.prepareDataValuesArray();
-      });
+      .subscribe(
+        (resp) => {
+          this.dataValues = resp.data;
+          this.prepareDataValuesArray();
+          this.valueLoaded = true;
+        },
+        (error) => {
+          this.valueLoaded = true;
+          this.prepareDataValuesArray();
+        }
+      );
   }
 
   prepareDataValuesArray(): void {
     this.dataElements?.forEach((de) => {
       this.dataValuesArray[de.id!] = {};
+
+      this.dataValuesTotalArray[de.id!] = {};
+
       this.categoryCombinations?.forEach((co) => {
+        let rowTotal = 0;
+
         if (de.category_combination_id === co.id) {
           co.category_option_combinations?.forEach((coc) => {
             coc.value_type = coc.value_type || de.value_type;
             coc.option_set_id = coc.option_set_id || de.option_set_id;
+            coc.option_set = coc.option_set || de.option_set;
 
             const existing = this.dataValues?.find((dv) => {
               return (
@@ -237,42 +270,46 @@ export class DataValueComponent implements OnInit {
                 dv.category_option_combination_id === coc.id
               );
             });
+            if (coc.value_type === 'NUMBER') {
+              rowTotal = rowTotal + parseFloat(existing?.value || '0');
+            }
             this.dataValuesArray[de.id!][coc.id!] = {
               id: existing ? existing.id : undefined,
               value: existing ? existing.value : undefined,
               oldValue: existing ? existing.value : undefined,
               isSaving: false,
+              isSaved: false,
+              hasError: false,
               data_element_id: de.id,
               category_option_combination_id: coc.id,
             };
           });
         }
+        this.dataValuesTotalArray[de.id!][co.id!] = rowTotal;
       });
     });
   }
 
-  prepareHeaders(catCombo: CategoryCombination): any[] {
-    const tableHeaders: any[] = [];
-    catCombo.categories?.forEach((c) => {
-      const option = c.category_options?.map((o1) => o1);
-      let tr: any[] = [];
-      catCombo.category_option_combinations?.forEach((coc) => {
-        const optionIds2 = coc.category_options?.map((o2) => o2.id);
-        const column = option?.find((x) => optionIds2?.indexOf(x.id));
-        let existColumn = tr.find((y: any) => y?.idscolumn?.id);
-        if (existColumn) {
-          existColumn.colspan++;
-        } else {
-          tr.push({ id: column?.id, colspan: 1, name: column?.name });
-        }
-      });
-      tableHeaders.push(tr);
+  calculateTotal(
+    valueChanged: number,
+    de: DataElement,
+    catComb: CategoryCombination,
+    cocId: number
+  ): void {
+    let total = valueChanged || 0;
+    catComb.category_option_combinations?.forEach((coc) => {
+      const value_type = coc.value_type || de.value_type;
+      if (value_type === 'NUMBER' && coc.id != cocId) {
+        total =
+          total + parseFloat(this.dataValuesArray[de.id!][coc.id!].value || 0);
+        console.log(this.dataValuesArray[de.id!][coc.id!].value);
+        console.log(total);
+      }
     });
-    console.log(tableHeaders);
-    return tableHeaders;
+    this.dataValuesTotalArray[de.id!][catComb.id!] = total;
   }
 
-  saveValue(dataValue: any): void {
+  saveValue(event: any, dataValue: any): void {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
@@ -289,16 +326,50 @@ export class DataValueComponent implements OnInit {
       period_id: this.period_id,
     };
     if (
-      dataValue.value !== dataValue.oldValue &&
-      dataValue.value !== undefined
+      dataValue.value !== undefined &&
+      dataValue.value !== null &&
+      dataValue.value.toString() !== dataValue.oldValue
     ) {
       dataValue.isSaving = true;
       if (dataValue.id !== undefined) {
-        this.dataValueService.update(dataValue).subscribe();
+        this.dataValueService.update(dataValue).subscribe(
+          (resp) => this.onSuccess(dataValue, resp.data!),
+          (error) => this.onError(dataValue)
+        );
       } else {
-        this.dataValueService.create(dataValue).subscribe();
+        this.dataValueService.create(dataValue).subscribe(
+          (resp) => this.onSuccess(dataValue, resp.data!),
+          (error) => this.onError(dataValue)
+        );
       }
     }
+  }
+
+  protected onSuccess(dataValue: any, savedData: DataValue): void {
+    this.dataValuesArray[dataValue.data_element_id][
+      dataValue.category_option_combination_id
+    ].oldValue = savedData?.value;
+    this.dataValuesArray[dataValue.data_element_id][
+      dataValue.category_option_combination_id
+    ].id = savedData?.id;
+    this.dataValuesArray[dataValue.data_element_id][
+      dataValue.category_option_combination_id
+    ].isSaved = true;
+    this.dataValuesArray[dataValue.data_element_id][
+      dataValue.category_option_combination_id
+    ].hasError = false;
+    this.toastService.info('Value saved');
+  }
+
+  protected onError(dataValue: any): void {
+    this.dataValuesArray[dataValue.data_element_id][
+      dataValue.category_option_combination_id
+    ].isSaved = false;
+
+    this.dataValuesArray[dataValue.data_element_id][
+      dataValue.category_option_combination_id
+    ].hasError = true;
+    this.toastService.error('Error value not saved');
   }
 
   fileUploader($event: any, dataValue: DataValue): void {
@@ -327,10 +398,13 @@ export class DataValueComponent implements OnInit {
     });
   }
 
-  filterByCategoryCombo(id: number): DataElement[] {
-    return this.dataElements?.filter(
+  filterByCategoryCombo(id: number): any {
+    const des = this.dataElements?.filter(
       (de) => de.category_combination_id === id
     )!;
+    const grouped = this.helper.groupBy(des, 'groupName');
+    console.log(grouped);
+    return [];
   }
 
   /**
@@ -366,12 +440,5 @@ export class DataValueComponent implements OnInit {
     this.loadDataValues();
     // this.dataValues = [];
     // this.prepareDataValuesArray();
-  }
-
-  /**
-   * When error on loading data set data to empty and reset page to load
-   */
-  protected onError(): void {
-    this.toastService.error('Error loading Data Value');
   }
 }

@@ -18,6 +18,8 @@ import {FacilityCustomDetailValue} from "../facility-custom-detail-value.model";
 import {FacilityCustomDetailValueService} from "../facility-custom-detail-value.service";
 import {ToastService} from "src/app/shared/toast.service";
 import {Facility} from "../../facility.model";
+import {FacilityCustomDetailOptionService} from "../../../facility-custom-detail/facility-custom-detail-option/facility-custom-detail-option.service";
+import {FacilityCustomDetailOption} from "../../../facility-custom-detail/facility-custom-detail-option/facility-custom-detail-option.model";
 
 @Component({
   selector: "app-facility-custom-detail-value-update",
@@ -29,6 +31,7 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
   errors = [];
   facility!: Facility;
   facilityCustomDetails?: FacilityCustomDetail[] = [];
+  options?: FacilityCustomDetailOption[];
   /**
    * Declare form
    */
@@ -41,6 +44,7 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
   constructor(
     protected facilityCustomDetailValueService: FacilityCustomDetailValueService,
     protected facilityCustomDetailService: FacilityCustomDetailService,
+    protected optionService: FacilityCustomDetailOptionService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -49,6 +53,7 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
     this.facility = this.dialogConfig.data.facility;
     if (this.dialogConfig.data.facilityCustomDetailValue !== undefined) {
       this.updateForm(this.dialogConfig.data.facilityCustomDetailValue);
+      this.getOptions(this.dialogConfig.data.facilityCustomDetailValue.facility_custom_detail_id)
     }
   }
 
@@ -141,5 +146,16 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
       ])!.value,
       value: this.editForm.get(["value"])!.value,
     };
+  }
+
+  loadOptions(event: any): void {
+    const facilityCustomDetailId = event.value as number;
+    this.getOptions(facilityCustomDetailId);
+  }
+
+  private getOptions(facilityCustomDetailId: number) {
+    this.optionService.query({facility_custom_detail_id: facilityCustomDetailId}).subscribe(response => {
+      this.options = response.data;
+    });
   }
 }

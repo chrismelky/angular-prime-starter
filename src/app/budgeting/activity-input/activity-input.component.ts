@@ -44,7 +44,7 @@ import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
 export class ActivityInputComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
-
+  budgetIsLocked? = false;
   facilityIsLoading = false;
   activityLoading = false;
   budgetClassIsLoading = false;
@@ -187,6 +187,34 @@ export class ActivityInputComponent implements OnInit {
       });
   }
 
+  private setBudgetStatus(): void {
+    switch (this.budget_type) {
+      case 'CURRENT':
+        this.budgetIsLocked =
+          this.adminHierarchyCostCentre?.is_current_budget_locked ||
+          this.adminHierarchyCostCentre?.is_current_budget_approved;
+        break;
+      case 'APPROVED':
+        this.budgetIsLocked =
+          this.adminHierarchyCostCentre?.is_current_budget_locked ||
+          this.adminHierarchyCostCentre?.is_current_budget_approved;
+        break;
+      case 'CARRYOVER':
+        this.budgetIsLocked =
+          this.adminHierarchyCostCentre?.is_carryover_budget_locked ||
+          this.adminHierarchyCostCentre?.is_carryover_budget_approved;
+        break;
+      case 'SUPPLEMENTARY':
+        this.budgetIsLocked =
+          this.adminHierarchyCostCentre?.is_supplementary_budget_locked ||
+          this.adminHierarchyCostCentre?.is_supplementary_budget_approved;
+        break;
+      default:
+        this.budgetIsLocked = false;
+        break;
+    }
+  }
+
   /**
    * Called initialy/onInit to
    * Restore page, sort option from url query params if exist and load page
@@ -200,7 +228,7 @@ export class ActivityInputComponent implements OnInit {
       this.adminHierarchyCostCentre = data.adminHierarchyCostCentre;
       this.budget_type = params['budgetType'];
       this.financialYear = data.financialYear;
-
+      this.setBudgetStatus();
       this.loadFacilities();
 
       const page = queryParams.get('page');
@@ -308,6 +336,7 @@ export class ActivityInputComponent implements OnInit {
         activityInput: data,
         facilityActivity: this.facilityActivity,
         gfsCodes: this.gfsCodes,
+        budgetIsLocked: this.budgetIsLocked,
       },
       width: '900px',
       header: 'Create/Update ActivityInput',

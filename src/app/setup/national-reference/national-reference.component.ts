@@ -5,55 +5,47 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import {combineLatest, Observable} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, Observable } from 'rxjs';
+import {
+  ConfirmationService,
+  LazyLoadEvent,
+  MenuItem,
+  TreeNode,
+} from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { ReferenceType } from "src/app/setup/reference-type/reference-type.model";
-import { ReferenceTypeService } from "src/app/setup/reference-type/reference-type.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { ReferenceType } from 'src/app/setup/reference-type/reference-type.model';
+import { ReferenceTypeService } from 'src/app/setup/reference-type/reference-type.service';
 
-import { NationalReference } from "./national-reference.model";
-import { NationalReferenceService } from "./national-reference.service";
-import { NationalReferenceUpdateComponent } from "./update/national-reference-update.component";
-import {finalize} from "rxjs/operators";
-import {TreeTable} from "primeng/treetable";
+import { NationalReference } from './national-reference.model';
+import { NationalReferenceService } from './national-reference.service';
+import { NationalReferenceUpdateComponent } from './update/national-reference-update.component';
+import { finalize } from 'rxjs/operators';
+import { TreeTable } from 'primeng/treetable';
 
 @Component({
-  selector: "app-national-reference",
-  templateUrl: "./national-reference.component.html",
+  selector: 'app-national-reference',
+  templateUrl: './national-reference.component.html',
 })
 export class NationalReferenceComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
+  @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: TreeTable;
   nationalReferences?: TreeNode[] = [];
   referenceTypes?: ReferenceType[] = [];
   parents?: NationalReference[] = [];
   linkLevels?: PlanrepEnum[] = [];
-
-  cols = [
-    {
-      field: "code",
-      header: "Code",
-      sort: true,
-    },
-    {
-      field: "description",
-      header: "Description",
-      sort: true,
-    },
-  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -82,17 +74,18 @@ export class NationalReferenceComponent implements OnInit {
 
   ngOnInit(): void {
     this.referenceTypeService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<ReferenceType[]>) =>
           (this.referenceTypes = resp.data)
       );
     this.nationalReferenceService
-      .query({ columns: ["id", "description"] })
+      .query({ columns: ['id', 'description'] })
       .subscribe(
-        (resp: CustomResponse<NationalReference[]>) => (this.parents = resp.data)
+        (resp: CustomResponse<NationalReference[]>) =>
+          (this.parents = resp.data)
       );
-    this.linkLevels = this.enumService.get("linkLevels");
+    this.linkLevels = this.enumService.get('linkLevels');
     this.handleNavigation();
   }
 
@@ -111,7 +104,7 @@ export class NationalReferenceComponent implements OnInit {
         per_page: this.per_page,
         sort: this.sort(),
         reference_type_id: this.reference_type_id,
-        parent_id : null,
+        parent_id: null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -135,11 +128,11 @@ export class NationalReferenceComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -214,8 +207,8 @@ export class NationalReferenceComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -223,15 +216,23 @@ export class NationalReferenceComponent implements OnInit {
    * Creating or updating NationalReference
    * @param nationalReference ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(nationalReference?: NationalReference): void {
+  createOrUpdate(
+    nationalReference?: NationalReference,
+    parent?: NationalReference
+  ): void {
     const data: NationalReference = nationalReference ?? {
       ...new NationalReference(),
       reference_type_id: this.reference_type_id,
       link_level: this.link_level,
+      parent_id: parent?.id,
     };
     const ref = this.dialogService.open(NationalReferenceUpdateComponent, {
-      data,
-      header: "Create/Update NationalReference",
+      data: {
+        reference: data,
+        parents: parent ? [parent] : [],
+      },
+      header: 'Create/Update NationalReference',
+      width: '900px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -246,7 +247,7 @@ export class NationalReferenceComponent implements OnInit {
    */
   delete(nationalReference: NationalReference): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this NationalReference?",
+      message: 'Are you sure that you want to delete this NationalReference?',
       accept: () => {
         this.nationalReferenceService
           .delete(nationalReference.id!)
@@ -272,16 +273,16 @@ export class NationalReferenceComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/national-reference"], {
+      this.router.navigate(['/national-reference'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
-    this.nationalReferences =(resp?.data ?? []).map((c) => {
+    this.nationalReferences = (resp?.data ?? []).map((c) => {
       return {
         data: c,
         children: [],
@@ -296,14 +297,14 @@ export class NationalReferenceComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading National Reference");
+    this.toastService.error('Error loading National Reference');
   }
 
   /**
    * toggleActivation event
    * @param row Data = constist of row Data
    */
-  toggleActivation(row:any){
+  toggleActivation(row: any) {
     var nationalReference = this.createFromForm(row);
     this.subscribeToSaveResponse(
       this.nationalReferenceService.update(nationalReference)
@@ -335,8 +336,7 @@ export class NationalReferenceComponent implements OnInit {
    */
   protected onSaveError(error: any): void {}
 
-  protected onSaveFinalize(): void {
-  }
+  protected onSaveFinalize(): void {}
 
   /**
    * Return form values as object of type NationalReference
@@ -346,7 +346,7 @@ export class NationalReferenceComponent implements OnInit {
     return {
       ...new NationalReference(),
       id: row.id,
-      code:row.code,
+      code: row.code,
       description: row.description,
       active: row.active,
       reference_type_id: row.reference_type_id,
@@ -366,6 +366,7 @@ export class NationalReferenceComponent implements OnInit {
     this.nationalReferenceService
       .query({
         parent_id: node.data.id,
+        with: ['sectors'],
         sort: ['code:asc'],
       })
       .subscribe(

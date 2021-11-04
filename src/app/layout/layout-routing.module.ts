@@ -1252,6 +1252,35 @@ const routes: Routes = [
             (m) => m.ReportSetupModule
           ),
       },
+        {
+          path: "data-element-group-set"
+        ,
+        loadChildren: () =>
+          import(
+            "../setup/data-element-group-set/data-element-group-set.module"
+          ).then((m) => m.DataElementGroupSetModule),
+      },
+      {
+        path: "data-element-group",
+        loadChildren: () =>
+          import("../setup/data-element-group/data-element-group.module").then(
+            (m) => m.DataElementGroupModule
+          ),
+      },
+      {
+        path: "generic-target",
+        loadChildren: () =>
+          import("../setup/generic-target/generic-target.module").then(
+            (m) => m.GenericTargetModule
+          ),
+      },
+      {
+        path: "generic-activity",
+        loadChildren: () =>
+          import("../setup/generic-activity/generic-activity.module").then(
+            (m) => m.GenericActivityModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

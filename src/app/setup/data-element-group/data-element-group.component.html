@@ -1,0 +1,234 @@
+<div class="content" fxLayout="column" fxLayoutGap="0.75rem">
+  <!-- Filter Panel -->
+  <p-card class="filter">
+    <ng-template pTemplate="header">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+        <i class="pi pi-filter"></i>
+        <span class="card-header-text">Filter</span>
+      </div>
+    </ng-template>
+    <div fxLayout="column" fxLayoutGap="4px">
+      <div fxLayout="row wrap" fxLayoutGap="10px">
+        <div
+          fxLayout="row wrap"
+          fxLayoutGap="0.75rem"
+          fxFlex
+          fxLayoutAlign="start center"
+        >
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="data_element_group_set_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="dataElementGroupSets!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="data_element_group_set_id"
+              ></p-dropdown>
+              <label for="data_element_group_set_id"
+                >Data Element Group Set
+              </label>
+            </span>
+          </div>
+        </div>
+        <div
+          fxLayout="row wrap"
+          fxFlex="140px"
+          fxLayoutGap="4px"
+          fxLayoutAlign="end center"
+        >
+          <button
+            pButton
+            type="button"
+            [pTooltip]="
+              advFilter.selected
+                ? 'Hide Advanced Search'
+                : 'Show Advanced Search'
+            "
+            tooltipPosition="bottom"
+            [icon]="
+              advFilter.selected
+                ? 'pi pi-angle-double-up'
+                : 'pi pi-angle-double-down'
+            "
+            class="p-button-rounded p-button-text p-button-plain"
+            (click)="advFilter.selected = !advFilter.selected"
+          ></button>
+          <button
+            pButton
+            class="p-button-primary p-button-raised"
+            icon="pi pi-search"
+            label="Search"
+            (click)="onSearch()"
+          ></button>
+        </div>
+      </div>
+      <p-accordion>
+        <p-accordionTab
+          class="p-shadow-0"
+          #advFilter
+          [selected]="advFilter.selected"
+          [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"
+        >
+          <div fxLayout="row wrap" fxLayoutGap="10px">
+            <div
+              fxLayout="row wrap"
+              fxLayoutGap="0.75rem"
+              fxFlex
+              fxLayoutAlign="start center"
+            >
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="name"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['name']"
+                  />
+                  <label for="name">Name </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['name'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="code"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['code']"
+                  />
+                  <label for="code">Code </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['code'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+            </div>
+            <div
+              fxLayout="row"
+              fxLayoutGap="4px"
+              fxFlex="140px"
+              fxLayoutAlign="end"
+            >
+              <button
+                pButton
+                pTooltip="Clear Advanced Search"
+                tooltipPosition="bottom"
+                class="p-button-text p-button-plain"
+                icon="pi pi-times"
+                label="Clear"
+                (click)="clearSearch()"
+              ></button>
+            </div>
+          </div>
+        </p-accordionTab>
+      </p-accordion>
+    </div>
+  </p-card>
+
+  <!-- Table Panel -->
+  <p-card>
+    <p-table
+      #table
+      [lazy]="true"
+      [resizableColumns]="true"
+      [responsive]="true"
+      [autoLayout]="true"
+      [loading]="isLoading"
+      [columns]="cols"
+      [value]="dataElementGroups!"
+      (onLazyLoad)="onSortChange($event)"
+      [customSort]="true"
+    >
+      <ng-template pTemplate="caption">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text">Data Element Groups</span>
+          <button
+            pButton
+            icon="pi pi-plus"
+            class="p-button-raised"
+            [disabled]="!data_element_group_set_id"
+            (click)="createOrUpdate()"
+            label="Add Data Element Group"
+          ></button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr *ngIf="dataElementGroups?.length">
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            {{ rowData[col.field] }}
+          </td>
+          <td>
+            <div fxLayout="row" fxLayoutAlign="end">
+              <div fxLayout="row" fxLayoutGap="2px">
+                <button
+                  pButton
+                  pTooltip="Edit"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-pencil
+              "
+                  (click)="createOrUpdate(rowData)"
+                ></button>
+                <button
+                  pButton
+                  pTooltip="Delete"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-trash
+              "
+                  (click)="delete(rowData)"
+                ></button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+    </p-table>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+      <p-paginator
+        #paginator
+        [alwaysShow]="dataElementGroups?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
+  </p-card>
+</div>
+
+<p-confirmDialog
+  [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+  [style]="{ width: '50vw' }"
+  header="Confirmation Delete Data Element Group"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>

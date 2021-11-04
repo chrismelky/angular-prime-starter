@@ -42,7 +42,9 @@
               "./node_modules/primeicons/primeicons.css",
               "src/content/scss/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+
+            ]
           },
           "configurations": {
             "production": {

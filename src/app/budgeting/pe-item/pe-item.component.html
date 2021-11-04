@@ -5,6 +5,9 @@
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
         <i class="pi pi-filter"></i>
         <span class="card-header-text">Filter</span>
+        <p-divider class="title">
+          <span>{{ currentUser?.admin_hierarchy?.name }}</span>
+        </p-divider>
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
@@ -15,19 +18,19 @@
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div fxLayout="column" fxLayoutGap="10px" fxFlex>
-            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <div fxLayout="column" fxLayoutGap="20px" fxFlex>
+            <div fxLayout="row" fxLayoutGap="25px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <p-dropdown
-                    id="pe_sub_form_id"
-                    optionValue="value"
-                    [options]="peSubForms!"
-                    [group]="true"
-                    (onChange)="getPeForm($event)"
-                    [autoDisplayFirst]=false
-                    [filter]="true"
-                    [(ngModel)]="parent_sub_budget_class"
+                              id="pe_sub_form_id"
+                              optionValue="value"
+                              [options]="peSubForms!"
+                              [group]="true"
+                              (onChange)="getPeForm($event)"
+                              [autoDisplayFirst]=false
+                              [filter]="true"
+                              [(ngModel)]="parent_sub_budget_class"
                   >
                   <ng-template let-group pTemplate="group">
                       <div class="p-d-flex p-ai-center">
@@ -39,37 +42,37 @@
                   <label for="pe_sub_form_id">Personal Emolument Sub Form </label>
                 </span>
               </div>
-            </div>
-
-            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
               <span class="p-float-label">
                 <p-dropdown
-                  id="budget_class_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]=false
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="budgetClasses!"
-                  (onChange)="getFundSources($event)"
-                  [(ngModel)]="budget_class_id"
+                            id="budget_class_id"
+                            optionValue="id"
+                            optionLabel="name"
+                            [autoDisplayFirst]=false
+                            [filter]="true"
+                            class="p-inputtext-sm"
+                            [options]="budgetClasses!"
+                            (onChange)="getFundSources($event)"
+                            [(ngModel)]="budget_class_id"
                 ></p-dropdown>
                 <label for="budget_class_id">Budget Class </label>
               </span>
               </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="25px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
               <span class="p-float-label">
                 <p-dropdown
-                  id="fund_source_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]="false"
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="fundSources!"
-                  (onChange)="filterChanged()"
-                  [(ngModel)]="fund_source_id"
+                            id="fund_source_id"
+                            optionValue="id"
+                            optionLabel="name"
+                            [autoDisplayFirst]="false"
+                            [filter]="true"
+                            class="p-inputtext-sm"
+                            [options]="fundSources!"
+                            (onChange)="filterChanged()"
+                            [(ngModel)]="fund_source_id"
                 ></p-dropdown>
                 <label for="fund_source_id">Fund Source </label>
               </span>
@@ -77,31 +80,20 @@
               <div class="p-field" fxFlex>
               <span class="p-float-label">
                 <p-dropdown
-                  id="section_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  optionGroupLabel="name"
-                  appendTo="body"
-                  optionGroupChildren="children"
-                  [options]="sections!"
-                  [group]="true"
-                  (onChange)="filterChanged()"
-                  [autoDisplayFirst]=false
-                  [filter]="true"
-                  [(ngModel)]="section_id"
+                            id="section_id"
+                            optionValue="id"
+                            optionLabel="name"
+                            optionGroupLabel="name"
+                            appendTo="body"
+                            [options]="sections!"
+                            (onChange)="filterChanged()"
+                            [autoDisplayFirst]=false
+                            [filter]="true"
+                            [(ngModel)]="section_id"
                 >
-                  <ng-template let-group pTemplate="group">
-                      <div class="p-d-flex p-ai-center">
-                        <i class="pi pi-folder-open">&nbsp;</i>
+                  <ng-template let-group pTemplate="sections">
                           <span>[ {{group.code}} ] - {{group.name}}</span>
-                      </div>
                   </ng-template>
-
-                  <ng-template let-costCenter pTemplate="item">
-                    <div class="country-item">
-                        <div>[ {{costCenter.code}} ] - {{costCenter.name}}</div>
-                    </div>
-                </ng-template>
                 </p-dropdown>
                 <label for="section_id">Planning Unit </label>
               </span>
@@ -113,175 +105,186 @@
     </div>
   </p-card>
 
+  <div *ngIf="isCriteriaMeet(); else noDataToShow">
+    <p-toolbar>
+      <div class="p-toolbar-group-left">
+      <span class="card-header-text">
+        Personal Emolument Budget
+        <i class="pi {{is_current_budget_locked?' pi-lock':' pi-lock-open'}}"></i><br/></span>
+      </div>
 
-  <p-toolbar>
-    <div class="p-toolbar-group-left">
-      <span class="card-header-text">Personal Emolument Budget <i
-        class="pi {{is_current_budget_locked?' pi-lock':' pi-lock-open'}}"></i><br/></span>
-    </div>
-
-    <div class="p-toolbar-goup">
+      <div class="p-toolbar-goup">
       <span *ngIf="dataReady" class="p-card-subheader">
         Balance: {{balanceAmount | currency:' '}}, &nbsp;&nbsp;&nbsp;
         Budget : {{budgetedAmount | currency:' '}}, &nbsp;&nbsp;&nbsp;
         Ceilling: {{cellingAmount | currency: ' '}}
       </span>
-    </div>
+      </div>
 
-    <div *ngIf="dataReady" class="p-toolbar-group-right">
-      <p-button icon="pi pi-print" styleClass="p-button-success" (onClick)="printPeFormStatus()"></p-button>
-    </div>
-  </p-toolbar>
+      <div *ngIf="dataReady" class="p-toolbar-group-right">
+        <p-button icon="pi pi-print" styleClass="p-button-success" (onClick)="printPeFormStatus()"></p-button>
+      </div>
+    </p-toolbar>
 
-  <p-card *ngIf="dataReady">
-    <div style="overflow-x:scroll;" *ngIf="dataReady" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="left">
-      <table id="peTable" class="p-datatable" style="width: 100%">
-        <tr class="p-datatable-header	">
-          <th rowspan="2">#</th>
-          <th *ngFor="let parent of peTableFields?.parentDefinitions" [attr.colspan]="parent.cols_span"
-              [attr.rowspan]="parent.row_span">{{parent.field_name}}</th>
-        </tr>
-        <tr class="p-datatable-header	">
-          <th *ngFor="let child of peTableFields?.childrenDefinitions">{{child.field_name}}</th>
-        </tr>
+    <p-card *ngIf="dataReady">
+      <div style="overflow-x:scroll;" *ngIf="dataReady" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="left">
+        <table id="peTable" class="p-datatable" style="width: 100%">
+          <tr class="p-datatable-header	">
+            <th rowspan="2">#</th>
+            <th *ngFor="let parent of peTableFields?.parentDefinitions" [attr.colspan]="parent.cols_span"
+                [attr.rowspan]="parent.row_span">{{parent.field_name}}
+            </th>
+          </tr>
+          <tr class="p-datatable-header	">
+            <th *ngFor="let child of peTableFields?.childrenDefinitions">{{child.field_name}}</th>
+          </tr>
 
-        <tr *ngFor="let i of round">
-          <td title="{{i.uid}}">
-            <p-radioButton *ngIf="round.length > 1" name="city" value="{{i.uid}}" [(ngModel)]="city" inputId="{{i.uid}}"
-                           (onClick)="selectedRows($event,i.uid,i.id)"></p-radioButton>
-            {{i.id + 1}}
-          </td>
+          <tr *ngFor="let i of round">
+            <td title="{{i.uid}}">
+              <p-radioButton *ngIf="round.length > 1"
+                             name="selectedRow" value="{{i.uid}}"
+                             [(ngModel)]="city" inputId="{{i.uid}}"
+                             (onClick)="selectedRows($event,i.uid,i.id)"
+              ></p-radioButton>
+              {{i.id + 1}}
+            </td>
 
-          <td *ngFor="let input of inputTexts[i.id]">
-            <div *ngIf="input.select_option === null">
-
-              <div *ngIf="input?.output_type === 'CURRENCY'; else notCurrencyBlock">
-                <p-inputNumber
-                  [size]="10"
-                  [disabled]="!!input.formula || is_current_budget_locked"
-                  [(ngModel)]="peValuesArray[i.uid!][input.id].value"
-                  (onBlur)="updateValue(peValuesArray[i.uid!][input.id])"
-                  autocomplete="off"
-                  inputId="{{ i.uid! }}-{{ input.id! }}"
-                  [inputStyle]="{'text-align': 'right','max-width':'2px !important'}">
-                </p-inputNumber>
-              </div>
-
-              <ng-template #notCurrencyBlock>
-                <ng-container *ngIf="input?.output_type === 'DATE'; else notDateBlock;">
-                  <p-calendar
-                    appendTo="body"
-                    [(ngModel)]="peValuesArray[i.uid!][input.id].value"
-                    [monthNavigator]="true"
-                    [yearNavigator]="true"
-                    yearRange="{{yearRange}}"
-                    dateFormat="yy-mm-dd">
-                  </p-calendar>
-                </ng-container>
-
-                <ng-template #notDateBlock>
-                  <input
-                    type="{{input.type}}"
-                    id="{{ i.uid! }}-{{ input.id! }}"
-                    class="p-inputtext-sm"
-                    pInputText
+            <td *ngFor="let input of inputTexts[i.id]">
+              <div *ngIf="input.select_option === null">
+                <div *ngIf="input?.output_type === 'CURRENCY'; else notCurrencyBlock">
+                  <p-inputNumber
+                    [size]="14"
                     [disabled]="!!input.formula || is_current_budget_locked"
                     [(ngModel)]="peValuesArray[i.uid!][input.id].value"
-                    (blur)="updateValue(peValuesArray[i.uid!][input.id])"
+                    (onBlur)="updateValue(peValuesArray[i.uid!][input.id])"
                     autocomplete="off"
-                  >
-                </ng-template>
-              </ng-template>
+                    inputId="{{ i.uid! }}-{{ input.id! }}"
+                    [inputStyle]="{'text-align': 'right','max-width':'2px !important'}">
+                  </p-inputNumber>
+                </div>
 
+                <ng-template #notCurrencyBlock>
+                  <ng-container *ngIf="input?.output_type === 'DATE'; else notDateBlock;">
+                    <p-calendar
+                      appendTo="body"
+                      [(ngModel)]="peValuesArray[i.uid!][input.id]?.value ? peValuesArray[i.uid!][input.id]?.value : defaultValue"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="{{yearRange}}"
+                      dateFormat="yy-mm-dd">
+                    </p-calendar>
+                  </ng-container>
+
+                  <ng-template #notDateBlock>
+                    <input
+                      type="{{input.type}}"
+                      id="{{ i.uid! }}-{{ input.id! }}"
+                      class="p-inputtext-sm"
+                      pInputText
+                      [disabled]="!!input.formula || is_current_budget_locked"
+                      [(ngModel)]="peValuesArray[i.uid!][input.id]?.value ? peValuesArray[i.uid!][input.id]?.value : defaultValue"
+                      (blur)="updateValue(peValuesArray[i.uid!][input.id])"
+                      autocomplete="off"
+                    >
+                  </ng-template>
+                </ng-template>
+
+                <!--input
+                  type="{{input.type}}"
+                  id="{{ i.uid! }}-{{ input.id! }}"
+                  class="p-inputtext-sm"
+                  pInputText
+                  [disabled]="!!input.formula || is_current_budget_locked"
+                  [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                  (blur)="updateValue(peValuesArray[i.uid!][input.id])"
+                  autocomplete="off"
+                -->
+              </div>
+              <div *ngIf="input.select_option !== null">
+                <p-dropdown
+                            [options]="input.select_option"
+                            [showClear]="true"
+                            [filter]="true"
+                            [disabled]="is_current_budget_locked"
+                            optionLabel="name"
+                            optionGroupLabel="name"
+                            optionGroupChildren="children"
+                            optionValue="name"
+                            placeholder="{{input.select_option[0]?.name}}"
+                            [group]="true"
+                            [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                            (onChange)="updateValue(peValuesArray[i.uid!][input.id])"
+                >
+                  <ng-template let-group pTemplate="group">
+                    <div class="p-d-flex p-ai-center">
+                      <span>{{group.name}}</span>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="round.length > 1">
+            <td>TOTAL</td>
+            <td *ngFor="let total of peTableFields?.textInputs">
               <!--input
-                type="{{input.type}}"
-                id="{{ i.uid! }}-{{ input.id! }}"
-                class="p-inputtext-sm"
+                id="{{total.id}}"
+                type="currency"
                 pInputText
-                [disabled]="!!input.formula || is_current_budget_locked"
-                [(ngModel)]="peValuesArray[i.uid!][input.id].value"
-                (blur)="updateValue(peValuesArray[i.uid!][input.id])"
-                autocomplete="off"
-              -->
-            </div>
-            <div *ngIf="input.select_option !== null">
-              <p-dropdown
-                [options]="input.select_option"
-                [showClear]="true"
-                [filter]="true"
-                [disabled]="is_current_budget_locked"
-                optionLabel="name"
-                optionGroupLabel="name"
-                optionGroupChildren="children"
-                optionValue="name"
-                placeholder="{{input.select_option[0]?.name}}"
-                [group]="true"
-                [(ngModel)]="peValuesArray[i.uid!][input.id].value"
-                (onChange)="updateValue(peValuesArray[i.uid!][input.id])"
-              >
-                <ng-template let-group pTemplate="group">
-                  <div class="p-d-flex p-ai-center">
-                    <span>{{group.name}}</span>
-                  </div>
-                </ng-template>
-              </p-dropdown>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="round.length > 1">
-          <td>TOTAL</td>
-          <td *ngFor="let total of peTableFields?.textInputs">
-            <!--input
-              id="{{total.id}}"
-              type="currency"
-              pInputText
-              [disabled]=true
-              [(ngModel)]="verticalTotal[total.id!]"
-            /-->
-            <p-inputNumber
-              [size]="10"
-              [(ngModel)]="verticalTotal[total.id!]"
-              inputId="{{total.id}}"
-              [disabled]=true
-              [inputStyle]="{'text-align': 'right','max-width':'2px !important'}">
-            </p-inputNumber>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </p-card>
+                [disabled]=true
+                [(ngModel)]="verticalTotal[total.id!]"
+              /-->
+              <p-inputNumber
+                [size]="14"
+                [(ngModel)]="verticalTotal[total.id!]"
+                inputId="{{total.id}}"
+                [disabled]=true
+                [inputStyle]="{'text-align': 'right','max-width':'2px !important'}">
+              </p-inputNumber>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </p-card>
 
-  <p-card *ngIf="peTableFields?.childrenDefinitions">
-    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-      <div *ngIf="peTableFields.peSubForm?.is_multiple" fxLayout="row" fxLayoutGap="10px">
+    <p-card *ngIf="peTableFields?.childrenDefinitions">
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+        <div *ngIf="peTableFields.peSubForm?.is_multiple" fxLayout="row" fxLayoutGap="10px">
+          <button
+            [disabled]="is_current_budget_locked"
+            (click)="addRow((round[0].id)+(round.length))"
+            pButton pRipple
+            type="button"
+            label="Add New Row"
+            icon="pi pi-plus"
+            class="p-button-raised p-button-text">
+          </button>
+          <button
+            [disabled]="selectedRowsIndexArray.length === 0"
+            (click)="deleteSelectedRows()"
+            pButton pRipple
+            type="button"
+            label="Delete Selected Row"
+            icon="pi pi-trash"
+            class="p-button-raised p-button-danger p-button-text">
+          </button>
+        </div>
         <button
           [disabled]="is_current_budget_locked"
-          (click)="addRow((round[0].id)+(round.length))"
+          (click)="store()"
           pButton pRipple
           type="button"
-          label="Add New Row"
-          icon="pi pi-plus"
-          class="p-button-raised p-button-text">
-        </button>
-        <button
-          [disabled]="selectedRowsIndexArray.length === 0"
-          (click)="deleteSelectedRows()"
-          pButton pRipple
-          type="button"
-          label="Delete Selected Row"
-          icon="pi pi-trash"
-          class="p-button-raised p-button-danger p-button-text">
-        </button>
+          label="Submit"
+          icon="pi pi-check"></button>
       </div>
-      <button
-        [disabled]="is_current_budget_locked"
-        (click)="store()"
-        pButton pRipple
-        type="button"
-        label="Submit"
-        icon="pi pi-check"></button>
-    </div>
-  </p-card>
+    </p-card>
+  </div>
+  <ng-template #noDataToShow pTemplate="emptymessage">
+    <p-card>
+      <span class="card-header-text">Personal Emolument Budget</span>
+      <div fxLayoutAlign="center" colspan="6">No data found .</div>
+    </p-card>
+  </ng-template>
 </div>
 
 <p-confirmDialog

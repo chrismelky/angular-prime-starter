@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { OptionSetValue } from "./option-set-value.model";
+import {Project} from "../project/project.model";
 
 @Injectable({ providedIn: "root" })
 export class OptionSetValueService {
@@ -52,5 +53,18 @@ export class OptionSetValueService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  upload(data: any): Observable<CustomResponse<OptionSetValue[]>> {
+    return this.http.post<CustomResponse<OptionSetValue[]>>(
+      this.resourceUrl + '/upload',
+      data
+    );
+  }
+
+  downloadTemplate(): any {
+    return this.http.get(this.resourceUrl + '/downloadUploadTemplate', {
+      responseType: 'arraybuffer',
+    });
   }
 }

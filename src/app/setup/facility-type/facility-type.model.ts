@@ -7,6 +7,7 @@ export class FacilityType {
     public name?: string,
     public lga_level?: string,
     public admin_hierarchy_level_id?: number,
+    public planning_admin_hierarchy_level?: number,
     public sections?: Section[]
   ) {}
 }

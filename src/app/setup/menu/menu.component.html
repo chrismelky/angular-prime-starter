@@ -130,8 +130,11 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="menus?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}}
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header }}
             <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'parent_id'">
@@ -147,22 +150,27 @@
             {{ rowData[col.field] }}
           </td>
           <td>
-            {{ rowData.parent?.label }}
+            {{ rowData.parent?.parent?.parent?.label }} -
+            {{ rowData.parent?.parent?.label }} - {{ rowData.parent?.label }}
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  label="Sub-Menu"
                   *ngIf="rowData.items.length > 0"
                   pTooltip="Sub-Menu"
                   tooltipPosition="bottom"
-                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
                   icon="pi pi-list"
                   (click)="subMenu(rowData)"
                 ></button>
                 <button
                   pButton
+                  label="Permissions"
                   pTooltip="Permissions"
                   tooltipPosition="bottom"
                   class="

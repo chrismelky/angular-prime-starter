@@ -12,6 +12,12 @@ export class Facility {
     public admin_hierarchy?: AdminHierarchy,
     public ownership?: string,
     public physical_state?: string,
+    public p1?: number,
+    public p2?: number,
+    public p3?: number,
+    public p4?: number,
+    public p5?: number,
+    public planning_hierarchy_position?: number,
   ) {}
 }
 

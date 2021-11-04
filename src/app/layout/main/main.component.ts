@@ -629,11 +629,34 @@ export class MainComponent implements OnInit {
       label: "Expenditure Categories",
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "expenditure-category",
+<<<<<<< HEAD
+=======
+    },
+    {
+      label: "Data Element Group Sets",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "data-element-group-set",
+    },
+    {
+      label: "Data Element Groups",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "data-element-group",
+>>>>>>> b606d8258e2b071c9114bf27509ab55e9c644d15
     },
     {
       label: "Facility Custom Detail Options",
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "facility-custom-detail-option",
+    },
+    {
+      label: "Generic Targets",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "generic-target",
+    },
+    {
+      label: "Generic Activities",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "generic-activity",
     },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {

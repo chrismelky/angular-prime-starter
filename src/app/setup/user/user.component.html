@@ -7,83 +7,11 @@
         <span class="card-header-text">Filter</span>
       </div>
     </ng-template>
+    <ng-template pTemplate="content">
+      <div class="loader-area">
+        <app-loader [isLoading]="levelIsLoading"></app-loader>
 
-    <div fxLayout="column" fxLayoutGap="4px">
-      <div fxLayout="row wrap" fxLayoutGap="10px">
-        <div
-          fxLayout="row wrap"
-          fxLayoutGap="0.75rem"
-          fxFlex
-          fxLayoutAlign="start center"
-        >
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <app-admin-hierarchy-tree
-                [returnType]="'object'"
-                id="admin_hierarchy_id"
-                (onSelect)="onAdminHierarchySelection($event)"
-              ></app-admin-hierarchy-tree>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="levelId"
-                optionValue="position"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="adminHierarchyLevels!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="admin_hierarchy_position"
-              ></p-dropdown>
-              <label for="levelId">Level</label>
-            </span>
-          </div>
-
-        </div>
-        <div
-          fxLayout="row wrap"
-          fxFlex="140px"
-          fxLayoutGap="4px"
-          fxLayoutAlign="end center"
-        >
-          <button
-            pButton
-            pRipple
-            type="button"
-            [pTooltip]="
-              advFilter.selected
-                ? 'Hide Advanced Search'
-                : 'Show Advanced Search'
-            "
-            tooltipPosition="bottom"
-            [icon]="
-              advFilter.selected
-                ? 'pi pi-angle-double-up'
-                : 'pi pi-angle-double-down'
-            "
-            class="p-button-rounded p-button-text p-button-plain"
-            (click)="advFilter.selected = !advFilter.selected"
-          ></button>
-          <button
-            pButton
-            pRipple
-            class="p-button-primary p-button-raised"
-            icon="pi pi-search"
-            label="Search"
-            (click)="onSearch()"
-          ></button>
-        </div>
-      </div>
-      <p-accordion>
-        <p-accordionTab
-          class="p-shadow-0"
-          #advFilter
-          [selected]="advFilter.selected"
-          [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"
-        >
+        <div fxLayout="column" fxLayoutGap="4px">
           <div fxLayout="row wrap" fxLayoutGap="10px">
             <div
               fxLayout="row wrap"
@@ -92,123 +20,186 @@
               fxLayoutAlign="start center"
             >
               <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="first_name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['first_name']"
-                  />
-                  <label for="first_name">First Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['first_name'] = undefined; onSearch()"
-                  ></i>
+                <span class="p-float-label">
+                  <app-admin-hierarchy-tree
+                    [returnType]="'object'"
+                    id="admin_hierarchy_id"
+                    label="Admin Hierarchy"
+                    (onSelect)="onAdminHierarchySelection($event)"
+                  ></app-admin-hierarchy-tree>
                 </span>
               </div>
               <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="middle_name"
-                    type="text"
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="levelId"
+                    optionValue="position"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
                     class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['middle_name']"
-                  />
-                  <label for="middle_name">Middle Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['middle_name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="last_name"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['last_name']"
-                  />
-                  <label for="middle_name">Last Name </label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['last_name'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="email"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['email']"
-                  />
-                  <label for="email">Email</label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['email'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="cheque_number"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['cheque_number']"
-                  />
-                  <label for="cheque_number">Cheque Number</label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['cheque_number'] = undefined; onSearch()"
-                  ></i>
-                </span>
-              </div>
-              <div class="p-field" fxFlex>
-                <span class="p-float-label p-input-icon-right">
-                  <input
-                    id="title"
-                    type="text"
-                    class="p-inputtext-sm"
-                    pInputText
-                    [(ngModel)]="search['title']"
-                  />
-                  <label for="title">Title</label>
-                  <i
-                    class="pi pi-times clear"
-                    (click)="search['title'] = undefined; onSearch()"
-                  ></i>
+                    [options]="adminHierarchyLevels!"
+                    (onChange)="filterChanged()"
+                    [(ngModel)]="admin_hierarchy_position"
+                  ></p-dropdown>
+                  <label for="levelId">User Admin Level</label>
                 </span>
               </div>
             </div>
             <div
-              fxLayout="row"
-              fxLayoutGap="4px"
+              fxLayout="row wrap"
               fxFlex="140px"
-              fxLayoutAlign="end"
+              fxLayoutGap="4px"
+              fxLayoutAlign="end center"
             >
               <button
                 pButton
                 pRipple
-                pTooltip="Clear Advanced Search"
+                type="button"
+                [pTooltip]="
+                  advFilter.selected
+                    ? 'Hide Advanced Search'
+                    : 'Show Advanced Search'
+                "
                 tooltipPosition="bottom"
-                class="p-button-text p-button-plain"
-                icon="pi pi-times"
-                label="Clear"
-                (click)="clearSearch()"
+                [icon]="
+                  advFilter.selected
+                    ? 'pi pi-angle-double-up'
+                    : 'pi pi-angle-double-down'
+                "
+                class="p-button-rounded p-button-text p-button-plain"
+                (click)="advFilter.selected = !advFilter.selected"
+              ></button>
+              <button
+                pButton
+                pRipple
+                class="p-button-primary p-button-raised"
+                icon="pi pi-search"
+                label="Search"
+                (click)="onSearch()"
               ></button>
             </div>
           </div>
-        </p-accordionTab>
-      </p-accordion>
-    </div>
+          <p-accordion>
+            <p-accordionTab
+              class="p-shadow-0"
+              #advFilter
+              [selected]="advFilter.selected"
+              [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"
+            >
+              <div fxLayout="row wrap" fxLayoutGap="10px">
+                <div
+                  fxLayout="row wrap"
+                  fxLayoutGap="0.75rem"
+                  fxFlex
+                  fxLayoutAlign="start center"
+                >
+                  <div class="p-field" fxFlex>
+                    <span class="p-float-label p-input-icon-right">
+                      <input
+                        id="first_name"
+                        type="text"
+                        class="p-inputtext-sm"
+                        pInputText
+                        [(ngModel)]="search['first_name']"
+                      />
+                      <label for="first_name">First Name </label>
+                      <i
+                        class="pi pi-times clear"
+                        (click)="search['first_name'] = undefined; onSearch()"
+                      ></i>
+                    </span>
+                  </div>
+                  <div class="p-field" fxFlex>
+                    <span class="p-float-label p-input-icon-right">
+                      <input
+                        id="last_name"
+                        type="text"
+                        class="p-inputtext-sm"
+                        pInputText
+                        [(ngModel)]="search['last_name']"
+                      />
+                      <label for="middle_name">Last Name </label>
+                      <i
+                        class="pi pi-times clear"
+                        (click)="search['last_name'] = undefined; onSearch()"
+                      ></i>
+                    </span>
+                  </div>
+                  <div class="p-field" fxFlex>
+                    <span class="p-float-label p-input-icon-right">
+                      <input
+                        id="email"
+                        type="text"
+                        class="p-inputtext-sm"
+                        pInputText
+                        [(ngModel)]="search['email']"
+                      />
+                      <label for="email">Email</label>
+                      <i
+                        class="pi pi-times clear"
+                        (click)="search['email'] = undefined; onSearch()"
+                      ></i>
+                    </span>
+                  </div>
+                  <div class="p-field" fxFlex>
+                    <span class="p-float-label p-input-icon-right">
+                      <input
+                        id="cheque_number"
+                        type="text"
+                        class="p-inputtext-sm"
+                        pInputText
+                        [(ngModel)]="search['cheque_number']"
+                      />
+                      <label for="cheque_number">Cheque Number</label>
+                      <i
+                        class="pi pi-times clear"
+                        (click)="
+                          search['cheque_number'] = undefined; onSearch()
+                        "
+                      ></i>
+                    </span>
+                  </div>
+                  <div class="p-field" fxFlex>
+                    <span class="p-float-label p-input-icon-right">
+                      <input
+                        id="title"
+                        type="text"
+                        class="p-inputtext-sm"
+                        pInputText
+                        [(ngModel)]="search['title']"
+                      />
+                      <label for="title">Title</label>
+                      <i
+                        class="pi pi-times clear"
+                        (click)="search['title'] = undefined; onSearch()"
+                      ></i>
+                    </span>
+                  </div>
+                </div>
+                <div
+                  fxLayout="row"
+                  fxLayoutGap="4px"
+                  fxFlex="140px"
+                  fxLayoutAlign="end"
+                >
+                  <button
+                    pButton
+                    pRipple
+                    pTooltip="Clear Advanced Search"
+                    tooltipPosition="bottom"
+                    class="p-button-text p-button-plain"
+                    icon="pi pi-times"
+                    label="Clear"
+                    (click)="clearSearch()"
+                  ></button>
+                </div>
+              </div>
+            </p-accordionTab>
+          </p-accordion>
+        </div>
+      </div>
+    </ng-template>
   </p-card>
 
   <!-- Table Panel -->
@@ -229,6 +220,10 @@
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Users</span>
           <button
+            [disabled]="
+              adminHierarchy?.admin_hierarchy_position !==
+              admin_hierarchy_position
+            "
             pButton
             pRipple
             icon="pi pi-plus"
@@ -247,12 +242,8 @@
             {{ col.header }}
             <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'admin_hierarchy_id'">
-            Duty Station<p-sortIcon [field]="'admin_hierarchy_id'"></p-sortIcon>
-          </th>
-          <th [pSortableColumn]="'section_id'">
-            Allocation<p-sortIcon [field]="'section_id'"></p-sortIcon>
-          </th>
+          <th>Admin Area</th>
+          <th>Planning Unit</th>
           <th></th>
         </tr>
       </ng-template>
@@ -268,6 +259,7 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  label="Roles"
                   pTooltip="Roles"
                   tooltipPosition="bottom"
                   class="
@@ -278,6 +270,7 @@
                 ></button>
                 <button
                   pButton
+                  label="Password Reset"
                   pTooltip="Password Reset"
                   tooltipPosition="bottom"
                   class="
@@ -288,6 +281,7 @@
                 ></button>
                 <button
                   pButton
+                  label="Groups"
                   pTooltip="Groups"
                   tooltipPosition="bottom"
                   class="

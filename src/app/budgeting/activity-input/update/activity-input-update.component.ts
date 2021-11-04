@@ -69,6 +69,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     period_three: [null, []],
     period_four: [null, []],
     has_breakdown: [null, []],
+    is_inkind: [null, []],
     breakdowns: this.fb.array([]),
   });
 
@@ -211,6 +212,7 @@ export class ActivityInputUpdateComponent implements OnInit {
       period_three: activityInput.period_three,
       period_four: activityInput.period_four,
       has_breakdown: activityInput.has_breakdown,
+      is_inkind: activityInput.is_inkind,
     });
     const breakdowns = activityInput.breakdowns
       ? JSON.parse(activityInput.breakdowns)
@@ -226,30 +228,32 @@ export class ActivityInputUpdateComponent implements OnInit {
     const breakdowns = this.editForm.get(['breakdowns'])!.value;
     return {
       ...new ActivityInput(),
-      id: this.editForm.get(['id'])!.value,
-      gfs_code_id: this.editForm.get(['gfs_code_id'])!.value,
-      unit_price: this.editForm.get(['unit_price'])!.value,
-      quantity: this.editForm.get(['quantity'])!.value,
-      frequency: this.editForm.get(['frequency'])!.value,
-      unit: this.editForm.get(['unit'])!.value,
-      forward_year_one_amount: this.editForm.get(['forward_year_one_amount'])!
-        .value,
-      forward_year_two_amount: this.editForm.get(['forward_year_two_amount'])!
-        .value,
-      activity_id: this.editForm.get(['activity_id'])!.value,
-      fund_source_id: this.editForm.get(['fund_source_id'])!.value,
-      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
-      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
-      facility_id: this.editForm.get(['facility_id'])!.value,
-      section_id: this.editForm.get(['section_id'])!.value,
-      budget_class_id: this.editForm.get(['budget_class_id'])!.value,
-      activity_fund_source_id: this.editForm.get(['activity_fund_source_id'])!
-        .value,
-      period_one: this.editForm.get(['period_one'])!.value,
-      period_two: this.editForm.get(['period_two'])!.value,
-      period_three: this.editForm.get(['period_three'])!.value,
-      period_four: this.editForm.get(['period_four'])!.value,
-      has_breakdown: this.editForm.get(['has_breakdown'])!.value,
+      ...this.editForm.value,
+      // id: this.editForm.get(['id'])!.value,
+      // gfs_code_id: this.editForm.get(['gfs_code_id'])!.value,
+      // unit_price: this.editForm.get(['unit_price'])!.value,
+      // quantity: this.editForm.get(['quantity'])!.value,
+      // frequency: this.editForm.get(['frequency'])!.value,
+      // unit: this.editForm.get(['unit'])!.value,
+      // forward_year_one_amount: this.editForm.get(['forward_year_one_amount'])!
+      //   .value,
+      // forward_year_two_amount: this.editForm.get(['forward_year_two_amount'])!
+      //   .value,
+      // activity_id: this.editForm.get(['activity_id'])!.value,
+      // fund_source_id: this.editForm.get(['fund_source_id'])!.value,
+      // financial_year_id: this.editForm.get(['financial_year_id'])!.value,
+      // admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      // facility_id: this.editForm.get(['facility_id'])!.value,
+      // section_id: this.editForm.get(['section_id'])!.value,
+      // budget_class_id: this.editForm.get(['budget_class_id'])!.value,
+      // activity_fund_source_id: this.editForm.get(['activity_fund_source_id'])!
+      //   .value,
+      // period_one: this.editForm.get(['period_one'])!.value,
+      // period_two: this.editForm.get(['period_two'])!.value,
+      // period_three: this.editForm.get(['period_three'])!.value,
+      // period_four: this.editForm.get(['period_four'])!.value,
+      // has_breakdown: this.editForm.get(['has_breakdown'])!.value,
+      // is_inkind: this.editForm.get(['is_inkind'])!.value,
       breakdowns: breakdowns ? JSON.stringify(breakdowns) : breakdowns,
     };
   }

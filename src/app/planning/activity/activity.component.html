@@ -44,9 +44,9 @@
             [ngSwitch]="budget_type"
           >
             <small>Decision Level</small>
-            <strong *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
+            <p-tag severity="success" *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
               adminHierarchyCostCentre?.current_budget_decision_level?.name
-            }}</strong>
+            }}</p-tag>
             <strong *ngSwitchCase="'CARRYOVER'">{{
               adminHierarchyCostCentre?.carryover_budget_decision_level?.name
             }}</strong>
@@ -56,7 +56,23 @@
             }}</strong>
           </span>
         </p-divider>
-        <!-- <i class="pi pi-lock"></i> -->
+        <button
+          *ngIf="!budgetIsLocked"
+          icon="pi pi-arrow-right"
+          pButton
+          [routerLink]="[
+            '/activity-input',
+            budget_type!,
+            adminHierarchyCostCentre?.id
+          ]"
+          class="
+            p-button-rounded
+            p-button-text
+            p-button-success
+            p-button-outline
+            p-button-icon-only
+          "
+        ></button>
       </div>
     </ng-template>
     <ng-template pTemplate="content">
@@ -139,6 +155,7 @@
           <div fxLayout="row" fxLayoutAlign="space-between center">
             <span class="card-header-text">Activities</span>
             <button
+              *ngIf="!budgetIsLocked"
               pButton
               icon="pi pi-plus"
               class="p-button-raised"
@@ -165,6 +182,7 @@
             <th></th>
           </tr>
         </ng-template>
+
         <ng-template pTemplate="body" let-rowData let-columns="columns">
           <tr>
             <td>
@@ -194,6 +212,7 @@
                     (click)="createOrUpdate(rowData)"
                   ></button>
                   <button
+                    *ngIf="!budgetIsLocked"
                     pButton
                     pTooltip="Delete"
                     tooltipPosition="bottom"

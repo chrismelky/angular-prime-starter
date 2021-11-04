@@ -7,6 +7,10 @@ import {FundSource} from "../../../setup/fund-source/fund-source.model";
 import {GfsCodeService} from "../../../setup/gfs-code/gfs-code.service";
 import {GfsCode} from "../../../setup/gfs-code/gfs-code.model";
 import {ProjectionService} from "../projection.service";
+import {Observable} from "rxjs";
+import {Projection} from "../projection.model";
+import {finalize} from "rxjs/operators";
+import {ToastService} from "../../../shared/toast.service";
 
 @Component({
   selector: 'app-initiate-projection',
@@ -29,13 +33,14 @@ export class InitiateProjectionComponent implements OnInit {
     public config: DynamicDialogConfig,
     protected fb: FormBuilder,
     protected gfsCodeService: GfsCodeService,
-    protected projectionService: ProjectionService
+    protected projectionService: ProjectionService,
+    protected toastService: ToastService,
   ) {
     this.fund_source_id=this.config.data.fund_source_id;
     this.facility_id = this.config.data.facility_id;
     this.financial_year_id = this.config.data.financial_year_id;
     this.admin_hierarchy_id = this.config.data.admin_hierarchy_id;
-    this.projections = this.config.data.projections;
+    this.projections = this.config.data.projection;
   }
 
   ngOnInit(): void {
@@ -49,7 +54,9 @@ export class InitiateProjectionComponent implements OnInit {
             .query({aggregated_code:gfsCode})
             .subscribe(
               (resp: CustomResponse<GfsCode[]>) =>{
-                this.revenueSources = resp.data??[];
+                let gfsCodeIds = this.projections.map(p => (p.gfs_code_id));
+                console.log(gfsCodeIds);
+                this.revenueSources = (resp.data??[]).filter(rs => !this.projections.map(p => (p.gfs_code_id)).includes(rs.id));
               }
             );
         }
@@ -64,13 +71,35 @@ export class InitiateProjectionComponent implements OnInit {
       fund_source_id:this.fund_source_id,
       source:this.selectedRevenueSources.map(srs => (srs.id))
     }
-    this.projectionService
-      .initiate(payload)
-      .subscribe(
-        (resp: CustomResponse<any[]>) =>{
-          console.log(resp);
-        }
-      );
+    this.subscribeToSaveResponse(this.projectionService.initiate(payload));
+  }
+
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<Projection>>
+  ): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toastService.info(result.message);
+    this.dialogRef.close(true);
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {}
+
+  protected onSaveFinalize(): void {
   }
 
 }

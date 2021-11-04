@@ -7,6 +7,7 @@
     [formGroup]="editForm"
   >
     <div fxLayout="column" fxLayoutGap="20px">
+      <!--Activity  -->
       <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
         <div class="p-field" fxFlex>
           <span class="p-float-label">
@@ -21,8 +22,9 @@
           </span>
         </div>
       </div>
-
-      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
+      <!-- Gfs Row -->
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <!-- Gfs Code -->
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
@@ -57,7 +59,7 @@
             >
           </span>
         </div>
-
+        <!-- Unit  -->
         <div class="p-field" fxFlex="200px">
           <span class="p-float-label">
             <p-dropdown
@@ -90,8 +92,10 @@
         </div>
       </div>
 
-      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
-        <div class="p-field p-col-12 p-md-4" fxFlex>
+      <!-- Price Row -->
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <!-- Unit price -->
+        <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-inputNumber
               #unitPrice
@@ -122,7 +126,8 @@
           </span>
         </div>
 
-        <div class="p-field p-col-12 p-md-4" fxFlex>
+        <!-- Quantity -->
+        <div class="p-field" fxFlex="0 0 80px">
           <span class="p-float-label">
             <p-inputNumber
               #quantity
@@ -153,7 +158,8 @@
           </span>
         </div>
 
-        <div class="p-field p-col-12 p-md-4" fxFlex>
+        <!-- Frequencey -->
+        <div class="p-field" fxFlex="0 0 80px">
           <span class="p-float-label">
             <p-inputNumber
               #frequency
@@ -184,122 +190,114 @@
           </span>
         </div>
 
+        <!-- Total -->
         <p-fieldset fxFlex legend="Total" class="total-fieldset">
           <strong>{{ total | currency: " " }}</strong>
         </p-fieldset>
+        <!-- Q1 -->
+        <div class="p-field" fxFlex="0 0 70px">
+          <span class="p-float-label">
+            <p-inputNumber
+              [max]="100"
+              [min]="0"
+              id="period_one"
+              formControlName="period_one"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+            <label for="period_one">Q1(%)</label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('period_one')!.invalid &&
+              (editForm.get('period_one')!.dirty ||
+                editForm.get('period_one')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
+        <!-- Q2 -->
+        <div class="p-field" fxFlex="0 0 70px">
+          <span class="p-float-label">
+            <p-inputNumber
+              [max]="100"
+              [min]="0"
+              id="period_two"
+              formControlName="period_two"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+            <label for="period_two">Q2(%)</label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('period_two')!.invalid &&
+              (editForm.get('period_two')!.dirty ||
+                editForm.get('period_two')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
+        <!-- Q3 -->
+        <div class="p-field" fxFlex="0 0 70px">
+          <span class="p-float-label">
+            <p-inputNumber
+              [max]="100"
+              [min]="0"
+              id="period_three"
+              formControlName="period_three"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+            <label for="period_three">Q3(%)</label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('period_three')!.invalid &&
+              (editForm.get('period_three')!.dirty ||
+                editForm.get('period_three')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
+        <!-- Q4 -->
+        <div class="p-field" fxFlex="0 0 70px">
+          <span class="p-float-label">
+            <p-inputNumber
+              [max]="100"
+              [min]="0"
+              id="period_four"
+              formControlName="period_four"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+            <label for="period_four">Q4(%)</label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('period_four')!.invalid &&
+              (editForm.get('period_four')!.dirty ||
+                editForm.get('period_four')!.touched ||
+                formError)
+            "
+          >
+          </span>
+        </div>
       </div>
 
-      <div fxFlex fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
-        <div
-          class="period"
-          fxFlex="1 1 50%"
-          fxLayout="row"
-          fxLayoutGap="20px"
-          fxLayoutAlign="end"
-        >
-          <div class="p-field" fxFlex="0 0 70px">
-            <span class="p-float-label">
-              <p-inputNumber
-                [max]="100"
-                [min]="0"
-                id="period_one"
-                formControlName="period_one"
-                mode="decimal"
-                [minFractionDigits]="2"
-                [maxFractionDigits]="2"
-              ></p-inputNumber>
-              <label for="period_one">Q1(%)</label>
-            </span>
-            <span
-              *ngIf="
-                editForm.get('period_one')!.invalid &&
-                (editForm.get('period_one')!.dirty ||
-                  editForm.get('period_one')!.touched ||
-                  formError)
-              "
-            >
-            </span>
-          </div>
-
-          <div class="p-field" fxFlex="0 0 70px">
-            <span class="p-float-label">
-              <p-inputNumber
-                [max]="100"
-                [min]="0"
-                id="period_two"
-                formControlName="period_two"
-                mode="decimal"
-                [minFractionDigits]="2"
-                [maxFractionDigits]="2"
-              ></p-inputNumber>
-              <label for="period_two">Q2(%)</label>
-            </span>
-            <span
-              *ngIf="
-                editForm.get('period_two')!.invalid &&
-                (editForm.get('period_two')!.dirty ||
-                  editForm.get('period_two')!.touched ||
-                  formError)
-              "
-            >
-            </span>
-          </div>
-
-          <div class="p-field" fxFlex="0 0 70px">
-            <span class="p-float-label">
-              <p-inputNumber
-                [max]="100"
-                [min]="0"
-                id="period_three"
-                formControlName="period_three"
-                mode="decimal"
-                [minFractionDigits]="2"
-                [maxFractionDigits]="2"
-              ></p-inputNumber>
-              <label for="period_three">Q3(%)</label>
-            </span>
-            <span
-              *ngIf="
-                editForm.get('period_three')!.invalid &&
-                (editForm.get('period_three')!.dirty ||
-                  editForm.get('period_three')!.touched ||
-                  formError)
-              "
-            >
-            </span>
-          </div>
-
-          <div class="p-field" fxFlex="0 0 70px">
-            <span class="p-float-label">
-              <p-inputNumber
-                [max]="100"
-                [min]="0"
-                id="period_four"
-                formControlName="period_four"
-                mode="decimal"
-                [minFractionDigits]="2"
-                [maxFractionDigits]="2"
-              ></p-inputNumber>
-              <label for="period_four">Q4(%)</label>
-            </span>
-            <span
-              *ngIf="
-                editForm.get('period_four')!.invalid &&
-                (editForm.get('period_four')!.dirty ||
-                  editForm.get('period_four')!.touched ||
-                  formError)
-              "
-            >
-            </span>
-          </div>
-        </div>
-        <div
-          fxFlex="0 0 50%"
-          fxLayout="row"
-          fxLayoutGap="20px"
-          fxLayoutAlign="start"
-        >
-          <div class="p-field" fxFlex="0 0 50%">
+      <!-- Forward row -->
+      <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+        <span fxFlex></span>
+        <div fxLayout="column" fxLayoutGap="20px" fxFlex="200px">
+          <!-- Year One forward -->
+          <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-inputNumber
                 id="forward_year_one_amount"
@@ -320,7 +318,8 @@
             >
             </span>
           </div>
-          <div class="p-field" fxFlex="0 0 50%">
+          <!-- Year Two forward -->
+          <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-inputNumber
                 id="forward_year_two_amount"
@@ -343,7 +342,14 @@
           </div>
         </div>
       </div>
-      <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start">
+      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
+        <p-checkbox
+          name="is_inkind"
+          [binary]="true"
+          label="Is Inkind"
+          formControlName="is_inkind"
+        ></p-checkbox>
+
         <p-checkbox
           #hasBeakDown
           name="has_breakdown"
@@ -351,13 +357,19 @@
           label="Has breakdown"
           formControlName="has_breakdown"
         ></p-checkbox>
-
+      </div>
+      <div
+        fxLayout="column"
+        fxLayoutGap="10px"
+        fxLayoutAlign="start"
+        *ngIf="editForm.get('has_breakdown')?.value"
+      >
         <p-table
           [value]="breakDownControls.controls"
           dataKey="controls.item.value"
           editMode="row"
           responsiveLayout="scroll"
-          styleClass="p-datatable-gridlines"
+          styleClass="p-datatable-gridlines breakdown"
           formArrayName="breakdowns"
         >
           <ng-template pTemplate="header">
@@ -367,7 +379,7 @@
               <th>Quantity</th>
               <th>Frequency</th>
               <th>Sub Total</th>
-              <th style="width: 8rem"></th>
+              <th style="width: 80px"></th>
             </tr>
             <tr class="add-table-row">
               <th>
@@ -383,9 +395,9 @@
                   [maxFractionDigits]="2"
                 ></p-inputNumber>
               </th>
-              <th>
+              <th style="width: 100px">
                 <p-inputNumber
-                  [style]="{ 'min-width': '70px', width: '100px' }"
+                  [style]="{ 'min-width': '80px', width: '80px' }"
                   #quantityToAdd
                   id="quantityToAdd"
                   mode="decimal"
@@ -393,9 +405,9 @@
                   [maxFractionDigits]="2"
                 ></p-inputNumber>
               </th>
-              <th>
+              <th style="width: 100px">
                 <p-inputNumber
-                  [style]="{ 'min-width': '70px', width: '100px' }"
+                  [style]="{ 'min-width': '80px', width: '80px' }"
                   #frequencyToAdd
                   id="frequencyToAdd"
                   mode="decimal"
@@ -404,7 +416,7 @@
                 ></p-inputNumber>
               </th>
               <th></th>
-              <th style="width: 8rem">
+              <th style="width: 100px">
                 <div
                   fxFlex
                   fxLayout="row"

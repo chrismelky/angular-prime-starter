@@ -5,23 +5,23 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { ReferenceDocument } from "src/app/setup/reference-document/reference-document.model";
-import { ReferenceDocumentService } from "src/app/setup/reference-document/reference-document.service";
-import { PlanningMatrix } from "../planning-matrix.model";
-import { PlanningMatrixService } from "../planning-matrix.service";
-import { ToastService } from "src/app/shared/toast.service";
-import {NationalReferenceService} from "../../national-reference/national-reference.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { ReferenceDocument } from 'src/app/setup/reference-document/reference-document.model';
+import { ReferenceDocumentService } from 'src/app/setup/reference-document/reference-document.service';
+import { PlanningMatrix } from '../planning-matrix.model';
+import { PlanningMatrixService } from '../planning-matrix.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { NationalReferenceService } from '../../national-reference/national-reference.service';
 
 @Component({
-  selector: "app-planning-matrix-update",
-  templateUrl: "./planning-matrix-update.component.html",
+  selector: 'app-planning-matrix-update',
+  templateUrl: './planning-matrix-update.component.html',
 })
 export class PlanningMatrixUpdateComponent implements OnInit {
   isSaving = false;
@@ -36,12 +36,12 @@ export class PlanningMatrixUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    national_reference_id: [null, [Validators.required]],
+    reference_document_id: [null, [Validators.required]],
   });
 
   constructor(
     protected planningMatrixService: PlanningMatrixService,
-    protected referenceDocumentService: NationalReferenceService,
+    protected referenceDocumentService: ReferenceDocumentService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -50,7 +50,7 @@ export class PlanningMatrixUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.referenceDocumentService
-      .query({ columns: ["id", "code","description"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<ReferenceDocument[]>) =>
           (this.referenceDocuments = resp.data)
@@ -117,7 +117,7 @@ export class PlanningMatrixUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: planningMatrix.id,
       name: planningMatrix.name,
-      national_reference_id: planningMatrix.national_reference_id,
+      reference_document_id: planningMatrix.reference_document_id,
     });
   }
 
@@ -128,9 +128,9 @@ export class PlanningMatrixUpdateComponent implements OnInit {
   protected createFromForm(): PlanningMatrix {
     return {
       ...new PlanningMatrix(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      national_reference_id: this.editForm.get(["national_reference_id"])!
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      reference_document_id: this.editForm.get(['reference_document_id'])!
         .value,
     };
   }

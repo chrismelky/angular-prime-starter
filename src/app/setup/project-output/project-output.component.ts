@@ -20,8 +20,6 @@ import {
 } from '../../config/pagination.constants';
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { Project } from 'src/app/setup/project/project.model';
-import { ProjectService } from 'src/app/setup/project/project.service';
 
 import { ProjectOutput } from './project-output.model';
 import { ProjectOutputService } from './project-output.service';
@@ -32,6 +30,7 @@ import { ExpenditureCategoryService } from '../expenditure-category/expenditure-
 import { SectorService } from '../sector/sector.service';
 import { ProjectType } from '../project-type/project-type.model';
 import { ProjectTypeService } from '../project-type/project-type.service';
+import {UploadComponent} from "./upload/upload.component";
 
 @Component({
   selector: 'app-project-output',
@@ -328,5 +327,22 @@ export class ProjectOutputComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Project Output');
+  }
+
+  upload(): void {
+    const item =  {
+      sectorId: this.sector_id,
+      expenditureCategoryId: this.expenditure_category_id,
+    };
+    const ref = this.dialogService.open(UploadComponent, {
+      width: '60%',
+      header: 'Project Output Upload Form',
+      data: item
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

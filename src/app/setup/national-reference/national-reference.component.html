@@ -149,16 +149,28 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">National References</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!reference_type_id"
-            (click)="createOrUpdate(undefined, undefined)"
-            label="Add National Reference"
-          ></button>
+          <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end">
+            <button
+              pButton
+              icon="pi pi-plus"
+              class="p-button-raised p-button-text"
+              [disabled]="!reference_type_id"
+              (click)="createOrUpdate()"
+              label="Add National Reference"
+            ></button>
+            &nbsp;
+            <button
+              pButton
+              icon="pi pi-upload"
+              class="p-button-raised"
+              [disabled]="!reference_type_id"
+              (click)="upload()"
+              label="Upload National References"
+            ></button>
+          </div>
         </div>
       </ng-template>
+
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="nationalReferences?.length">
           <th class="fit" style="padding-right: 24px"></th>

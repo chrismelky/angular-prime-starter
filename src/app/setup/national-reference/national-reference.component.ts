@@ -16,7 +16,6 @@ import {
 } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
 
 import { CustomResponse } from '../../utils/custom-response';
 import {
@@ -34,6 +33,7 @@ import { NationalReferenceService } from './national-reference.service';
 import { NationalReferenceUpdateComponent } from './update/national-reference-update.component';
 import { finalize } from 'rxjs/operators';
 import { TreeTable } from 'primeng/treetable';
+import {UploadComponent} from "./upload/upload.component";
 
 @Component({
   selector: 'app-national-reference',
@@ -387,5 +387,21 @@ export class NationalReferenceComponent implements OnInit {
           this.isLoading = false;
         }
       );
+  }
+
+  upload(): void {
+    const item =  {
+      referenceTypeId: this.reference_type_id,
+    };
+    const ref = this.dialogService.open(UploadComponent, {
+      width: '60%',
+      header: 'National Reference Upload Form',
+      data: item
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
   }
 }

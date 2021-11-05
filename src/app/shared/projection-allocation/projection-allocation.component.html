@@ -4,39 +4,81 @@
     <p-table
       #fc
       class="ceiling"
-      [value]="ceilingMapped!"
+      [value]="completeCeiling!"
       [scrollable]="true"
       dataKey="id"
     >
-      <ng-template pTemplate="caption">
-        <span><b>Own Sources</b></span>
-        <span>{{totalAllocatedAmount}}</span>
-        <br>
-        <div fxLayout="column" fxLayoutGap="10px">
-          <div fxLayout="row wrap" fxLayoutGap="10px">
-            <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
-              <div class="p-field" fxFlex>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-template>
       <ng-template pTemplate="header" >
+        <tr>
+          <th colspan="3">
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+              <table>
+                <td style="text-align:left !important;border-bottom: 2px solid white !important;">
+                  <span>
+                    Total Available Amount : <br> {{ projectionAmount | currency: 'TSH':'TSH' }}
+                  </span>
+                </td>
+                <td style="text-align:left !important;border-bottom: 2px solid white !important;">
+                  <span [className]="(((totalAllocatedAmount/projectionAmount)*100)>0 && ((totalAllocatedAmount/projectionAmount)*100) <= 100)?'success':'error'">
+                    Total Allocated Amount : <br> {{ totalAllocatedAmount | currency: 'TSH':'TSH'}}
+                     ({{(totalAllocatedAmount/projectionAmount)*100 | number : '1.2-2'}}%)
+                  </span>
+                </td>
+                <td style="text-align:left !important;border-bottom: 2px solid white !important;">
+                  <span [className]="(((totalAllocatedAmount/projectionAmount)*100)>0 && ((totalAllocatedAmount/projectionAmount)*100) <= 100)?'success':'error'">
+                    Remaining Amount : <br>{{ (projectionAmount-totalAllocatedAmount) | currency: 'TSH':'TSH'}}
+                    ({{((projectionAmount-totalAllocatedAmount)/projectionAmount) * 100 | number : '1.2-2'}}%)
+                  </span>
+                </td>
+              </table>
+            </div>
+          </th>
+        </tr>
         <tr>
           <th>Budget Class</th>
           <th class="end">Amount (TSH)</th>
           <th class="end">%</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex">
+      <ng-template pTemplate="body" let-rowData  let-secIndex="rowIndex">
         <tr>
-          <td>{{rowData?.budget_class.name}}</td>
-          <td style="text-align: end">
-            <p-inputNumber [(ngModel)]="rowData.amount" prefix=" TSH"></p-inputNumber>
+          <td colspan="3" style="background-color:  #d6eaf8  !important;">
+            <b>{{rowData?.name}}</b>
           </td>
-          <td style="text-align: end">
-            <p-inputNumber [(ngModel)]="rowData.percent" suffix=" %"></p-inputNumber>
+        </tr>
+        <tr *ngFor="let ceil of rowData?.ceiling ; index as ceilingIndex;">
+          <td>{{ceil?.budget_class.name}}</td>
+          <td *ngIf="ceil.is_locked">
+            <div style="text-align:end;width:100%">
+              {{ceil.amount | currency: 'TSH':'TSH'}}
+            </div>
+          </td>
+          <td *ngIf="ceil.is_locked">
+            <div  style="text-align:end;width:100%">
+              {{ceil.percent | number:'1.2-2'}} %
+            </div>
+          </td>
+          <td style="text-align: end"  *ngIf="!ceil.is_locked">
+            <p-inputNumber
+              [(ngModel)]="ceil.amount"
+              (onInput)="amountChange($event.value,ceil,rowData?.id,ceilingIndex,secIndex)"
+              prefix="TSH"
+              [min]="0"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+            ></p-inputNumber>
+          </td>
+          <td style="text-align: end"  *ngIf="!ceil.is_locked">
+            <p-inputNumber
+              *ngIf="!ceil.is_locked"
+              [(ngModel)]="ceil.percent"
+              (onInput)="getPercent($event.value,ceil,rowData?.id,ceilingIndex,secIndex)"
+               suffix=" %"
+               [min]="0"
+               [max]="100"
+               [minFractionDigits]="2"
+               [maxFractionDigits]="2"
+            ></p-inputNumber>
           </td>
         </tr>
       </ng-template>

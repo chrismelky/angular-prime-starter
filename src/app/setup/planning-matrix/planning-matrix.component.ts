@@ -43,12 +43,7 @@ export class PlanningMatrixComponent implements OnInit {
       field: "name",
       header: "Name",
       sort: true,
-    },
-    {
-      field: "national_reference_id",
-      header: "Reference Document ",
-      sort: true,
-    },
+    }
   ]; //Table display columns
 
   isLoading = false;

@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { PriorityArea } from "src/app/setup/priority-area/priority-area.model";
-import { PriorityAreaService } from "src/app/setup/priority-area/priority-area.service";
-import { PlanningMatrix } from "src/app/setup/planning-matrix/planning-matrix.model";
-import { PlanningMatrixService } from "src/app/setup/planning-matrix/planning-matrix.service";
-import { GenericSectorProblem } from "../generic-sector-problem.model";
-import { GenericSectorProblemService } from "../generic-sector-problem.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { PriorityArea } from 'src/app/setup/priority-area/priority-area.model';
+import { PriorityAreaService } from 'src/app/setup/priority-area/priority-area.service';
+import { PlanningMatrix } from 'src/app/setup/planning-matrix/planning-matrix.model';
+import { PlanningMatrixService } from 'src/app/setup/planning-matrix/planning-matrix.service';
+import { GenericSectorProblem } from '../generic-sector-problem.model';
+import { GenericSectorProblemService } from '../generic-sector-problem.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-generic-sector-problem-update",
-  templateUrl: "./generic-sector-problem-update.component.html",
+  selector: 'app-generic-sector-problem-update',
+  templateUrl: './generic-sector-problem-update.component.html',
 })
 export class GenericSectorProblemUpdateComponent implements OnInit {
   isSaving = false;
@@ -56,13 +56,13 @@ export class GenericSectorProblemUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.priorityAreaService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'description'] })
       .subscribe(
         (resp: CustomResponse<PriorityArea[]>) =>
           (this.priorityAreas = resp.data)
       );
     this.planningMatrixService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<PlanningMatrix[]>) =>
           (this.planningMatrices = resp.data)
@@ -143,12 +143,12 @@ export class GenericSectorProblemUpdateComponent implements OnInit {
   protected createFromForm(): GenericSectorProblem {
     return {
       ...new GenericSectorProblem(),
-      id: this.editForm.get(["id"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      description: this.editForm.get(["description"])!.value,
-      params: this.editForm.get(["params"])!.value,
-      priority_area_id: this.editForm.get(["priority_area_id"])!.value,
-      planning_matrix_id: this.editForm.get(["planning_matrix_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      description: this.editForm.get(['description'])!.value,
+      params: this.editForm.get(['params'])!.value,
+      priority_area_id: this.editForm.get(['priority_area_id'])!.value,
+      planning_matrix_id: this.editForm.get(['planning_matrix_id'])!.value,
     };
   }
 }

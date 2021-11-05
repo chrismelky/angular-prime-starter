@@ -7,6 +7,7 @@
     [formGroup]="editForm"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
+      <!-- name -->
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input id="name" type="text" pInputText formControlName="name" />
@@ -25,7 +26,7 @@
           >
         </span>
       </div>
-
+      <!-- code -->
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <input id="code" type="text" pInputText formControlName="code" />
@@ -61,6 +62,39 @@
           formControlName="is_submitted"
         ></p-inputSwitch>
         <label for="is_submitted">Is Submitted </label>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            #content
+            id="cas_plan_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            (onChange)="loadCasPlanContent(content.value)"
+            appendTo="body"
+            [options]="casPlans!"
+            formControlName="cas_plan_id"
+          ></p-dropdown>
+          <label for="cas_plan_id">Cas Plan </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('cas_plan_id')!.invalid &&
+            (editForm.get('cas_plan_id')!.dirty ||
+              editForm.get('cas_plan_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('cas_plan_id')?.errors?.required"
+            >Cas Plan is required.</small
+          >
+        </span>
       </div>
 
       <div class="p-field" fxFlex>

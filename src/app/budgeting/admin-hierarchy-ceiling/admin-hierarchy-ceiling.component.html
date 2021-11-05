@@ -86,6 +86,53 @@
           ></button>
         </div>
       </div>
+      <div fxLayout="row wrap" fxLayoutGap="10px">
+        <div
+          fxLayout="row"
+          fxLayoutGap="0.75rem"
+          fxFlex
+          fxLayoutAlign="start center"
+        >
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="section_level_id"
+                optionValue="position"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="planingLevels!"
+                (onChange)="selectionLevelChange($event.value)"
+                [(ngModel)]="position"
+              ></p-dropdown>
+              <label for="section_level_id">Section Level </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="section_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="sections!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="section_id"
+              ></p-dropdown>
+              <label for="section_id">Section </label>
+            </span>
+          </div>
+        </div>
+        <div
+          fxLayout="row wrap"
+          fxFlex="140px"
+          fxLayoutGap="4px"
+          fxLayoutAlign="end center"
+        ></div>
+      </div>
       <p-accordion>
         <p-accordionTab
           class="p-shadow-0"
@@ -137,7 +184,7 @@
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Ceiling Amounts</span>
           <div class="card-header-text">
-            <p-splitButton  *ngIf="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
+            <p-splitButton *ngxPermissionsOnly="['INITIATE_CEILING']"  [disabled]="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
               !admin_hierarchy_id || !financial_year_id || !budget_type
             " styleClass="p-button-raised"></p-splitButton>
           </div>
@@ -145,15 +192,15 @@
       </ng-template>
       <ng-template pTemplate="header" >
         <tr *ngIf="adminHierarchyCeilings?.length">
-          <th rowspan="" style="width: 3em">SN</th>
-          <th rowspan="" >Revenue Source</th>
-          <th rowspan="" >Fund Source</th>
-          <th rowspan="" >Budget Class</th>
-          <th rowspan="" >Bank Account</th>
-          <th rowspan="" style="min-width:200px !important;">Amount</th>
-          <th rowspan="" >Status</th>
-          <th  *ngIf=" position === 1" colspan="">Lock/Unlock</th>
-          <th rowspan=""  style="width:8rem"></th>
+          <th  style="width: 3em">SN</th>
+          <th >Revenue Source</th>
+          <th  >Fund Source</th>
+          <th>Budget Class</th>
+          <th>Bank Account</th>
+          <th>Amount (TZS)</th>
+          <th>Status</th>
+          <th  *ngIf=" position === ceilingStartSectionPosition" colspan="">Lock/Unlock</th>
+          <th  style="width:8rem"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
@@ -166,10 +213,12 @@
           <td [pEditableRow]="rowData" style="min-width:200px !important;">
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <input pInputText type="text" [(ngModel)]="rowData.amount" required>
+                <p-inputNumber [(ngModel)]="rowData.amount"></p-inputNumber>
               </ng-template>
               <ng-template pTemplate="output">
-                {{rowData?.amount | currency: 'TZS'}}
+                <div class="p-field" fxFlex style="text-align:end">
+                {{rowData?.amount | currency: '' :''}}
+                </div>
               </ng-template>
             </p-cellEditor>
           </td>
@@ -185,8 +234,8 @@
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" fxLayoutGap="2px">
-                <button *ngIf="rowData.amount > 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
+              <div fxLayout="row" *ngxPermissionsOnly="['MANAGE_CEILING']" fxLayoutGap="2px">
+                <button  [disabled]="rowData.amount <= 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
                 <button
                   pButton
                   *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData['amount'] <=0 "

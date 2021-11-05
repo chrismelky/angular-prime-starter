@@ -115,6 +115,7 @@
             optionValue="position"
             optionLabel="name"
             [autoDisplayFirst]="false"
+            (onChange)="loadSectionByPosition($event.value)"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
@@ -136,6 +137,20 @@
             *ngIf="editForm.get('section_level_position')?.errors?.required"
             >Section Level Position is required.</small
           >
+        </span>
+      </div>
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-multiSelect
+            id="section"
+            [options]="sections!"
+            appendTo="body"
+            optionLabel="name"
+            optionValue="id"
+            formControlName="section"
+            selectedItemsLabel="{0} items selected">
+          </p-multiSelect>
+          <label for="section">Section </label>
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">

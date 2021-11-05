@@ -159,110 +159,144 @@
   <!-- Table Panel -->
   <p-card>
     <p-table
-      #table
-      [lazy]="true"
+      #pt
       class="projection"
-      [resizableColumns]="true"
       [responsive]="true"
-      [autoLayout]="true"
-      [loading]="isLoading"
       [value]="projections!"
-      (onLazyLoad)="onSortChange($event)"
-      [customSort]="true"
+      [globalFilterFields]="['gfs_code.code','gfs_code.name']"
       dataKey="id"
-      editMode="row"
+      editMode="row"w
       responsiveLayout="scroll"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Projections</span>
           <span>
-            <button (click)="allocateProjection()" *ngIf="projections!.length > 0" pButton pRipple type="button" label="Allocate" class="p-button-outlined"></button>&nbsp;&nbsp;
-            <p-splitButton  label="Initiate Projection" icon="pi pi pi-wallet" (onClick)="initiateProjection()" [model]="items!"  [disabled]="
+            <button (click)="allocateProjection()" [disabled]="projections!.length <= 0"
+                    *ngxPermissionsOnly="['ALLOCATE_PROJECTION']" class="p-button-outlined" label="Allocate" pButton pRipple
+                    type="button"></button>&nbsp;&nbsp;
+            <p-splitButton  *ngxPermissionsOnly="['INITIATE_PROJECTION']" label="Initiate Projection" icon="pi pi pi-wallet" (onClick)="initiateProjection()" [model]="items!"  [disabled]="
               !admin_hierarchy_id || !financial_year_id || !fund_source_id || !facility_id || !facility_type_id
             " styleClass="p-button-raised"></p-splitButton>
           </span>
         </div>
       </ng-template>
-      <ng-template pTemplate="header">
-        <tr *ngIf="projections?.length">
-          <th>Revenue Source</th>
-          <th>Quarter 1</th>
-          <th>Quarter 2</th>
-          <th>Quarter 3</th>
-          <th>Quarter 4</th>
-          <th>2021 projection</th>
-          <th>2121 projection</th>
+      <ng-template pTemplate="header" [ngIf]="this.financial_year_id">
+        <tr>
+          <th rowspan="2">Revenue Source</th>
+          <th colspan="5" style="text-align:center;padding:1em">{{planningFinancialYears['0']?.name}} Projection</th>
+          <th colspan="2" style="text-align:center;padding:1em">Forward Years Projection</th>
           <th></th>
+        </tr>
+        <tr>
+          <th>Q1 (TZS)</th>
+          <th>Q2 (TZS)</th>
+          <th>Q3 (TZS)</th>
+          <th>Q4 (TZS)</th>
+          <th>Total (TZS)</th>
+          <th>{{planningFinancialYears['1']?.name}} (TZS)</th>
+          <th>{{planningFinancialYears['2']?.name}} (TZS)</th>
+          <th></th>
+        </tr>
+        <tr *ngIf="projections!.length>5">
+          <th style="padding: 0px !important;">
+            <div class="p-field" fxFlex>
+              <span class="p-input-icon-right" style="width: 100% !important;margin-top:4px !important;">
+                    <input pInputText type="text" [(ngModel)]="searchKey" (ngModelChange)="pt.filterGlobal($event, 'contains')" placeholder="Search Revenue Source" />
+                    <i class="pi pi-search"></i>
+                </span>
+            </div>
+          </th>
+          <th colspan="8"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
         <tr [pEditableRow]="rowData">
-          <td>[{{rowData.gfs_code.code}}]  {{rowData.gfs_code.name}}</td>
+          <td style="border: none !important;">[{{rowData.gfs_code.code}}]  {{rowData.gfs_code.name}}</td>
           <td>
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <p-inputNumber [(ngModel)]="rowData.q1_amount"  mode="currency" currency="TSH"></p-inputNumber>
+                <p-inputNumber [(ngModel)]="rowData.q1_amount"  ></p-inputNumber>
               </ng-template>
               <ng-template pTemplate="output">
-                <b>{{rowData.q1_amount | currency: 'TZS'}}</b>
+                <div class="p-field" fxFlex style="text-align:end">
+                  {{rowData.q1_amount | currency: '':''}}
+                </div>
               </ng-template>
             </p-cellEditor>
           </td>
           <td>
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <p-inputNumber [(ngModel)]="rowData.q2_amount"  mode="currency" currency="TSH"></p-inputNumber>
+                <p-inputNumber [(ngModel)]="rowData.q2_amount"></p-inputNumber>
               </ng-template>
               <ng-template pTemplate="output">
-                <b>{{rowData.q2_amount | currency: 'TZS'}}</b>
+                <div class="p-field" fxFlex style="text-align:end">
+                {{rowData.q2_amount | currency: '':''}}
+                </div>
               </ng-template>
             </p-cellEditor>
           </td>
           <td>
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <p-inputNumber [(ngModel)]="rowData.q3_amount "  mode="currency" currency="TSH"></p-inputNumber>
+                <p-inputNumber [(ngModel)]="rowData.q3_amount "></p-inputNumber>
               </ng-template>
               <ng-template pTemplate="output">
-                <b>{{rowData.q3_amount | currency: 'TZS'}}</b>
+                <div class="p-field" fxFlex style="text-align:end">
+                {{rowData.q3_amount | currency: '':''}}
+                </div>
               </ng-template>
             </p-cellEditor>
           </td>
           <td>
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <p-inputNumber [(ngModel)]="rowData.q4_amount"  mode="currency" currency="TSH"></p-inputNumber>
+                <p-inputNumber [(ngModel)]="rowData.q4_amount"></p-inputNumber>
               </ng-template>
               <ng-template pTemplate="output">
-                <b>{{rowData.q4_amount | currency: 'TZS'}}</b>
+                <div class="p-field" fxFlex style="text-align:end">
+                {{rowData.q4_amount | currency: '':''}}
+                </div>
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td style="text-align: end">
+            {{rowData.amount | currency: '':''}}
+          </td>
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <p-inputNumber
+                  [(ngModel)]="rowData.forwad_year1_amount"
+                >
+                </p-inputNumber>
+              </ng-template>
+              <ng-template pTemplate="output">
+                <div class="p-field" fxFlex style="text-align:end">
+                {{rowData.forwad_year1_amount | currency: '':''}}
+                </div>
               </ng-template>
             </p-cellEditor>
           </td>
           <td>
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <p-inputNumber [(ngModel)]="rowData.forwad_year1_amount"  mode="currency" currency="TSH"></p-inputNumber>
+                <p-inputNumber
+                  [(ngModel)]="rowData.forwad_year2_amount"
+                ></p-inputNumber>
               </ng-template>
               <ng-template pTemplate="output">
-                <b style="text-align: end">{{rowData.forwad_year1_amount | currency: 'TZS'}}</b>
+                <div class="p-field" fxFlex style="text-align:end">
+                {{rowData.forwad_year2_amount | currency: '':''}}
+                </div>
               </ng-template>
             </p-cellEditor>
           </td>
-          <td>
-            <p-cellEditor>
-              <ng-template pTemplate="input">
-                <p-inputNumber [(ngModel)]="rowData.forwad_year2_amount"  mode="currency" currency="TSH"></p-inputNumber>
-              </ng-template>
-              <ng-template pTemplate="output">
-                <b>{{rowData.forwad_year2_amount | currency: 'TZS'}}</b>
-              </ng-template>
-            </p-cellEditor>
-          </td>
-          <td>
+          <td style="border: none !important;">
             <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" fxLayoutGap="2px">
-                <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+              <div fxLayout="row" fxLayoutGap="2px" *ngxPermissionsOnly="['MANAGE_PROJECTION']">
+                <button  *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
                 <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData,ri)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
                 <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(rowData, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
                 <button
@@ -282,18 +316,21 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="footer">
-        <tr style="background-color:#F3F3F3!important;border-bottom: 1px solid gray" *ngIf="projections!.length > 0">
-          <td style="text-align: end;"><b>Total Projection</b></td>
-          <td style="text-align: end;">{{calculateTotal('q1')}}</td>
-          <td style="text-align: end;"></td>
-          <td style="text-align: end;"></td>
-          <td style="text-align: end;"></td>
-          <td style="text-align: end;"></td>
-          <td style="text-align: end;"></td>
-          <td style="text-align: end;"></td>
+        <tr *ngIf="projections!.length > 0">
+          <th colspan="5" class="p-text-right"></th>
+          <th style="text-align: end;padding-bottom: 1em !important;padding-top: 1em !important;padding-right: 5px !important;">{{calculateTotal('amount') | currency: '':''}}</th>
+          <th style="text-align: end;padding-right: 5px !important;">{{calculateTotal('forwad_year1_amount') | currency: '':''}}</th>
+          <th style="text-align: end;padding-right: 5px !important;">{{calculateTotal('forwad_year2_amount') | currency: '':''}}</th>
+          <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9" style="text-align: center">
+            No Projections Found
+          </td>
+        </tr>
+      </ng-template>
     </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator

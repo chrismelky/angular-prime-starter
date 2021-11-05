@@ -8,35 +8,30 @@
     <div fxLayout="column" fxLayoutGap="10px">
       <div fxLayout="row wrap" fxLayoutGap="10px">
         <div fxLayout="row wrap" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
-          <div *ngFor="let ceiling of councilCeilingGroup" class="p-field" fxFlex>
-               <span class="p-float-label">
+          <div  class="p-field" fxFlex>
+             <span class="p-float-label">
                   <div  fxLayout="row" fxLayoutAlign="space-between center">
-                    <span><b>{{ceiling.label}}</b></span>
-                    <span ><b [className]="((((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
-                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00
-                    )) >0 && (((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
-                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00
-                    )) <=100) ?'success':'error'">{{ (ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
-                      | currency:"TZS":"TSH"}} ({{((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)
-                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00
-                    ) | number : '1.2-2'}})%</b>Allocated</span>
+                     <span><b>{{ceiling?.section?.section_level?.name}}</b></span>
+                    <span>
+                      <b [className]="(ceiling?.amount!>0?(totalAllocatedCeiling[currentCeilingChain?.section_level_position?.position]?.amount/ceiling?.amount!)*100:0.00)>0 && (ceiling?.amount!>0?(totalAllocatedCeiling[currentCeilingChain?.section_level_position?.position]?.amount/ceiling?.amount!)*100:0.00)<=100?'success':'error'">
+                       {{totalAllocatedCeiling[currentCeilingChain?.section_level_position?.position]?.amount  | number : '1.2-2'}} ({{ceiling?.amount!>0?(totalAllocatedCeiling[currentCeilingChain?.section_level_position?.position]?.amount/ceiling?.amount!)*100:0.00 | number : '1.2-2'}} %)
+                      </b>Allocated
+                    </span>
                   </div>
-                </span>
+               </span>
             <p-dropdown
               optionValue=""
               optionLabel="section.name"
               [autoDisplayFirst]="true"
-              [(ngModel)]="defaultSelected![ceiling.position]"
-              placeholder="Select  {{ceiling.label}}"
+              [(ngModel)]="this.ceiling!.section!.position"
               [filter]="true"
-              [options]="ceiling.ceiling!"
-              (onChange)="sectionChange($event.value,ceiling.chain)"
+              [options]="parentCeiling!"
               styleClass="form-control"
             >
               <ng-template let-item pTemplate="item">
                 <div fxLayout="row" fxLayoutAlign="space-between center">
                   <span class=""> {{item.section.name}} </span>
-                  <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(ceiling.position,op,$event,item,ceiling.chain)" *ngIf="ceiling.chain.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
+                  <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked" (click)="allocateCeiling(currentCeilingChain?.section_level_position.position,op,$event,item,currentCeilingChain!)" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge  *ngIf="currentCeilingChain?.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
                 </div>
               </ng-template>
               <ng-template let-item pTemplate="selectedItem">
@@ -45,6 +40,74 @@
               </ng-template>
             </p-dropdown>
           </div>
+          <div *ngFor="let chain of ceilingChain" class="p-field" fxFlex>
+               <span class="p-float-label">
+                  <div  fxLayout="row" fxLayoutAlign="space-between center">
+                     <span><b>{{chain.section_level_position.name}}</b></span>
+                    <span >
+                      <b [className]="(selectedCeiling[chain?.section_level_position?.position]?.amount!>0?(totalAllocatedCeiling[chain?.section_level_position?.position]?.amount/selectedCeiling[chain?.section_level_position?.position]?.amount!)*100:0.00)>0 && (selectedCeiling[chain?.section_level_position?.position]?.amount!>0?(totalAllocatedCeiling[chain?.section_level_position?.position]?.amount/selectedCeiling[chain?.section_level_position?.position]?.amount!)*100:0.00)<=100?'success':'error'">
+                      {{totalAllocatedCeiling[chain?.section_level_position?.position]?.amount  | number : '1.2-2'}} ({{selectedCeiling[chain?.section_level_position?.position]?.amount!>0?(totalAllocatedCeiling[chain?.section_level_position?.position]?.amount/selectedCeiling[chain?.section_level_position?.position]?.amount!)*100:0.00 | number : '1.2-2'}} %)
+                      </b>Allocated
+                    </span>
+                  </div>
+               </span>
+            <p-dropdown
+              optionValue=""
+              optionLabel="section.name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              [options]="adminCeilingByLevel[chain.section_level_position.position]!"
+              (onChange)="onchange($event.value,chain!)"
+              styleClass="form-control"
+            >
+              <ng-template let-item pTemplate="item">
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                  <span class=""> {{item.section.name}} </span>
+                  <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked"  class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(chain?.section_level_position.position,op,$event,item,chain!)"  *ngIf="chain?.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
+                </div>
+              </ng-template>
+              <ng-template let-item pTemplate="selectedItem">
+                <span class=""> {{item.section.name}}</span>
+                <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>
+              </ng-template>
+            </p-dropdown>
+          </div>
+<!--          <div *ngFor="let ceiling of councilCeilingGroup" class="p-field" fxFlex>-->
+<!--               <span class="p-float-label">-->
+<!--                  <div  fxLayout="row" fxLayoutAlign="space-between center">-->
+<!--                    <span><b>{{ceiling.label}}</b></span>-->
+<!--                    <span ><b [className]="((((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)-->
+<!--                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00-->
+<!--                    )) >0 && (((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)-->
+<!--                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00-->
+<!--                    )) <=100) ?'success':'error'">{{ (ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)-->
+<!--                      | currency:"TZS":"TSH"}} ({{((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)-->
+<!--                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00-->
+<!--                    ) | number : '1.2-2'}})%</b>Allocated</span>-->
+<!--                  </div>-->
+<!--                </span>-->
+<!--            <p-dropdown-->
+<!--              optionValue=""-->
+<!--              optionLabel="section.name"-->
+<!--              [autoDisplayFirst]="true"-->
+<!--              [(ngModel)]="defaultSelected![ceiling.position]"-->
+<!--              placeholder="Select  {{ceiling.label}}"-->
+<!--              [filter]="true"-->
+<!--              [options]="ceiling.ceiling!"-->
+<!--              styleClass="form-control"-->
+<!--            >-->
+<!--              <ng-template let-item pTemplate="item">-->
+<!--                <div fxLayout="row" fxLayoutAlign="space-between center">-->
+<!--                  <span class=""> {{item.section.name}} </span>-->
+<!--                  <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(ceiling.position,op,$event,item,ceiling.chain)" *ngIf="ceiling.chain.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>-->
+<!--                </div>-->
+<!--              </ng-template>-->
+<!--              <ng-template let-item pTemplate="selectedItem">-->
+<!--                <span class=""> {{item.section.name}}</span>-->
+<!--                <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>-->
+<!--              </ng-template>-->
+<!--            </p-dropdown>-->
+<!--          </div>-->
         </div>
       </div>
     </div>
@@ -99,11 +162,11 @@
                   <td>{{rowData?.facility}}</td>
                   <td>
                     <div  class="p-field" fxFlex style="text-align: end;">
-                      <span *ngIf="finalCeiling.amount <=0 || rowData.is_locked">
+                      <span *ngIf="rowData.is_locked">
                         {{rowData!.amount | currency:"TZS":"TSH"}}
                       </span>
                       <p-inputNumber
-                        *ngIf="finalCeiling.amount > 0 && !rowData.is_locked"
+                        *ngIf="!rowData.is_locked"
                         mode="decimal"
                         prefix="TSH "
                         [(ngModel)]="rowData!.amount"
@@ -117,11 +180,11 @@
                   </td>
                   <td >
                     <div  class="p-field" fxFlex style="text-align: end;">
-                      <span *ngIf="finalCeiling.amount <=0 || rowData.is_locked">
+                      <span *ngIf="rowData.is_locked">
                         {{rowData!.percent | number : '1.2-2'}} %
                       </span>
                       <p-inputNumber
-                        *ngIf="finalCeiling.amount > 0  && !rowData.is_locked"
+                        *ngIf="!rowData.is_locked"
                         mode="decimal"
                         suffix=" %"
                         [(ngModel)]="rowData.percent"
@@ -205,7 +268,9 @@
             <td  styleClass="col-button">
               <div  class="p-field" fxFlex style="text-align: end;">
                       <span *ngIf="rowData.is_locked">
+                         <div class="p-field" fxFlex style="text-align:end">
                         {{rowData!.amount | currency:"TZS":"TSH"}}
+                         </div>
                       </span>
                     <p-inputNumber
                       *ngIf="!rowData.is_locked"
@@ -223,7 +288,9 @@
             <td>
               <div  class="p-field" fxFlex style="text-align: end;">
                 <span *ngIf="rowData.is_locked">
+                   <div class="p-field" fxFlex style="text-align:end">
                   {{rowData!.amount | currency:"TZS":"TSH"}}
+                   </div>
                 </span>
                 <p-inputNumber
                   *ngIf="!rowData.is_locked"

@@ -34,16 +34,18 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const rootAdminHierarchy = this.currentUser.admin_hierarchy;
+    const history = this.localStorageService.retrieve(`${this.stateKey}_state`);
     if (
       this.stateKey &&
-      this.localStorageService.retrieve(`${this.stateKey}_state`)
+      history &&
+      rootAdminHierarchy?.id?.toString() === history[0].key
     ) {
       this.nodes = this.localStorageService.retrieve(`${this.stateKey}_state`);
       this.selectedValue = this.localStorageService.retrieve(
         `${this.stateKey}_selected`
       );
     } else {
-      const rootAdminHierarchy = this.currentUser.admin_hierarchy;
       if (rootAdminHierarchy) {
         this.nodes = [
           {
@@ -69,7 +71,7 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
     this.adminHierarchyService
       .query({
         parent_id: selected.data.id,
-        columns: ['id', 'name', 'code', 'admin_hierarchy_position'],
+        columns: ['id', 'name', 'code', 'admin_hierarchy_position','current_financial_year_id','carryover_financial_year_id','supplementary_financial_year_id'],
       })
       .subscribe(
         (resp) => {

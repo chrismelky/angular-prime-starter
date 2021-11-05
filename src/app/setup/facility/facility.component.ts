@@ -33,6 +33,7 @@ import { UserService } from '../user/user.service';
 import { FacilityCustomDetailValueComponent } from './facility-custom-detail-value/facility-custom-detail-value.component';
 import { TransferComponent } from './transfer/transfer.component';
 import { UploadComponent } from './upload/upload.component';
+import {FacilityBankAccountComponent} from "./facility-bank-account/facility-bank-account.component";
 
 @Component({
   selector: 'app-facility',
@@ -64,17 +65,6 @@ export class FacilityComponent implements OnInit {
       header: 'Name',
       sort: true,
     },
-    /*{
-      field: 'ownership',
-      header: 'Ownership',
-      sort: true,
-    },
-    {
-      field: 'physical_state',
-      header: 'Physical State',
-      sort: true,
-    },
-   */
   ]; //Table display columns
 
   isLoading = false;
@@ -373,6 +363,20 @@ export class FacilityComponent implements OnInit {
       if (result) {
         this.loadPage(this.page);
       }
+    });
+  }
+
+  bankAccounts(rowData: Facility):void {
+    const data = {
+      facility: rowData,
+    };
+    const ref = this.dialogService.open(FacilityBankAccountComponent, {
+      data,
+      width: '60%',
+      header: 'Bank Accounts',
+    });
+    ref.onClose.subscribe((result) => {
+      this.loadPage(this.page);
     });
   }
 }

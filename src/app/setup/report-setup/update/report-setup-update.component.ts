@@ -12,11 +12,10 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
-import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
-import { ReportSetup } from "../report-setup.model";
+import {ParameterList, ReportSetup} from "../report-setup.model";
 import { ReportSetupService } from "../report-setup.service";
 import { ToastService } from "src/app/shared/toast.service";
+
 
 @Component({
   selector: "app-report-setup-update",
@@ -27,8 +26,6 @@ export class ReportSetupUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
-  casPlanContents?: CasPlanContent[] = [];
-
   /**
    * Declare form
    */
@@ -38,12 +35,12 @@ export class ReportSetupUpdateComponent implements OnInit {
     template_name: [null, []],
     query_params: [null, []],
     sql_query: [null, []],
-    cas_plan_content_id: [null, [Validators.required]],
   });
+
+  parameters?: ParameterList[] = [];
 
   constructor(
     protected reportSetupService: ReportSetupService,
-    protected casPlanContentService: CasPlanContentService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -51,13 +48,9 @@ export class ReportSetupUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casPlanContentService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
-      );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+
+    //Initialize form with data from dialog
+    this.updateForm(this.dialogConfig.data);
   }
 
   /**
@@ -70,6 +63,7 @@ export class ReportSetupUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
+
     const reportSetup = this.createFromForm();
     if (reportSetup.id !== undefined) {
       this.subscribeToSaveResponse(this.reportSetupService.update(reportSetup));
@@ -118,7 +112,6 @@ export class ReportSetupUpdateComponent implements OnInit {
       template_name: reportSetup.template_name,
       query_params: reportSetup.query_params,
       sql_query: reportSetup.sql_query,
-      cas_plan_content_id: reportSetup.cas_plan_content_id,
     });
   }
 
@@ -134,7 +127,6 @@ export class ReportSetupUpdateComponent implements OnInit {
       template_name: this.editForm.get(["template_name"])!.value,
       query_params: this.editForm.get(["query_params"])!.value,
       sql_query: this.editForm.get(["sql_query"])!.value,
-      cas_plan_content_id: this.editForm.get(["cas_plan_content_id"])!.value,
     };
   }
 }

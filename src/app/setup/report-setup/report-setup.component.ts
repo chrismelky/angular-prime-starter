@@ -20,8 +20,6 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
-import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
 
 import { ReportSetup } from "./report-setup.model";
 import { ReportSetupService } from "./report-setup.service";
@@ -35,8 +33,6 @@ export class ReportSetupComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
   reportSetups?: ReportSetup[] = [];
-
-  casPlanContents?: CasPlanContent[] = [];
 
   cols = [
     {
@@ -71,11 +67,9 @@ export class ReportSetupComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  cas_plan_content_id!: number;
 
   constructor(
     protected reportSetupService: ReportSetupService,
-    protected casPlanContentService: CasPlanContentService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -85,12 +79,6 @@ export class ReportSetupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casPlanContentService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
-      );
     this.handleNavigation();
   }
 
@@ -100,9 +88,6 @@ export class ReportSetupComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_plan_content_id) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -111,7 +96,6 @@ export class ReportSetupComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_plan_content_id: this.cas_plan_content_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -146,20 +130,8 @@ export class ReportSetupComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+      this.loadPage(this.page, true);
     });
-  }
-
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
   }
 
   /**
@@ -226,7 +198,6 @@ export class ReportSetupComponent implements OnInit {
   createOrUpdate(reportSetup?: ReportSetup): void {
     const data: ReportSetup = reportSetup ?? {
       ...new ReportSetup(),
-      cas_plan_content_id: this.cas_plan_content_id,
     };
     const ref = this.dialogService.open(ReportSetupUpdateComponent, {
       data,

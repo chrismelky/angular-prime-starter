@@ -172,8 +172,10 @@
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Projections</span>
           <span>
-            <button (click)="allocateProjection()" *ngIf="projections!.length > 0" pButton pRipple type="button" label="Allocate" class="p-button-outlined"></button>&nbsp;&nbsp;
-            <p-splitButton  label="Initiate Projection" icon="pi pi pi-wallet" (onClick)="initiateProjection()" [model]="items!"  [disabled]="
+            <button (click)="allocateProjection()" [disabled]="projections!.length > 0"
+                    *ngxPermissionsOnly="['ALLOCATE_PROJECTION']" class="p-button-outlined" label="Allocate" pButton pRipple
+                    type="button"></button>&nbsp;&nbsp;
+            <p-splitButton  *ngxPermissionsOnly="['INITIATE_PROJECTION']" label="Initiate Projection" icon="pi pi pi-wallet" (onClick)="initiateProjection()" [model]="items!"  [disabled]="
               !admin_hierarchy_id || !financial_year_id || !fund_source_id || !facility_id || !facility_type_id
             " styleClass="p-button-raised"></p-splitButton>
           </span>

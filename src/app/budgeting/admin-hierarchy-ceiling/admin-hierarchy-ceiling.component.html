@@ -234,8 +234,8 @@
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" fxLayoutGap="2px">
-                <button *ngxPermissionsOnly="['ALLOCATE_CEILING']" [disabled]="rowData.amount <= 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
+              <div fxLayout="row" *ngxPermissionsOnly="['MANAGE_CEILING']" fxLayoutGap="2px">
+                <button  [disabled]="rowData.amount <= 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
                 <button
                   pButton
                   *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData['amount'] <=0 "

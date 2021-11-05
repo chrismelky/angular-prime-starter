@@ -110,24 +110,32 @@ export class ProjectionComponent implements OnInit {
     protected ceilingChainService: CeilingChainService
   ) {
     this.currentUser = userService.getCurrentUser();
-    this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
+    // this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
     this.section_id = this.currentUser?.section_id!;
   }
 
   ngOnInit(): void {
     this.items = [
-      {label: 'Download Template', icon: 'pi pi-download', command: () => {}},
-      {label: 'Upload Projection', icon: 'pi pi-upload', command: () => {}},
+      // {label: 'Download Template', icon: 'pi pi-download', command: () => {}},
+      // {label: 'Upload Projection', icon: 'pi pi-upload', command: () => {}},
     ];
-    if(this.financial_year_id){
-      this.financialYearService
-        .financialYearAndForward(this.financial_year_id)
-        .subscribe(
-          (resp: CustomResponse<FinancialYear[]>) =>{
-            this.planningFinancialYears = Object.assign({}, (resp.data??[]));
+    this.financialYearService
+      .query({ columns: ['id', 'name','status'] })
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) =>{
+          this.financialYears = resp.data ?? [];
+          this.financial_year_id = this.financialYears.find(f => (f.status ==1))!.id!;
+          if(this.financial_year_id){
+            this.financialYearService
+              .financialYearAndForward(this.financial_year_id)
+              .subscribe(
+                (resp: CustomResponse<FinancialYear[]>) =>{
+                  this.planningFinancialYears = Object.assign({}, (resp.data??[]));
+                }
+              );
           }
-        );
-    }
+        }
+      );
     this.fundSourceService
       .query({ columns: ["id", "name"],can_project:true })
       .subscribe(

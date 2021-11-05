@@ -33,13 +33,16 @@ export class AdminCeilingDisseminationComponent implements OnInit {
 
   selectedCeiling: { [s: string]: AdminHierarchyCeiling; } = {};
   totalAllocatedCeiling: { [s: string]: any; } = {};
+  adminCeilingByLevel: any = {};
+
   toAllocate?:AdminHierarchyCeiling[]=[];
   allocationPosition?: number;
   totalFacilityAllocatedAmount?: number = 0;
   finalCeiling?: any= {};
   defaultSelected?: { [s: string]: any; } = {};
-
-
+  currentCeilingChain?: CeilingChain = {};
+  parentCeiling?: AdminHierarchyCeiling[]=[];
+  allCeilingChain?: CeilingChain[]=[];
 
   position?: number;
   section_id?: number;
@@ -81,6 +84,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     protected  facilityService:FacilityService
   ) {
     this.ceiling=this.config.data.ceiling;
+    this.parentCeiling =[this.config.data.ceiling];
     this.position = this.config.data.position;
     this.ceilingStartPosition = this.config.data.ceilingStartPosition;
     this.section_id = this.config.data.section_id;
@@ -90,104 +94,66 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  this.processCeiling();
+    this.loadCeilingChain()
   }
-
-  // Process Ceiling
-  processCeiling():void{
+  loadCeilingChain(){
     this.ceilingChainService
       .queryWithChild({for_admin_hierarchy_level_position:this.position})
       .subscribe(
-        (resp: CustomResponse<CeilingChain[]>) =>{
-          this.ceilingChain = (resp.data??[]);
-          const filteredChain = (resp.data??[]).filter(c => c.section_level_position.position >= (this.section_level_position!)
-          ||(c.section_level_position.position == (this.section_level_position!-1) && c.next_id));
-          const positions = filteredChain.map((c) => {return c.section_level_position.position});
-          let payload = {
-            position:positions,
-            admin_hierarchy_id:this.ceiling!.admin_hierarchy_id,
-            budget_type:this.ceiling!.budget_type,
-            financial_year_id:this.ceiling!.financial_year_id,
-            ceiling_id:this.ceiling!.ceiling_id
-          };
-          this.adminHierarchyCeilingService.ceilingByPosition(payload)
-            .subscribe((resp: CustomResponse<any>) =>{
-              this.councilCeiling = resp.data??[];
-
-              //Creating Ceiling Payload
-              this.councilCeilingGroup = filteredChain.map((p) => {const c = this.councilCeiling!.filter( cc => cc.section?.position === p.section_level_position.position)
-                return {position:p.section_level_position.position, ceiling:c,label:p.section_level_position.name,chain:p}});
-
-              //Removing Unwanted Item
-              const index = this.councilCeilingGroup.findIndex(item => item.position === this.section_level_position);
-              this.councilCeilingGroup[index].ceiling = this.councilCeilingGroup[index]!.ceiling!.filter((c: { section_id: number | undefined; })=>c.section_id === this.section_id);
-              const parentPosition  = filteredChain.find(fc => fc?.next?.section_level_position.position === this.councilCeilingGroup![index].position)?.section_level_position.position;
-              if(parentPosition !== undefined){
-                const parentIndex = this.councilCeilingGroup.findIndex(item => item.position === parentPosition);
-                this.councilCeilingGroup[parentIndex].ceiling = this.councilCeilingGroup[parentIndex].ceiling.filter((c: { section_id: any; })=>c.section_id === this.councilCeilingGroup![index].ceiling[0]!.section!.parent_id);
-              }
-              this.updateSelection(this.councilCeilingGroup);
-            });
+        (resp: CustomResponse<CeilingChain[]>) => {
+          this.allCeilingChain = (resp.data ?? []);
+          this.ceilingChain = (resp.data ?? []).filter(cc => cc.section_level_position.position > this.ceiling!.section?.position!);
+          this.currentCeilingChain = (resp.data ?? []).find(cc=> cc.section_level_position.position == this.ceiling!.section?.position!);
+          this.selectedCeiling[this.currentCeilingChain!.section_level_position.position] ={...this.ceiling};
+          if(this.currentCeilingChain!.next_id){
+            this.getChildCeiling(this.ceiling!,this.currentCeilingChain);
+          }else{
+            this.loadFacilityCeiling(this.ceiling);
+          }
         });
   }
 
-  updateSelection(ceilingGroup:any,startIndex=0,parentPosition=0):void{
-    for (let ceiling of ceilingGroup) {
-      if(ceiling.ceiling.length > 0){
-        if(startIndex == 0){this.defaultSelected![ceiling.position] = {...ceiling.ceiling[0]};}else{
-          let ceilingId = this.defaultSelected![parentPosition]?this.defaultSelected![parentPosition]:this.councilCeilingGroup![startIndex-1].ceiling[0];
-          let ceilingSectors = ceilingId.ceiling.sector.map((s: { id: any; }) => (s.id));
-          this.councilCeilingGroup![startIndex].ceiling = this.councilCeiling!.filter((c) => (c.parent_id === ceilingId.id && ceilingSectors.includes(c.section?.sector_id)));
-          this.defaultSelected![ceiling.position] = {...this.councilCeilingGroup![startIndex].ceiling[0]};
-          if(!ceiling.chain.next){
-            this.finalCeiling = this.defaultSelected![ceiling.position];
-            this.loadFacilityCeiling(this.defaultSelected![ceiling.position]);
-          }
-        }
-        if(ceiling.chain.next){
-          let sections = this.councilCeiling!.filter(cc => cc.parent_id == this.defaultSelected![ceiling.position].id);
-          this.totalAllocatedCeiling[ceiling.position] = {...{amount:this.getTotalAllocatedAmount(sections)}};
-        }
-        this.selectedCeiling[ceiling.position] ={...this.defaultSelected![ceiling.position]};
-      }
-      startIndex++;
+  onchange(ceiling:any,chain:CeilingChain){
+    this.selectedCeiling[chain.section_level_position.position] ={...ceiling};
+    if(chain.next_id){
+      this.getChildCeiling(ceiling,chain);
+    }else{
+      this.loadFacilityCeiling(ceiling);
+      this.finalCeiling = ceiling;
     }
   }
-
-  sectionChange(ceiling: any,chain:CeilingChain) : void{
-    if(chain.next){
-      this.selectedCeiling[chain.section_level_position.position] = {...ceiling};
-      let sections = this.councilCeiling!.filter(cc => cc.parent_id == ceiling.id);
-      this.totalAllocatedCeiling[chain.section_level_position.position] = {...{amount:this.getTotalAllocatedAmount(sections)}};
-      let ceilingData = this.councilCeilingGroup!.filter(cg => cg.position > ceiling.section.position);
-      let startIndex = this.councilCeilingGroup!.findIndex(c=>c.position == ceilingData[0].position);
-      this.updateSelection(ceilingData,startIndex,chain.section_level_position.position);
-    }else{
-      this.finalCeiling = ceiling;
-      this.loadFacilityCeiling(ceiling);
-    }
+  getChildCeiling(ceiling: AdminHierarchyCeiling,chain: CeilingChain = {}){
+    this.adminHierarchyCeilingService
+      .queryCeilingWithChildren({
+        per_page: 1000,
+        admin_hierarchy_id: ceiling!.admin_hierarchy_id,
+        financial_year_id: ceiling!.financial_year_id,
+        budget_type: ceiling!.budget_type,
+        parent_id:ceiling.id,
+        sector_ids:this.ceiling!.ceiling.sector.map((c: { id: any; }) => (c.id))
+      })
+      .subscribe(
+        (res: CustomResponse<AdminHierarchyCeiling[]>) => {
+          this.toAllocate = res.data ?? [];
+          this.toAllocate = this.toAllocate!.map((c) => Object.assign(c,
+            {percent: ceiling.amount!>0?((c.amount!/ceiling!.amount!)*100):(0)}));
+          this.totalAllocatedCeiling[chain.section_level_position.position] = {...{amount:this.getTotalAllocatedAmount(this.toAllocate!)}};
+          this.adminCeilingByLevel[(chain.next.section_level_position.position)] = this.toAllocate;
+          this.clonedCeiling = this.toAllocate!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent ,section:c.section}));
+        }
+      );
   }
 
 
   allocateCeiling(position:number,table:any,event:any,ceiling:AdminHierarchyCeiling,chain:any):void{
-    console.log(ceiling.ceiling)
     this.allocationPosition = position;
+    this.selectedCeiling[chain.section_level_position.position] ={...ceiling};
     if(ceiling!.amount!>0){
-      let ceilingSectors = ceiling.ceiling.sector.map((s: { id: any; }) => (s.id));
-      this.toAllocate = this.councilCeiling!.filter(cc => cc.parent_id == ceiling.id && ceilingSectors.includes(cc.section?.sector_id))
-      this.toAllocate = this.toAllocate!.map((c) => Object.assign(c,
-        {percent: ceiling.amount!>0?((c.amount!/ceiling!.amount!)*100):(0)}));
-      this.clonedCeiling = this.toAllocate!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent,section:c.section }));
+      this.getChildCeiling(ceiling,chain);
       table.toggle(event,this.overlayTarget?.nativeElement);
-      this.sectionChange(ceiling,chain);
     }else{
       this.toastService.info('No Ceiling To allocate')
     }
-  }
-
-  //Load Total allocated  Ceiling
-  getAllocatedAmount(ceiling_id: number){
-    return this.adminHierarchyCeilingService.queryTotalAllocatedAmount({admin_hierarchy_ceiling_id:ceiling_id});
   }
 
 
@@ -198,7 +164,6 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     if(this.clonedFacilityCeiling![index].amount != row.amount){
       if(this.totalFacilityAllocatedAmount! <= this.finalCeiling!.amount!) {
         const facilityCeiling = this.facilityUpdateCeilingFrom(row);
-        console.log(facilityCeiling);
         if(facilityCeiling.id !== null){
           this.subscribeToSaveResponse(
             this.budgetCeilingService.update(facilityCeiling),row
@@ -239,11 +204,12 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     this.facilityCeiling![i].amount=amount;
     this.facilityCeiling![i].percent=this.finalCeiling!.amount!>0?(amount!/this.finalCeiling!.amount!)*100:0.00;
     this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
+    this.totalAllocatedCeiling[this.finalCeiling?.section?.position] = {...{amount:this.getTotalAllocatedAmount(this.facilityCeiling!)}};
   }
 
   //Ceiling Input Change
   ceilingChange(row: AdminHierarchyCeiling,amount:number): void{
-    const position=this.ceilingChain!.find(cc => cc.next.section_level_position.position == row.section?.position)!.section_level_position.position;
+    const position=this.allCeilingChain!.find(cc => cc.next.section_level_position.position == row.section?.position)!.section_level_position.position;
     const i = this.toAllocate!.findIndex(item => item.id === row.id);
     this.toAllocate![i].amount=amount;
     this.toAllocate![i].percent=this.selectedCeiling[position]!.amount!>0?(amount!/this.selectedCeiling[position].amount!)*100:0.00;
@@ -252,16 +218,20 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   //Get Facility Percent
   getFacilityPercent(row: any,percent:number): void{
     const i = this.facilityCeiling!.findIndex(item => item.id === row.id);
+    console.log(percent);
     this.facilityCeiling![i].percent=percent;
     this.facilityCeiling![i].amount=(percent * this.finalCeiling!.amount!)/100;
     this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
+    this.totalAllocatedCeiling[this.finalCeiling?.section?.position] = {...{amount:this.getTotalAllocatedAmount(this.facilityCeiling!)}};
   }
+
   //Percent Input Change
-  getPercent(row: AdminHierarchyCeiling,percent:number){;
-    const position=this.ceilingChain!.find(c => c.next_id && c.next.section_level_position.position == row.section?.position)?.section_level_position.position;
+  getPercent(row: AdminHierarchyCeiling,percent:number){
+    const position=this.allCeilingChain!.find(c => c.next_id && c.next.section_level_position.position == row.section?.position)?.section_level_position.position;
     const i = this.toAllocate!.findIndex(item => item.id === row.id);
     this.toAllocate![i].percent=percent;
-    this.toAllocate![i].amount=(percent * this.selectedCeiling[position].amount!)/100;
+    this.toAllocate![i].amount=(percent * this.selectedCeiling[position!].amount!)/100;
+    this.adminCeilingByLevel[row.section?.position!][i].amount=(percent * this.selectedCeiling[position!].amount!)/100;
     this.totalAllocatedCeiling[position] = {...{amount:this.getTotalAllocatedAmount(this.toAllocate!)}};
   }
 
@@ -330,8 +300,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   protected onSaveSuccess(result: any,ceiling:any): void {
     if ('facility' in ceiling){
       const index = this.facilityCeiling!.findIndex(item => item.id === ceiling.id);
-      this.clonedCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
+      this.clonedFacilityCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
       this.facilityCeiling![index].ceilingId = result.data.id
+      this.totalAllocatedCeiling[this.finalCeiling?.section?.position] = {...{amount:this.getTotalAllocatedAmount(this.facilityCeiling!)}};
     }else{
       // const index = this.ceilingToDisseminate!.findIndex(item => item.id === ceiling.id);
       this.clonedCeiling = this.toAllocate!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent ,section:c.section}));
@@ -345,11 +316,11 @@ export class AdminCeilingDisseminationComponent implements OnInit {
    * @param error
    */
   protected onSaveError(error: any,ceiling:any): void {
-    if ('facility' in ceiling){
+    if ('facility' in ceiling) {
       const index = this.facilityCeiling!.findIndex(item => item.id === ceiling.id);
-      this.facilityCeiling![index].amount=this.clonedCeiling![index].amount;
-      this.facilityCeiling![index].percent=this.clonedCeiling![index].percent;
-      this.getPercent(this.clonedCeiling![index],this.clonedCeiling![index].percent!);
+      this.facilityCeiling![index].amount = this.clonedFacilityCeiling![index].amount;
+      this.facilityCeiling![index].percent = this.clonedFacilityCeiling![index].percent;
+      this.getPercent(this.clonedFacilityCeiling![index], this.clonedFacilityCeiling![index].percent!);
     }else{
       const index = this.toAllocate!.findIndex(item => item.id === ceiling.id);
       this.toAllocate![index].amount=this.clonedCeiling![index].amount;
@@ -360,10 +331,6 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   }
 
   protected onSaveFinalize(): void {
-  }
-
-  closeOverlay(table:Table): void{
-
   }
 
   //Load Facility Ceiling
@@ -385,6 +352,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
               id:facility.id,
               ceilingId:budgetCeiling==undefined?null:budgetCeiling!.id,
               ceiling_id:this.ceiling!.ceiling_id,
+              ceiling:this.facilityCeiling,
               // @ts-ignore
               planning_admin_hierarchy_id:facility[position],
               budget_class_id:this.ceiling!.ceiling.budget_class_id,
@@ -398,6 +366,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
           });
           this.clonedFacilityCeiling = this.facilityCeiling!.map(c => ({ id: c.id, amount: c.amount,percent:c.percent }));
           this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
+          this.totalAllocatedCeiling[ceiling?.section?.position] = {...{amount:this.getTotalAllocatedAmount(this.facilityCeiling!)}};
         });
       });
     }

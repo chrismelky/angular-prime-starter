@@ -21,8 +21,8 @@ export class UploadComponent implements OnInit {
    * Declare form
    */
   editForm: FormGroup;
-  sectorId!: number;
-  expenditureCategoryId!: number;
+  sector_id!: number;
+  expenditure_category_id!: number;
 
   constructor(
     protected projectOutputService: ProjectOutputService,
@@ -31,12 +31,12 @@ export class UploadComponent implements OnInit {
     public fb: FormBuilder,
     private toastService: ToastService,
   ) {
-    this.sectorId = this.config.data.sectorId;
-    this.expenditureCategoryId = this.config.data.expenditureCategoryId;
+    this.sector_id = this.config.data.sectorId;
+    this.expenditure_category_id = this.config.data.expenditureCategoryId;
     this.editForm = this.fb.group({
       file: [],
-      expenditureCategoryId: [this.expenditureCategoryId],
-      sectorId: [this.sectorId],
+      expenditure_category_id: [this.expenditure_category_id],
+      sector_id: [this.sector_id],
     });
   }
 
@@ -97,8 +97,8 @@ export class UploadComponent implements OnInit {
    */
   protected createFromForm(): FormData {
     const fd = new FormData();
-    fd.append('sectorId', this.editForm.get(['sectorId'])!.value);
-    fd.append('expenditureCategoryId', this.editForm.get(['expenditureCategoryId'])!.value);
+    fd.append('sector_id', this.editForm.get(['sector_id'])!.value);
+    fd.append('expenditure_category_id', this.editForm.get(['expenditure_category_id'])!.value);
     fd.append('file', this.editForm.get(['file'])!.value);
     return fd;
   }

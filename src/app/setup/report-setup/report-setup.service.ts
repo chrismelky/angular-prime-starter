@@ -15,7 +15,7 @@ import { ReportSetup } from "./report-setup.model";
 
 @Injectable({ providedIn: "root" })
 export class ReportSetupService {
-  public resourceUrl = "api/report_setups";
+  public resourceUrl = "api/reports";
 
   constructor(protected http: HttpClient) {}
 

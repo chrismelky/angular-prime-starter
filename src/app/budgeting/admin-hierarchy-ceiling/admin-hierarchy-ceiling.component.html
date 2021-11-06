@@ -234,17 +234,21 @@
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" *ngxPermissionsOnly="['MANAGE_CEILING']" fxLayoutGap="2px">
-                <button  [disabled]="rowData.amount <= 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
+              <div fxLayout="row" *ngxPermissionsOnly="['ALLOCATE_CEILING']" fxLayoutGap="2px">
+                <button  *ngIf="rowData.amount > 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
+              </div>
+              <div fxLayout="row" *ngxPermissionsOnly="['DELETE_CEILING_AMOUNT']" fxLayoutGap="2px">
                 <button
                   pButton
-                  *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData['amount'] <=0 "
+                  *ngIf="!rowData['is_locked']"
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="p-button-text p-button-plain p-button-rounded p-button-icon"
                   icon="pi pi-trash"
                   (click)="delete(rowData)"
                 ></button>
+              </div>
+              <div fxLayout="row" *ngxPermissionsOnly="['EDIT_CEILING']" fxLayoutGap="2px">
                 <button *ngIf="!editing && !rowData['is_locked'] && position === ceilingStartSectionPosition && !rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
                 <button *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button"  icon="pi pi-pencil" (click)="editOwnSource(rowData)" class="p-button-rounded p-button-text"></button>
                 <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>

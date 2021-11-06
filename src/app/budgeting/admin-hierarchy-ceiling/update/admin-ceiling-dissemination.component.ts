@@ -108,6 +108,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
           if(this.currentCeilingChain!.next_id){
             this.getChildCeiling(this.ceiling!,this.currentCeilingChain);
           }else{
+            this.finalCeiling = this.ceiling;
             this.loadFacilityCeiling(this.ceiling);
           }
         });

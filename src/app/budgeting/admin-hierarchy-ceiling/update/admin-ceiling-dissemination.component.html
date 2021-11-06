@@ -72,42 +72,6 @@
               </ng-template>
             </p-dropdown>
           </div>
-<!--          <div *ngFor="let ceiling of councilCeilingGroup" class="p-field" fxFlex>-->
-<!--               <span class="p-float-label">-->
-<!--                  <div  fxLayout="row" fxLayoutAlign="space-between center">-->
-<!--                    <span><b>{{ceiling.label}}</b></span>-->
-<!--                    <span ><b [className]="((((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)-->
-<!--                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00-->
-<!--                    )) >0 && (((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)-->
-<!--                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00-->
-<!--                    )) <=100) ?'success':'error'">{{ (ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)-->
-<!--                      | currency:"TZS":"TSH"}} ({{((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)-->
-<!--                      >0?((ceiling.chain.next?totalAllocatedCeiling[ceiling.position].amount:totalFacilityAllocatedAmount)/(ceiling.chain.next?defaultSelected![ceiling.position].amount:finalCeiling.amount))*100:0.00-->
-<!--                    ) | number : '1.2-2'}})%</b>Allocated</span>-->
-<!--                  </div>-->
-<!--                </span>-->
-<!--            <p-dropdown-->
-<!--              optionValue=""-->
-<!--              optionLabel="section.name"-->
-<!--              [autoDisplayFirst]="true"-->
-<!--              [(ngModel)]="defaultSelected![ceiling.position]"-->
-<!--              placeholder="Select  {{ceiling.label}}"-->
-<!--              [filter]="true"-->
-<!--              [options]="ceiling.ceiling!"-->
-<!--              styleClass="form-control"-->
-<!--            >-->
-<!--              <ng-template let-item pTemplate="item">-->
-<!--                <div fxLayout="row" fxLayoutAlign="space-between center">-->
-<!--                  <span class=""> {{item.section.name}} </span>-->
-<!--                  <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(ceiling.position,op,$event,item,ceiling.chain)" *ngIf="ceiling.chain.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>-->
-<!--                </div>-->
-<!--              </ng-template>-->
-<!--              <ng-template let-item pTemplate="selectedItem">-->
-<!--                <span class=""> {{item.section.name}}</span>-->
-<!--                <span *ngIf="section_level_position! <= item.section.position!" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b></span>-->
-<!--              </ng-template>-->
-<!--            </p-dropdown>-->
-<!--          </div>-->
         </div>
       </div>
     </div>
@@ -121,11 +85,13 @@
               class="ceiling"
               [value]="facilityCeiling!"
               [scrollable]="true"
-              scrollHeight="35vh"
+              scrollHeight="flex"
               dataKey="id"
               editMode="row"
+              [paginator]="true" [rows]="5"
               [globalFilterFields]="['council','facility']"
               dataKey="id"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowsPerPageOptions]="[5,10,25,50]"
             >
               <ng-template pTemplate="caption">
                 <span><b>{{finalCeiling?.section?.name}} Allocation</b></span>
@@ -207,7 +173,7 @@
     </div>
   </div>
 </div>
-<div class="p-dialog-footer" style="bottom: 0">
+<div class="p-dialog-footer">
   <p-button (click)="close()"  label="Save & Close" icon="pi pi-save"></p-button>
 </div>
 

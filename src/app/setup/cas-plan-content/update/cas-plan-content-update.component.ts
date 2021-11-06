@@ -17,6 +17,8 @@ import { CasPlanService } from 'src/app/setup/cas-plan/cas-plan.service';
 import { CasPlanContent } from '../cas-plan-content.model';
 import { CasPlanContentService } from '../cas-plan-content.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import {ReportSetup} from "../../report-setup/report-setup.model";
+import {ReportSetupService} from "../../report-setup/report-setup.service";
 
 @Component({
   selector: 'app-cas-plan-content-update',
@@ -30,6 +32,8 @@ export class CasPlanContentUpdateComponent implements OnInit {
   parents?: CasPlanContent[] = [];
   casPlans?: CasPlan[] = [];
 
+  reports?: ReportSetup[] = [];
+
   /**
    * Declare form
    */
@@ -37,6 +41,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required, Validators.maxLength(255)]],
     parent_id: [null, []],
+    report_id: [null, []],
     cas_plan_id: [null, [Validators.required]],
     sort_order: [null, [Validators.required, Validators.min(1)]],
   });
@@ -44,6 +49,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
   constructor(
     protected casPlanContentService: CasPlanContentService,
     protected casPlanService: CasPlanService,
+    protected reportSetupService: ReportSetupService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -61,6 +67,11 @@ export class CasPlanContentUpdateComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
       );
+    this.reportSetupService.query({ columns: ['id','name']})
+      .subscribe(
+        (resp:CustomResponse<ReportSetup[]>) => (this.reports = resp.data)
+      );
+    this.updateForm(this.dialogConfig.data);
     const dialogData = this.dialogConfig.data;
     const casPlanContent: CasPlanContent = dialogData.casPlanContent;
     this.casPlans = dialogData.casPlans;
@@ -140,6 +151,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
       id: casPlanContent.id,
       name: casPlanContent.name,
       parent_id: casPlanContent.parent_id,
+      report_id: casPlanContent.report_id,
       cas_plan_id: casPlanContent.cas_plan_id,
       sort_order: casPlanContent.sort_order,
     });
@@ -155,6 +167,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
       parent_id: this.editForm.get(['parent_id'])!.value,
+      report_id: this.editForm.get(['report_id'])!.value,
       cas_plan_id: this.editForm.get(['cas_plan_id'])!.value,
       sort_order: this.editForm.get(['sort_order'])!.value,
     };

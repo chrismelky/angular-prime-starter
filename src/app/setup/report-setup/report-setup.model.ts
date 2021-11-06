@@ -3,8 +3,15 @@ export class ReportSetup {
     public id?: number,
     public name?: string,
     public template_name?: string,
-    public query_params?: string,
-    public sql_query?: string,
-    public cas_plan_content_id?: number
+    public query_params?: ParameterList[],
+    public sql_query?: string
+  ) {}
+}
+
+export class ParameterList {
+  constructor(
+    public id?: number,
+    public name?: string,
+    public value?: string,
   ) {}
 }

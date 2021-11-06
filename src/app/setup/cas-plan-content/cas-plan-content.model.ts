@@ -3,6 +3,7 @@ export class CasPlanContent {
     public id?: number,
     public name?: string,
     public parent_id?: number,
+    public report_id?: number,
     public cas_plan_id?: number,
     public sort_order?: number
   ) {}

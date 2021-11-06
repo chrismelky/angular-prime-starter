@@ -55,16 +55,23 @@
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <textarea
-            id="query_params"
-            formControlName="query_params"
-            [rows]="5"
-            [cols]="30"
-            pInputTextarea
-            [autoResize]="true"
-          ></textarea>
+          <input id="query_params" type="text" pInputText formControlName="query_params" />
           <label for="query_params">Query Params </label>
         </span>
+<!--        <span class="p-float-label">-->
+<!--          <p-multiSelect id="parameters"-->
+<!--                         [options]="parameters!"-->
+<!--                         [virtualScroll]="true"-->
+<!--                         [filter]="true"-->
+<!--                         optionLabel="name"-->
+<!--                         display="chip"-->
+<!--                         appendTo="body"-->
+<!--                         dataKey="id"-->
+<!--                         formControlName="query_params"-->
+<!--          ></p-multiSelect>-->
+
+<!--          <label for="parameters">Query Params </label>-->
+<!--        </span>-->
         <span
           *ngIf="
             editForm.get('query_params')!.invalid &&
@@ -99,36 +106,6 @@
         </span>
       </div>
 
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="cas_plan_content_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="casPlanContents!"
-            formControlName="cas_plan_content_id"
-          ></p-dropdown>
-          <label for="cas_plan_content_id">Cas Plan Content </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('cas_plan_content_id')!.invalid &&
-            (editForm.get('cas_plan_content_id')!.dirty ||
-              editForm.get('cas_plan_content_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('cas_plan_content_id')?.errors?.required"
-            >Cas Plan Content is required.</small
-          >
-        </span>
-      </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

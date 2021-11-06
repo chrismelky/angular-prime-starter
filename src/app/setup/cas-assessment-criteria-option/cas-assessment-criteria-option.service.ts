@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { CasAssessmentCriteriaOption } from "./cas-assessment-criteria-option.model";
+import {CasPlanContent} from "../cas-plan-content/cas-plan-content.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentCriteriaOptionService {
@@ -60,5 +61,11 @@ export class CasAssessmentCriteriaOptionService {
     return this.http.post<CustomResponse<CasAssessmentCriteriaOption[]>>(
       this.baseUrl,param
     )
+  }
+
+  loadContents(version_id: number) {
+    return this.http.get<CustomResponse<any>>(
+      `${this.resourceUrl}/load_contents/${version_id}`
+    );
   }
 }

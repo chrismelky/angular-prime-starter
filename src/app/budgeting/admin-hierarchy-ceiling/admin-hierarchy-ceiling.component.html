@@ -183,8 +183,8 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Ceiling Amounts</span>
-          <div class="card-header-text">
-            <p-splitButton *ngxPermissionsOnly="['INITIATE_CEILING']"  [disabled]="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
+          <div class="card-header-text" *ngxPermissionsOnly="['INITIATE_CEILING']">
+            <p-splitButton   *ngIf="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
               !admin_hierarchy_id || !financial_year_id || !budget_type
             " styleClass="p-button-raised"></p-splitButton>
           </div>

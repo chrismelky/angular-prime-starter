@@ -120,7 +120,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   ngOnInit(): void {
     this.rootSection = this.currentUser.section;
     this.section_id = this.rootSection?.id;
-    this.position = this.rootSection?.position;
     this.ceilingService
       .query({ columns: ['id', 'name'] })
       .subscribe(

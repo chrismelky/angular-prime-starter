@@ -39,6 +39,7 @@ import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
 import { ScrutinizationService } from 'src/app/planning/scrutinization/scrutinization.service';
 import { Scrutinization } from 'src/app/planning/scrutinization/scrutinization.model';
 import { DecisionLevel } from 'src/app/setup/decision-level/decision-level.model';
+import { AddressCommentComponent } from 'src/app/shared/address-comment/address-comment.component';
 
 @Component({
   selector: 'app-activity-input',
@@ -386,6 +387,19 @@ export class ActivityInputComponent implements OnInit {
           this.setBudgetStatus();
         });
       },
+    });
+  }
+
+  addressComments(i: ActivityInput): void {
+    const ref = this.dialogService.open(AddressCommentComponent, {
+      data: i.addressable_comments,
+      width: '800px',
+    });
+
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        i.addressable_comments = result;
+      }
     });
   }
 

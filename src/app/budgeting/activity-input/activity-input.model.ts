@@ -1,3 +1,4 @@
+import { Comment } from 'src/app/planning/scrutinization/comment/comment.model';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
 
@@ -29,6 +30,7 @@ export class ActivityInput {
     public activity_fund_source_id?: number,
     public fund_source?: FundSource,
     public comments: any[] = [],
-    public gfs_code?: GfsCode
+    public gfs_code?: GfsCode,
+    public addressable_comments: Comment[] = []
   ) {}
 }

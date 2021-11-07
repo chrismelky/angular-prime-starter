@@ -224,7 +224,11 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
+        <tr
+          [ngClass]="{
+            'has-comment': rowData.addressable_comments.length
+          }"
+        >
           <td>[ {{ rowData.gfs_code.code }} ] {{ rowData.gfs_code.name }}</td>
           <td>
             {{ rowData.unit }}
@@ -247,6 +251,15 @@
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
+                <button
+                  *ngIf="rowData.addressable_comments.length"
+                  (click)="addressComments(rowData)"
+                  icon="pi pi-comment"
+                  pButton
+                  class="
+                    p-icon-only p-button-text p-button-plain p-button-rounded
+                  "
+                ></button>
                 <button
                   pButton
                   pTooltip="Edit"

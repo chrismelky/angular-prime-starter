@@ -31,7 +31,7 @@ export class FacilityCustomDetailValueUpdateComponent implements OnInit {
   errors = [];
   facility!: Facility;
   facilityCustomDetails?: FacilityCustomDetail[] = [];
-  options?: FacilityCustomDetailOption[];
+  options?: FacilityCustomDetailOption[] = [];
   /**
    * Declare form
    */

@@ -5,10 +5,10 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -28,6 +28,9 @@ import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-c
 import { CasAssessmentCriteriaOption } from "./cas-assessment-criteria-option.model";
 import { CasAssessmentCriteriaOptionService } from "./cas-assessment-criteria-option.service";
 import { CasAssessmentCriteriaOptionUpdateComponent } from "./update/cas-assessment-criteria-option-update.component";
+import {AdminHierarchy} from "../admin-hierarchy/admin-hierarchy.model";
+import {OverlayPanel} from "primeng/overlaypanel";
+import {LocalStorageService} from "ngx-webstorage";
 
 @Component({
   selector: "app-cas-assessment-criteria-option",
@@ -36,10 +39,19 @@ import { CasAssessmentCriteriaOptionUpdateComponent } from "./update/cas-assessm
 export class CasAssessmentCriteriaOptionComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
+  treeLoading: boolean = false;
+  nodes: TreeNode[] = [];
+  selectedValue: any;
+  @Input() selectionMode: string = 'single';
+  @Input() returnType: string = 'id';
+  @Input() stateKey?: string;
+  @Input() label: string = 'Cas Plan Contents';
+  @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  @ViewChild('op') panel!: OverlayPanel;
   casAssessmentCriteriaOptions?: CasAssessmentCriteriaOption[] = [];
 
   casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
-  casPlanContents?: CasPlanContent[] = [];
+  casPlanContents: CasPlanContent[] = [];
 
   cols = [
     {
@@ -72,6 +84,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
     protected casPlanContentService: CasPlanContentService,
     protected activatedRoute: ActivatedRoute,
+    protected localStorageService: LocalStorageService,
     protected router: Router,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
@@ -81,16 +94,10 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "cas_category_name"] })
+      .query({ columns: ["id", "cas_category_name", "cas_assessment_category_id"] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)
-      );
-    this.casPlanContentService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
       );
     this.handleNavigation();
   }
@@ -301,5 +308,70 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error("Error loading Cas Assessment Criteria Option");
+  }
+
+  loadContents() {
+    //initialaize nodes array
+    this.nodes = [];
+    this.casAssessmentCriteriaOptionService.loadContents(this.cas_assessment_category_version_id)
+      .subscribe((resp)=>{
+        this.casPlanContents = resp.data;
+        if (this.casPlanContents.length > 0) {
+          for (let i = 0; i < this.casPlanContents!.length; i++) {
+            this.nodes.push({
+              label: this.casPlanContents[i].name,
+              data: {id:this.casPlanContents[i].id,name: this.casPlanContents[i].name},
+              children: [],
+              leaf: false,
+            });
+          }
+          this.selectedValue = this.nodes[0];
+          this.onSelectionChange();
+        }
+      });
+  }
+  nodeExpand(event: any): any {
+    let selected: TreeNode = event.node;
+    this.treeLoading = true;
+    this.casPlanContentService
+      .query({
+        parent_id: selected.data.id,
+        columns: ['id', 'name'],
+      })
+      .subscribe(
+        (resp) => {
+          this.treeLoading = false;
+          selected.children = resp.data?.map((a) => {
+            return {
+              label: a.name,
+              data: a,
+              leaf: false,
+            };
+          });
+        },
+        (error) => {
+          this.treeLoading = false;
+        }
+      );
+  }
+
+  onSelectionChange(event?: any): void {
+    const selection =
+      typeof this.selectedValue === 'object'
+        ? this.returnType === 'object'
+          ? this.selectedValue?.data
+          : this.selectedValue?.data?.id
+        : this.selectedValue?.data?.map((d: CasPlanContent) => {
+          return this.returnType === 'object' ? d : d.id;
+        });
+    this.onSelect.next(selection);
+    this.panel.hide();
+    this.localStorageService.store(`${this.stateKey}_selected`, {
+      label: this.selectedValue.label,
+      data: this.selectedValue.data,
+      leaf: this.selectedValue.leaf,
+    });
+    this.cas_plan_content_id = this.selectedValue?.data?.id;
+    this.loadPage();
   }
 }

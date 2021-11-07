@@ -189,6 +189,33 @@
           ></button>
         </div>
       </ng-template>
+
+      <ng-template pTemplate="caption">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text">Project Outputs</span>
+          <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="end">
+            <button
+              pButton
+              icon="pi pi-plus"
+              class="p-button-raised p-button-text"
+              [disabled]="!expenditure_category_id || !sector_id"
+              (click)="createOrUpdate()"
+              label="Add Project Output"
+            ></button>
+            &nbsp;
+            <button
+              pButton
+              icon="pi pi-upload"
+              class="p-button-raised"
+              [disabled]="!expenditure_category_id || !sector_id"
+              (click)="upload()"
+              label="Upload Project Outputs"
+            ></button>
+          </div>
+        </div>
+      </ng-template>
+
+
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="projectOutputs?.length">
           <th

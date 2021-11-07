@@ -45,7 +45,6 @@ export class FacilityUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     facility_type_id: [null, [Validators.required]],
     ownership: [null, [Validators.required]],
-    physical_state: [null, [Validators.required]],
   });
 
   constructor(
@@ -138,7 +137,6 @@ export class FacilityUpdateComponent implements OnInit {
       name: facility.name,
       facility_type_id: facility.facility_type_id,
       ownership: facility.ownership,
-      physical_state: facility.physical_state,
     });
   }
 
@@ -154,7 +152,6 @@ export class FacilityUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       facility_type_id: this.editForm.get(['facility_type_id'])!.value,
       ownership: this.editForm.get(['ownership'])!.value,
-      physical_state: this.editForm.get(['physical_state'])!.value,
     };
   }
 }

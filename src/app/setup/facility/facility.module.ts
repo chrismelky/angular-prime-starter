@@ -13,11 +13,12 @@ import {SharedModule} from "../../shared/shared.module";
 import {FacilityComponent} from "./facility.component";
 import {FacilityUpdateComponent} from "./update/facility-update.component";
 import {FacilityCustomDetailValueModule} from "./facility-custom-detail-value/facility-custom-detail-value.module";
-import { TransferComponent } from './transfer/transfer.component';
+import {TransferComponent} from './transfer/transfer.component';
 import {UploadComponent} from "./upload/upload.component";
+import {FacilityBankAccountModule} from "./facility-bank-account/facility-bank-account.module";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, FacilityRoutingModule, FacilityCustomDetailValueModule],
+  imports: [SharedModule, CommonModule, FacilityRoutingModule, FacilityCustomDetailValueModule, FacilityBankAccountModule],
   declarations: [FacilityComponent, FacilityUpdateComponent, TransferComponent, UploadComponent],
   entryComponents: [FacilityUpdateComponent],
 })

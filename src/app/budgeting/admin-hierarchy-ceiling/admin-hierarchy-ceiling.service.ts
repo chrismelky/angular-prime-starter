@@ -38,6 +38,16 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  projectionAllocation(
+    payload: any
+  ): Observable<CustomResponse<any>> {
+    const url = 'api/initiate_projection_ceiling';
+    return this.http.post<CustomResponse<any>>(
+      url,
+      payload
+    );
+  }
+
   lockOrUnlockCeiling(
     payload: any
   ): Observable<CustomResponse<AdminHierarchyCeiling>> {
@@ -57,12 +67,11 @@ export class AdminHierarchyCeilingService {
     );
   }
 
-  ceilingByFundSource(req?: any): Observable<CustomResponse<any[]>> {
-    const options = createRequestOption(req);
+  ceilingByFundSource(payload?: any): Observable<CustomResponse<any[]>> {
     const url = 'api/ceiling_by_fund_source';
-    return this.http.get<CustomResponse<any[]>>(
+    return this.http.post<CustomResponse<any[]>>(
       url,
-      { params: options }
+      payload
     );
   }
 

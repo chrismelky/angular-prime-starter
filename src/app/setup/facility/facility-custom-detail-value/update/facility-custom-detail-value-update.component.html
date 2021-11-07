@@ -38,7 +38,7 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex *ngIf="!options">
+      <div class="p-field" fxFlex *ngIf="options!.length===0">
         <span class="p-float-label">
           <input id="value" type="text" pInputText formControlName="value" />
           <label for="value">Value </label>
@@ -56,7 +56,7 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex *ngIf="options">
+      <div class="p-field" fxFlex *ngIf="options!.length > 0">
         <span class="p-float-label">
           <p-dropdown
             id="facility_custom_detail_id_option"

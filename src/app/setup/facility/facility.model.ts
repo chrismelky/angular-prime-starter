@@ -11,7 +11,6 @@ export class Facility {
     public admin_hierarchy_id?: number,
     public admin_hierarchy?: AdminHierarchy,
     public ownership?: string,
-    public physical_state?: string,
     public p1?: number,
     public p2?: number,
     public p3?: number,

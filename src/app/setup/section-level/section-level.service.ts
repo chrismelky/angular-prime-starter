@@ -26,6 +26,12 @@ export class SectionLevelService {
     );
   }
 
+  sectionByPosition(position: number): Observable<CustomResponse<SectionLevel[]>> {
+    return this.http.get<CustomResponse<SectionLevel[]>>(
+      `${this.resourceUrl}/${position}`
+    );
+  }
+
   find(id: number): Observable<CustomResponse<SectionLevel>> {
     return this.http.get<CustomResponse<SectionLevel>>(
       `${this.resourceUrl}/${id}`

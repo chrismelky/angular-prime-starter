@@ -91,6 +91,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   section_id!: number | undefined;
   admin_hierarchy_position!: number;
   ceilingStartSectionPosition!: number;
+  section_level_id!:number;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -107,16 +108,18 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected sectionLevelService: SectionLevelService,
-    protected userService: UserService
+    protected userService: UserService,
+    protected ceilingChainService: CeilingChainService
   ) {
     this.currentUser = userService.getCurrentUser();
     this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
+    this.position = this.currentUser.section?.position!;
+    this.selectionLevelChange(this.position);
   }
 
   ngOnInit(): void {
     this.rootSection = this.currentUser.section;
     this.section_id = this.rootSection?.id;
-    this.position = this.rootSection?.position;
     this.ceilingService
       .query({ columns: ['id', 'name'] })
       .subscribe(
@@ -145,7 +148,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         }
       );
     this.sectionLevelService
-      .query({ columns: ['id', 'name', 'position'] })
+      .sectionByPosition(this.position!)
       .subscribe(
         (resp: CustomResponse<SectionLevel[]>) =>
           (this.planingLevels = resp.data)
@@ -231,7 +234,9 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     });
   }
 
-  selectionLevelChange() {
+  selectionLevelChange(sectionId:number) {
+    this.position = sectionId;
+    console.log(sectionId);
     this.sectionService
       .query({ position: this.position })
       .subscribe((resp: CustomResponse<Section[]>) => {
@@ -620,19 +625,34 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     ref.onClose.subscribe((result) => {});
   }
   editOwnSource(rowData: AdminHierarchyCeiling): void{
-    const ref = this.dialogService.open(ProjectionAllocationComponent, {
-      header: 'Allocate Ceiling',
-      width: '60%',
-      data:{
-        fund_source_id:rowData.ceiling.fund_source_id,
-        section_id:rowData.section_id,
-        financial_year_id:rowData.financial_year_id,
-        admin_hierarchy_id:rowData.admin_hierarchy_id,
-        budget_type:rowData.budget_type,
-        facility_id:rowData.facility_id
-      }
-    });
-    ref.onClose.subscribe((result) => {});
+    this.ceilingChainService
+      .queryWithChild({
+        for_admin_hierarchy_level_position:this.admin_hierarchy_position,
+        is_active:true,
+        per_page:1000,
+      })
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          if((resp.data ?? []).length>0){
+            const ref = this.dialogService.open(ProjectionAllocationComponent, {
+              header: 'Allocate Ceiling',
+              width: '60%',
+              data:{
+                fund_source_id:rowData.ceiling.fund_source_id,
+                section_id:rowData.section_id,
+                financial_year_id:rowData.financial_year_id,
+                admin_hierarchy_id:rowData.admin_hierarchy_id,
+                budget_type:rowData.budget_type,
+                facility_id:rowData.facility_id,
+                ceilingChain:resp.data[0]
+              }
+            });
+            ref.onClose.subscribe((result) => {});
+          }else{
+            this.toastService.error('No ceiling Chain Configured');
+          }
+        }
+      )
   }
 
 }

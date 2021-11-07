@@ -94,26 +94,21 @@
       </div>
       <div class="p-field" fxFlex>
         <span class="p-float-label">
-          <p-multiSelect
-            [options]="nextDecisionLevels!"
-            formControlName="next_decision_level_ids"
+          <p-dropdown
+            id="next_decision_level_id"
+            optionValue="id"
             optionLabel="name"
-            dataKey="id"
+            [autoDisplayFirst]="false"
             [filter]="true"
+            [showClear]="true"
+            optionValue="id"
+            optionLabel="name"
             class="p-inputtext-sm"
             appendTo="body"
-          >
-          </p-multiSelect>
-          <label for="next_decision_level_ids">Next Decision Level</label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('next_decision_level_ids')!.invalid &&
-            (editForm.get('next_decision_level_ids')!.dirty ||
-              editForm.get('next_decision_level_ids')!.touched ||
-              formError)
-          "
-        >
+            [options]="nextDecisionLevels!"
+            formControlName="next_decision_level_id"
+          ></p-dropdown>
+          <label for="next_decision_level_id">Next Decision Level</label>
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">

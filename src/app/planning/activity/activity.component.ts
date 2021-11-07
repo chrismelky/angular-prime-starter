@@ -40,6 +40,9 @@ import { FinancialYearTargetService } from '../long-term-target/financial-year-t
 import { AdminHierarchyCostCentre } from '../admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
 import { ProjectTypeService } from 'src/app/setup/project-type/project-type.service';
 import { ProjectType } from 'src/app/setup/project-type/project-type.model';
+import { ScrutinizationService } from '../scrutinization/scrutinization.service';
+import { Comment } from '../scrutinization/comment/comment.model';
+import { AddressCommentComponent } from 'src/app/shared/address-comment/address-comment.component';
 
 @Component({
   selector: 'app-activity',
@@ -234,6 +237,19 @@ export class ActivityComponent implements OnInit {
         this.budgetIsLocked = false;
         break;
     }
+  }
+
+  addressComments(a: Activity): void {
+    const ref = this.dialogService.open(AddressCommentComponent, {
+      data: a.addressable_comments,
+      width: '800px',
+    });
+
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        a.addressable_comments = result;
+      }
+    });
   }
 
   /**

@@ -36,6 +36,9 @@ import { ActivityInputUpdateComponent } from './update/activity-input-update.com
 import { AdminHierarchyCostCentre } from 'src/app/planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
 import { GfsCodeService } from 'src/app/setup/gfs-code/gfs-code.service';
 import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
+import { ScrutinizationService } from 'src/app/planning/scrutinization/scrutinization.service';
+import { Scrutinization } from 'src/app/planning/scrutinization/scrutinization.model';
+import { DecisionLevel } from 'src/app/setup/decision-level/decision-level.model';
 
 @Component({
   selector: 'app-activity-input',
@@ -79,6 +82,7 @@ export class ActivityInputComponent implements OnInit {
   fund_source_id?: number;
   fundSources?: FundSource[] = [];
   budget_type!: string;
+  decisionLevel?: DecisionLevel;
 
   constructor(
     protected activityInputService: ActivityInputService,
@@ -93,7 +97,8 @@ export class ActivityInputComponent implements OnInit {
     protected helper: HelperService,
     protected toastService: ToastService,
     protected enumService: EnumService,
-    protected gfsCodeService: GfsCodeService
+    protected gfsCodeService: GfsCodeService,
+    protected scrutinizationService: ScrutinizationService
   ) {}
 
   ngOnInit(): void {
@@ -228,6 +233,10 @@ export class ActivityInputComponent implements OnInit {
       this.adminHierarchyCostCentre = data.adminHierarchyCostCentre;
       this.budget_type = params['budgetType'];
       this.financialYear = data.financialYear;
+      this.decisionLevel = this.helper.getDecionLevel(
+        this.budget_type,
+        this.adminHierarchyCostCentre
+      );
       this.setBudgetStatus();
       this.loadFacilities();
 
@@ -345,6 +354,38 @@ export class ActivityInputComponent implements OnInit {
       if (result) {
         this.loadPage(this.page);
       }
+    });
+  }
+
+  forward(): void {
+    if (!this.decisionLevel || this.decisionLevel.next_decision_level_id) {
+      this.toastService.warn('No next decision level defined');
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: `Are you sure you want ot forward this cost centre to ${this.decisionLevel.next_decision_level?.name}`,
+      accept: () => {
+        const data = {
+          ...new Scrutinization(),
+          admin_hierarchy_cost_centre_id: this.adminHierarchyCostCentre.id,
+          admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
+          section_id: this.adminHierarchyCostCentre.section_id,
+          decision_level_id: this.decisionLevel?.next_decision_level_id,
+          from_decision_level_id:
+            this.adminHierarchyCostCentre.current_budget_decision_level_id,
+          financial_year_id: this.financialYear.id,
+          budget_type: this.budget_type,
+          hierarchy_position:
+            this.adminHierarchyCostCentre.admin_hierarchy
+              ?.admin_hierarchy_position,
+          is_returned: false,
+        };
+        this.scrutinizationService.create(data).subscribe((resp) => {
+          this.adminHierarchyCostCentre = resp.data;
+          this.setBudgetStatus();
+        });
+      },
     });
   }
 

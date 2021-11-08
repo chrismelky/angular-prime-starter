@@ -26,6 +26,8 @@ import { CasAssessmentCriteriaOptionService } from "src/app/setup/cas-assessment
 import { CasAssessmentSubCriteriaOption } from "./cas-assessment-sub-criteria-option.model";
 import { CasAssessmentSubCriteriaOptionService } from "./cas-assessment-sub-criteria-option.service";
 import { CasAssessmentSubCriteriaOptionUpdateComponent } from "./update/cas-assessment-sub-criteria-option-update.component";
+import {CasPlanService} from "../cas-plan/cas-plan.service";
+import {CasPlan} from "../cas-plan/cas-plan.model";
 
 @Component({
   selector: "app-cas-assessment-sub-criteria-option",
@@ -37,6 +39,7 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
   casAssessmentSubCriteriaOptions?: CasAssessmentSubCriteriaOption[] = [];
 
   casAssessmentCriteriaOptions?: CasAssessmentCriteriaOption[] = [];
+  casPlans?: CasPlan[] = [];
 
   cols = [
     {
@@ -77,10 +80,12 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
 
   //Mandatory filter
   cas_assessment_criteria_option_id!: number;
+  cas_plan_id!: number;
 
   constructor(
     protected casAssessmentSubCriteriaOptionService: CasAssessmentSubCriteriaOptionService,
     protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
+    protected casPlanService: CasPlanService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -90,13 +95,29 @@ export class CasAssessmentSubCriteriaOptionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casAssessmentCriteriaOptionService
+    this.casPlanService
       .query({ columns: ["id", "name"] })
+      .subscribe(
+        (resp: CustomResponse<CasPlan[]>) =>
+          (this.casPlans = resp.data)
+      );
+    this.handleNavigation();
+  }
+
+
+
+  /**
+   * Load criteria data from api based on selected cas plan
+   * @param page = page number
+   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   */
+  loadCriteria(){
+    this.casAssessmentCriteriaOptionService
+      .query({ cas_plan_id: this.cas_plan_id})
       .subscribe(
         (resp: CustomResponse<CasAssessmentCriteriaOption[]>) =>
           (this.casAssessmentCriteriaOptions = resp.data)
       );
-    this.handleNavigation();
   }
 
   /**

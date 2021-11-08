@@ -14,7 +14,24 @@
           fxLayoutGap="0.75rem"
           fxFlex
           fxLayoutAlign="start center"
-        >
+        > <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="cas_plan_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casPlans!"
+                (onChange)="loadCriteria()"
+                [(ngModel)]="cas_plan_id"
+              ></p-dropdown>
+              <label for="cas_plan_id"
+              >CAS Plan
+              </label>
+            </span>
+        </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -148,7 +165,7 @@
             class="p-button-raised"
             [disabled]="!cas_assessment_criteria_option_id"
             (click)="createOrUpdate()"
-            label="Add Cas Assessment Sub Criteria Option"
+            label="Add Cas Sub Criteria Option"
           ></button>
         </div>
       </ng-template>

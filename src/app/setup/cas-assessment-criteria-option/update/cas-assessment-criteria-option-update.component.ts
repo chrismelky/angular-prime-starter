@@ -19,6 +19,8 @@ import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-c
 import { CasAssessmentCriteriaOption } from "../cas-assessment-criteria-option.model";
 import { CasAssessmentCriteriaOptionService } from "../cas-assessment-criteria-option.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {CasPlanService} from "../../cas-plan/cas-plan.service";
+import {CasPlan} from "../../cas-plan/cas-plan.model";
 
 @Component({
   selector: "app-cas-assessment-criteria-option-update",
@@ -31,6 +33,7 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
 
   casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
   casPlanContents?: CasPlanContent[] = [];
+  casPlans?: CasPlan[] = [];
 
   /**
    * Declare form
@@ -39,14 +42,14 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     number: [null, [Validators.required]],
-    cas_assessment_category_version_id: [null, [Validators.required]],
-    cas_plan_content_id: [null, [Validators.required]],
+    cas_plan_id: [null, [Validators.required]],
   });
 
   constructor(
     protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
     protected casPlanContentService: CasPlanContentService,
+    protected casPlanService: CasPlanService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
@@ -54,17 +57,11 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "cas_assessment_category_id"] })
-      .subscribe(
-        (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
-          (this.casAssessmentCategoryVersions = resp.data)
-      );
-    this.casPlanContentService
+    this.casPlanService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
+        (resp: CustomResponse<CasPlan[]>) =>
+          (this.casPlans = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
@@ -135,9 +132,7 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
       id: casAssessmentCriteriaOption.id,
       name: casAssessmentCriteriaOption.name,
       number: casAssessmentCriteriaOption.number,
-      cas_assessment_category_version_id:
-        casAssessmentCriteriaOption.cas_assessment_category_version_id,
-      cas_plan_content_id: casAssessmentCriteriaOption.cas_plan_content_id,
+      cas_plan_id: casAssessmentCriteriaOption.cas_plan_id,
     });
   }
 
@@ -151,10 +146,7 @@ export class CasAssessmentCriteriaOptionUpdateComponent implements OnInit {
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
       number: this.editForm.get(["number"])!.value,
-      cas_assessment_category_version_id: this.editForm.get([
-        "cas_assessment_category_version_id",
-      ])!.value,
-      cas_plan_content_id: this.editForm.get(["cas_plan_content_id"])!.value,
+      cas_plan_id: this.editForm.get(["cas_plan_id"])!.value,
     };
   }
 }

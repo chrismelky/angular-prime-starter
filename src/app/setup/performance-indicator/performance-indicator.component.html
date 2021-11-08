@@ -8,18 +8,36 @@
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
-      <div fxLayout="row wrap" fxLayoutGap="10px">
+      <div fxLayout="row" fxLayoutGap="10px">
         <div
-          fxLayout="row wrap"
+          fxLayout="row"
           fxLayoutGap="0.75rem"
           fxFlex
           fxLayoutAlign="start center"
         >
+          <div class="p-field" fxFlex="0 1 25%">
+            <span class="p-float-label">
+              <p-dropdown
+                id="section_id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                appendTo="body"
+                [(ngModel)]="section"
+                [options]="sections!"
+                (onChange)="sectorChanged()"
+              ></p-dropdown>
+              <label for="section_id">Department</label>
+            </span>
+          </div>
+
           <app-objective-tree
+            [sectorId]="sectorId"
             [selectionMode]="'single'"
             [returnType]="'object'"
             (onSelect)="onObjectiveSeletion($event)"
-            fxFlex
+            fxFlex="0 0 75%"
           ></app-objective-tree>
         </div>
         <div

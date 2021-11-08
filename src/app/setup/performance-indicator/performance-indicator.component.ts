@@ -7,7 +7,7 @@
  */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
@@ -42,6 +42,8 @@ export class PerformanceIndicatorComponent implements OnInit {
 
   objectives?: Objective[] = [];
   sections?: Section[] = [];
+  section?: Section;
+  sectorId: Subject<number> = new Subject();
 
   cols = [
     {
@@ -148,6 +150,10 @@ export class PerformanceIndicatorComponent implements OnInit {
           this.onError();
         }
       );
+  }
+
+  sectorChanged(): void {
+    this.sectorId?.next(this.section?.sector_id);
   }
 
   /**
@@ -258,6 +264,7 @@ export class PerformanceIndicatorComponent implements OnInit {
     const indicator: PerformanceIndicator = performanceIndicator ?? {
       ...new PerformanceIndicator(),
       objective_id: this.objective.id,
+      section_id: this.section?.id,
     };
     const ref = this.dialogService.open(PerformanceIndicatorUpdateComponent, {
       data: {

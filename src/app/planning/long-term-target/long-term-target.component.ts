@@ -49,6 +49,7 @@ export class LongTermTargetComponent implements OnInit {
 
   objectives?: any[] = [];
   sections?: Section[] = [];
+  section?: Section;
 
   isLoading = false;
   page?: number = 1;
@@ -67,7 +68,6 @@ export class LongTermTargetComponent implements OnInit {
   financialYears: FinancialYear[] = [];
   currentFinancialYear?: FinancialYear;
   indicators?: PerformanceIndicator[] = [];
-  section?: Section;
 
   sectorId: Subject<number> = new Subject();
 

@@ -19,6 +19,7 @@ export class ObjectiveTreeComponent implements OnInit {
   currentUser!: User;
 
   @Input() sectorId!: Subject<number>;
+  @Input() allSectors: boolean = false;
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
@@ -47,6 +48,7 @@ export class ObjectiveTreeComponent implements OnInit {
         this.lowestType = this.objectiveTypes?.find(
           (t) => t.position === this.objectiveTypes?.length
         );
+        this.allSectors && this.loadTree();
       });
     this.sectorId?.subscribe((sectorId) => {
       this.loadTree(sectorId);
@@ -57,19 +59,20 @@ export class ObjectiveTreeComponent implements OnInit {
   }
 
   loadTree(sectorId?: number): void {
-    this.objectiveService
-      .tree({
-        sector_id: sectorId,
-      })
-      .subscribe(
-        (resp: CustomResponse<Objective[]>) => {
-          this.objectives = resp.data?.map((obj) => this.getNode(obj));
-          this.onLoadingChange.next(false);
-        },
-        (error) => {
-          this.onLoadingChange.next(false);
+    const sectorFilter = sectorId
+      ? {
+          sector_id: sectorId,
         }
-      );
+      : {};
+    this.objectiveService.tree(sectorFilter).subscribe(
+      (resp: CustomResponse<Objective[]>) => {
+        this.objectives = resp.data?.map((obj) => this.getNode(obj));
+        this.onLoadingChange.next(false);
+      },
+      (error) => {
+        this.onLoadingChange.next(false);
+      }
+    );
   }
 
   private getNode(ob: Objective): TreeNode {

@@ -120,7 +120,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   ngOnInit(): void {
     this.rootSection = this.currentUser.section;
     this.section_id = this.rootSection?.id;
-    this.budget_type = this.activatedRoute.snapshot.params.budgetType;
     this.ceilingService
       .query({ columns: ['id', 'name'] })
       .subscribe(
@@ -192,7 +191,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       header: 'Upload Ceiling Template File',
       data: {
         admin_hierarchy_id: this.admin_hierarchy_id,
-        budget_type: this.budget_type,
+        budget_type: this.activatedRoute.snapshot.params.budgetType,
         section_id: this.section_id,
         financial_year_id: this.financial_year_id,
       },
@@ -225,7 +224,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         admin_hierarchy_position: this.admin_hierarchy_position,
         position: this.position,
         financial_year_id: this.financial_year_id,
-        budget_type: this.budget_type,
+        budget_type:this.activatedRoute.snapshot.params.budgetType,
       },
       width: '60%',
       header: 'Lock/Unlock Ceiling',
@@ -262,7 +261,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
-      !this.budget_type
+      !this.activatedRoute.snapshot.params.budgetType
     ) {
       return;
     }
@@ -277,7 +276,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
           sort: this.sort(),
           admin_hierarchy_id: this.admin_hierarchy_id,
           financial_year_id: this.financial_year_id,
-          budget_type: this.budget_type,
+          budget_type:this.activatedRoute.snapshot.params.budgetType,
           section_id: this.section_id,
           position: this.position,
           ...this.helper.buildFilter(this.search),
@@ -399,7 +398,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       ...new AdminHierarchyCeiling(),
       admin_hierarchy_id: this.admin_hierarchy_id,
       financial_year_id: this.financial_year_id,
-      budget_type: this.budget_type,
+      budget_type:this.activatedRoute.snapshot.params.budgetType,
     };
     const ref = this.dialogService.open(AdminHierarchyCeilingUpdateComponent, {
       data,
@@ -445,7 +444,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/admin-hierarchy-ceiling'], {
+      this.router.navigate(['/admin-hierarchy-ceiling/'+this.activatedRoute.snapshot.params.budgetType], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -514,7 +513,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       active: true,
       is_locked: false,
       is_approved: false,
-      budget_type: this.budget_type,
+      budget_type:this.activatedRoute.snapshot.params.budgetType,
       amount: 0.0,
     };
   }

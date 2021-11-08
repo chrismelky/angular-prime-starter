@@ -31,6 +31,8 @@ import { CasAssessmentCriteriaOptionUpdateComponent } from "./update/cas-assessm
 import {AdminHierarchy} from "../admin-hierarchy/admin-hierarchy.model";
 import {OverlayPanel} from "primeng/overlaypanel";
 import {LocalStorageService} from "ngx-webstorage";
+import {CasPlanService} from "../cas-plan/cas-plan.service";
+import {CasPlan} from "../cas-plan/cas-plan.model";
 
 @Component({
   selector: "app-cas-assessment-criteria-option",
@@ -52,6 +54,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
 
   casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
   casPlanContents: CasPlanContent[] = [];
+  casPlans?: CasPlan[] = [];
 
   cols = [
     {
@@ -78,11 +81,13 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   //Mandatory filter
   cas_assessment_category_version_id!: number;
   cas_plan_content_id!: number;
+  cas_plan_id!: number;
 
   constructor(
     protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
     protected casAssessmentCategoryVersionService: CasAssessmentCategoryVersionService,
     protected casPlanContentService: CasPlanContentService,
+    protected casPlanService: CasPlanService,
     protected activatedRoute: ActivatedRoute,
     protected localStorageService: LocalStorageService,
     protected router: Router,
@@ -93,11 +98,11 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "cas_category_name", "cas_assessment_category_id"] })
+    this.casPlanService
+      .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
-          (this.casAssessmentCategoryVersions = resp.data)
+        (resp: CustomResponse<CasPlan[]>) =>
+          (this.casPlans = resp.data)
       );
     this.handleNavigation();
   }
@@ -108,7 +113,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.cas_assessment_category_version_id || !this.cas_plan_content_id) {
+    if ( !this.cas_plan_id) {
       return;
     }
     this.isLoading = true;
@@ -119,9 +124,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_assessment_category_version_id:
-          this.cas_assessment_category_version_id,
-        cas_plan_content_id: this.cas_plan_content_id,
+        cas_plan_id: this.cas_plan_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -238,9 +241,7 @@ export class CasAssessmentCriteriaOptionComponent implements OnInit {
   ): void {
     const data: CasAssessmentCriteriaOption = casAssessmentCriteriaOption ?? {
       ...new CasAssessmentCriteriaOption(),
-      cas_assessment_category_version_id:
-        this.cas_assessment_category_version_id,
-      cas_plan_content_id: this.cas_plan_content_id,
+      cas_plan_id: this.cas_plan_id,
     };
     const ref = this.dialogService.open(
       CasAssessmentCriteriaOptionUpdateComponent,

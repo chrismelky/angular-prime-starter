@@ -5,9 +5,9 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
@@ -49,6 +49,7 @@ export class LongTermTargetComponent implements OnInit {
 
   objectives?: any[] = [];
   sections?: Section[] = [];
+  section?: Section;
 
   isLoading = false;
   page?: number = 1;
@@ -67,6 +68,8 @@ export class LongTermTargetComponent implements OnInit {
   financialYears: FinancialYear[] = [];
   currentFinancialYear?: FinancialYear;
   indicators?: PerformanceIndicator[] = [];
+
+  sectorId: Subject<number> = new Subject();
 
   constructor(
     protected longTermTargetService: LongTermTargetService,
@@ -105,6 +108,10 @@ export class LongTermTargetComponent implements OnInit {
     }
 
     this.handleNavigation();
+  }
+
+  sectorChanged(): void {
+    this.sectorId?.next(this.section?.sector_id);
   }
 
   /**
@@ -198,10 +205,13 @@ export class LongTermTargetComponent implements OnInit {
   }
 
   onObjectiveSeletion($event: any): void {
-    console.log($event);
     this.objective = $event;
     this.objectives = [this.objective];
-    this.filterChanged();
+    if ($event) {
+      this.filterChanged();
+    } else {
+      this.longTermTargets = [];
+    }
   }
 
   /**
@@ -270,7 +280,7 @@ export class LongTermTargetComponent implements OnInit {
       ...new LongTermTarget(),
       strategic_plan_id: this.strategicPlan.id,
       objective_id: this.objective.id,
-      section_id: this.section_id,
+      section_id: this.section?.id,
     };
     const ref = this.dialogService.open(LongTermTargetUpdateComponent, {
       data: {

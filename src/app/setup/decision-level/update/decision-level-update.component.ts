@@ -41,7 +41,7 @@ export class DecisionLevelUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     admin_hierarchy_level_position: [null, [Validators.required]],
     section_level_position: [null, [Validators.required]],
-    next_decision_level_ids: [null, []],
+    next_decision_level_id: [null, []],
   });
 
   constructor(
@@ -144,10 +144,7 @@ export class DecisionLevelUpdateComponent implements OnInit {
       admin_hierarchy_level_position:
         decisionLevel.admin_hierarchy_level_position,
       section_level_position: decisionLevel.section_level_position,
-      next_decision_level_ids:
-        decisionLevel.next_decision_level_ids !== undefined
-          ? JSON.parse(decisionLevel.next_decision_level_ids!)
-          : decisionLevel.next_decision_level_ids,
+      next_decision_level_id: decisionLevel.next_decision_level_id,
     });
   }
 
@@ -165,12 +162,8 @@ export class DecisionLevelUpdateComponent implements OnInit {
       ])!.value,
       section_level_position: this.editForm.get(['section_level_position'])!
         .value,
-      next_decision_level_ids:
-        this.editForm.get(['next_decision_level_ids'])!.value !== undefined
-          ? JSON.stringify(
-              this.editForm.get(['next_decision_level_ids'])!.value
-            )
-          : undefined,
+      next_decision_level_id: this.editForm.get(['next_decision_level_id'])!
+        .value,
     };
   }
 }

@@ -1,6 +1,7 @@
 import { AdminHierarchy } from '../admin-hierarchy/admin-hierarchy.model';
 import { Section } from '../section/section.model';
 import { Role } from '../role/role.model';
+import { DecisionLevel } from '../decision-level/decision-level.model';
 
 export class User {
   constructor(
@@ -9,6 +10,7 @@ export class User {
     public last_name?: string,
     public email?: string,
     public cheque_number?: string,
+    public username?: string,
     public activated?: string,
     public title?: string,
     public mobile_number?: string,
@@ -23,6 +25,7 @@ export class User {
     public admin_hierarchy?: AdminHierarchy,
     public section?: Section,
     public active?: boolean,
-    public roles?: Role[]
+    public roles?: Role[],
+    public decision_level?: DecisionLevel
   ) {}
 }

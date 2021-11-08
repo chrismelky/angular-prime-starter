@@ -35,6 +35,7 @@
             </div>
             <!-- Objective -->
             <app-objective-tree
+              [allSectors]="true"
               [selectionMode]="'single'"
               (onSelect)="onObjectiveSeletion($event)"
               fxFlex="0 0 70%"

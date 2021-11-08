@@ -34,28 +34,7 @@ export class ReportSetupComponent implements OnInit {
   @ViewChild("table") table!: Table;
   reportSetups?: ReportSetup[] = [];
 
-  cols = [
-    {
-      field: "name",
-      header: "Name",
-      sort: true,
-    },
-    {
-      field: "template_name",
-      header: "Template Name",
-      sort: true,
-    },
-    {
-      field: "query_params",
-      header: "Query Params",
-      sort: false,
-    },
-    {
-      field: "sql_query",
-      header: "Sql Query",
-      sort: false,
-    },
-  ]; //Table display columns
+  cols = []; //Table display columns
 
   isLoading = false;
   page?: number = 1;

@@ -1,0 +1,53 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <textarea
+            id="comments"
+            formControlName="comments"
+            [rows]="5"
+            [cols]="30"
+            pInputTextarea
+            [autoResize]="true"
+          ></textarea>
+          <label for="comments">Comments </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('comments')!.invalid &&
+            (editForm.get('comments')!.dirty ||
+              editForm.get('comments')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('comments')?.errors?.required"
+            >comment is required.</small
+          >
+        </span>
+      </div>
+      <div fxFlex *ngFor="let c of otherComments">
+        <div>{{ c.comments }}</div>
+        <blockquote>{{ c.address_comments }}</blockquote>
+      </div>
+      <div fxLayout="row">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

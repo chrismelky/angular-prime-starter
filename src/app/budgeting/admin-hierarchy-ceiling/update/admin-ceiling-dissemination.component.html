@@ -138,6 +138,7 @@
                         [(ngModel)]="rowData!.amount"
                         [minFractionDigits]="2"
                         [maxFractionDigits]="2"
+                        inputStyleClass="bg-red"
                         (onBlur)="updateFacilityCeiling(rowData)"
                         (onInput)="facilityCeilingChange(rowData,$event.value)"
                         [min]="0"

@@ -153,7 +153,8 @@ export class ProjectionComponent implements OnInit {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
-      !this.fund_source_id
+      !this.fund_source_id ||
+      !this.facility_id
     ) {
       return;
     }
@@ -357,7 +358,6 @@ export class ProjectionComponent implements OnInit {
    * @param event adminhierarchyId or Ids
    */
   onAdminHierarchySelection(event: any): void {
-    // this.financial_year_id = event.current_financial_year_id;
     this.adminHierarchyPosition = event.admin_hierarchy_position;
     this.admin_hierarchy_id = event.id;
     this.loadCeilingChain();
@@ -367,10 +367,11 @@ export class ProjectionComponent implements OnInit {
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>{
           this.admin_hierarchy_level_id = (resp.data??[])[0].id!;
           this.facilityTypeService
-            .query({columns: ['id', 'name', 'code'],admin_hierarchy_level_id:this.admin_hierarchy_level_id})
+            .query({columns: ['id', 'name', 'code'],planning_admin_hierarchy_level:this.admin_hierarchy_level_id})
             .subscribe(
               (resp: CustomResponse<FacilityType[]>) =>{
                 this.facilityTypes = resp.data??[];
+                this.loadPage();
               }
             );
         }
@@ -399,12 +400,15 @@ export class ProjectionComponent implements OnInit {
   }
   loadFacilities(){
     this.facilityService
-      .query({columns: ['id', 'name', 'code'],facility_type_id:this.facility_type_id,admin_hierarchy_id:this.admin_hierarchy_id})
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) =>{
-          this.facilities = resp.data??[];
-        }
-      );
+      .search(
+        this.facility_type_id!,
+        ('p'+ this.adminHierarchyPosition),
+        this.admin_hierarchy_id!,
+      ).subscribe((resp:any) => {
+      this.facilities = resp.data ?? [];
+      this.facility_id = undefined!
+      this.projections = [];
+      });
   }
 
   onRowEditInit(projection: Projection) {

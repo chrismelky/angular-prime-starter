@@ -30,7 +30,7 @@ import { FacilityView } from 'src/app/setup/facility/facility.model';
 import { FacilityService } from 'src/app/setup/facility/facility.service';
 import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
 
-import { ActivityInput } from './activity-input.model';
+import { ActivityInput, BudgetStatus } from './activity-input.model';
 import { ActivityInputService } from './activity-input.service';
 import { ActivityInputUpdateComponent } from './update/activity-input-update.component';
 import { AdminHierarchyCostCentre } from 'src/app/planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
@@ -53,6 +53,7 @@ export class ActivityInputComponent implements OnInit {
   activityLoading = false;
   budgetClassIsLoading = false;
   fundSourceIsLoading = false;
+  budgetStatus?: BudgetStatus;
 
   activityInputs?: ActivityInput[] = [];
 
@@ -185,6 +186,29 @@ export class ActivityInputComponent implements OnInit {
       );
   }
 
+  activityChanges(): void {
+    this.loadBudgetingStatus();
+    this.filterChanged();
+  }
+
+  private loadBudgetingStatus(): void {
+    this.activityInputService
+      .getStatus({
+        financial_year_id: this.financialYear.id,
+        admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
+        budget_type: this.budget_type,
+        section_id: this.adminHierarchyCostCentre.section_id,
+        facility_id: this.facility_id,
+        fund_source_id: this.fund_source_id,
+        budget_class_id: this.facilityActivity.budget_class_id,
+        activity_id: this.facilityActivity.id,
+      })
+      .subscribe((resp) => {
+        this.budgetStatus = resp.data;
+        console.log(this.budgetStatus);
+      });
+  }
+
   loadFundSource(facilityId: number): void {
     this.fundSourceService
       .getByYearAndFacility(this.financialYear.id!, facilityId)
@@ -199,21 +223,30 @@ export class ActivityInputComponent implements OnInit {
         this.budgetIsLocked =
           this.adminHierarchyCostCentre?.is_current_budget_locked ||
           this.adminHierarchyCostCentre?.is_current_budget_approved;
+        this.decisionLevel =
+          this.adminHierarchyCostCentre.current_budget_decision_level;
         break;
       case 'APPROVED':
         this.budgetIsLocked =
           this.adminHierarchyCostCentre?.is_current_budget_locked ||
           this.adminHierarchyCostCentre?.is_current_budget_approved;
+        this.decisionLevel =
+          this.adminHierarchyCostCentre.current_budget_decision_level;
         break;
       case 'CARRYOVER':
         this.budgetIsLocked =
           this.adminHierarchyCostCentre?.is_carryover_budget_locked ||
           this.adminHierarchyCostCentre?.is_carryover_budget_approved;
+        this.decisionLevel =
+          this.adminHierarchyCostCentre.carryover_budget_decision_level;
+
         break;
       case 'SUPPLEMENTARY':
         this.budgetIsLocked =
           this.adminHierarchyCostCentre?.is_supplementary_budget_locked ||
           this.adminHierarchyCostCentre?.is_supplementary_budget_approved;
+        this.decisionLevel =
+          this.adminHierarchyCostCentre.supplementary_budget_decision_level;
         break;
       default:
         this.budgetIsLocked = false;
@@ -359,13 +392,15 @@ export class ActivityInputComponent implements OnInit {
   }
 
   forward(): void {
-    if (!this.decisionLevel || this.decisionLevel.next_decision_level_id) {
+    console.log(this.decisionLevel);
+    if (!this.decisionLevel || !this.decisionLevel.next_decision_level_id) {
       this.toastService.warn('No next decision level defined');
       return;
     }
 
     this.confirmationService.confirm({
       message: `Are you sure you want ot forward this cost centre to ${this.decisionLevel.next_decision_level?.name}`,
+      key: 'forward',
       accept: () => {
         const data = {
           ...new Scrutinization(),

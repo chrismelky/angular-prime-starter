@@ -9,6 +9,7 @@ export class User {
     public last_name?: string,
     public email?: string,
     public cheque_number?: string,
+    public username?: string,
     public activated?: string,
     public title?: string,
     public mobile_number?: string,

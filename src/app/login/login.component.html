@@ -54,7 +54,7 @@
                 <p-message
                   *ngIf="authenticationError"
                   severity="error"
-                  text="Invalid email or password"
+                  text="Invalid Username or password"
                 ></p-message>
               </div>
             </div>
@@ -62,28 +62,27 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <input
-                    #email
-                    id="email"
+                    id="username"
                     type="text"
                     pInputText
                     autofocus
-                    formControlName="email"
+                    formControlName="username"
                     autocomplete="off"
                   />
-                  <label for="email">Email </label>
+                  <label for="username">Username or Email or Cheque Number </label>
                 </span>
                 <span
                   *ngIf="
-                    loginForm.get('email')!.invalid &&
-                    (loginForm.get('email')!.dirty ||
-                      loginForm.get('email')!.touched ||
+                    loginForm.get('username')!.invalid &&
+                    (loginForm.get('username')!.dirty ||
+                      loginForm.get('username')!.touched ||
                       formError)
                   "
                 >
                   <small
                     class="p-error"
-                    *ngIf="loginForm.get('email')?.errors?.required"
-                    >Email is required.</small
+                    *ngIf="loginForm.get('username')?.errors?.required"
+                    >Username or Email or Cheque Number is required.</small
                   >
                 </span>
               </div>
@@ -92,12 +91,10 @@
                   <span class="p-float-label">
                     <p-password
                       id="password"
-                      name="password"
                       formControlName="password"
                       appendTo="body"
                       [toggleMask]="true"
                       inputId="password"
-                      autocomplete="off"
                       autofocus
                       [feedback]="false"
                     ></p-password>

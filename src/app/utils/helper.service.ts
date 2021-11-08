@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { AdminHierarchyCostCentre } from '../planning/admin-hierarchy-cost-centres/admin-hierarchy-cost-centre.model';
+import { DecisionLevel } from '../setup/decision-level/decision-level.model';
 
 @Injectable({ providedIn: 'root' })
 export class HelperService {
@@ -24,5 +26,23 @@ export class HelperService {
         values: newObj[k],
       };
     });
+  }
+
+  getDecionLevel(
+    budgeType: string,
+    adminHierarchyCostCentre: AdminHierarchyCostCentre
+  ): DecisionLevel | undefined {
+    switch (budgeType) {
+      case 'CURRENT':
+        return adminHierarchyCostCentre.current_budget_decision_level;
+      case 'APPROVED':
+        return adminHierarchyCostCentre.current_budget_decision_level;
+      case 'CARRYOVER':
+        return adminHierarchyCostCentre.carryover_budget_decision_level;
+      case 'SUPPLEMENTARY':
+        return adminHierarchyCostCentre.supplementary_budget_decision_level;
+      default:
+        return undefined;
+    }
   }
 }

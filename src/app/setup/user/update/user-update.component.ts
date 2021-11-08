@@ -51,6 +51,7 @@ export class UserUpdateComponent implements OnInit {
     id: [null, []],
     first_name: [null, [Validators.required]],
     last_name: [null, [Validators.required]],
+    username: [null, [Validators.required]],
     email: [null, [Validators.required, Validators.email]],
     cheque_number: [null, [Validators.required]],
     active: [false, []],
@@ -178,6 +179,7 @@ export class UserUpdateComponent implements OnInit {
       mobile_number: user?.mobile_number,
       section_id: user?.section_id,
       section_position: user?.section_position,
+      username: user?.username,
       admin_hierarchy_id: user?.admin_hierarchy_id,
       role_id: user?.roles?.length ? user?.roles[0].id : null,
       facilities:

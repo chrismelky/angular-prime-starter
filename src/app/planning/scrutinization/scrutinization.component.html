@@ -1,6 +1,6 @@
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <!-- Filter Panel -->
-  <p-card class="filter">
+  <p-card class="filter filter-no-adv">
     <ng-template pTemplate="header">
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
         <i class="pi pi-filter"></i>
@@ -8,241 +8,224 @@
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
-      <div fxLayout="row wrap" fxLayoutGap="10px">
+      <div fxLayout="row" fxLayoutGap="10px">
         <div
-          fxLayout="row wrap"
+          fxLayout="row"
           fxLayoutGap="0.75rem"
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <app-admin-hierarchy-tree
-                (onSelect)="onAdminHierarchySelection($event)"
-                [returnType]="'object'"
-              ></app-admin-hierarchy-tree>
-            </span>
-          </div>
-
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="parent_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
+          <div class="p-field tree-input" fxFlex>
+            <span class="p-float-label p-input-icon-right">
+              <input
+                fxFlex
+                id="description"
+                type="text"
                 class="p-inputtext-sm"
-                [options]="departments!"
-                (onChange)="filterSections()"
-                [(ngModel)]="parent_id"
-              ></p-dropdown>
-              <label for="parent_id">Department </label>
+                autocomplete="off"
+                pInputText
+                [disabled]="true"
+                style="cursor: pointer"
+                (click)="adminPanel.toggle($event)"
+                [ngModel]="selectedAdminHierarchy?.label"
+              />
+              <label for="description">Admin Hierarchy</label>
+              <i class="pi pi-chevron-down"></i>
+              <div
+                style="
+                  cursor: pointer;
+                  position: absolute;
+                  left: 0;
+                  right: 0;
+                  top: 0;
+                  bottom: 0;
+                "
+                (click)="adminPanel.toggle($event)"
+              ></div>
             </span>
           </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="section_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
+          <div class="p-field tree-input" fxFlex>
+            <span class="p-float-label p-input-icon-right">
+              <input
+                fxFlex
+                id="description"
+                type="text"
                 class="p-inputtext-sm"
-                [options]="sections!"
-                (onChange)="loadActivities()"
-                [(ngModel)]="section_id"
-              ></p-dropdown>
-              <label for="section_id">Section </label>
+                autocomplete="off"
+                pInputText
+                [disabled]="true"
+                style="cursor: pointer"
+                (click)="costCentrePanel.toggle($event)"
+                [ngModel]="selectedCostCentre?.section?.name"
+              />
+              <label for="description">Cost Centre</label>
+              <i class="pi pi-chevron-down"></i>
+              <div
+                style="
+                  cursor: pointer;
+                  position: absolute;
+                  left: 0;
+                  right: 0;
+                  top: 0;
+                  bottom: 0;
+                "
+                (click)="costCentrePanel.toggle($event)"
+              ></div>
             </span>
           </div>
-        </div>
-        <div
-          fxLayout="row wrap"
-          fxFlex="140px"
-          fxLayoutGap="4px"
-          fxLayoutAlign="end center"
-        >
-          <button
-            pButton
-            type="button"
-            [pTooltip]="
-              advFilter.selected
-                ? 'Hide Advanced Search'
-                : 'Show Advanced Search'
-            "
-            tooltipPosition="bottom"
-            [icon]="
-              advFilter.selected
-                ? 'pi pi-angle-double-up'
-                : 'pi pi-angle-double-down'
-            "
-            class="p-button-rounded p-button-text p-button-plain"
-            (click)="advFilter.selected = !advFilter.selected"
-          ></button>
-          <button
-            pButton
-            class="p-button-primary p-button-raised"
-            icon="pi pi-search"
-            label="Search"
-            (click)="onSearch()"
-          ></button>
         </div>
       </div>
-      <p-accordion>
-        <p-accordionTab
-          class="p-shadow-0"
-          #advFilter
-          [selected]="advFilter.selected"
-          [transitionOptions]="'280ms cubic-bezier(0.4, 0, 0.2, 1)'"
-        >
-          <div fxLayout="row wrap" fxLayoutGap="10px">
-            <div
-              fxLayout="row wrap"
-              fxLayoutGap="0.75rem"
-              fxFlex
-              fxLayoutAlign="start center"
-            ></div>
-            <div
-              fxLayout="row"
-              fxLayoutGap="4px"
-              fxFlex="140px"
-              fxLayoutAlign="end"
-            >
-              <button
-                pButton
-                pTooltip="Clear Advanced Search"
-                tooltipPosition="bottom"
-                class="p-button-text p-button-plain"
-                icon="pi pi-times"
-                label="Clear"
-                (click)="clearSearch()"
-              ></button>
-            </div>
-          </div>
-        </p-accordionTab>
-      </p-accordion>
     </div>
   </p-card>
 
   <!-- Table Panel -->
-<p-card>
-  <ng-template pTemplate="caption">
-    <div fxLayout="row" fxLayoutAlign="space-between center">
-      <span class="card-header-text">Scrutinization</span>
-      <button
-        pButton
-        icon="pi pi-plus"
-        class="p-button-raised p-button-outlined"
-        [disabled]="!scrutinizations"
-        (click)="createOrUpdate()"
-        label="Forward"
-      ></button>
-    </div>
-  </ng-template>
-</p-card>
+  <p-card>
+    <ng-template pTemplate="caption">
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <span class="card-header-text">{{
+          selectedAdminHierarchy?.label
+        }}</span>
+        <button
+          *ngIf="userDecionLevel?.next_decision_level"
+          (click)="forwardCostCentre()"
+          pButton
+          icon="pi pi-plus"
+          class="p-button-raised p-button-outlined"
+          [disabled]="!selectedCostCentre"
+          label="Forward"
+        ></button>
+        <button
+          (click)="returnCostCentre()"
+          pButton
+          icon="pi pi-plus"
+          class="p-button-raised p-button-outlined"
+          [disabled]="!selectedCostCentre"
+          label="Return"
+        ></button>
+      </div>
+    </ng-template>
+  </p-card>
 
   <p-card>
-    <p-tabView>
-      <p-tabPanel header="Budget">
-        <p-table [value]="scrutinizations!" dataKey="description" responsiveLayout="scroll">
-          <ng-template pTemplate="header" *ngIf="scrutinizations?.length! > 0">
-            <tr>
-              <th style="width: 3rem"></th>
-              <th>Code</th>
-              <th>Activity</th>
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-activity  let-expanded="expanded">
-            <tr>
-              <td>
-                <button type="button" pButton pRipple [pRowToggler]="activity" (click)="loadInputs(activity.id)" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
-              </td>
-              <td>{{activity.code}}</td>
-              <td>{{activity.description}}</td>
-              <td></td>
-              <td>
-                <!--            <button type="button" pButton pRipple  class="p-button-text p-button-rounded p-button-plain" [icon]="activity.status == 1 ? 'pi pi-check-circle' : 'pi pi-times-circle'"></button>-->
-                <p-badge [value]="activity.status"  severity="{{activity.status == 1?'success':'warning'}}" ></p-badge>
-              </td>
-              <td>
-                <button pButton type="button" class="p-button-outlined p-button-rounded p-button-icon" label="Comments"
-                        style="margin-left: 16px" icon="pi pi-comment" (click)="setActivityComments(activity)"
-                ></button>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="rowexpansion"  let-activity>
-            <tr>
-              <td colspan="12">
-                <div class="p-p-3">
-                  <p-table [value]="inputs!" dataKey="id">
-                    <ng-template pTemplate="header">
-            <tr>
-              <th >Facility</th>
-              <th [colSpan]="2">Fund Source</th>
-              <th [colSpan]="2">Description</th>
-              <th >Quantity</th>
-              <th >Frequency</th>
-              <th >Unit Price</th>
-              <th >Sub Total</th>
-              <th ></th>
-              <th ></th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-input>
-            <tr>
-              <td>{{input.name}}</td>
-              <td [colSpan]="2">{{input.fund_source_code+' - '+input.fund_source}}</td>
-              <td [colSpan]="2">{{input.gfs_code+' - '+input.gfs_name}}</td>
-              <td>{{input.quantity}}</td>
-              <td>{{input.frequency}}</td>
-              <td>{{input.unit_price}}</td>
-              <td>{{input.quantity*input.frequency*input.unit_price | currency:'TZS  '}}</td>
-              <td [colSpan]="2">
-                <p-badge [value]="input.status"  severity="{{input.status == 1?'success':'warning'}}"></p-badge>
-                <button pButton type="button" class="p-button-outlined  p-button-rounded p-button-icon" label="Comments"
-                        style="margin-left: 16px" icon="pi pi-comment" (click)="setInputComments(input)"
-                ></button>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="3">There are no inputs for this activity yet.</td>
-            </tr>
-          </ng-template>
-        </p-table>
-</div>
-</td>
-</tr>
-</ng-template>
-<ng-template pTemplate="emptymessage">
-  <tr>
-    <td colspan="3">There are no activities for this cost centre yet.</td>
-  </tr>
-</ng-template>
-</p-table>
-      </p-tabPanel>
-      <p-tabPanel header="Budget vs Ceiling">
+    <p-table
+      #table
+      dataKey="id"
+      [lazy]="true"
+      [resizableColumns]="true"
+      [responsive]="true"
+      [expandedRowKeys]="expandedRowKeys"
+      [autoLayout]="true"
+      [loading]="isLoading"
+      [value]="activities!"
+      styleClass="p-datatable-gridlines"
+    >
+      <ng-template pTemplate="caption">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text">Activity</span>
+        </div>
+      </ng-template>
 
-      </p-tabPanel>
-    </p-tabView>
-<ng-template pTemplate="footer">
-  <p-paginator
-    #paginator
-    [alwaysShow]="scrutinizations?.length! > 0"
-    [rows]="per_page"
-    dropdownAppendTo="body"
-    [showCurrentPageReport]="true"
-    [totalRecords]="totalItems"
-    [rowsPerPageOptions]="perPageOptions"
-    (onPageChange)="pageChanged($event)"
-  ></p-paginator>
-</ng-template>
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-expanded="true"
+      >
+        <tr
+          style="white-space: normal"
+          [ngClass]="{
+            'tr-expanded': expanded,
+            'has-comment': rowData.hasComment
+          }"
+        >
+          <td [attr.colspan]="2">
+            [ {{ rowData.code }} ] {{ rowData.description }}
+            {{ expanded }}
+          </td>
+          <td style="width: 80px; padding: 0px">
+            <button
+              (click)="createOrUpdate(rowData.comments, 'ACTIVITY', rowData)"
+              icon="pi pi-comment"
+              pButton
+              class="p-icon-only p-button-text p-button-rounded"
+            ></button>
+          </td>
+        </tr>
+        <tr style="white-space: normal" [ngClass]="{ 'tr-expanded': expanded }">
+          <td>Facility: {{ rowData.facility.name }}</td>
+          <td>Budget Class: {{ rowData.budget_class.name }}</td>
+          <td></td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="rowexpansion" let-rowData>
+        <tr style="background-color: hsl(210, 9%, 96%)">
+          <td [attr.colspan]="3" style="padding: 0px">
+            <table
+              class="p-datatable p-datatable-gridlines"
+              style="width: 100%; background: transparent"
+            >
+              <thead class="p-datatable-thead">
+                <tr>
+                  <th>Fund Source</th>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Frequency</th>
+                  <th>Unit Price</th>
+                  <th>Sub Total</th>
+                  <th style="width: 79px"></th>
+                </tr>
+              </thead>
+              <tbody class="p-datatable-tbody" style="background: transparent">
+                <tr
+                  *ngFor="let i of rowData.inputs"
+                  [ngClass]="{ 'has-comment': i.hasComment }"
+                >
+                  <td>
+                    {{ i.fund_source?.name }}
+                  </td>
+                  <td>
+                    {{ i.gfs_code?.name }}
+                  </td>
+                  <td>
+                    {{ i.quantity }}
+                  </td>
+                  <td>
+                    {{ i.frequency }}
+                  </td>
+                  <td>
+                    {{ i.unit_price | currency: " " }}
+                  </td>
+                  <td>
+                    {{
+                      i.unit_price * i.frequency * i.quantity | currency: " "
+                    }}
+                  </td>
+                  <td>
+                    <button
+                      (click)="createOrUpdate(i.comments, 'INPUT', i)"
+                      icon="pi pi-comment"
+                      pButton
+                      class="p-icon-only p-button-text p-button-rounded"
+                    ></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+    </p-table>
+    <div fxLayoutAlign="center" fxLayout="row" fxLayoutGap="10px">
+      <p-paginator
+        #paginator
+        [rows]="1"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
 
@@ -252,3 +235,43 @@
   header="Confirmation Delete Scrutinization"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>
+
+<p-overlayPanel #adminPanel [dismissable]="true" appendTo="body">
+  <ng-template pTemplate>
+    <p-tree
+      [value]="nodes"
+      [filter]="true"
+      [propagateSelectionUp]="false"
+      (onNodeExpand)="nodeExpand($event)"
+      [selectionMode]="'single'"
+      [(selection)]="selectedAdminHierarchy"
+      [loading]="treeLoading"
+      (onNodeSelect)="onAdminHierarchyChange($event)"
+    ></p-tree>
+  </ng-template>
+</p-overlayPanel>
+
+<p-overlayPanel #costCentrePanel [dismissable]="true" appendTo="body">
+  <ng-template pTemplate>
+    <p-listbox
+      fxFlex="0 0 400px"
+      (onClick)="onCostCentreChange()"
+      [filter]="true"
+      [options]="submittedCostCentres!"
+      [(ngModel)]="selectedCostCentre"
+      optionLabel="section.name"
+    >
+      <ng-template let-costCentre pTemplate="item">
+        <div fxFlex fxLayout="row">
+          <span
+            >{{ costCentre.section?.name }}-{{ costCentre.id }}-{{
+              costCentre.page
+            }}</span
+          >
+          <span fxFlex></span>
+          <i class="pi pi-user"></i>
+        </div>
+      </ng-template>
+    </p-listbox>
+  </ng-template>
+</p-overlayPanel>

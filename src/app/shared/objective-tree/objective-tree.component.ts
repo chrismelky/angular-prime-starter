@@ -1,6 +1,7 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
+import { Subject } from 'rxjs';
 import { Objective } from 'src/app/setup/objective/objective.model';
 import { ObjectiveService } from 'src/app/setup/objective/objective.service';
 import { User } from 'src/app/setup/user/user.model';
@@ -15,6 +16,7 @@ import { CustomResponse } from 'src/app/utils/custom-response';
 export class ObjectiveTreeComponent implements OnInit {
   currentUser!: User;
 
+  @Input() sectorId!: Subject<number>;
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
@@ -31,16 +33,26 @@ export class ObjectiveTreeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sectorId?.subscribe((sectorId) => {
+      this.loadTree(sectorId);
+    });
     this.onLoadingChange.next(false);
-    this.objectiveService.tree().subscribe(
-      (resp: CustomResponse<Objective[]>) => {
-        this.objectives = resp.data?.map((obj) => this.getNode(obj));
-        this.onLoadingChange.next(false);
-      },
-      (error) => {
-        this.onLoadingChange.next(false);
-      }
-    );
+  }
+
+  loadTree(sectorId?: number): void {
+    this.objectiveService
+      .tree({
+        sector_id: sectorId,
+      })
+      .subscribe(
+        (resp: CustomResponse<Objective[]>) => {
+          this.objectives = resp.data?.map((obj) => this.getNode(obj));
+          this.onLoadingChange.next(false);
+        },
+        (error) => {
+          this.onLoadingChange.next(false);
+        }
+      );
   }
 
   private getNode(ob: Objective): TreeNode {

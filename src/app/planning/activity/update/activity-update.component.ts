@@ -142,6 +142,7 @@ export class ActivityUpdateComponent implements OnInit {
     generic_activity_id: [null, []],
     responsible_person_id: [null, [Validators.required]],
     period_type: [null, []],
+    period: [null, [Validators.required]],
     period_one: [null, []],
     period_two: [null, []],
     period_three: [null, []],
@@ -574,6 +575,20 @@ export class ActivityUpdateComponent implements OnInit {
         this.responsiblePeople = resp.data;
         this.responsibleIsLoading = false;
       });
+  }
+
+  onPeriodChange(): void {
+    if (
+      this.generalForm.get('period_one')?.value !== true &&
+      this.generalForm.get('period_two')?.value !== true &&
+      this.generalForm.get('period_three')?.value !== true &&
+      this.generalForm.get('period_four')?.value !== true
+    ) {
+      this.generalForm.get('period')?.setValidators([Validators.required]);
+    } else {
+      this.generalForm.get('period')?.clearValidators();
+    }
+    this.generalForm.get('period')?.updateValueAndValidity();
   }
 
   /**

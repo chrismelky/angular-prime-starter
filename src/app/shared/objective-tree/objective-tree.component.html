@@ -31,7 +31,7 @@
   <ng-template pTemplate>
     <p-tree
       fxFlex="0 0 700px"
-      filterMode="strict"
+      filterBy="data.description,data.code"
       [selectionMode]="selectionMode"
       (onNodeSelect)="onSelectionChange(); op.hide()"
       [(selection)]="objectiveNode"

@@ -105,10 +105,7 @@
                     [autoDisplayFirst]="false"
                     [filter]="true"
                     class="p-inputtext-sm"
-                    [group]="true"
-                    optionGroupChildren="values"
-                    optionGroupLabel="name"
-                    [options]="objectiveWithTargets"
+                    [options]="targets!"
                     (onChange)="filterChanged()"
                     [(ngModel)]="financialYearTarget"
                   ></p-dropdown>

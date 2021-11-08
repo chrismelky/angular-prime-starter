@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { ActivityInput } from "./activity-input.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { ActivityInput, BudgetStatus } from './activity-input.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ActivityInputService {
-  public resourceUrl = "api/activity_inputs";
+  public resourceUrl = 'api/activity_inputs';
 
   constructor(protected http: HttpClient) {}
 
@@ -48,6 +48,16 @@ export class ActivityInputService {
     return this.http.get<CustomResponse<ActivityInput[]>>(this.resourceUrl, {
       params: options,
     });
+  }
+
+  getStatus(req?: any): Observable<CustomResponse<BudgetStatus>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<BudgetStatus>>(
+      `${this.resourceUrl}/budgeting_status`,
+      {
+        params: options,
+      }
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

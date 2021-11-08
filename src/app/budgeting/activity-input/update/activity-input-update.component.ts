@@ -44,6 +44,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   gfsCodes?: GfsCode[] = [];
   facilityActivity?: FacilityActivity;
   total = 0.0;
+  periodSum = 0.0;
   /**
    * Declare form
    */
@@ -54,8 +55,8 @@ export class ActivityInputUpdateComponent implements OnInit {
     quantity: [null, [Validators.required]],
     frequency: [null, [Validators.required]],
     unit: [null, [Validators.required]],
-    forward_year_one_amount: [null, []],
-    forward_year_two_amount: [null, []],
+    forward_year_one_amount: [null, [Validators.required]],
+    forward_year_two_amount: [null, [Validators.required]],
     activity_id: [null, [Validators.required]],
     activity_fund_source_id: [null, [Validators.required]],
     budget_class_id: [null, [Validators.required]],
@@ -64,10 +65,11 @@ export class ActivityInputUpdateComponent implements OnInit {
     admin_hierarchy_id: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
     facility_id: [null, [Validators.required]],
-    period_one: [null, []],
-    period_two: [null, []],
-    period_three: [null, []],
-    period_four: [null, []],
+    period: [null, [Validators.required]], //validator field to sum up into 100
+    period_one: [null, [Validators.max(100)]],
+    period_two: [null, [Validators.max(100)]],
+    period_three: [null, [Validators.max(100)]],
+    period_four: [null, [Validators.max(100)]],
     has_breakdown: [null, []],
     is_inkind: [null, []],
     breakdowns: this.fb.array([]),
@@ -121,6 +123,16 @@ export class ActivityInputUpdateComponent implements OnInit {
     frequency?: number
   ): void {
     this.total = (unit_price || 0) * (quantity || 0) * (frequency || 0);
+  }
+
+  onPeriodChange(q1?: number, q2?: number, q3?: number, q4?: number): void {
+    this.periodSum = (q1 || 0) + (q2 || 0) + (q3 || 0) + (q4 || 0);
+    if (this.periodSum !== 100) {
+      this.editForm.get('period')?.setValidators([Validators.required]);
+    } else {
+      this.editForm.get('period')?.clearValidators();
+    }
+    this.editForm.get('period')?.updateValueAndValidity();
   }
 
   protected subscribeToSaveResponse(
@@ -218,6 +230,41 @@ export class ActivityInputUpdateComponent implements OnInit {
       ? JSON.parse(activityInput.breakdowns)
       : [];
     breakdowns.forEach((b: any) => this.addControl(b));
+    if (!this.facilityActivity?.period_one) {
+      this.editForm.get('period_one')?.disable();
+      this.editForm.patchValue({
+        period_one: 0,
+      });
+    } else {
+      this.editForm.get('period_one')?.setValidators([Validators.required]);
+    }
+
+    if (!this.facilityActivity?.period_two) {
+      this.editForm.get('period_two')?.disable();
+      this.editForm.patchValue({
+        period_two: 0,
+      });
+    } else {
+      this.editForm.get('period_two')?.setValidators([Validators.required]);
+    }
+
+    if (!this.facilityActivity?.period_three) {
+      this.editForm.get('period_three')?.disable();
+      this.editForm.patchValue({
+        period_three: 0,
+      });
+    } else {
+      this.editForm.get('period_three')?.setValidators([Validators.required]);
+    }
+
+    if (!this.facilityActivity?.period_four) {
+      this.editForm.get('period_four')?.disable();
+      this.editForm.patchValue({
+        period_four: 0,
+      });
+    } else {
+      this.editForm.get('period_four')?.setValidators([Validators.required]);
+    }
   }
 
   /**

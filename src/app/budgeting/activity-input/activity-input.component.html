@@ -143,7 +143,7 @@
                   filterBy="code,description"
                   class="p-inputtext-sm"
                   [options]="facilityActivities!"
-                  (onChange)="filterChanged()"
+                  (onChange)="activityChanges()"
                   [(ngModel)]="facilityActivity"
                 >
                   <ng-template pTemplate="selectedItem">
@@ -162,21 +162,43 @@
               </span>
             </div>
           </div>
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-            <span fxFlex="0 1 50%"></span>
+          <div
+            style="padding-top: 10px !important"
+            *ngIf="facilityActivity"
+            fxLayout="row"
+            fxLayoutGap="10px"
+            fxLayoutAlign="end"
+          >
             <p-fieldset
               class="total-fieldset"
-              fxFlex="0 0 25%"
-              legend="Total Ceiling"
+              fxFlex="0 1 25%"
+              legend="Activity Amount"
             >
-              {{ 1000000 | currency: " " }}
+              {{ budgetStatus?.activityAmount | currency: " " }}
             </p-fieldset>
             <p-fieldset
               class="total-fieldset"
-              fxFlex="0 0 25%"
-              legend="Total Balance"
+              fxFlex="0 1 25%"
+              legend="Total Ceiling"
             >
-              {{ 20000 | currency: " " }}
+              {{ budgetStatus?.ceilingAmount | currency: " " }}
+            </p-fieldset>
+            <p-fieldset
+              class="total-fieldset"
+              fxFlex="0 1 25%"
+              legend="Used Amount"
+            >
+              {{ budgetStatus?.usedAmount | currency: " " }}
+            </p-fieldset>
+            <p-fieldset
+              class="total-fieldset"
+              fxFlex="0 1 25%"
+              legend="Ceiling Balance"
+            >
+              {{
+                (budgetStatus?.ceilingAmount || 0) -
+                  (budgetStatus?.usedAmount || 0) | currency: " "
+              }}
             </p-fieldset>
           </div>
         </div>
@@ -216,10 +238,10 @@
             <p-sortIcon [field]="'gfs_code_id'"></p-sortIcon>
           </th>
           <th>Unit</th>
-          <th>Unit Price</th>
-          <th>Quantity</th>
-          <th>Frequency</th>
-          <th>Sub Total</th>
+          <th style="text-align: right">Unit Price</th>
+          <th style="text-align: right">Quantity</th>
+          <th style="text-align: right">Frequency</th>
+          <th style="text-align: right">Sub Total</th>
           <th></th>
         </tr>
       </ng-template>
@@ -233,16 +255,16 @@
           <td>
             {{ rowData.unit }}
           </td>
-          <td>
+          <td style="text-align: right">
             {{ rowData.unit_price | currency: " " }}
           </td>
-          <td>
+          <td style="text-align: right">
             {{ rowData.quantity | currency: " " }}
           </td>
-          <td>
+          <td style="text-align: right">
             {{ rowData.frequency | currency: " " }}
           </td>
-          <td>
+          <td style="text-align: right">
             {{
               rowData.unit_price * rowData.quantity * rowData.frequency
                 | currency: " "
@@ -308,5 +330,13 @@
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
   header="Confirmation Delete Activity Input"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>
+
+<p-confirmDialog
+  key="forward"
+  [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+  [style]="{ width: '50vw' }"
+  header="Confirmation Forward Budget"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

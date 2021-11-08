@@ -143,7 +143,7 @@
                   filterBy="code,description"
                   class="p-inputtext-sm"
                   [options]="facilityActivities!"
-                  (onChange)="filterChanged()"
+                  (onChange)="activityChanges()"
                   [(ngModel)]="facilityActivity"
                 >
                   <ng-template pTemplate="selectedItem">
@@ -167,16 +167,23 @@
             <p-fieldset
               class="total-fieldset"
               fxFlex="0 0 25%"
-              legend="Total Ceiling"
+              legend="Activity Amount"
             >
-              {{ 1000000 | currency: " " }}
+              {{ budgetStatus?.activityAmount | currency: " " }}
             </p-fieldset>
             <p-fieldset
               class="total-fieldset"
               fxFlex="0 0 25%"
-              legend="Total Balance"
+              legend="Total Ceiling"
             >
-              {{ 20000 | currency: " " }}
+              {{ budgetStatus?.ceilingAmount | currency: " " }}
+            </p-fieldset>
+            <p-fieldset
+              class="total-fieldset"
+              fxFlex="0 0 25%"
+              legend="Used Amount"
+            >
+              {{ budgetStatus?.usedAmount | currency: " " }}
             </p-fieldset>
           </div>
         </div>

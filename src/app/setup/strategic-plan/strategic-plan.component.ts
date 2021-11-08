@@ -251,12 +251,21 @@ export class StrategicPlanComponent implements OnInit {
   }
 
 
-  downloadStrategicPlan(strategicPlan?: StrategicPlan){
+  downloadStrategicPlan(id: number){
+    this.strategicPlanService.download(id).subscribe( resp =>{
+      let file = new Blob([resp], { type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank");
+    });
+
+
+    /*
     this.strategicPlanService.download({url: strategicPlan?.url})
       .subscribe(
         (resp: CustomResponse<any[]>) =>
           (console.log(resp))
       );
+     */
   }
 
   /**

@@ -257,15 +257,6 @@ export class StrategicPlanComponent implements OnInit {
       let fileURL = URL.createObjectURL(file);
       window.open(fileURL,"_blank");
     });
-
-
-    /*
-    this.strategicPlanService.download({url: strategicPlan?.url})
-      .subscribe(
-        (resp: CustomResponse<any[]>) =>
-          (console.log(resp))
-      );
-     */
   }
 
   /**

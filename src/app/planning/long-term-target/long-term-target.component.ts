@@ -67,6 +67,7 @@ export class LongTermTargetComponent implements OnInit {
   financialYears: FinancialYear[] = [];
   currentFinancialYear?: FinancialYear;
   indicators?: PerformanceIndicator[] = [];
+  section?: Section;
 
   sectorId: Subject<number> = new Subject();
 
@@ -109,8 +110,8 @@ export class LongTermTargetComponent implements OnInit {
     this.handleNavigation();
   }
 
-  sectorChanged(sectorId: number): void {
-    this.sectorId?.next(sectorId);
+  sectorChanged(): void {
+    this.sectorId?.next(this.section?.sector_id);
   }
 
   /**
@@ -276,7 +277,7 @@ export class LongTermTargetComponent implements OnInit {
       ...new LongTermTarget(),
       strategic_plan_id: this.strategicPlan.id,
       objective_id: this.objective.id,
-      section_id: this.section_id,
+      section_id: this.section?.id,
     };
     const ref = this.dialogService.open(LongTermTargetUpdateComponent, {
       data: {

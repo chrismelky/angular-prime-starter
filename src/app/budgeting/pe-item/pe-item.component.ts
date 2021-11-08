@@ -98,6 +98,7 @@ export class PeItemComponent implements OnInit {
 
   //Mandatory filter
   admin_hierarchy_id!: number;
+  admin_hierarchy_code!: string;
   financial_year_id!: number;
   is_current_budget_locked!: boolean;
   pe_sub_form_id!: number;
@@ -137,6 +138,7 @@ export class PeItemComponent implements OnInit {
       this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
       this.financial_year_id = this.currentUser.admin_hierarchy?.current_financial_year_id!
       this.is_current_budget_locked = this.currentUser.admin_hierarchy?.is_current_budget_locked!
+      this.admin_hierarchy_code = this.currentUser.admin_hierarchy?.code!
     }
   }
 
@@ -154,6 +156,7 @@ export class PeItemComponent implements OnInit {
     )
 
     if (this.admin_hierarchy_id) {
+      console.log('0000'+this.admin_hierarchy_code)
       this.facilityService
         .query({
           columns: ['id', 'name', 'code'],

@@ -30,6 +30,8 @@ import { CasAssessmentSubCriteriaReportSetService } from "./cas-assessment-sub-c
 import { CasAssessmentSubCriteriaReportSetUpdateComponent } from "./update/cas-assessment-sub-criteria-report_set-update.component";
 import {CasAssessmentCriteriaOption} from "../cas-assessment-criteria-option/cas-assessment-criteria-option.model";
 import {CasAssessmentCriteriaOptionService} from "../cas-assessment-criteria-option/cas-assessment-criteria-option.service";
+import {CasPlanService} from "../cas-plan/cas-plan.service";
+import {CasPlan} from "../cas-plan/cas-plan.model";
 
 @Component({
   selector: "app-cas-assessment-sub-criteria-report_set",
@@ -41,6 +43,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
   casAssessmentSubCriteriaReportSets?: CasAssessmentSubCriteriaReportSet[] = [];
 
   casPlanContents?: CasPlanContent[] = [];
+  casPlans?: CasPlan[] = [];
   casAssessmentSubCriteriaOptions?: CasAssessmentSubCriteriaOption[] = [];
 
   casAssessmentCriteriaOptions?: CasAssessmentCriteriaOption[] = [];
@@ -63,13 +66,14 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  cas_plan_content_id!: number;
+  cas_plan_id!: number;
   cas_assessment_sub_criteria_option_id!: number;
   cas_assessment_criteria_option_id!: number;
 
   constructor(
     protected casAssessmentSubCriteriaReportSetService: CasAssessmentSubCriteriaReportSetService,
     protected casPlanContentService: CasPlanContentService,
+    protected casPlanService: CasPlanService,
     protected casAssessmentSubCriteriaOptionService: CasAssessmentSubCriteriaOptionService,
     protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
     protected activatedRoute: ActivatedRoute,
@@ -81,11 +85,11 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casPlanContentService
+    this.casPlanService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
+        (resp: CustomResponse<CasPlan[]>) =>
+          (this.casPlans = resp.data)
       );
     this.handleNavigation();
   }
@@ -97,7 +101,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
-      !this.cas_plan_content_id ||
+      !this.cas_plan_id ||
       !this.cas_assessment_sub_criteria_option_id
     ) {
       return;
@@ -110,7 +114,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_plan_content_id: this.cas_plan_content_id,
+        cas_plan_id: this.cas_plan_id,
         cas_assessment_sub_criteria_option_id:
           this.cas_assessment_sub_criteria_option_id,
         ...this.helper.buildFilter(this.search),
@@ -230,7 +234,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
     const data: CasAssessmentSubCriteriaReportSet =
       casAssessmentSubCriteriaReportSet ?? {
         ...new CasAssessmentSubCriteriaReportSet(),
-        cas_plan_content_id: this.cas_plan_content_id,
+        cas_plan_id: this.cas_plan_id,
         cas_assessment_sub_criteria_option_id:
           this.cas_assessment_sub_criteria_option_id,
       };
@@ -310,7 +314,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
    */
   fetchCriteria(item: any) {
     this.casAssessmentCriteriaOptionService
-      .query({cas_plan_content_id: item.value})
+      .query({cas_plan_id: item.value})
       .subscribe(
         (resp: CustomResponse<CasAssessmentCriteriaOption[]>) =>
           (this.casAssessmentCriteriaOptions = resp.data)

@@ -31,7 +31,7 @@
       (ngSubmit)="save()"
       [formGroup]="generalForm"
     >
-      <mat-stepper #stepper>
+      <mat-stepper #stepper [linear]="true">
         <ng-template matStepperIcon="edit">
           <i
             class="pi pi-pencil"
@@ -306,40 +306,51 @@
                 ></button>
               </div>
             </div>
-            <div
-              fxLayout="row"
-              fxLayoutGap="20px"
-              fxLayoutAlign="space-between"
-            >
-              <!-- Period Onde field -->
-              <p-checkbox
-                name="q1"
-                [value]="true"
-                label="Q1"
-                [binary]="true"
-                formControlName="period_one"
-              ></p-checkbox>
-              <p-checkbox
-                name="q2"
-                [binary]="true"
-                [value]="true"
-                label="Q2"
-                formControlName="period_two"
-              ></p-checkbox>
-              <p-checkbox
-                name="q3"
-                [value]="true"
-                [binary]="true"
-                label="Q3"
-                formControlName="period_three"
-              ></p-checkbox>
-              <p-checkbox
-                name="q4"
-                [value]="true"
-                [binary]="true"
-                label="Q4"
-                formControlName="period_four"
-              ></p-checkbox>
+            <div fxLayout="column" fxLayoutGap="2px">
+              <div
+                fxLayout="row"
+                fxLayoutGap="20px"
+                fxLayoutAlign="space-between"
+              >
+                <!-- Period Onde field -->
+                <p-checkbox
+                  name="q1"
+                  [value]="true"
+                  label="Q1"
+                  [binary]="true"
+                  (onChange)="onPeriodChange()"
+                  formControlName="period_one"
+                ></p-checkbox>
+                <p-checkbox
+                  name="q2"
+                  [binary]="true"
+                  (onChange)="onPeriodChange()"
+                  [value]="true"
+                  label="Q2"
+                  formControlName="period_two"
+                ></p-checkbox>
+                <p-checkbox
+                  name="q3"
+                  (onChange)="onPeriodChange()"
+                  [value]="true"
+                  [binary]="true"
+                  label="Q3"
+                  formControlName="period_three"
+                ></p-checkbox>
+                <p-checkbox
+                  name="q4"
+                  [value]="true"
+                  (onChange)="onPeriodChange()"
+                  [binary]="true"
+                  label="Q4"
+                  formControlName="period_four"
+                ></p-checkbox>
+              </div>
+              <small
+                class="p-error"
+                *ngIf="formError && generalForm.get('period')?.errors?.required"
+                >At least one Quarter is required.</small
+              >
             </div>
 
             <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
@@ -360,6 +371,11 @@
                       formError)
                   "
                 >
+                  <small
+                    class="p-error"
+                    *ngIf="generalForm.get('indicator_value')?.errors?.required"
+                    >Activity Indicator is required.</small
+                  >
                 </span>
               </div>
 
@@ -568,6 +584,7 @@
             <div fxLayout="row" fxLayoutGap="0.75rem">
               <span fxFlex></span>
               <button
+                (click)="formError = true"
                 matStepperNext
                 class="p-button-text"
                 icon="pi pi-arrow-right"

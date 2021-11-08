@@ -194,101 +194,146 @@
         <p-fieldset fxFlex legend="Total" class="total-fieldset">
           <strong>{{ total | currency: " " }}</strong>
         </p-fieldset>
-        <!-- Q1 -->
-        <div class="p-field" fxFlex="0 0 70px">
-          <span class="p-float-label">
-            <p-inputNumber
-              [max]="100"
-              [min]="0"
-              id="period_one"
-              formControlName="period_one"
-              mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-            ></p-inputNumber>
-            <label for="period_one">Q1(%)</label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('period_one')!.invalid &&
-              (editForm.get('period_one')!.dirty ||
-                editForm.get('period_one')!.touched ||
-                formError)
-            "
+        <div fxLayout="column" fxLayoutGap="2px">
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+            <!-- Q1 -->
+            <div class="p-field" fxFlex="0 0 70px">
+              <span class="p-float-label">
+                <p-inputNumber
+                  #q1
+                  [max]="100"
+                  [min]="0"
+                  id="period_one"
+                  (onInput)="
+                    onPeriodChange($event.value, q2.value, q3.value, q4.value)
+                  "
+                  formControlName="period_one"
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                ></p-inputNumber>
+                <label for="period_one">Q1(%)</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('period_one')!.invalid &&
+                  (editForm.get('period_one')!.dirty ||
+                    editForm.get('period_one')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('period_one')?.errors?.required"
+                  >Q1 required</small
+                >
+              </span>
+            </div>
+            <!-- Q2 -->
+            <div class="p-field" fxFlex="0 0 70px">
+              <span class="p-float-label">
+                <p-inputNumber
+                  #q2
+                  (onInput)="
+                    onPeriodChange(q1.value, $event.value, q3.value, q4.value)
+                  "
+                  [max]="100"
+                  [min]="0"
+                  id="period_two"
+                  formControlName="period_two"
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                ></p-inputNumber>
+                <label for="period_two">Q2(%)</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('period_two')!.invalid &&
+                  (editForm.get('period_two')!.dirty ||
+                    editForm.get('period_two')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('period_two')?.errors?.required"
+                  >Q2 required</small
+                >
+              </span>
+            </div>
+            <!-- Q3 -->
+            <div class="p-field" fxFlex="0 0 70px">
+              <span class="p-float-label">
+                <p-inputNumber
+                  #q3
+                  (onInput)="
+                    onPeriodChange(q1.value, q2.value, $event.value, q4.value)
+                  "
+                  [max]="100"
+                  [min]="0"
+                  id="period_three"
+                  formControlName="period_three"
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                ></p-inputNumber>
+                <label for="period_three">Q3(%)</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('period_three')!.invalid &&
+                  (editForm.get('period_three')!.dirty ||
+                    editForm.get('period_three')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('period_three')?.errors?.required"
+                  >Q3 required</small
+                >
+              </span>
+            </div>
+            <!-- Q4 -->
+            <div class="p-field" fxFlex="0 0 70px">
+              <span class="p-float-label">
+                <p-inputNumber
+                  #q4
+                  (onInput)="
+                    onPeriodChange(q1.value, q2.value, q3.value, $event.value)
+                  "
+                  [max]="100"
+                  [min]="0"
+                  id="period_four"
+                  formControlName="period_four"
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                ></p-inputNumber>
+                <label for="period_four">Q4(%)</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('period_four')!.invalid &&
+                  (editForm.get('period_four')!.dirty ||
+                    editForm.get('period_four')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('period_four')?.errors?.required"
+                  >Q4 required</small
+                >
+              </span>
+            </div>
+          </div>
+          <small
+            class="p-error"
+            *ngIf="formError && editForm.get('period')?.errors?.required"
+            >Quarter sum must be 100</small
           >
-          </span>
-        </div>
-        <!-- Q2 -->
-        <div class="p-field" fxFlex="0 0 70px">
-          <span class="p-float-label">
-            <p-inputNumber
-              [max]="100"
-              [min]="0"
-              id="period_two"
-              formControlName="period_two"
-              mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-            ></p-inputNumber>
-            <label for="period_two">Q2(%)</label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('period_two')!.invalid &&
-              (editForm.get('period_two')!.dirty ||
-                editForm.get('period_two')!.touched ||
-                formError)
-            "
-          >
-          </span>
-        </div>
-        <!-- Q3 -->
-        <div class="p-field" fxFlex="0 0 70px">
-          <span class="p-float-label">
-            <p-inputNumber
-              [max]="100"
-              [min]="0"
-              id="period_three"
-              formControlName="period_three"
-              mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-            ></p-inputNumber>
-            <label for="period_three">Q3(%)</label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('period_three')!.invalid &&
-              (editForm.get('period_three')!.dirty ||
-                editForm.get('period_three')!.touched ||
-                formError)
-            "
-          >
-          </span>
-        </div>
-        <!-- Q4 -->
-        <div class="p-field" fxFlex="0 0 70px">
-          <span class="p-float-label">
-            <p-inputNumber
-              [max]="100"
-              [min]="0"
-              id="period_four"
-              formControlName="period_four"
-              mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-            ></p-inputNumber>
-            <label for="period_four">Q4(%)</label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('period_four')!.invalid &&
-              (editForm.get('period_four')!.dirty ||
-                editForm.get('period_four')!.touched ||
-                formError)
-            "
-          >
-          </span>
         </div>
       </div>
 
@@ -316,6 +361,13 @@
                   formError)
               "
             >
+              <small
+                class="p-error"
+                *ngIf="
+                  editForm.get('forward_year_one_amount')?.errors?.required
+                "
+                >Forward Yr1 required</small
+              >
             </span>
           </div>
           <!-- Year Two forward -->
@@ -338,6 +390,13 @@
                   formError)
               "
             >
+              <small
+                class="p-error"
+                *ngIf="
+                  editForm.get('forward_year_one_amount')?.errors?.required
+                "
+                >Forward Yr2 required</small
+              >
             </span>
           </div>
         </div>

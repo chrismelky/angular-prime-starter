@@ -93,7 +93,7 @@ export class ActivityComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-  objectiveWithTargets: any;
+  targets?: FinancialYearTarget[] = [];
   objective: any;
 
   //Mandatory filter
@@ -265,17 +265,12 @@ export class ActivityComponent implements OnInit {
       )
       .subscribe(
         (resp: CustomResponse<FinancialYearTarget[]>) => {
-          this.objectiveWithTargets = this.helper.groupBy(
-            resp.data!.map((t) => {
-              return {
-                ...t,
-                description: `[ ${t.code} ] ${t.description}`,
-                objective: `[ ${t.objective_code} ] ${t.objective}`,
-              };
-            }),
-            'objective'
-          );
-          console.log(this.objectiveWithTargets);
+          this.targets = resp.data?.map((t) => {
+            return {
+              ...t,
+              description: `[ ${t.code} ] ${t.description}`,
+            };
+          });
           this.targetIsLoading = false;
         },
         (error) => {

@@ -223,21 +223,30 @@ export class ActivityInputComponent implements OnInit {
         this.budgetIsLocked =
           this.adminHierarchyCostCentre?.is_current_budget_locked ||
           this.adminHierarchyCostCentre?.is_current_budget_approved;
+        this.decisionLevel =
+          this.adminHierarchyCostCentre.current_budget_decision_level;
         break;
       case 'APPROVED':
         this.budgetIsLocked =
           this.adminHierarchyCostCentre?.is_current_budget_locked ||
           this.adminHierarchyCostCentre?.is_current_budget_approved;
+        this.decisionLevel =
+          this.adminHierarchyCostCentre.current_budget_decision_level;
         break;
       case 'CARRYOVER':
         this.budgetIsLocked =
           this.adminHierarchyCostCentre?.is_carryover_budget_locked ||
           this.adminHierarchyCostCentre?.is_carryover_budget_approved;
+        this.decisionLevel =
+          this.adminHierarchyCostCentre.carryover_budget_decision_level;
+
         break;
       case 'SUPPLEMENTARY':
         this.budgetIsLocked =
           this.adminHierarchyCostCentre?.is_supplementary_budget_locked ||
           this.adminHierarchyCostCentre?.is_supplementary_budget_approved;
+        this.decisionLevel =
+          this.adminHierarchyCostCentre.supplementary_budget_decision_level;
         break;
       default:
         this.budgetIsLocked = false;
@@ -383,13 +392,15 @@ export class ActivityInputComponent implements OnInit {
   }
 
   forward(): void {
-    if (!this.decisionLevel || this.decisionLevel.next_decision_level_id) {
+    console.log(this.decisionLevel);
+    if (!this.decisionLevel || !this.decisionLevel.next_decision_level_id) {
       this.toastService.warn('No next decision level defined');
       return;
     }
 
     this.confirmationService.confirm({
       message: `Are you sure you want ot forward this cost centre to ${this.decisionLevel.next_decision_level?.name}`,
+      key: 'forward',
       accept: () => {
         const data = {
           ...new Scrutinization(),

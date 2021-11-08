@@ -30,6 +30,8 @@ import {CasAssessmentCategory} from "../cas-assessment-category/cas-assessment-c
 import {CasAssessmentCriteriaOption} from "../cas-assessment-criteria-option/cas-assessment-criteria-option.model";
 import {CasAssessmentSubCriteriaOption} from "../cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
 import {CasAssessmentCriteriaOptionService} from "../cas-assessment-criteria-option/cas-assessment-criteria-option.service";
+import {CasPlan} from "../cas-plan/cas-plan.model";
+import {CasPlanService} from "../cas-plan/cas-plan.service";
 
 @Component({
   selector: "app-cas-assessment-sub-criteria-possible_score",
@@ -71,12 +73,14 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
   cas_assessment_category_id!: number;
   cas_assessment_criteria_option_id!: number;
   cas_assessment_sub_criteria_option_id!: number;
+  casPlans?: CasPlan[] = [];
+  cas_plan_id!: number;
 
   constructor(
     protected casAssessmentSubCriteriaPossibleScoreService: CasAssessmentSubCriteriaPossibleScoreService,
     protected casAssessmentSubCriteriaOptionService: CasAssessmentSubCriteriaOptionService,
     protected casAssessmentCriteriaOptionService: CasAssessmentCriteriaOptionService,
-    protected casAssessmentCategoryService: CasAssessmentCategoryService,
+    protected casPlanService: CasPlanService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -86,9 +90,9 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casAssessmentCategoryService.query({columns: ["id","name"]})
-      .subscribe((resp: CustomResponse<CasAssessmentCategory[]>) =>
-        (this.casAssessmentCategories = resp.data));
+    this.casPlanService.query({columns: ["id","name"]})
+      .subscribe((resp: CustomResponse<CasPlan[]>) =>
+        (this.casPlans = resp.data));
     this.handleNavigation();
   }
 

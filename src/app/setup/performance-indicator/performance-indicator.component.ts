@@ -7,7 +7,7 @@
  */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
@@ -42,6 +42,8 @@ export class PerformanceIndicatorComponent implements OnInit {
 
   objectives?: Objective[] = [];
   sections?: Section[] = [];
+  section?: Section;
+  sectorId: Subject<number> = new Subject();
 
   cols = [
     {
@@ -150,6 +152,10 @@ export class PerformanceIndicatorComponent implements OnInit {
       );
   }
 
+  sectorChanged(): void {
+    this.sectorId?.next(this.section?.sector_id);
+  }
+
   /**
    * Called initialy/onInit to
    * Restore page, sort option from url query params if exist and load page
@@ -187,10 +193,13 @@ export class PerformanceIndicatorComponent implements OnInit {
   }
 
   onObjectiveSeletion($event: any): void {
-    console.log($event);
     this.objective = $event;
     this.objectives = [this.objective];
-    this.filterChanged();
+    if ($event) {
+      this.filterChanged();
+    } else {
+      this.performanceIndicators = [];
+    }
   }
 
   /**
@@ -258,6 +267,7 @@ export class PerformanceIndicatorComponent implements OnInit {
     const indicator: PerformanceIndicator = performanceIndicator ?? {
       ...new PerformanceIndicator(),
       objective_id: this.objective.id,
+      section_id: this.section?.id,
     };
     const ref = this.dialogService.open(PerformanceIndicatorUpdateComponent, {
       data: {

@@ -49,6 +49,7 @@ export class LongTermTargetComponent implements OnInit {
 
   objectives?: any[] = [];
   sections?: Section[] = [];
+  section?: Section;
 
   isLoading = false;
   page?: number = 1;
@@ -109,8 +110,8 @@ export class LongTermTargetComponent implements OnInit {
     this.handleNavigation();
   }
 
-  sectorChanged(sectorId: number): void {
-    this.sectorId?.next(sectorId);
+  sectorChanged(): void {
+    this.sectorId?.next(this.section?.sector_id);
   }
 
   /**
@@ -204,10 +205,13 @@ export class LongTermTargetComponent implements OnInit {
   }
 
   onObjectiveSeletion($event: any): void {
-    console.log($event);
     this.objective = $event;
     this.objectives = [this.objective];
-    this.filterChanged();
+    if ($event) {
+      this.filterChanged();
+    } else {
+      this.longTermTargets = [];
+    }
   }
 
   /**
@@ -276,7 +280,7 @@ export class LongTermTargetComponent implements OnInit {
       ...new LongTermTarget(),
       strategic_plan_id: this.strategicPlan.id,
       objective_id: this.objective.id,
-      section_id: this.section_id,
+      section_id: this.section?.id,
     };
     const ref = this.dialogService.open(LongTermTargetUpdateComponent, {
       data: {

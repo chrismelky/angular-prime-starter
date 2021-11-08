@@ -18,53 +18,20 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="cas_assessment_category_version_id"
+                id="cas_plan_id"
                 optionValue="id"
-                optionLabel="cas_category_name"
+                optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="casAssessmentCategoryVersions!"
-                (onChange)="loadContents()"
-                [(ngModel)]="cas_assessment_category_version_id"
+                [options]="casPlans!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="cas_plan_id"
               ></p-dropdown>
-              <label for="cas_assessment_category_version_id"
-              >CAS Category Version
+              <label for="cas_plan_id"
+              >CAS Plan
               </label>
             </span>
-          </div>
-
-          <div class="p-field" fxFlex>
-            <button
-              type="button"
-              pButton
-              pRipple
-              iconPos="left"
-              class="p-button-outlined p-button-plain planrep-tree"
-              (click)="op.toggle($event)"
-            >
-              <i class="pi pi-folder"></i>&nbsp;
-              {{
-              selectedValue
-                ? selectionMode === "single"
-                  ? selectedValue?.data?.name
-                  : "Cas Plan Content Selected(" + selectedValue?.length + ")"
-                : "Select Cas Plan Content"
-              }}
-            </button>
-            <p-overlayPanel #op [dismissable]="true" appendTo="body">
-              <ng-template pTemplate>
-                <p-tree
-                  [value]="nodes"
-                  [filter]="true"
-                  (onNodeExpand)="nodeExpand($event)"
-                  [selectionMode]="selectionMode"
-                  [(selection)]="selectedValue"
-                  [loading]="treeLoading"
-                  (onNodeSelect)="onSelectionChange($event)"
-                ></p-tree>
-              </ng-template>
-            </p-overlayPanel>
           </div>
         </div>
         <div
@@ -176,7 +143,7 @@
             icon="pi pi-plus"
             class="p-button-raised"
             [disabled]="
-              !cas_assessment_category_version_id || !cas_plan_content_id
+              !cas_plan_id
             "
             (click)="createOrUpdate()"
             label="Add Cas Criteria Option"

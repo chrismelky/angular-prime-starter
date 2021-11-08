@@ -46,9 +46,13 @@ export class ObjectiveService {
     });
   }
 
-  tree(): Observable<CustomResponse<Objective[]>> {
+  tree(req?: any): Observable<CustomResponse<Objective[]>> {
+    const options = createRequestOption(req);
     return this.http.get<CustomResponse<Objective[]>>(
-      `${this.resourceUrl}/tree`
+      `${this.resourceUrl}/tree`,
+      {
+        params: options,
+      }
     );
   }
 

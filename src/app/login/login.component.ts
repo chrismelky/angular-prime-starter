@@ -16,10 +16,7 @@ import { StateStorageService } from '../core/state-storage.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit, AfterViewInit {
-  @ViewChild('email', { static: false })
-  email?: ElementRef;
-
+export class LoginComponent implements OnInit {
   formError = false;
   isLoading = false;
   authenticationError = false;
@@ -28,7 +25,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
    * Declare form
    */
   loginForm = this.fb.group({
-    email: [null, [Validators.required, Validators.email]],
+    username: [null, [Validators.required]],
     password: [null, [Validators.required]],
     rememberMe: [false],
   });
@@ -43,12 +40,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
     document.getElementById('flash-page')?.remove();
-  }
-
-  ngAfterViewInit(): void {
-    if (this.email) {
-      this.email.nativeElement.focus();
-    }
   }
 
   login(): void {
@@ -72,7 +63,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
         }
       },
       (error: HttpErrorResponse) => {
-        console.log(error);
         this.isLoading = false;
         if (error.status === 401) {
           this.authenticationError = true;

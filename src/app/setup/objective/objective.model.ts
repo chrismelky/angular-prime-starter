@@ -9,7 +9,8 @@ export class Objective {
     public objective_type_id?: number,
     public parent_id?: number,
     public children?: Objective[],
-    public sectors?: Sector[]
+    public sectors?: Sector[],
+    public position?: number
   ) {}
 }
 

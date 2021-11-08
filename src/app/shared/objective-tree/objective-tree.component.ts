@@ -2,6 +2,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { Subject } from 'rxjs';
+import { ObjectiveType } from 'src/app/setup/objective-type/objective-type.model';
+import { ObjectiveTypeService } from 'src/app/setup/objective-type/objective-type.service';
 import { Objective } from 'src/app/setup/objective/objective.model';
 import { ObjectiveService } from 'src/app/setup/objective/objective.service';
 import { User } from 'src/app/setup/user/user.model';
@@ -22,19 +24,34 @@ export class ObjectiveTreeComponent implements OnInit {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onLoadingChange: EventEmitter<boolean> = new EventEmitter(false);
 
-  objectiveNode!: TreeNode;
+  objectiveNode?: TreeNode;
   objectives?: any[] = [];
+  objectiveTypes?: ObjectiveType[] = [];
+  lowestType?: ObjectiveType;
 
   constructor(
     protected userService: UserService,
-    protected objectiveService: ObjectiveService
+    protected objectiveService: ObjectiveService,
+    protected objectiveTypeService: ObjectiveTypeService
   ) {
     this.currentUser = userService.getCurrentUser();
   }
 
   ngOnInit(): void {
+    this.objectiveTypeService
+      .query({
+        columns: ['id', 'position', 'name'],
+      })
+      .subscribe((resp) => {
+        this.objectiveTypes = resp.data || [];
+        this.lowestType = this.objectiveTypes?.find(
+          (t) => t.position === this.objectiveTypes?.length
+        );
+      });
     this.sectorId?.subscribe((sectorId) => {
       this.loadTree(sectorId);
+      this.objectiveNode = undefined;
+      this.onSelectionChange();
     });
     this.onLoadingChange.next(false);
   }
@@ -42,7 +59,7 @@ export class ObjectiveTreeComponent implements OnInit {
   loadTree(sectorId?: number): void {
     this.objectiveService
       .tree({
-        sectorId: sectorId,
+        sector_id: sectorId,
       })
       .subscribe(
         (resp: CustomResponse<Objective[]>) => {
@@ -61,7 +78,7 @@ export class ObjectiveTreeComponent implements OnInit {
       label: `[ ${ob.code} ] - ${ob.description}`,
       data: ob,
       key: ob.id?.toString(),
-      selectable: !hasChildren,
+      selectable: ob.objective_type_id === this.lowestType?.id,
       expanded: hasChildren,
       children: hasChildren ? ob.children?.map((cob) => this.getNode(cob)) : [],
     };
@@ -69,7 +86,7 @@ export class ObjectiveTreeComponent implements OnInit {
 
   onSelectionChange(event?: any): void {
     const selection =
-      typeof this.objectiveNode.data === 'object'
+      typeof this.objectiveNode?.data === 'object'
         ? this.returnType === 'object'
           ? this.objectiveNode?.data
           : this.objectiveNode?.data?.id

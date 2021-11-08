@@ -37,22 +37,6 @@
               <label for="financial_year_id">Financial Year </label>
             </span>
           </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="budget_type"
-                optionValue="value"
-                optionLabel="display"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="budgetTypes!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="budget_type"
-              ></p-dropdown>
-              <label for="budget_type">Budget Type </label>
-            </span>
-          </div>
         </div>
         <div
           fxLayout="row wrap"
@@ -183,10 +167,9 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Ceiling Amounts</span>
-          <div class="card-header-text">
-            <p-splitButton *ngxPermissionsOnly="['INITIATE_CEILING']"  [disabled]="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
-              !admin_hierarchy_id || !financial_year_id || !budget_type
-            " styleClass="p-button-raised"></p-splitButton>
+          <div class="card-header-text" *ngxPermissionsOnly="['INITIATE_CEILING']">
+            <p-splitButton   *ngIf="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition && financial_year_id !== undefined && admin_hierarchy_id !== undefined" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"
+            styleClass="p-button-raised"></p-splitButton>
           </div>
         </div>
       </ng-template>
@@ -199,7 +182,7 @@
           <th>Bank Account</th>
           <th>Amount (TZS)</th>
           <th>Status</th>
-          <th  *ngIf=" position === ceilingStartSectionPosition" colspan="">Lock/Unlock</th>
+          <th *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">Lock/Unlock</th>
           <th  style="width:8rem"></th>
         </tr>
       </ng-template>
@@ -226,7 +209,7 @@
             <p-badge severity="success" *ngIf="rowData?.is_locked===false" value="unlocked"></p-badge>
             <p-badge severity="danger" *ngIf="rowData?.is_locked===true" value="Locked"></p-badge>
           </td>
-          <td>
+          <td *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">
             <p-inputSwitch
               (onChange)="toggleActivation(rowData)"
               [(ngModel)]="rowData['is_locked']"

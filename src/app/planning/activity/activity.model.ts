@@ -1,6 +1,9 @@
+import { ActivityInput } from 'src/app/budgeting/activity-input/activity-input.model';
 import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
+import { Facility } from 'src/app/setup/facility/facility.model';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
+import { Comment } from '../scrutinization/comment/comment.model';
 
 export class Activity {
   constructor(
@@ -38,7 +41,8 @@ export class Activity {
     public budget_class?: BudgetClass,
     public fund_sources?: FundSource[],
     public activity_facilities?: any[],
-    public references?: NationalReference[]
+    public references?: NationalReference[],
+    public addressable_comments: Comment[] = []
   ) {}
 }
 
@@ -61,6 +65,18 @@ export class FacilityActivity {
   public period_two?: boolean;
   public period_three?: boolean;
   public period_four?: boolean;
+  public budget_class_id?: number;
+  public activity_fund_source_id?: number;
+}
+
+export class ScrutinyActivity {
+  public id?: number;
+  public code?: string;
+  public description?: string;
+  public facility?: Facility;
+  public budget_class?: BudgetClass;
+  public inputs?: ActivityInput[] = [];
+  public comments?: Comment[] = [];
   public budget_class_id?: number;
   public activity_fund_source_id?: number;
 }

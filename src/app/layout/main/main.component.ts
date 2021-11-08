@@ -728,7 +728,28 @@ export class MainComponent implements OnInit {
         {
           label: "Ceiling Amounts",
           icon: "pi pi-fw pi-link",
-          routerLink: "admin-hierarchy-ceiling",
+          items: [
+            {
+              label: "Opened",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "admin-hierarchy-ceiling/CURRENT",
+            },
+            {
+              label: "Approved",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "admin-hierarchy-ceiling/APPROVED",
+            },
+            {
+              label: "Carry Over",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "admin-hierarchy-ceiling/CARRYOVER",
+            },
+            {
+              label: "Vote Reallocation",
+              icon: "pi pi-fw pi-arrow-right",
+              routerLink: "admin-hierarchy-ceiling/SUPPLEMENTARY",
+            },
+          ],
         },
         {
           label: "PE Budget Submission Items",

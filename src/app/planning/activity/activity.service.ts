@@ -15,6 +15,7 @@ import {
   Activity,
   ActivityFundSource,
   FacilityActivity,
+  ScrutinyActivity,
 } from './activity.model';
 import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
 
@@ -55,6 +56,17 @@ export class ActivityService {
 
     return this.http.get<CustomResponse<FacilityActivity[]>>(
       `${this.resourceUrl}/facility_activities/`,
+      {
+        params: options,
+      }
+    );
+  }
+
+  scrutinyActivities(req: any): Observable<CustomResponse<ScrutinyActivity[]>> {
+    const options = createRequestOption(req);
+
+    return this.http.get<CustomResponse<ScrutinyActivity[]>>(
+      `${this.resourceUrl}/scrutinization_activities/`,
       {
         params: options,
       }

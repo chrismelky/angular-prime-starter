@@ -51,4 +51,8 @@ export class ReportService {
       params: options,
     });
   }
+
+  getParams(id: number): Observable<CustomResponse<Report[]>> {
+    return this.http.get<CustomResponse<Report[]>>(`${this.resourceUrl}/get_params/${id}`);
+  }
 }

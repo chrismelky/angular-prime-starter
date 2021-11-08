@@ -8,7 +8,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
 import { Table } from "primeng/table";
@@ -30,6 +30,9 @@ import { FinancialYearService } from "src/app/setup/financial-year/financial-yea
 import {BudgetType, Report} from "./report.model";
 import { ReportService } from "./report.service";
 import { ReportUpdateComponent } from "./update/report-update.component";
+import {CasPlan} from "../../setup/cas-plan/cas-plan.model";
+import {CasPlanService} from "../../setup/cas-plan/cas-plan.service";
+import {TreeTable} from "primeng/treetable";
 
 @Component({
   selector: "app-report",
@@ -37,14 +40,21 @@ import { ReportUpdateComponent } from "./update/report-update.component";
 })
 export class ReportComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('table') table!: TreeTable;
   reports?: Report[] = [];
 
-  casPlanContents?: CasPlanContent[] = [];
+  casPlanContents?: TreeNode[] = [];
+  parents?: CasPlanContent[] = [];
+  casPlans?: CasPlan[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
 
-  cols = []; //Table display columns
+  cols = [
+    {
+      field: 'name',
+      header: 'Name',
+      sort: true,
+    },]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -56,6 +66,7 @@ export class ReportComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
+  cas_plan_id!: number;
   cas_plan_content_id!: number;
   admin_hierarchy_id!: number;
   financial_year_id!: number;
@@ -68,6 +79,7 @@ export class ReportComponent implements OnInit {
   constructor(
     protected reportService: ReportService,
     protected casPlanContentService: CasPlanContentService,
+    protected casPlanService: CasPlanService,
     protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
@@ -85,11 +97,11 @@ export class ReportComponent implements OnInit {
       {id:3, name:'CARRYOVER'},
       {id:4, name:'SUPPLEMENTARY'},
     ];
-    this.casPlanContentService
+    this.casPlanService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
+        (resp: CustomResponse<CasPlan[]>) =>
+          (this.casPlans = resp.data)
       );
     this.adminHierarchyService
       .query({ columns: ["id", "name"] })
@@ -103,22 +115,6 @@ export class ReportComponent implements OnInit {
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
       );
-    this.items = [
-      {
-        label: 'PDF Format',
-        icon: 'pi pi-file-pdf',
-        command: () => {
-          this.getReport('PDF');
-        },
-      },
-      {
-        label: 'Excel Format',
-        icon: 'pi pi-file-excel',
-        command: () => {
-          this.getReport('XLSX');
-        },
-      },
-    ];
     this.handleNavigation();
   }
 
@@ -128,29 +124,23 @@ export class ReportComponent implements OnInit {
    * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (
-      !this.cas_plan_content_id ||
-      !this.admin_hierarchy_id ||
-      !this.financial_year_id||
-      !this.budgetType
-    ) {
+    if (!this.cas_plan_id) {
       return;
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.reportService
+    this.casPlanContentService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_plan_content_id: this.cas_plan_content_id,
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        financial_year_id: this.financial_year_id,
+        cas_plan_id: this.cas_plan_id,
+        parent_id: null,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<Report[]>) => {
+        (res: CustomResponse<CasPlanContent[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -261,7 +251,6 @@ export class ReportComponent implements OnInit {
   createOrUpdate(report?: Report): void {
     const data: Report = report ?? {
       ...new Report(),
-      cas_plan_content_id: this.cas_plan_content_id,
       admin_hierarchy_id: this.admin_hierarchy_id,
       financial_year_id: this.financial_year_id,
     };
@@ -299,23 +288,29 @@ export class ReportComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<Report[]> | null,
+    resp: CustomResponse<CasPlanContent[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/report"], {
+      this.router.navigate(['/report'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            (this.predicate ?? 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
-    this.reports = resp?.data ?? [];
+    this.casPlanContents = (resp?.data ?? []).map((c) => {
+      return {
+        data: c,
+        children: [],
+        leaf: false,
+      };
+    });
   }
 
   /**
@@ -336,22 +331,66 @@ export class ReportComponent implements OnInit {
     this.admin_hierarchy_position =event.admin_hierarchy_position;
   }
 
-  private getReport(format: string) {
+  getReport(report: any) {
   if (
-    !this.cas_plan_content_id ||
     !this.admin_hierarchy_id ||
     !this.financial_year_id ||
     !this.budgetType){
     return;
   }
-  this.reportService.getReport({
-    cas_plan_content_id:this.cas_plan_content_id,
-    admin_hierarchy_id:this.admin_hierarchy_id,
-    financial_year_id:this.financial_year_id,
-    budgetType:this.budgetType,
-    format:format
-  }).subscribe((resp)=>{
-    console.log(resp.data);
-  });
+  const data = report;
+    data.admin_hierarchy_id = this.admin_hierarchy_id;
+    data.financial_year_id = this.financial_year_id;
+    data.budgetType = this.budgetType;
+    const ref = this.dialogService.open(ReportUpdateComponent, {
+      data,
+      header: report.name,
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  loadContents() {
+    this.casPlanContentService.query({
+      cas_plan_id: this.cas_plan_id,
+      parent_id: null
+    })
+      .subscribe((resp:CustomResponse<CasPlanContent[]>)=>(this.parents  = resp.data));
+  }
+
+  /**
+   * When cas content expanded load children
+   * @param event = constist of node data
+   */
+  onNodeExpand(event: any): void {
+    const node = event.node;
+    this.isLoading = true;
+    // Load children by parent_id= node.data.id
+    this.casPlanContentService
+      .query({
+        parent_id: node.data.id,
+        sort: ['sort_order:asc'],
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          // Map response data to @TreeNode type
+          node.children = (resp?.data ?? []).map((c) => {
+            return {
+              data: c,
+              children: [],
+              leaf: false,
+            };
+          });
+          // Update Tree state
+          this.casPlanContents = [...this.casPlanContents!];
+        },
+        (error) => {
+          this.isLoading = false;
+        }
+      );
   }
 }

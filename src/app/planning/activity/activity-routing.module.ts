@@ -42,7 +42,10 @@ export class AdminHierarchyCostCentreResolveService
 
     switch (budgetType) {
       case 'CURRENT' || 'APPROVED':
-        eagerWith.push('currentBudgetDecisionLevel');
+        eagerWith.push(
+          'currentBudgetDecisionLevel',
+          'currentBudgetDecisionLevel.nextDecisionLevel'
+        );
         columns.push(
           'is_current_budget_locked',
           'is_current_budget_approved',
@@ -50,7 +53,10 @@ export class AdminHierarchyCostCentreResolveService
         );
         break;
       case 'CARRYOVER':
-        eagerWith.push('carryOverBudgetDecisionLevel');
+        eagerWith.push(
+          'carryOverBudgetDecisionLevel',
+          'carryOverBudgetDecisionLevel.nextDecisionLevel'
+        );
         columns.push(
           'is_carryover_budget_locked',
           'is_carryover_budget_approved',
@@ -58,7 +64,10 @@ export class AdminHierarchyCostCentreResolveService
         );
         break;
       case 'SUPPLEMENTARY':
-        eagerWith.push('supplementaryOverBudgetDecisionLevel');
+        eagerWith.push(
+          'supplementaryOverBudgetDecisionLevel',
+          'supplementaryOverBudgetDecisionLevel.nextDecisionLevel'
+        );
         columns.push(
           'is_supplementary_budget_locked',
           'is_supplementary_budget_approved',

@@ -32,7 +32,7 @@
           >
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
+      <div class="p-field" fxFlex *ngIf="!this.objectiveType?.is_incremental">
         <span class="p-float-label">
           <input id="code" type="text" pInputText formControlName="code" />
           <label for="code">Code </label>
@@ -46,16 +46,83 @@
           "
         >
           <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
-          >Code is required.
+            >Code is required.
           </small>
-          <small class="p-error" *ngIf="editForm.get('code')?.errors?.minlength">
-            Code should have a minimum length of 3 alphanumeric characters is required.
+          <small
+            class="p-error"
+            *ngIf="editForm.get('code')?.errors?.minlength"
+          >
+            Code should have a minimum length of 3 alphanumeric characters is
+            required.
           </small>
-          <small class="p-error" *ngIf="editForm.get('code')?.errors?.maxlength">
-            Code should have a maximum length of 3 alphanumeric characters is required.
+          <small
+            class="p-error"
+            *ngIf="editForm.get('code')?.errors?.maxlength"
+          >
+            Code should have a maximum length of 3 alphanumeric characters is
+            required.
           </small>
         </span>
       </div>
+
+      <div
+        class="p-field"
+        fxFlex="0 0 100%"
+        *ngIf="this.objectiveType?.position! > 1"
+      >
+        <span class="p-float-label">
+          <p-dropdown
+            id="parent"
+            optionLabel="description"
+            optionValue="id"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            filterBy="code,description"
+            formControlName="parent_id"
+            class="p-inputtext-sm"
+            [options]="parents!"
+          >
+            <ng-template let-obj pTemplate="item">
+              [ {{ obj.code }} ] {{ obj.description }}
+            </ng-template>
+          </p-dropdown>
+          <label for="priority_area_id">Parent Planning Sequence</label>
+        </span>
+      </div>
+
+      <!-- Sectors -->
+      <div class="p-field" fxFlex *ngIf="objectiveType?.is_sectoral">
+        <span class="p-float-label">
+          <p-multiSelect
+            [options]="sectors!"
+            optionLabel="name"
+            id="sectors"
+            dataKey="id"
+            [filter]="true"
+            appendTo="body"
+            [maxSelectedLabels]="1"
+            formControlName="sectors"
+            display="chip"
+          >
+          </p-multiSelect>
+          <label for="sectors">Sectors </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sectors')!.invalid &&
+            (editForm.get('sectors')!.dirty ||
+              editForm.get('sectors')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('sectors')?.errors?.required"
+            >Sectors is required.</small
+          >
+        </span>
+      </div>
+
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

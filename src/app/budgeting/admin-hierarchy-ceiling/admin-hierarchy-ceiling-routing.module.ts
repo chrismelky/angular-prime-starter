@@ -12,7 +12,7 @@ import { AdminHierarchyCeilingComponent } from "./admin-hierarchy-ceiling.compon
 
 const routes: Routes = [
   {
-    path: "",
+    path: ":budgetType",
     component: AdminHierarchyCeilingComponent,
     data: {
       defaultSort: "id:asc",

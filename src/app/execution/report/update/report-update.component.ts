@@ -21,6 +21,15 @@ import { FinancialYearService } from "src/app/setup/financial-year/financial-yea
 import { Report } from "../report.model";
 import { ReportService } from "../report.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {PeriodService} from "../../../setup/period/period.service";
+import {Period} from "../../../setup/period/period.model";
+import {FundSource} from "../../../setup/fund-source/fund-source.model";
+import {FundSourceService} from "../../../setup/fund-source/fund-source.service";
+import {Section} from "../../../setup/section/section.model";
+import {SectionService} from "../../../setup/section/section.service";
+import {Sector} from "../../../setup/sector/sector.model";
+import {SectorService} from "../../../setup/sector/sector.service";
+import {J} from "@angular/cdk/keycodes";
 
 @Component({
   selector: "app-report-update",
@@ -34,19 +43,39 @@ export class ReportUpdateComponent implements OnInit {
   casPlanContents?: CasPlanContent[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
+  periods?: Period[] = [];
+  sections?: Section[] = [];
+  sectors?: Sector[] = [];
+  departments?: Section[] = [];
+  fundSources?: FundSource[] = [];
+  parameters: string[] | undefined;
 
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
-    cas_plan_content_id: [null, [Validators.required]],
-    admin_hierarchy_id: [null, [Validators.required]],
-    financial_year_id: [null, [Validators.required]],
+    period_id: [null, []],
+    section_id: [null, []],
+    sector_id: [null, []],
+    fund_source_pe: [null, []],
+    is_facility_account: [null, []],
+    intervention_id: [null, []],
+    exchange_rate: [null, []],
+    control_code: [null, []],
+    budget_class_id: [null, []],
+    department_id: [null, []],
+    fund_source_id: [null, []],
+    admin_hierarchy_id: [null, []],
+    financial_year_id: [null, []],
   });
 
   constructor(
     protected reportService: ReportService,
+    protected periodService: PeriodService,
+    protected sectionService: SectionService,
+    protected sectorService: SectorService,
+    protected fundSourceService: FundSourceService,
     protected casPlanContentService: CasPlanContentService,
     protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
@@ -57,25 +86,52 @@ export class ReportUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.casPlanContentService
-      .query({ columns: ["id", "name"] })
+    this.reportService
+      .getParams(this.dialogConfig.data.report_id)
       .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
-      );
-    this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchy[]>) =>
-          (this.adminHierarchies = resp.data)
-      );
-    this.financialYearService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
+        (resp: CustomResponse<Report[]>) =>{
+          const params = resp.data;
+          if (params) {
+            this.parameters = params[0].query_params?.split(',');
+            for (let i=0; i < this.parameters?.length!; i++){
+              if (this.parameters![i] == 'period_id'){
+                this.periodService.query({ columns :['id','name']})
+                  .subscribe((resp:CustomResponse<Period[]>)=>(this.periods = resp.data));
+              }
+              if (this.parameters![i] == 'fund_source_id'){
+                this.fundSourceService.query({ columns :['id','name']})
+                  .subscribe((resp:CustomResponse<FundSource[]>)=>(this.fundSources = resp.data));
+              }
+              if (this.parameters![i] == 'section_id'){
+                this.sectionService.query({ position: 4})
+                  .subscribe((resp:CustomResponse<Section[]>)=>(this.sections = resp.data));
+              }
+              if (this.parameters![i] == 'department_id'){
+                this.sectionService.query({ position: 3})
+                  .subscribe((resp:CustomResponse<Section[]>)=>(this.departments = resp.data));
+              }
+              if (this.parameters![i] == 'sector_id'){
+                this.sectorService.query({ columns :['id','name']})
+                  .subscribe((resp:CustomResponse<Sector[]>)=>(this.sectors = resp.data));
+              }
+            }
+          }
+        }
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+  }
+
+
+  getReport(format: string) {
+    const data = JSON.parse(JSON.stringify(this.editForm.value));
+    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+    data.financial_year_id = this.dialogConfig.data.financial_year_id;
+    data.report_id = this.dialogConfig.data.report_id;
+    data.budgetType = this.dialogConfig.data.budgetType;
+    data.format = format;
+    this.reportService.getReport(data).subscribe((resp) => {
+      console.log(resp.data)
+    });
   }
 
   /**
@@ -132,7 +188,17 @@ export class ReportUpdateComponent implements OnInit {
   protected updateForm(report: Report): void {
     this.editForm.patchValue({
       id: report.id,
-      cas_plan_content_id: report.cas_plan_content_id,
+      period_id: report.period_id,
+      section_id: report.section_id,
+      sector_id: report.sector_id,
+      department_id: report.department_id,
+      fund_source_id: report.fund_source_id,
+      fund_source_pe: report.fund_source_pe,
+      is_facility_account: report.is_facility_account,
+      intervention_id: report.intervention_id,
+      exchange_rate: report.exchange_rate,
+      control_code: report.control_code,
+      budget_class_id: report.budget_class_id,
       admin_hierarchy_id: report.admin_hierarchy_id,
       financial_year_id: report.financial_year_id,
     });
@@ -146,7 +212,17 @@ export class ReportUpdateComponent implements OnInit {
     return {
       ...new Report(),
       id: this.editForm.get(["id"])!.value,
-      cas_plan_content_id: this.editForm.get(["cas_plan_content_id"])!.value,
+      period_id: this.editForm.get(["period_id"])!.value,
+      fund_source_id: this.editForm.get(["fund_source_id"])!.value,
+      fund_source_pe: this.editForm.get(["fund_source_pe"])!.value,
+      is_facility_account: this.editForm.get(["is_facility_account"])!.value,
+      intervention_id: this.editForm.get(["intervention_id"])!.value,
+      exchange_rate: this.editForm.get(["exchange_rate"])!.value,
+      control_code: this.editForm.get(["control_code"])!.value,
+      budget_class_id: this.editForm.get(["budget_class_id"])!.value,
+      department_id: this.editForm.get(["department_id"])!.value,
+      section_id: this.editForm.get(["section_id"])!.value,
+      sector_id: this.editForm.get(["sector_id"])!.value,
       admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
       financial_year_id: this.editForm.get(["financial_year_id"])!.value,
     };

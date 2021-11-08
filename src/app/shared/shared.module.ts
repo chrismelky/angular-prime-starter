@@ -12,6 +12,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { LoaderComponent } from './loader/loader.component';
 import { DraggableDirective } from './draggable.directive';
 import {MenuTreeComponent} from "./menu-tree/menu-tree.component";
+import { AddressCommentComponent } from './address-comment/address-comment.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import {MenuTreeComponent} from "./menu-tree/menu-tree.component";
     AssessmentTreeComponent,
     LoaderComponent,
     DraggableDirective,
+    AddressCommentComponent,
   ],
   imports: [SharedMaterialModule, SharedPrimengModule, CommonModule],
   exports: [

@@ -12,9 +12,17 @@
           "
         ></button>
         <p-divider fxFlex class="title" align="center">
-          <span fxLayout="column" fxLayoutAlign="centre center">
-            <small>Budget Type</small>
-            <strong>{{ budget_type }}</strong>
+          <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+            <span fxLayout="column" fxLayoutAlign="centre center">
+              <small>Budget Type</small>
+              <strong>{{ budget_type }}</strong>
+            </span>
+            <i *ngIf="budgetIsLocked" class="pi pi-lock" style="color: red"></i>
+            <i
+              *ngIf="!budgetIsLocked"
+              class="pi pi-lock-open pi-primary"
+              style="color: green"
+            ></i>
           </span>
         </p-divider>
         <p-divider fxFlex class="title" align="center">
@@ -184,7 +192,11 @@
         </ng-template>
 
         <ng-template pTemplate="body" let-rowData let-columns="columns">
-          <tr>
+          <tr
+            [ngClass]="{
+              'has-comment': rowData.addressable_comments.length
+            }"
+          >
             <td>
               {{ rowData.code }}
             </td>
@@ -197,6 +209,15 @@
             <td>
               <div fxLayout="row" fxLayoutAlign="end">
                 <div fxLayout="row" fxLayoutGap="2px">
+                  <button
+                    *ngIf="rowData.addressable_comments.length"
+                    (click)="addressComments(rowData)"
+                    icon="pi pi-comment"
+                    pButton
+                    class="
+                      p-icon-only p-button-text p-button-plain p-button-rounded
+                    "
+                  ></button>
                   <button
                     pButton
                     pTooltip="Edit"

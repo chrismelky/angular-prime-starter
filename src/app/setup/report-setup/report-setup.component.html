@@ -84,24 +84,22 @@
           ></button>
         </div>
       </ng-template>
-      <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="reportSetups?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th style="flex: 0 0 2rem"></th>
+      <ng-template pTemplate="header">
+        <tr  *ngIf="reportSetups!.length > 0">
+          <th colspan="2">Name</th>
+          <th>Template name</th>
+          <th>Query Params</th>
+          <th>Sql Query</th>
+          <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <ng-template pTemplate="body" let-rowData>
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
-          </td>
-          <td style="flex: 0 0 2 rem">
+          <td colspan="2">{{rowData.name}}</td>
+          <td>{{rowData.template_name}}</td>
+          <td>{{rowData.query_params}}</td>
+          <td>{{rowData.sql_query}}</td>
+          <td >
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button

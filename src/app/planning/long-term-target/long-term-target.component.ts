@@ -5,9 +5,9 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
@@ -68,6 +68,8 @@ export class LongTermTargetComponent implements OnInit {
   currentFinancialYear?: FinancialYear;
   indicators?: PerformanceIndicator[] = [];
 
+  sectorId: Subject<number> = new Subject();
+
   constructor(
     protected longTermTargetService: LongTermTargetService,
     protected objectiveService: ObjectiveService,
@@ -105,6 +107,10 @@ export class LongTermTargetComponent implements OnInit {
     }
 
     this.handleNavigation();
+  }
+
+  sectorChanged(sectorId: number): void {
+    this.sectorId?.next(sectorId);
   }
 
   /**

@@ -412,18 +412,21 @@ export class ProjectionComponent implements OnInit {
   }
 
   onRowEditSave(projection: Projection ,index: number) {
-    let valid = this.projectionValidity(projection);
-    this.totalProjectionAmount = this.getTotalAllocatedProjection(this.projections);
-    let payload = this.createFrom(projection)
-    if(valid.success){
-      if(this.totalAllocatedAmount <= this.totalProjectionAmount){
+    if(this.projectionValidity(projection).success){
+      const index = this.projections!.findIndex(item => item.id === projection.id);
+      let amount = (+projection.q1_amount!) + (+projection.q2_amount!) + (+projection.q3_amount!) + (+projection.q4_amount!);
+      projection.amount = amount;
+      this.projections![index]= projection;
+      let payload = this.createFrom(projection)
+      if(this.totalAllocatedAmount <= this.getTotalAllocatedProjection(this.projections)){
         this.subscribeToSaveResponse(this.projectionService.update(payload),projection,index);
+        this.totalProjectionAmount = this.getTotalAllocatedProjection(this.projections);
       }else{
         this.projections![index] = this.clonedProjection[projection.id!];
         this.toastService.error('Allocated Amount Is Higher than Total Projection Amount');
       }
     }else{
-      this.toastService.error(valid.massage);
+      this.toastService.error(this.projectionValidity(projection).massage);
       this.projections![index] = this.clonedProjection[projection.id!];
     }
   }
@@ -460,6 +463,9 @@ export class ProjectionComponent implements OnInit {
                 }
               });
               ref.onClose.subscribe((result) => {
+                if(result){
+                  this.loadAllocated();
+                }
               });
             }else{
               this.toastService.error('No ceiling Chain Configured');
@@ -577,8 +583,7 @@ export class ProjectionComponent implements OnInit {
       })
       .subscribe(
         (resp: CustomResponse<any>) => {
-          this.totalAllocatedAmount = this.getTotalAllocated(
-            (resp.data ?? []));
+          this.totalAllocatedAmount = this.getTotalAllocated((resp.data ?? []));
           });
   }
   getTotalAllocatedProjection(data:any){

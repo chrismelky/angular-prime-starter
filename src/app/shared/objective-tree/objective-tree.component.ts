@@ -24,7 +24,7 @@ export class ObjectiveTreeComponent implements OnInit {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onLoadingChange: EventEmitter<boolean> = new EventEmitter(false);
 
-  objectiveNode!: TreeNode;
+  objectiveNode?: TreeNode;
   objectives?: any[] = [];
   objectiveTypes?: ObjectiveType[] = [];
   lowestType?: ObjectiveType;
@@ -50,6 +50,8 @@ export class ObjectiveTreeComponent implements OnInit {
       });
     this.sectorId?.subscribe((sectorId) => {
       this.loadTree(sectorId);
+      this.objectiveNode = undefined;
+      this.onSelectionChange();
     });
     this.onLoadingChange.next(false);
   }
@@ -84,7 +86,7 @@ export class ObjectiveTreeComponent implements OnInit {
 
   onSelectionChange(event?: any): void {
     const selection =
-      typeof this.objectiveNode.data === 'object'
+      typeof this.objectiveNode?.data === 'object'
         ? this.returnType === 'object'
           ? this.objectiveNode?.data
           : this.objectiveNode?.data?.id

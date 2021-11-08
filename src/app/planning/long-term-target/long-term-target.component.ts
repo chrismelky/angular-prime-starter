@@ -205,10 +205,13 @@ export class LongTermTargetComponent implements OnInit {
   }
 
   onObjectiveSeletion($event: any): void {
-    console.log($event);
     this.objective = $event;
     this.objectives = [this.objective];
-    this.filterChanged();
+    if ($event) {
+      this.filterChanged();
+    } else {
+      this.longTermTargets = [];
+    }
   }
 
   /**

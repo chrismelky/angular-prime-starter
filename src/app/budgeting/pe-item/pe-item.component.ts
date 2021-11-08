@@ -110,6 +110,7 @@ export class PeItemComponent implements OnInit {
   parent_sub_budget_class?: any;
   yearRange?: string;
   councilHQFacilityCode?: string;
+  isTableReady?: boolean = false
 
   constructor(
     protected peItemService: PeItemService,
@@ -304,6 +305,7 @@ export class PeItemComponent implements OnInit {
           }
           /** the fetch dataValue*/
           this.fetchDataValues();
+          this.isTableReady = true;
         });
     } else {
       this.toastService.error('Facility HQ with code node  '+this.councilHQFacilityCode+' defined');

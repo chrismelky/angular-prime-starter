@@ -15,6 +15,9 @@ import { CustomResponse } from '../../../utils/custom-response';
 import { Objective } from '../objective.model';
 import { ObjectiveService } from '../objective.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { ObjectiveType } from '../../objective-type/objective-type.model';
+import { Sector } from '../../sector/sector.model';
+import { SectorService } from '../../sector/sector.service';
 
 @Component({
   selector: 'app-objective-update',
@@ -24,17 +27,19 @@ export class ObjectiveUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-
+  parents?: Objective[] = [];
+  objectiveType?: ObjectiveType;
+  sectors?: Sector[] = [];
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
-    code: [
-      null,
-      [Validators.required, Validators.minLength(1), Validators.maxLength(1)],
-    ],
+    code: [null, []],
     description: [null, [Validators.required]],
+    parent_id: [null, []],
+    objective_type_id: [null, [Validators.required]],
+    sectors: [[]],
   });
 
   constructor(
@@ -42,11 +47,26 @@ export class ObjectiveUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected sectorService: SectorService
   ) {}
 
   ngOnInit(): void {
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const dialogData = this.dialogConfig.data;
+    this.parents = dialogData.parents;
+    this.updateForm(dialogData.objectiveData); //Initialize form with data from dialog
+    this.objectiveType = dialogData.objectiveType;
+    if (this.objectiveType?.is_sectoral) {
+      this.sectorService
+        .query({
+          columns: ['id', 'name'],
+        })
+        .subscribe((resp) => {
+          this.sectors = resp.data;
+        });
+    }
+    this.updateCodeValiditation();
+    this.updateSectorValiditation();
   }
 
   /**
@@ -65,6 +85,33 @@ export class ObjectiveUpdateComponent implements OnInit {
     } else {
       this.subscribeToSaveResponse(this.objectiveService.create(objective));
     }
+  }
+
+  private updateCodeValiditation(): void {
+    if (this.objectiveType?.is_incremental) {
+      this.editForm.get('code')?.clearValidators();
+    } else {
+      this.editForm
+        .get('code')
+        ?.setValidators([
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(1),
+        ]);
+    }
+    this.editForm.get('code')?.updateValueAndValidity();
+  }
+
+  private updateSectorValiditation(): void {
+    if (this.objectiveType?.is_sectoral) {
+      this.editForm.get('sectors')?.setValidators([Validators.required]);
+    } else {
+      this.editForm.get('sectors')?.clearValidators();
+      this.editForm.patchValue({
+        sectors: [],
+      });
+    }
+    this.editForm.get('sectors')?.updateValueAndValidity();
   }
 
   protected subscribeToSaveResponse(
@@ -105,6 +152,9 @@ export class ObjectiveUpdateComponent implements OnInit {
       id: objective.id,
       code: objective.code,
       description: objective.description,
+      parent_id: objective.parent_id,
+      objective_type_id: objective.objective_type_id,
+      sectors: objective.sectors,
     });
   }
 
@@ -118,6 +168,9 @@ export class ObjectiveUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       code: this.editForm.get(['code'])!.value,
       description: this.editForm.get(['description'])!.value,
+      objective_type_id: this.editForm.get(['objective_type_id'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      sectors: this.editForm.get(['sectors'])!.value,
     };
   }
 }

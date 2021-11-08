@@ -6,61 +6,54 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { ConfirmationService, TreeNode } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 
-import { CustomResponse } from '../../utils/custom-response';
-import {
-  ITEMS_PER_PAGE,
-  PER_PAGE_OPTIONS,
-} from '../../config/pagination.constants';
 import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
 
 import { ScrutinizationService } from './scrutinization.service';
-import { ScrutinizationUpdateComponent } from './update/scrutinization-update.component';
+import { ScrutinyActivity } from '../activity/activity.model';
+import { Scrutinization } from './scrutinization.model';
+import { User } from '../../setup/user/user.model';
+import { UserService } from '../../setup/user/user.service';
+import { ActivityInput } from '../../budgeting/activity-input/activity-input.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 import { ActivityService } from '../activity/activity.service';
-import { Activity } from '../activity/activity.model';
-import {Scrutinization} from "./scrutinization.model";
-import {SetCommentComponent} from "../assessment-criteria/update/set-comment.component";
-import {InputUpdateComponent} from "./update/input-update.component";
-import {User} from "../../setup/user/user.model";
-import {UserService} from "../../setup/user/user.service";
-import {ActivityInput} from "../../budgeting/activity-input/activity-input.model";
+import { OverlayPanel } from 'primeng/overlaypanel';
+import { Comment } from './comment/comment.model';
+import { CommentComponent } from './comment/comment.component';
+import { DecisionLevel } from 'src/app/setup/decision-level/decision-level.model';
+import { DecisionLevelService } from 'src/app/setup/decision-level/decision-level.service';
 
 @Component({
   selector: 'app-scrutinization',
   templateUrl: './scrutinization.component.html',
 })
 export class ScrutinizationComponent implements OnInit {
-  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('paginator', { static: true }) paginator!: Paginator;
   @ViewChild('table') table!: Table;
+  @ViewChild('adminPanel') adminPanel!: OverlayPanel;
+  @ViewChild('costCentrePanel') costCentrePanel!: OverlayPanel;
   scrutinizations?: Scrutinization[] = [];
   inputs?: ActivityInput[] = [];
 
   adminHierarchies?: AdminHierarchy[] = [];
   sections?: Section[] = [];
   departments?: Section[] = [];
-  activities: Activity[] = [];
+  activities?: ScrutinyActivity[] = [];
+  expandedRowKeys: any = {};
 
   columns = []; //Table display columns
 
   isLoading = false;
-  page?: number = 1;
+  page: number = 1;
   per_page!: number;
   totalItems = 0;
-  perPageOptions = PER_PAGE_OPTIONS;
-  predicate!: string; //Sort column
-  ascending!: boolean; //Sort direction asc/desc
-  search: any = {}; // items search objects
 
   //Mandatory filter
   admin_hierarchy_id!: number;
@@ -69,139 +62,177 @@ export class ScrutinizationComponent implements OnInit {
   admin_hierarchy_position!: number;
   budget_type = 'CURRENT';
   currentUser: User;
+  financialYearId?: number;
+
+  selectedAdminHierarchy: any;
+  nodes: TreeNode[] = [];
+  treeLoading = false;
+  userAdminHierarchy?: AdminHierarchy;
+  submittedCostCentres?: Scrutinization[] = [];
+  selectedCostCentre?: Scrutinization;
+  userDecionLevel?: DecisionLevel;
+  returnDecionLevel?: DecisionLevel;
 
   constructor(
     protected scrutinizationService: ScrutinizationService,
-    protected adminHierarchyService: AdminHierarchyService,
-    protected sectionService: SectionService,
-    protected activatedRoute: ActivatedRoute,
-    protected router: Router,
     protected userService: UserService,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    protected financialYearService: FinancialYearService,
+    protected activityService: ActivityService,
+    protected decisionLevelService: DecisionLevelService
   ) {
     this.currentUser = userService.getCurrentUser();
   }
 
   ngOnInit(): void {
-    this.sectionService
-      .query({ position: 3 })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.departments = resp.data)
-      );
-    this.handleNavigation();
+    this.userAdminHierarchy = this.currentUser.admin_hierarchy;
+    this.userDecionLevel = this.currentUser.decision_level;
+    this.financialYearService.findByStatus(1).subscribe((resp) => {
+      this.financialYearId = resp.data?.id;
+      this.createRootAdminHierarchy();
+    });
   }
 
-  /**
-   * Load data from api
-   * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
-   */
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.admin_hierarchy_id || !this.parent_id || !this.section_id) {
-      return;
+  createRootAdminHierarchy(): void {
+    if (this.userAdminHierarchy && this.userDecionLevel) {
+      this.scrutinizationService
+        .getSubmittedAdminHierarchies(
+          this.userDecionLevel?.id!,
+          this.financialYearId!,
+          this.userAdminHierarchy.id!,
+          `p${this.userAdminHierarchy.admin_hierarchy_position}`,
+          `p${this.userAdminHierarchy.admin_hierarchy_position! + 1}`
+        )
+        .subscribe((resp) => {
+          this.nodes = [
+            {
+              label: this.userAdminHierarchy?.name,
+              data: this.userAdminHierarchy,
+              key: this.userAdminHierarchy?.id?.toString(),
+              children: this.getNodes(resp.data || []),
+              leaf: false,
+              expanded: true,
+            },
+          ];
+        });
+
+      this.selectedAdminHierarchy = this.nodes[0];
+
+      this.loadSubmittedCostCentres(this.userAdminHierarchy?.id!);
     }
-    this.isLoading = true;
-    const pageToLoad: number = page ?? this.page ?? 1;
-    this.per_page = this.per_page ?? ITEMS_PER_PAGE;
+  }
+
+  loadSubmittedCostCentres(adminHierarchyId: number): void {
     this.scrutinizationService
-      .query({
-        page: pageToLoad,
-        per_page: this.per_page,
-        sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        section_id: this.section_id,
-        parent_id: this.parent_id,
-        ...this.helper.buildFilter(this.search),
-      })
+      .getSubmittedCostCentres(
+        this.userDecionLevel?.id!,
+        this.financialYearId!,
+        adminHierarchyId
+      )
+      .subscribe((resp) => {
+        this.submittedCostCentres = resp.data;
+      });
+  }
+
+  nodeExpand(event: any): any {
+    let selected: TreeNode = event.node;
+    this.treeLoading = true;
+    this.scrutinizationService
+      .getSubmittedAdminHierarchies(
+        this.userDecionLevel?.id!,
+        this.financialYearId!,
+        selected.data.id,
+        `p${selected.data.admin_hierarchy_position}`,
+        `p${selected.data.admin_hierarchy_position + 1}`
+      )
       .subscribe(
-        (res: CustomResponse<Scrutinization[]>) => {
-          this.isLoading = false;
-          this.onSuccess(res, pageToLoad, !dontNavigate);
+        (resp) => {
+          this.treeLoading = false;
+          selected.children = this.getNodes(resp.data || []);
         },
-        () => {
-          this.isLoading = false;
-          this.onError();
+        (error) => {
+          this.treeLoading = false;
         }
       );
   }
 
-  /**
-   * Called initialy/onInit to
-   * Restore page, sort option from url query params if exist and load page
-   */
-  protected handleNavigation(): void {
-    combineLatest([
-      this.activatedRoute.data,
-      this.activatedRoute.queryParamMap,
-    ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
-      const predicate = sort[0];
-      const ascending = sort[1] === 'asc';
-      this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
-      this.page = page !== null ? parseInt(page) : 1;
-      if (predicate !== this.predicate || ascending !== this.ascending) {
-        this.predicate = predicate;
-        this.ascending = ascending;
-      }
+  private getNodes(data: AdminHierarchy[]): TreeNode[] {
+    return data?.map((a) => {
+      return {
+        label: a.name,
+        key: a.id?.toString(),
+        data: a,
+        leaf: false,
+        parent: undefined,
+      };
     });
   }
 
-  /**
-   * Mandatory filter field changed;
-   * Mandatory filter= fields that must be specified when requesting data
-   * @param event
-   */
-  filterChanged(): void {
-    if (this.page !== 1) {
-      setTimeout(() => this.paginator.changePage(0));
-    } else {
-      this.loadPage(1);
-    }
-  }
-  onAdminHierarchySelection(event: any): void {
-    this.admin_hierarchy_id = event.id;
-    this.admin_hierarchy_position = event.admin_hierarchy_position;
-  }
-  /**
-   * search items by @var search params
-   */
-  onSearch(): void {
-    if (this.page !== 1) {
-      this.paginator.changePage(0);
-    } else {
-      this.loadPage();
-    }
+  onAdminHierarchyChange(event?: any): void {
+    this.loadSubmittedCostCentres(this.selectedAdminHierarchy.data.id);
+    this.adminPanel && this.adminPanel.hide();
+    this.selectedCostCentre = undefined;
+    this.activities = [];
   }
 
-  /**
-   * Clear search params
-   */
-  clearSearch(): void {
-    this.search = {};
-    if (this.page !== 1) {
-      this.paginator.changePage(0);
-    } else {
-      this.loadPage();
-    }
+  onCostCentreChange(): void {
+    this.scrutinizationService
+      .find(this.selectedCostCentre?.id!, {
+        columns: ['id', 'page'],
+      })
+      .subscribe((resp) => {
+        this.totalItems = resp.data?.page!;
+        const page = resp.data?.page! - 1;
+        setTimeout(() => {
+          this.paginator.changePage(page);
+        });
+      });
+    this.costCentrePanel && this.costCentrePanel.hide();
   }
 
-  /**
-   * Sorting changed
-   * predicate = column to sort by
-   * ascending = sort ascending else descending
-   * @param $event
-   */
-  onSortChange($event: LazyLoadEvent): void {
-    if ($event.sortField) {
-      this.predicate = $event.sortField!;
-      this.ascending = $event.sortOrder === 1;
-      this.loadPage();
-    }
+  loadActivities(): void {
+    this.isLoading = true;
+    this.activityService
+      .scrutinyActivities({
+        financial_year_id: this.financialYearId,
+        admin_hierarchy_id: this.selectedAdminHierarchy.data.id,
+        section_id: this.selectedCostCentre?.section_id,
+        budget_type: this.selectedCostCentre?.budget_type,
+        page: this.page,
+        scrutinization_id: this.selectedCostCentre?.id,
+      })
+      .subscribe(
+        (resp) => {
+          this.isLoading = false;
+          this.expandedRowKeys = {};
+          this.activities = resp.data?.map((a) => {
+            return {
+              ...a,
+              hasComment:
+                a.comments?.find(
+                  (c) => c.scrutinization_id === this.selectedCostCentre?.id
+                ) !== undefined,
+              inputs: a.inputs?.map((i) => {
+                return {
+                  ...i,
+                  hasComment:
+                    i.comments?.find(
+                      (i) => i.scrutinization_id === this.selectedCostCentre?.id
+                    ) !== undefined,
+                };
+              }),
+            };
+          });
+          this.totalItems = resp.total;
+          if (this.activities?.length) {
+            this.expandedRowKeys[this.activities[0].id!.toString()] = true;
+          }
+        },
+        (error) => (this.isLoading = false)
+      );
   }
 
   /**
@@ -210,151 +241,92 @@ export class ScrutinizationComponent implements OnInit {
    */
   pageChanged(event: any): void {
     this.page = event.page + 1;
-    this.per_page = event.rows!;
-    this.loadPage();
+    this.loadActivities();
   }
 
-  /**
-   * Impletement sorting Set/Reurn the sorting option for data
-   * @returns dfefault ot id sorting
-   */
-  protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : 'id';
-    const direction = this.ascending ? 'asc' : 'desc';
-    return [`${predicate}:${direction}`];
-  }
-
-  /**
-   * Creating or updating Scrutinization
-   * @param scrutinization ; If undefined initize new model to create else edit existing model
-   */
-  createOrUpdate(scrutinization?: Scrutinization): void {
-    const data: Scrutinization = scrutinization ?? {
-      ...new Scrutinization(),
-      admin_hierarchy_id: this.admin_hierarchy_id,
-      section_id: this.section_id,
-    };
-    const ref = this.dialogService.open(ScrutinizationUpdateComponent, {
-      data,
-      header: 'Create/Update Scrutinization',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
-  }
-
-  /**
-   * Delete Scrutinization
-   * @param scrutinization
-   */
-  delete(scrutinization: Scrutinization): void {
+  confirmForwardOrReturn(nextlevel: DecisionLevel, isReturned: boolean): void {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this Scrutinization?',
+      message: `Are you sure you want to ${
+        isReturned ? 'Return' : 'Forward'
+      } this cost centre to ${nextlevel.name}`,
       accept: () => {
-        this.scrutinizationService
-          .delete(scrutinization.id!)
-          .subscribe((resp) => {
-            this.loadPage(this.page);
-            this.toastService.info(resp.message);
-          });
+        const data = {
+          ...new Scrutinization(),
+          admin_hierarchy_cost_centre_id:
+            this.selectedCostCentre?.admin_hierarchy_cost_centre_id,
+          admin_hierarchy_id: this.selectedCostCentre?.admin_hierarchy_id,
+          section_id: this.selectedCostCentre?.section_id,
+          decision_level_id: nextlevel?.id,
+          from_decision_level_id: this.userDecionLevel?.id,
+          financial_year_id: this.selectedCostCentre?.financial_year_id,
+          budget_type: this.budget_type,
+          hierarchy_position:
+            this.selectedCostCentre?.admin_hierarchy?.admin_hierarchy_position,
+          is_returned: isReturned,
+        };
+        this.scrutinizationService.create(data).subscribe((resp) => {
+          this.loadSubmittedCostCentres(this.selectedAdminHierarchy.data.id);
+        });
       },
     });
   }
 
-  /**
-   * When successfully data loaded
-   * @param resp
-   * @param page
-   * @param navigate
-   */
-  protected onSuccess(
-    resp: CustomResponse<Scrutinization[]> | null,
-    page: number,
-    navigate: boolean
-  ): void {
-    this.totalItems = resp?.total!;
-    this.page = page;
-    if (navigate) {
-      this.router.navigate(['/scrutinization'], {
-        queryParams: {
-          page: this.page,
-          per_page: this.per_page,
-          sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
-        },
+  returnCostCentre(): void {
+    this.decisionLevelService
+      .getReturnDecisionLevel(
+        this.userDecionLevel?.id!,
+        this.selectedCostCentre?.admin_hierarchy?.admin_hierarchy_position!
+      )
+      .subscribe((resp) => {
+        if (resp.data) {
+          this.confirmForwardOrReturn(resp.data, true);
+        } else {
+          this.toastService.warn('No return decision level found');
+        }
       });
-    }
-    this.scrutinizations = resp?.data ?? [];
+  }
+
+  forwardCostCentre(): void {
+    this.confirmForwardOrReturn(
+      this.userDecionLevel?.next_decision_level!,
+      false
+    );
   }
 
   /**
-   * When error on loading data set data to empty and reset page to load
+   * Creating or updating Comment
+   * @param sectorProblem ; If undefined initize new model to create else edit existing model
    */
-  protected onError(): void {
-    setTimeout(() => (this.table.value = []));
-    this.page = 1;
-    this.toastService.error('Error loading Scrutinization');
-  }
-
-  filterSections() {
-    this.sectionService
-      .query({ parent_id: this.parent_id })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+  createOrUpdate(
+    comments: Comment[],
+    commentableType: string,
+    commentable: any
+  ): void {
+    const currentComment: Comment = comments.find((c) => {
+      return (
+        c.scrutinization_id === this.selectedCostCentre?.id &&
+        c.financial_year_id === this.financialYearId
       );
-  }
-  loadActivities() {
-    this.scrutinizationService
-      .queryActivities({
-        page: this.page,
-        perPage: this.per_page,
-        section_id: this.section_id,
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        budget_type: this.budget_type,
-        financial_year_id: this.currentUser.admin_hierarchy?.current_financial_year_id
-      })
-      .subscribe(
-        (resp: CustomResponse<Activity[]>) => (
-          this.scrutinizations = resp.data
-        )
-      );
-  }
-
-  loadInputs(activityId: number){
-      this.scrutinizationService.queryInput({
-        page: this.page,
-        perPage: this.per_page,
-        activity_id: activityId,
-        financial_year_id: this.currentUser.admin_hierarchy?.current_financial_year_id
-      }).subscribe((resp: CustomResponse<any>) => (
-        this.inputs = resp.data.inputs
-      ));
-  }
-
-  setActivityComments(activity: any) {
-    let data = activity;
-    const ref = this.dialogService.open(ScrutinizationUpdateComponent, {
-      data,
-      header: "Activity Comments",
+    }) ?? {
+      ...new Comment(),
+      scrutinization_id: this.selectedCostCentre?.id,
+      financial_year_id: this.financialYearId,
+      commentable_id: commentable.id,
+      commentable_type: commentableType,
+    };
+    const ref = this.dialogService.open(CommentComponent, {
+      data: {
+        currentComment,
+        otherComments: comments.filter(
+          (c) => c.scrutinization_id !== this.selectedCostCentre?.id
+        ),
+      },
+      header: 'Create/Update Comments',
     });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadActivities();
-      }
-    });
-  }
-
-  setInputComments(input: any) {
-    let data = input;
-    const ref = this.dialogService.open(InputUpdateComponent, {
-      data,
-      header: "Input Comments",
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadInputs(result);
+    ref.onClose.subscribe((newComments) => {
+      if (newComments) {
+        commentable.hasComment = true;
+        commentable.comments = newComments;
       }
     });
   }

@@ -57,6 +57,7 @@
           </span>
         </p-divider>
         <button
+          (click)="forward()"
           *ngIf="!budgetIsLocked"
           icon="pi pi-arrow-right"
           pButton
@@ -92,7 +93,6 @@
               <div class="p-field" fxFlex="0 1 30%">
                 <span class="p-float-label">
                   <p-dropdown
-                    [showClear]="true"
                     #facility
                     id="facility_id"
                     optionValue="id"
@@ -115,7 +115,6 @@
               <div class="p-field" fxFlex="0 1 70%">
                 <span class="p-float-label">
                   <p-dropdown
-                    [showClear]="true"
                     id="fund_source_id"
                     optionLabel="name"
                     optionValue="id"
@@ -137,7 +136,6 @@
             <div class="p-field" fxFlex="0 0 100%">
               <span class="p-float-label">
                 <p-dropdown
-                  [showClear]="true"
                   id="activity_id"
                   optionLabel="description"
                   [autoDisplayFirst]="false"
@@ -226,7 +224,11 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
+        <tr
+          [ngClass]="{
+            'has-comment': rowData.addressable_comments.length
+          }"
+        >
           <td>[ {{ rowData.gfs_code.code }} ] {{ rowData.gfs_code.name }}</td>
           <td>
             {{ rowData.unit }}
@@ -249,6 +251,15 @@
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
+                <button
+                  *ngIf="rowData.addressable_comments.length"
+                  (click)="addressComments(rowData)"
+                  icon="pi pi-comment"
+                  pButton
+                  class="
+                    p-icon-only p-button-text p-button-plain p-button-rounded
+                  "
+                ></button>
                 <button
                   pButton
                   pTooltip="Edit"

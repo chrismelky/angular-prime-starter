@@ -159,7 +159,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         (resp: CustomResponse<AdminHierarchyCeiling[]>) =>
           (this.parents = resp.data)
       );
-    this.budgetTypes = this.enumService.get('budgetTypes');
+    // this.budgetTypes = this.enumService.get('budgetTypes');
     this.handleNavigation();
     this.items = [
       {

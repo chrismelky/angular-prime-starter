@@ -105,7 +105,7 @@
     </div>
   </p-card>
 
-  <div *ngIf="isCriteriaMeet(); else noDataToShow">
+  <div *ngIf="isTableReady; else noDataToShow">
     <p-toolbar>
       <div class="p-toolbar-group-left">
       <span class="card-header-text">

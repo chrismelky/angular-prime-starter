@@ -38,9 +38,9 @@
               formError)
           "
         >
-          <small class="p-error" *ngIf="editForm.get('code')?.errors?.required"
-            >Code is required.</small
-          >
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.required">Code is required.</small>
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.minlength">Code length should be 8 alphanumeric characters.</small>
+          <small class="p-error" *ngIf="editForm.get('code')?.errors?.maxlength">Code length should be 8 alphanumeric characters.</small>
         </span>
       </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>

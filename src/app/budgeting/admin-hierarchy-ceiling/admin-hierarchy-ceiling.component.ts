@@ -92,6 +92,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   admin_hierarchy_position!: number;
   ceilingStartSectionPosition!: number;
   section_level_id!:number;
+  activeAdminHierarchy: AdminHierarchy = {};
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -474,6 +475,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
    */
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
+    this.activeAdminHierarchy = event;
     this.admin_hierarchy_position = event.admin_hierarchy_position;
     this.loadPage();
   }
@@ -486,7 +488,14 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     const ref = this.dialogService.open(InitiateCeilingComponent, {
       header: 'Ceiling Dissemination',
       width: '60%',
-      data: this.adminHierarchyCeilings,
+      data: {
+        ceiling:this.adminHierarchyCeilings,
+        ceilingStartPosition:this.ceilingStartPosition,
+        parent_id:this.admin_hierarchy_id,
+        position:this.admin_hierarchy_position,
+        activeAdminHierarchy:this.activeAdminHierarchy
+
+      },
     });
     ref.onClose.subscribe((result) => {
       if (result) {

@@ -6,7 +6,6 @@ import {ToastService} from "../toast.service";
 import {CustomResponse} from "../../utils/custom-response";
 import {AdminHierarchyCeiling} from "../../budgeting/admin-hierarchy-ceiling/admin-hierarchy-ceiling.model";
 import {FundSourceBudgetClassService} from "../../setup/fund-source-budget-class/fund-source-budget-class.service";
-import {Projection} from "../../budgeting/projection/projection.model";
 import {ProjectionService} from "../../budgeting/projection/projection.service";
 import {Observable} from "rxjs";
 import {finalize} from "rxjs/operators";
@@ -35,6 +34,7 @@ export class ProjectionAllocationComponent implements OnInit {
   ceilingChain: CeilingChain = {};
   completeCeiling: any[] = [];
   currentUser!: User;
+  totalProjection:any = {};
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
     protected financialYearService: FinancialYearService,
@@ -59,11 +59,10 @@ export class ProjectionAllocationComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
-    this.loadProjection();
+    this.getTotalProjection();
   }
 
   loadData(): void{
-    //this.totalAllocatedAmount = this.getTotalAllocated(this.ceiling);
     this.fundSourceBudgetClassService
       .query({
         fund_source_id:this.fund_source_id,
@@ -136,14 +135,10 @@ export class ProjectionAllocationComponent implements OnInit {
     }
     return ceiling.reduce((total: any, ceiling: any) => (Number(total) + Number(ceiling!.amount)), 0);
   }
-  getTotalAllocatedProjection(data:any){
-    return data.reduce((total: any, ceiling: any) => (Number(total) + Number(ceiling!.amount)), 0);
-  }
 
   getPercent(percent:number,data:any,section_id:number,ceilingIndex:number,secIndex:number){
     const x = this.completeCeiling.findIndex((s)=>s.id ===section_id);
     const i = this.completeCeiling[x].ceiling.findIndex((item: { ceiling_id: any; }) => item.ceiling_id === data.ceiling_id);
-    console.log(i);
     this.completeCeiling[secIndex].ceiling[i].percent=percent;
     this.completeCeiling[secIndex].ceiling[i].amount=(percent * this.projectionAmount)/100;
     this.totalAllocatedAmount = this.getTotalAllocated(this.completeCeiling);
@@ -153,23 +148,6 @@ export class ProjectionAllocationComponent implements OnInit {
     this.completeCeiling[secIndex].ceiling[i].amount=amount;
     this.completeCeiling[secIndex].ceiling[i].percent=(amount/this.projectionAmount)*100;
     this.totalAllocatedAmount = this.getTotalAllocated(this.completeCeiling);
-  }
-
-  loadProjection():void{
-    this.projectionService
-      .query({
-        per_page: 1000,
-        admin_hierarchy_id: this.admin_hierarchy_id,
-        financial_year_id: this.financial_year_id,
-        fund_source_id: this.fund_source_id,
-        facility_id:this.facility_id,
-      })
-      .subscribe(
-        (res: CustomResponse<Projection[]>) => {
-          let projection = res.data??[];
-          this.projectionAmount = this.getTotalAllocatedProjection(projection);
-        },
-      );
   }
 
   public subscribeToSaveResponse(
@@ -198,6 +176,21 @@ export class ProjectionAllocationComponent implements OnInit {
   protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
+  }
+
+  getTotalProjection(){
+    this.projectionService
+      .totalProjection({
+        fund_source_id:this.fund_source_id,
+        facility_id:this.facility_id,
+        financial_year_id:this.financial_year_id,
+        admin_hierarchy_id:this.admin_hierarchy_id,
+      })
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.totalProjection = resp.data;
+          this.projectionAmount =this.totalProjection.amount;
+        });
   }
 
 }

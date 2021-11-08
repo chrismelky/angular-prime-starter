@@ -191,7 +191,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       header: 'Upload Ceiling Template File',
       data: {
         admin_hierarchy_id: this.admin_hierarchy_id,
-        budget_type: this.activatedRoute.snapshot.params.budgetType,
+        budget_type: this.budget_type,
         section_id: this.section_id,
         financial_year_id: this.financial_year_id,
       },
@@ -224,7 +224,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         admin_hierarchy_position: this.admin_hierarchy_position,
         position: this.position,
         financial_year_id: this.financial_year_id,
-        budget_type:this.activatedRoute.snapshot.params.budgetType,
+        budget_type:this.budget_type,
       },
       width: '60%',
       header: 'Lock/Unlock Ceiling',
@@ -261,7 +261,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
-      !this.activatedRoute.snapshot.params.budgetType
+      !this.budget_type
     ) {
       return;
     }
@@ -276,7 +276,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
           sort: this.sort(),
           admin_hierarchy_id: this.admin_hierarchy_id,
           financial_year_id: this.financial_year_id,
-          budget_type:this.activatedRoute.snapshot.params.budgetType,
+          budget_type:this.budget_type,
           section_id: this.section_id,
           position: this.position,
           ...this.helper.buildFilter(this.search),
@@ -303,11 +303,13 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   protected handleNavigation(): void {
     combineLatest([
       this.activatedRoute.data,
+      this.activatedRoute.params,
       this.activatedRoute.queryParamMap,
-    ]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+    ]).subscribe(([data, params, queryParams]) => {
+      this.budget_type = params.budgetType;
+      const page = queryParams.get('page');
+      const perPage = queryParams.get('per_page');
+      const sort = (queryParams.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
       const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
@@ -315,6 +317,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       if (predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
+        this.loadPage();
       }
     });
   }
@@ -398,7 +401,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       ...new AdminHierarchyCeiling(),
       admin_hierarchy_id: this.admin_hierarchy_id,
       financial_year_id: this.financial_year_id,
-      budget_type:this.activatedRoute.snapshot.params.budgetType,
+      budget_type:this.budget_type,
     };
     const ref = this.dialogService.open(AdminHierarchyCeilingUpdateComponent, {
       data,
@@ -443,8 +446,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
-    if (navigate) {
-      this.router.navigate(['/admin-hierarchy-ceiling/'+this.activatedRoute.snapshot.params.budgetType], {
+    if (navigate && this.budget_type) {
+      this.router.navigate(['/admin-hierarchy-ceiling/'+ this.budget_type], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -513,7 +516,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       active: true,
       is_locked: false,
       is_approved: false,
-      budget_type:this.activatedRoute.snapshot.params.budgetType,
+      budget_type:this.budget_type,
       amount: 0.0,
     };
   }

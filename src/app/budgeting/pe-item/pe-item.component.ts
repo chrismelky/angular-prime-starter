@@ -98,6 +98,7 @@ export class PeItemComponent implements OnInit {
 
   //Mandatory filter
   admin_hierarchy_id!: number;
+  admin_hierarchy_code!: string;
   financial_year_id!: number;
   is_current_budget_locked!: boolean;
   pe_sub_form_id!: number;
@@ -108,6 +109,7 @@ export class PeItemComponent implements OnInit {
   currentUser?: User;
   parent_sub_budget_class?: any;
   yearRange?: string;
+  councilHQFacilityCode?: string;
 
   constructor(
     protected peItemService: PeItemService,
@@ -137,6 +139,7 @@ export class PeItemComponent implements OnInit {
       this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
       this.financial_year_id = this.currentUser.admin_hierarchy?.current_financial_year_id!
       this.is_current_budget_locked = this.currentUser.admin_hierarchy?.is_current_budget_locked!
+      this.admin_hierarchy_code = this.currentUser.admin_hierarchy?.code!
     }
   }
 
@@ -154,11 +157,12 @@ export class PeItemComponent implements OnInit {
     )
 
     if (this.admin_hierarchy_id) {
+     this.councilHQFacilityCode = '0000' + this.admin_hierarchy_code
       this.facilityService
         .query({
           columns: ['id', 'name', 'code'],
           admin_hierarchy_id: this.admin_hierarchy_id,
-          code: '00000000',
+          code: this.councilHQFacilityCode,
         })
         .subscribe(
           (resp: CustomResponse<Facility[]>) => {
@@ -274,32 +278,36 @@ export class PeItemComponent implements OnInit {
     ) {
       return;
     }
-    /** first fetch ceiling amount */
-    this.fetchCeilingAmount();
-    //this.fetchBudgetAmount()
-    this.peTableFields = [];
-    this.peDefinitionService
-      .getParentChildrenByFormId({
-        pe_form_id: this.pe_form_id,
-        pe_sub_form_id: this.pe_sub_form_id,
-      })
-      .subscribe((resp) => {
-        this.peTableFields = resp.data;
-        if (this.round.length === 0) {
-          this.addRow(0);
-          this.preparation();
-        } else {
-          for (let i = this.round.length; i > 1; i--) {
-            this.inputTexts[i] = [];
+
+    if (this.facilities[0]?.id !== undefined) {
+      /** first fetch ceiling amount */
+      this.fetchCeilingAmount();
+      this.peTableFields = [];
+      this.peDefinitionService
+        .getParentChildrenByFormId({
+          pe_form_id: this.pe_form_id,
+          pe_sub_form_id: this.pe_sub_form_id,
+        })
+        .subscribe((resp) => {
+          this.peTableFields = resp.data;
+          if (this.round.length === 0) {
+            this.addRow(0);
+            this.preparation();
+          } else {
+            for (let i = this.round.length; i > 1; i--) {
+              this.inputTexts[i] = [];
+              this.round.pop();
+            }
             this.round.pop();
+            this.addRow(0);
+            this.preparation();
           }
-          this.round.pop();
-          this.addRow(0);
-          this.preparation();
-        }
-        /** the fetch dataValue*/
-        this.fetchDataValues();
-      });
+          /** the fetch dataValue*/
+          this.fetchDataValues();
+        });
+    } else {
+      this.toastService.error('Facility HQ with code node  '+this.councilHQFacilityCode+' defined');
+    }
   }
 
   fetchDataValues() {
@@ -385,7 +393,7 @@ export class PeItemComponent implements OnInit {
           financial_year_id: this.financial_year_id,
           section_id: this.section_id,
           budget_type: 'CURRENT',
-          fund_source_id:this.fund_source_id,
+          fund_source_id: this.fund_source_id,
           budget_class_id: this.budget_class_id,
           per_page: 1000
         })
@@ -681,6 +689,7 @@ export class PeItemComponent implements OnInit {
       ceiling_amount: this.cellingAmount,
       balanceAmount: this.balanceAmount,
     };
+
 
     this.peItemService.create(object).subscribe((response) => {
       if (response.success) {

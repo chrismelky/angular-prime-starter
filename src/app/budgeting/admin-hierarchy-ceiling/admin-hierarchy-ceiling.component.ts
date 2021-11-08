@@ -86,7 +86,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
-  budget_type = 'CURRENT';
+  budget_type!: string;
   position!: number | undefined;
   section_id!: number | undefined;
   admin_hierarchy_position!: number;
@@ -109,7 +109,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected enumService: EnumService,
     protected sectionLevelService: SectionLevelService,
     protected userService: UserService,
-    protected ceilingChainService: CeilingChainService
+    protected ceilingChainService: CeilingChainService,
   ) {
     this.currentUser = userService.getCurrentUser();
     this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
@@ -120,6 +120,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   ngOnInit(): void {
     this.rootSection = this.currentUser.section;
     this.section_id = this.rootSection?.id;
+    this.budget_type = this.activatedRoute.snapshot.params.budgetType;
     this.ceilingService
       .query({ columns: ['id', 'name'] })
       .subscribe(

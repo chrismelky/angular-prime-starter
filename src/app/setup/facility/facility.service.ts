@@ -5,20 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
-import { createRequestOption } from '../../utils/request-util';
-import { CustomResponse } from '../../utils/custom-response';
-import { Facility, FacilityView } from './facility.model';
-import { GfsCode } from '../gfs-code/gfs-code.model';
+import {createRequestOption} from '../../utils/request-util';
+import {CustomResponse} from '../../utils/custom-response';
+import {Facility, FacilityView} from './facility.model';
+import {GfsCode} from '../gfs-code/gfs-code.model';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class FacilityService {
   public resourceUrl = 'api/facilities';
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient) {
+  }
 
   create(facility: Facility): Observable<CustomResponse<Facility>> {
     return this.http.post<CustomResponse<Facility>>(this.resourceUrl, facility);

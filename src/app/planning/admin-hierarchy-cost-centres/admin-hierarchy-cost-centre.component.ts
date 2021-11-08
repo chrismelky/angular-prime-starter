@@ -116,6 +116,7 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
+
     });
   }
 

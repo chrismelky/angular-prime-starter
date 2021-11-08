@@ -42,7 +42,7 @@ export class ObjectiveTreeComponent implements OnInit {
   loadTree(sectorId?: number): void {
     this.objectiveService
       .tree({
-        sectorId: sectorId,
+        sector_id: sectorId,
       })
       .subscribe(
         (resp: CustomResponse<Objective[]>) => {

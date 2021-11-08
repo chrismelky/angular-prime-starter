@@ -187,7 +187,7 @@ export class ProjectionAllocationComponent implements OnInit {
    */
   protected onSaveSuccess(result: any): void {
     this.toastService.info(result.message);
-    this.dialogRef.close();
+    this.dialogRef.close(result);
   }
 
   /**

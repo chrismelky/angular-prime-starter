@@ -37,22 +37,6 @@
               <label for="financial_year_id">Financial Year </label>
             </span>
           </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="budget_type"
-                optionValue="value"
-                optionLabel="display"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="budgetTypes!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="budget_type"
-              ></p-dropdown>
-              <label for="budget_type">Budget Type </label>
-            </span>
-          </div>
         </div>
         <div
           fxLayout="row wrap"
@@ -183,10 +167,9 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Ceiling Amounts</span>
-          <div class="card-header-text">
-            <p-splitButton *ngxPermissionsOnly="['INITIATE_CEILING']"  [disabled]="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"  [disabled]="
-              !admin_hierarchy_id || !financial_year_id || !budget_type
-            " styleClass="p-button-raised"></p-splitButton>
+          <div class="card-header-text" *ngxPermissionsOnly="['INITIATE_CEILING']">
+            <p-splitButton   *ngIf="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition && financial_year_id !== undefined && admin_hierarchy_id !== undefined" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"
+            styleClass="p-button-raised"></p-splitButton>
           </div>
         </div>
       </ng-template>
@@ -199,7 +182,7 @@
           <th>Bank Account</th>
           <th>Amount (TZS)</th>
           <th>Status</th>
-          <th  *ngIf=" position === ceilingStartSectionPosition" colspan="">Lock/Unlock</th>
+          <th *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">Lock/Unlock</th>
           <th  style="width:8rem"></th>
         </tr>
       </ng-template>
@@ -226,7 +209,7 @@
             <p-badge severity="success" *ngIf="rowData?.is_locked===false" value="unlocked"></p-badge>
             <p-badge severity="danger" *ngIf="rowData?.is_locked===true" value="Locked"></p-badge>
           </td>
-          <td>
+          <td *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">
             <p-inputSwitch
               (onChange)="toggleActivation(rowData)"
               [(ngModel)]="rowData['is_locked']"
@@ -234,17 +217,21 @@
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" *ngxPermissionsOnly="['MANAGE_CEILING']" fxLayoutGap="2px">
-                <button  [disabled]="rowData.amount <= 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
+              <div fxLayout="row" *ngxPermissionsOnly="['ALLOCATE_CEILING']" fxLayoutGap="2px">
+                <button  *ngIf="rowData.amount > 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
+              </div>
+              <div fxLayout="row" *ngxPermissionsOnly="['DELETE_CEILING_AMOUNT']" fxLayoutGap="2px">
                 <button
                   pButton
-                  *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData['amount'] <=0 "
+                  *ngIf="!rowData['is_locked']"
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="p-button-text p-button-plain p-button-rounded p-button-icon"
                   icon="pi pi-trash"
                   (click)="delete(rowData)"
                 ></button>
+              </div>
+              <div fxLayout="row" *ngxPermissionsOnly="['EDIT_CEILING']" fxLayoutGap="2px">
                 <button *ngIf="!editing && !rowData['is_locked'] && position === ceilingStartSectionPosition && !rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
                 <button *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button"  icon="pi pi-pencil" (click)="editOwnSource(rowData)" class="p-button-rounded p-button-text"></button>
                 <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>

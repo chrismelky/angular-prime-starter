@@ -356,6 +356,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
               ceiling:this.facilityCeiling,
               // @ts-ignore
               planning_admin_hierarchy_id:facility[position],
+              saved:false,
               budget_class_id:this.ceiling!.ceiling.budget_class_id,
               fund_source_id:this.ceiling!.ceiling.fund_source_id,
               council:ceiling.admin_hierarchy.name,

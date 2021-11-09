@@ -173,14 +173,14 @@
               fxFlex="0 1 25%"
               legend="Ceiling Total"
             >
-              {{ budgetStatus?.ceilingAmount | currency: " " }}
+              <strong>{{ budgetStatus?.ceilingAmount | currency: " " }}</strong>
             </p-fieldset>
             <p-fieldset
               class="total-fieldset used-total"
               fxFlex="0 1 25%"
               legend="Used Total"
             >
-              {{ budgetStatus?.usedAmount | currency: " " }}
+              <strong>{{ budgetStatus?.usedAmount | currency: " " }}</strong>
             </p-fieldset>
             <p-fieldset
               class="total-fieldset"

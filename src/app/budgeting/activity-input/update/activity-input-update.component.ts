@@ -44,6 +44,8 @@ export class ActivityInputUpdateComponent implements OnInit {
   gfsCodes?: GfsCode[] = [];
   facilityActivity?: FacilityActivity;
   total = 0.0;
+  totalYrOne = 0.0;
+  totalYrTwo = 0.0;
   periodSum = 0.0;
   /**
    * Declare form
@@ -55,8 +57,10 @@ export class ActivityInputUpdateComponent implements OnInit {
     quantity: [null, [Validators.required]],
     frequency: [null, [Validators.required]],
     unit: [null, [Validators.required]],
-    forward_year_one_amount: [null, [Validators.required]],
-    forward_year_two_amount: [null, [Validators.required]],
+    quantity_yr_one: [null, [Validators.required]],
+    quantity_yr_two: [null, [Validators.required]],
+    frequency_yr_one: [null, [Validators.required]],
+    frequency_yr_two: [null, [Validators.required]],
     activity_id: [null, [Validators.required]],
     activity_fund_source_id: [null, [Validators.required]],
     budget_class_id: [null, [Validators.required]],
@@ -90,8 +94,25 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
     const input: ActivityInput = dialogData.activityInput;
-    input?.id &&
+    if (input.id) {
       this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
+      this.updateTotalYrOne(
+        input.unit_price!,
+        input.quantity_yr_one!,
+        input.frequency_yr_one!
+      );
+      this.updateTotalYrTwo(
+        input.unit_price!,
+        input.quantity_yr_one!,
+        input.frequency_yr_one!
+      );
+      this.onPeriodChange(
+        input.period_one,
+        input.period_two,
+        input.period_three,
+        input.period_four
+      );
+    }
     this.updateForm(input); //Initialize form with data from dialog
   }
 
@@ -125,8 +146,28 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.total = (unit_price || 0) * (quantity || 0) * (frequency || 0);
   }
 
+  updateTotalYrOne(
+    unit_price?: number,
+    quantity?: number,
+    frequency?: number
+  ): void {
+    this.totalYrOne = (unit_price || 0) * (quantity || 0) * (frequency || 0);
+  }
+
+  updateTotalYrTwo(
+    unit_price?: number,
+    quantity?: number,
+    frequency?: number
+  ): void {
+    this.totalYrTwo = (unit_price || 0) * (quantity || 0) * (frequency || 0);
+  }
+
   onPeriodChange(q1?: number, q2?: number, q3?: number, q4?: number): void {
     this.periodSum = (q1 || 0) + (q2 || 0) + (q3 || 0) + (q4 || 0);
+    console.log(q1);
+    console.log(q2);
+    console.log(q3);
+    console.log(q4);
     if (this.periodSum !== 100) {
       this.editForm.get('period')?.setValidators([Validators.required]);
     } else {
@@ -208,9 +249,11 @@ export class ActivityInputUpdateComponent implements OnInit {
       unit_price: activityInput.unit_price,
       quantity: activityInput.quantity,
       frequency: activityInput.frequency,
+      frequency_yr_one: activityInput.frequency_yr_one,
+      frequency_yr_two: activityInput.frequency_yr_two,
       unit: activityInput.unit,
-      forward_year_one_amount: activityInput.forward_year_one_amount,
-      forward_year_two_amount: activityInput.forward_year_two_amount,
+      quantity_yr_one: activityInput.quantity_yr_one,
+      quantity_yr_two: activityInput.quantity_yr_two,
       activity_id: activityInput.activity_id,
       fund_source_id: activityInput.fund_source_id,
       financial_year_id: activityInput.financial_year_id,
@@ -276,31 +319,6 @@ export class ActivityInputUpdateComponent implements OnInit {
     return {
       ...new ActivityInput(),
       ...this.editForm.value,
-      // id: this.editForm.get(['id'])!.value,
-      // gfs_code_id: this.editForm.get(['gfs_code_id'])!.value,
-      // unit_price: this.editForm.get(['unit_price'])!.value,
-      // quantity: this.editForm.get(['quantity'])!.value,
-      // frequency: this.editForm.get(['frequency'])!.value,
-      // unit: this.editForm.get(['unit'])!.value,
-      // forward_year_one_amount: this.editForm.get(['forward_year_one_amount'])!
-      //   .value,
-      // forward_year_two_amount: this.editForm.get(['forward_year_two_amount'])!
-      //   .value,
-      // activity_id: this.editForm.get(['activity_id'])!.value,
-      // fund_source_id: this.editForm.get(['fund_source_id'])!.value,
-      // financial_year_id: this.editForm.get(['financial_year_id'])!.value,
-      // admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
-      // facility_id: this.editForm.get(['facility_id'])!.value,
-      // section_id: this.editForm.get(['section_id'])!.value,
-      // budget_class_id: this.editForm.get(['budget_class_id'])!.value,
-      // activity_fund_source_id: this.editForm.get(['activity_fund_source_id'])!
-      //   .value,
-      // period_one: this.editForm.get(['period_one'])!.value,
-      // period_two: this.editForm.get(['period_two'])!.value,
-      // period_three: this.editForm.get(['period_three'])!.value,
-      // period_four: this.editForm.get(['period_four'])!.value,
-      // has_breakdown: this.editForm.get(['has_breakdown'])!.value,
-      // is_inkind: this.editForm.get(['is_inkind'])!.value,
       breakdowns: breakdowns ? JSON.stringify(breakdowns) : breakdowns,
     };
   }

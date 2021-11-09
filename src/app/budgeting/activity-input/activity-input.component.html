@@ -294,6 +294,7 @@
                   (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
+                  *ngIf="!budgetIsLocked"
                   pButton
                   pTooltip="Delete"
                   tooltipPosition="bottom"

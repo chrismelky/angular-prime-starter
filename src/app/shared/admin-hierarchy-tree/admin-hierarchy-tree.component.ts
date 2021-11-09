@@ -3,6 +3,7 @@ import { Component, Input, OnInit, Output } from '@angular/core';
 import { LocalStorageService } from 'ngx-webstorage';
 import { TreeNode } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { Subject } from 'rxjs';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { User } from 'src/app/setup/user/user.model';
@@ -18,6 +19,9 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
   treeLoading: boolean = false;
   nodes: TreeNode[] = [];
   selectedValue: any;
+
+  @Input() selectionSubject?: Subject<TreeNode>;
+
   @Input() selectionMode: string = 'single';
   @Input() returnType: string = 'id';
   @Input() stateKey?: string;
@@ -34,6 +38,12 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    if (this.selectionSubject) {
+      this.selectionSubject?.subscribe((value) => {
+        this.selectedValue = value;
+      });
+    }
+
     const rootAdminHierarchy = this.currentUser.admin_hierarchy;
     const history = this.localStorageService.retrieve(`${this.stateKey}_state`);
     if (
@@ -71,7 +81,15 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
     this.adminHierarchyService
       .query({
         parent_id: selected.data.id,
-        columns: ['id', 'name', 'code', 'admin_hierarchy_position','current_financial_year_id','carryover_financial_year_id','supplementary_financial_year_id'],
+        columns: [
+          'id',
+          'name',
+          'code',
+          'admin_hierarchy_position',
+          'current_financial_year_id',
+          'carryover_financial_year_id',
+          'supplementary_financial_year_id',
+        ],
       })
       .subscribe(
         (resp) => {

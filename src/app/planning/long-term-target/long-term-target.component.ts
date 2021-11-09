@@ -89,9 +89,10 @@ export class LongTermTargetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.financialYearService
-      .findByStatus(1)
-      .subscribe((resp) => (this.currentFinancialYear = resp.data));
+    this.financialYearService.findByStatus(1).subscribe((resp) => {
+      this.currentFinancialYear = resp.data;
+      this.handleNavigation();
+    });
 
     if (this.currentUser?.section) {
       const parent = `p${this.currentUser.section.position}`;
@@ -106,8 +107,6 @@ export class LongTermTargetComponent implements OnInit {
           }
         });
     }
-
-    this.handleNavigation();
   }
 
   sectorChanged(): void {
@@ -182,8 +181,9 @@ export class LongTermTargetComponent implements OnInit {
         this.strategicPlan.end_financial_year_id!
       )
       .subscribe((resp) => {
-        this.financialYears = resp.data!;
-        console.log(resp.data);
+        this.financialYears = (resp.data || []).filter(
+          (fy) => fy.start_date! < this.currentFinancialYear?.end_date!
+        );
       });
   }
 
@@ -308,6 +308,7 @@ export class LongTermTargetComponent implements OnInit {
         longTermTarget,
         financialYearId,
         currentFinancialYear,
+        section: this.section,
         strategicPlanAdminHierarchyId: this.strategicPlan.admin_hierarchy_id,
         currentPosition:
           this.currentUser?.admin_hierarchy?.admin_hierarchy_position,

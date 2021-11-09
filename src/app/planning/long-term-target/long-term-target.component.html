@@ -229,8 +229,18 @@
               pRipple
               [pTooltip]="y.name + ' Targets'"
               tooltipPosition="bottom"
+              [ngClass]="{
+                'p-button-success':
+                  y.id === rowData.financial_year_target?.financial_year_id
+              }"
               class="
                 p-button-text p-button-plain p-button-rounded p-button-icon
+              "
+              [label]="
+                y.id === rowData.financial_year_target?.financial_year_id ||
+                currentFinancialYear?.id !== y.id
+                  ? 'View'
+                  : 'Confirm'
               "
               icon="pi pi-external-link"
               (click)="

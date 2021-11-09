@@ -50,6 +50,7 @@ export class LongTermTargetComponent implements OnInit {
   objectives?: any[] = [];
   sections?: Section[] = [];
   section?: Section;
+  showPrevious = false;
 
   isLoading = false;
   page?: number = 1;

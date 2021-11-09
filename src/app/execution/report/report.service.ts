@@ -47,8 +47,9 @@ export class ReportService {
 
   getReport(req?: any) {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<Report[]>>(`${this.resourceUrl}/get_report`, {
+    return this.http.get<any>(`${this.resourceUrl}/get_report`, {
       params: options,
+      responseType  : 'arraybuffer' as 'json'
     });
   }
 

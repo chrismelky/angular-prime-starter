@@ -130,7 +130,9 @@ export class ReportUpdateComponent implements OnInit {
     data.budgetType = this.dialogConfig.data.budgetType;
     data.format = format;
     this.reportService.getReport(data).subscribe((resp) => {
-      console.log(resp.data)
+      let file = new Blob([resp], { type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank");
     });
   }
 

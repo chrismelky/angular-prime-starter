@@ -3,12 +3,13 @@ export class ReportSetup {
     public id?: number,
     public name?: string,
     public template_name?: string,
-    public query_params?: ParameterList[],
+    public orientation?: string,
+    public query_params?: string,
     public sql_query?: string
   ) {}
 }
 
-export class ParameterList {
+export class OrientationList {
   constructor(
     public id?: number,
     public name?: string,

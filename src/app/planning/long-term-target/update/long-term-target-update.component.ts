@@ -211,6 +211,9 @@ export class LongTermTargetUpdateComponent implements OnInit {
   prepareReferenceControls(selectedReferences: NationalReference[]): void {
     this.referenceLoading = false;
     const ref = this.referenceControls;
+    while (ref.length !== 0) {
+      ref.removeAt(0);
+    }
     this.referenceTypes?.forEach((type) => {
       const value = type.multi_select
         ? selectedReferences.filter((r) => r.reference_type_id === type.id)

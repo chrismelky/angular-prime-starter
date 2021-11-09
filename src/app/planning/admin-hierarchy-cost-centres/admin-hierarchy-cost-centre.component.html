@@ -14,7 +14,7 @@
         <p-divider fxFlex class="title" align="center">
           <span fxLayout="column" fxLayoutAlign="centre center">
             <small>Financial year</small>
-            <strong>2021/22</strong>
+            <strong>{{ currentFinancialYear?.name }}</strong>
           </span>
         </p-divider>
       </div>
@@ -87,84 +87,171 @@
               fxFlex
               fxLayoutAlign="start center"
             ></div>
-            extra filter
           </div>
         </p-accordionTab>
       </p-accordion>
     </div>
   </p-card>
 
-  <div
-    fxLayout="column"
-    fxLayoutGap="10px"
-    fxLayoutAlign="start wrap"
-    style="width: 100%"
-  >
-    <p-card
-      *ngFor="let c of adminHierarchyCostCentres!"
-      fxFlex.lt-md="100%"
-      fxFlex="0 1  50%"
+  <p-card>
+    <p-table
+      #table
+      [lazy]="true"
+      [resizableColumns]="true"
+      [responsive]="true"
+      [autoLayout]="true"
+      [loading]="isLoading"
+      [value]="adminHierarchyCostCentres!"
+      (onLazyLoad)="onSortChange($event)"
+      [customSort]="true"
     >
-      <div
-        style="padding: 0.75rem"
-        fxLayout="row"
-        fxLayoutGap="10px"
-        fxLayoutAlign="space-between start"
-        fxFlex
-      >
-        <!-- Name -->
-        <div fxLayout="row" fxFlex fxLayoutGap="4px" fxLayoutAlign="start fill">
-          <div
-            fxLayout="column"
-            fxLayoutGap="10px"
-            fxLayoutAlign="space-between start"
-          >
-            <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start">
-              <p-tag [value]="c.section?.code!" severity="success"></p-tag>
-              <p-tag severity="info" value="{{ c.section?.name }}"></p-tag>
-            </div>
-            <div fxLayout="column" fxLayoutGap="1px">
-              <span>Budget Type:</span>
-              <span>Status</span>
-              <span
-                >Decision Level:
-                {{ c.current_budget_decision_level?.name }}</span
-              >
-            </div>
-          </div>
+      <!-- <ng-template pTemplate="caption">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text">Cost Centres</span>
         </div>
-
-        <div
-          fxLayout="column"
-          fxLayoutGap="10px"
-          fxFlex
-          fxLayoutAlign="space-between end"
-        >
-          <span fxFlex></span>
-          <div
-            fxLayout="row"
-            fxLayoutAlign="space-between center"
-            fxLayoutGap="10px"
-          >
+      </ng-template> -->
+      <ng-template pTemplate="header" let-columns>
+        <tr *ngIf="adminHierarchyCostCentres?.length">
+          <th>Cost Centre</th>
+          <th>Decision Level</th>
+          <th style="text-align: center">Status</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td style="height: 64px">
+            <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start">
+              <p-tag
+                [value]="rowData.section?.code!"
+                severity="success"
+              ></p-tag>
+              <p-tag
+                [value]="rowData.section?.name!"
+                severity="success"
+              ></p-tag>
+            </div>
+          </td>
+          <td>
+            <span [ngSwitch]="budget_type">
+              <span *ngSwitchCase="'CURRENT'">
+                <p-tag
+                  [value]="rowData.current_budget_decision_level?.name!"
+                  severity="info"
+                ></p-tag>
+              </span>
+              <span *ngSwitchCase="'APPROVED'">
+                <p-tag
+                  [value]="rowData.current_budget_decision_level?.name!"
+                  severity="info"
+                ></p-tag>
+              </span>
+              <span *ngSwitchCase="'CARRYOVER'">
+                <p-tag
+                  [value]="rowData.carryover_budget_decision_level?.name!"
+                  severity="info"
+                ></p-tag>
+              </span>
+              <span *ngSwitchCase="'SUPPLEMENTARY'">
+                <p-tag
+                  [value]="rowData.supplementary_budget_decision_level?.name!"
+                  severity="info"
+                ></p-tag>
+              </span>
+            </span>
+          </td>
+          <td style="text-align: center">
+            <span [ngSwitch]="budget_type">
+              <span *ngSwitchCase="'CURRENT'">
+                <i
+                  *ngIf="rowData.is_current_budget_locked"
+                  class="pi pi-lock"
+                  style="color: red"
+                ></i>
+                <i
+                  *ngIf="!rowData.is_current_budget_locked"
+                  class="pi pi-lock-open pi-primary"
+                  style="color: green"
+                ></i>
+              </span>
+              <span *ngSwitchCase="'APPROVED'">
+                <i
+                  *ngIf="rowData.is_current_budget_locked"
+                  class="pi pi-lock"
+                  style="color: red"
+                ></i>
+                <i
+                  *ngIf="!rowData.is_current_budget_locked"
+                  class="pi pi-lock-open pi-primary"
+                  style="color: green"
+                ></i>
+              </span>
+              <span *ngSwitchCase="'CARRYOVER'">
+                <i
+                  *ngIf="rowData.is_carryover_budget_locked"
+                  class="pi pi-lock"
+                  style="color: red"
+                ></i>
+                <i
+                  *ngIf="!rowData.is_carryover_budget_locked"
+                  class="pi pi-lock-open pi-primary"
+                  style="color: green"
+                ></i>
+              </span>
+              <span *ngSwitchCase="'SUPPLEMENTARY'">
+                <i
+                  *ngIf="rowData.is_supplementary_budget_locked"
+                  class="pi pi-lock"
+                  style="color: red"
+                ></i>
+                <i
+                  *ngIf="!rowData.is_supplementary_budget_locked"
+                  class="pi pi-lock-open pi-primary"
+                  style="color: green"
+                ></i>
+              </span>
+            </span>
+          </td>
+          <td class="fit">
             <button
-              fxFlex
               pButton
               class="p-button p-button-success p-button-text p-button-sm"
               label="Plan"
               icon="pi pi-list"
-              [routerLink]="['/activity', budget_type, c.id]"
+              [routerLink]="['/activity', budget_type, rowData.id]"
             ></button>
+          </td>
+          <td class="fit">
             <button
-              fxFlex
               pButton
               class="p-button p-button-info p-button-text p-button-sm"
               label="Budget"
               icon="pi pi-money-bill"
-              [routerLink]="['/activity-input', budget_type, c.id]"
+              [routerLink]="['/activity-input', budget_type, rowData.id]"
             ></button>
-          </div>
-        </div>
-      </div>
-    </p-card>
-  </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+    </p-table>
+    <div
+      fxLayout="row"
+      fxLayoutGap="10px"
+      fxLayoutAlign="center"
+      style="width: 100%"
+    >
+      <p-paginator
+        fxFlex
+        #paginator
+        [alwaysShow]="adminHierarchyCostCentres?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
+  </p-card>
 </div>

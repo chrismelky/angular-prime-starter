@@ -318,9 +318,7 @@ export class LongTermTargetComponent implements OnInit {
       header: 'Financial Year Target/Priorities',
     });
     ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
+      this.loadPage(this.page);
     });
   }
 

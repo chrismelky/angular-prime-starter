@@ -138,6 +138,7 @@
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Strategic Plans</span>
           <button
+            *ngxPermissionsOnly="['WRITE_STRATEGIC_PLAN']"
             pButton
             pRipple
             icon="pi pi-plus"
@@ -192,6 +193,10 @@
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
+                  *ngxPermissionsOnly="[
+                    'READ_LONG_TERM_TARGET',
+                    'WRITE_LONG_TERM_TARGET'
+                  ]"
                   class="p-button-text"
                   pButton
                   pRipple

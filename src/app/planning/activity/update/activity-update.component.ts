@@ -406,6 +406,9 @@ export class ActivityUpdateComponent implements OnInit {
   prepareReferenceControls(selectedReferences: NationalReference[]): void {
     this.referenceLoading = false;
     const ref = this.referenceControls;
+    while (ref.length !== 0) {
+      ref.removeAt(0);
+    }
     this.referenceTypes?.forEach((type) => {
       const value = type.multi_select
         ? selectedReferences.filter((r) => r.reference_type_id === type.id)
@@ -477,6 +480,7 @@ export class ActivityUpdateComponent implements OnInit {
   /** Load projects */
   loadProjects(budgetClassId: number): void {
     this.generalForm.get('project_id')?.reset();
+    this.updateProjectTypeValidation(0);
     this.projectIsLoading = false;
     this.projectService
       .byBudgetClassAndSection(budgetClassId, {
@@ -526,7 +530,7 @@ export class ActivityUpdateComponent implements OnInit {
 
   updateProjectTypeValidation(projectId: number): void {
     const project = this.projects?.find((p) => p.id === projectId);
-    if (project?.code === '0000') {
+    if (!project || project?.code === '0000') {
       this.projectTypeRequired = false;
       this.generalForm.patchValue({
         expenditure_category_id: null,

@@ -476,6 +476,7 @@ export class ActivityUpdateComponent implements OnInit {
 
   /** Load projects */
   loadProjects(budgetClassId: number): void {
+    this.generalForm.get('project_id')?.reset();
     this.projectIsLoading = false;
     this.projectService
       .byBudgetClassAndSection(budgetClassId, {

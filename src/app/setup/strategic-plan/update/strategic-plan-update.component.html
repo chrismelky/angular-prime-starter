@@ -157,7 +157,7 @@
       </div>
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
-        <p-fileUpload [showUploadButton]="false" name="url" id="url" url=""  (onSelect)="onSelect($event)" accept="application/pdf">
+        <p-fileUpload [showUploadButton]="false" name="url" id="url" url="" [maxFileSize]="10000000"  (onSelect)="onSelect($event)" accept="application/pdf">
         </p-fileUpload>
       </div>
 

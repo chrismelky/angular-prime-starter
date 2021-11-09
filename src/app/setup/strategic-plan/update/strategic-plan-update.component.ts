@@ -189,10 +189,4 @@ export class StrategicPlanUpdateComponent implements OnInit {
       });
   }
 
-  handleReaderLoaded(e: any) {
-    // @ts-ignore
-    //this.uploadedFiles.push('data:application/pdf;base64,' + btoa(e.target.result));
-    this.uploadedFiles.push(btoa(e.target.result));
-    this.editForm.get(['url'])?.setValue({ file: this.uploadedFiles });
-  }
 }

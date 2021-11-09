@@ -84,7 +84,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
     this.sections = dialogData.sections;
     this.objectives = dialogData.objectives;
 
-    this.target?.id &&
+    this.target?.section_id &&
       this.loadReferences(this.target?.section_id!, this.target?.id);
 
     this.updateForm(this.target!); //Initialize form with data from dialog

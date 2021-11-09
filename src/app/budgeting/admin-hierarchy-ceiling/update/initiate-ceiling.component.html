@@ -4,6 +4,9 @@
     <ng-template pTemplate="caption">
       <div fxLayout="row" fxLayoutAlign="space-between center">
         <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(cl)"></button>
+<!--        <span>-->
+<!--          <p-multiSelect [style]="{'min-width':'30em'}" [options]="adminHierarchiesList" [(ngModel)]="selectedAdminHierarchies" defaultLabel="Select Council" optionLabel="name" selectedItemsLabel="{0} Council selected"></p-multiSelect>-->
+<!--        </span>-->
         <span class="p-input-icon-left p-ml-auto">
                     <i class="pi pi-search"></i>
                     <input #ceilingSearchInput pInputText type="text"  placeholder="Search keyword" />

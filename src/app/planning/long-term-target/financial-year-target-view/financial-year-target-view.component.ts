@@ -4,6 +4,7 @@ import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-h
 import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
 import { AdminHierarchyTarget } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { Section } from 'src/app/setup/section/section.model';
 import { ToastService } from 'src/app/shared/toast.service';
 import { FinancialYear } from '../../../setup/financial-year/financial-year.model';
 import { FinancialYearTarget } from '../financial-year-target.model';
@@ -24,6 +25,7 @@ export class FinancialYearTargetViewComponent implements OnInit {
   adminLevels?: AdminHierarchyLevel[] = [];
   childAdminHierarchyTargets?: AdminHierarchyTarget[] = [];
   currentAdminTarget: FinancialYearTarget = {};
+  section?: Section;
 
   formError = false;
   isSaving = false;
@@ -44,12 +46,12 @@ export class FinancialYearTargetViewComponent implements OnInit {
     this.financialYearId = dialogData.financialYearId;
     this.longTermTarget = dialogData.longTermTarget;
     this.currentPosition = dialogData.currentPosition;
+    this.section = dialogData.section;
     this.strategicPlanAdminHierarchyId =
       dialogData.strategicPlanAdminHierarchyId;
     this.adminLevelService
       .lowerLevelsCanBudget(this.currentPosition)
       .subscribe((resp) => {
-        console.log(this.adminLevels);
         this.adminLevels = resp.data;
       });
     this.financialYearTargetService

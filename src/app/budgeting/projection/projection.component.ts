@@ -89,6 +89,7 @@ export class ProjectionComponent implements OnInit {
   totalProjectionAmount: number = 0.00;
   totalAllocatedAmount: number = 0.00;
   adminHierarchyPosition!:number
+  totalProjection:any={};
 
   constructor(
     protected projectionService: ProjectionService,
@@ -159,6 +160,7 @@ export class ProjectionComponent implements OnInit {
       return;
     }
     this.isLoading = true;
+    this.getTotalProjection();
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.projectionService
@@ -422,9 +424,9 @@ export class ProjectionComponent implements OnInit {
       projection.amount = amount;
       this.projections![index]= projection;
       let payload = this.createFrom(projection)
-      if(this.totalAllocatedAmount <= this.getTotalAllocatedProjection(this.projections)){
+      if(this.totalAllocatedAmount <= this.totalProjection.amount){
         this.subscribeToSaveResponse(this.projectionService.update(payload),projection,index);
-        this.totalProjectionAmount = this.getTotalAllocatedProjection(this.projections);
+        this.totalProjectionAmount = this.totalProjection.amount;
       }else{
         this.projections![index] = this.clonedProjection[projection.id!];
         this.toastService.error('Allocated Amount Is Higher than Total Projection Amount');
@@ -441,8 +443,7 @@ export class ProjectionComponent implements OnInit {
   }
 
   allocateProjection() : void{
-    this.totalProjectionAmount = this.getTotalAllocatedProjection(this.projections);
-    if(this.totalProjectionAmount > 0){
+    if(this.totalProjection.amount > 0){
       this.ceilingChainService
         .queryWithChild({
           for_admin_hierarchy_level_position:this.adminHierarchyPosition,
@@ -519,11 +520,6 @@ export class ProjectionComponent implements OnInit {
       projection.forwad_year2_amount === existProjection.forwad_year2_amount
     ){
       return {success:false,massage:'No any Change On projection'}
-    }else if(
-      projection.forwad_year1_amount === 0 ||
-      projection.forwad_year2_amount === 0
-    ){
-      return {success:false,massage:'Forward Projection Is Important'}
     }
     return {success:true,massage:'Every Thing Is ok'}
   }
@@ -560,15 +556,6 @@ export class ProjectionComponent implements OnInit {
   }
 
   protected onSaveFinalize(): void {
-  }
-
-  calculateTotal(column:string) {
-    let total = 0;
-    for(let proj of this.projections!) {
-      // @ts-ignore
-      total += +proj[column];
-    }
-    return total;
   }
 
 
@@ -610,5 +597,17 @@ export class ProjectionComponent implements OnInit {
           }
         });
   }
-
+  getTotalProjection(){
+    this.projectionService
+      .totalProjection({
+        fund_source_id:this.fund_source_id,
+        facility_id:this.facility_id,
+        financial_year_id:this.financial_year_id,
+        admin_hierarchy_id:this.admin_hierarchy_id,
+      })
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.totalProjection = resp.data;
+        });
+  }
 }

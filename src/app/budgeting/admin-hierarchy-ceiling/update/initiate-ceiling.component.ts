@@ -8,6 +8,8 @@ import {Table} from "primeng/table";
 import {fromEvent} from "rxjs";
 import {debounceTime, distinctUntilChanged, filter, map, subscribeOn} from 'rxjs/operators';
 import {DynamicDialogConfig} from 'primeng/dynamicdialog';
+import {AdminHierarchy} from "../../../setup/admin-hierarchy/admin-hierarchy.model";
+import {AdminHierarchyService} from "../../../setup/admin-hierarchy/admin-hierarchy.service";
 
 @Component({
   selector: 'app-initiate-ceiling',
@@ -21,16 +23,34 @@ export class InitiateCeilingComponent implements OnInit {
   filterValue: string='';
   isSearching:boolean=false;
   private existingCeiling: any;
-
+  selectedAdminHierarchies: number[] = [];
+  adminHierarchiesList: AdminHierarchy[]=[];
+  activeAdminHierarchy: AdminHierarchy={};
+  ceilingStartLevel!:number;
+  parent_id!:number;
+  position!:number;
   constructor(
     private fundSourceBudgetClassService:FundSourceBudgetClassService,
     public dialogRef: DynamicDialogRef,
-    public config: DynamicDialogConfig
+    public config: DynamicDialogConfig,
+    protected adminHierarchyService: AdminHierarchyService,
 
   ) { }
 
   ngAfterViewInit() {
-    this.existingCeiling=this.config.data;
+    this.existingCeiling=this.config.data.ceiling;
+    this.ceilingStartLevel=this.config.data.ceilingStartPosition;
+    this.parent_id=this.config.data.parent_id;
+    this.position=this.config.data.position;
+    this.activeAdminHierarchy= this.config.data.activeAdminHierarchy
+    // this.adminHierarchyService.query({parent_id:this.parent_id,
+    //   admin_hierarchy_position:this.ceilingStartLevel})
+    //   .subscribe((resp) => {
+    //     this.adminHierarchiesList = resp.data??[];
+    //     if(this.adminHierarchiesList.length <=0){
+    //       this.adminHierarchiesList.push(this.activeAdminHierarchy)
+    //     }
+    //   });
     fromEvent(this.ceilingSearchInput!.nativeElement, 'keyup').pipe(
       map((event: any) => {
         return event.target.value;
@@ -46,7 +66,6 @@ export class InitiateCeilingComponent implements OnInit {
         this.isSearching = false;
       }, (err) => {
           this.isSearching = false;
-          console.log('error', err);
         });
     });
   }

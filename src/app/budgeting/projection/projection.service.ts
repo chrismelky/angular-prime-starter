@@ -53,6 +53,13 @@ export class ProjectionService {
     });
   }
 
+  totalProjection(req?: any): Observable<CustomResponse<any>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<any>>('api/total_projections', {
+      params: options,
+    });
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

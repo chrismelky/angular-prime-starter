@@ -93,7 +93,7 @@ export class PeItemComponent implements OnInit {
   budgetedAmount: any = 0;
   balanceAmount: any = 0;
   defaultValue: any = null;
-  city?: string;
+  selectRow?: string;
 
 
   //Mandatory filter

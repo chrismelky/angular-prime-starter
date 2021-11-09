@@ -16,6 +16,7 @@ import { StrategicPlan } from './strategic-plan.model';
 @Injectable({ providedIn: 'root' })
 export class StrategicPlanService {
   public resourceUrl = 'api/strategic_plans';
+  public downloadUrl = 'api/download_strategic_plans';
 
   constructor(protected http: HttpClient) {}
 
@@ -55,13 +56,12 @@ export class StrategicPlanService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  download(req?: any): Observable<CustomResponse<any>> {
-    const options = createRequestOption(req);
-    return this.http.get<CustomResponse<any[]>>(
-      `${this.resourceUrl}/download`,
-      {
-        params: options,
-      }
-    );
+  download(id: number){
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+    };
+    return this.http.get<any>(
+      `${this.downloadUrl}/${id}`,httpOptions
+    )
   }
 }

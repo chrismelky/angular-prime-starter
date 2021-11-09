@@ -318,9 +318,9 @@
       <ng-template pTemplate="footer">
         <tr *ngIf="projections!.length > 0">
           <th colspan="5" class="p-text-right"></th>
-          <th style="text-align: end;padding-bottom: 1em !important;padding-top: 1em !important;padding-right: 5px !important;">{{calculateTotal('amount') | currency: '':''}}</th>
-          <th style="text-align: end;padding-right: 5px !important;">{{calculateTotal('forwad_year1_amount') | currency: '':''}}</th>
-          <th style="text-align: end;padding-right: 5px !important;">{{calculateTotal('forwad_year2_amount') | currency: '':''}}</th>
+          <th style="text-align: end;padding-bottom: 1em !important;padding-top: 1em !important;padding-right: 5px !important;">{{totalProjection?.amount | currency: '':''}}</th>
+          <th style="text-align: end;padding-right: 5px !important;">{{totalProjection?.forwad_year1_amount  | currency: '':''}}</th>
+          <th style="text-align: end;padding-right: 5px !important;">{{totalProjection?.forwad_year2_amount | currency: '':''}}</th>
           <th></th>
         </tr>
       </ng-template>

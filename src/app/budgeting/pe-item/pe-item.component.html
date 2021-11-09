@@ -105,7 +105,7 @@
     </div>
   </p-card>
 
-  <div *ngIf="isTableReady; else noDataToShow">
+  <div *ngIf="isTableReady && this.isCriteriaMeet(); else noDataToShow">
     <p-toolbar>
       <div class="p-toolbar-group-left">
       <span class="card-header-text">
@@ -143,7 +143,7 @@
             <td title="{{i.uid}}">
               <p-radioButton *ngIf="round.length > 1"
                              name="selectedRow" value="{{i.uid}}"
-                             [(ngModel)]="city" inputId="{{i.uid}}"
+                             [(ngModel)]="selectRow" inputId="{{i.uid}}"
                              (onClick)="selectedRows($event,i.uid,i.id)"
               ></p-radioButton>
               {{i.id + 1}}

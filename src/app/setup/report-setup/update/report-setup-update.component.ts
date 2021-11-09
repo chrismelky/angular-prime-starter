@@ -12,7 +12,7 @@ import { finalize } from "rxjs/operators";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 
 import { CustomResponse } from "../../../utils/custom-response";
-import {ParameterList, ReportSetup} from "../report-setup.model";
+import {OrientationList, ReportSetup} from "../report-setup.model";
 import { ReportSetupService } from "../report-setup.service";
 import { ToastService } from "src/app/shared/toast.service";
 
@@ -33,11 +33,11 @@ export class ReportSetupUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, []],
     template_name: [null, []],
+    orientation: [null, []],
     query_params: [null, []],
     sql_query: [null, []],
   });
-
-  parameters?: ParameterList[] = [];
+  orientations?: OrientationList[] = [];
 
   constructor(
     protected reportSetupService: ReportSetupService,
@@ -48,7 +48,15 @@ export class ReportSetupUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
+    this.orientations = [
+      {
+        name:'Potrait',
+        value:'potrait'
+      },{
+        name:'Landscape',
+        value:'landscape'
+      }
+    ];
     //Initialize form with data from dialog
     this.updateForm(this.dialogConfig.data);
   }
@@ -110,6 +118,7 @@ export class ReportSetupUpdateComponent implements OnInit {
       id: reportSetup.id,
       name: reportSetup.name,
       template_name: reportSetup.template_name,
+      orientation: reportSetup.orientation,
       query_params: reportSetup.query_params,
       sql_query: reportSetup.sql_query,
     });
@@ -125,6 +134,7 @@ export class ReportSetupUpdateComponent implements OnInit {
       id: this.editForm.get(["id"])!.value,
       name: this.editForm.get(["name"])!.value,
       template_name: this.editForm.get(["template_name"])!.value,
+      orientation: this.editForm.get(["orientation"])!.value,
       query_params: this.editForm.get(["query_params"])!.value,
       sql_query: this.editForm.get(["sql_query"])!.value,
     };

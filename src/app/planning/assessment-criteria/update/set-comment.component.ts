@@ -5,6 +5,7 @@ import {UserService} from "../../../setup/user/user.service";
 import {ToastService} from "../../../shared/toast.service";
 import {User} from "../../../setup/user/user.model";
 import {AssessmentCriteriaService} from "../assessment-criteria.service";
+import {AssessmentCriteria} from "../assessment-criteria.model";
 @Component({
   selector: "app-set-comment",
   templateUrl: "./set-comment.component.html",
@@ -69,7 +70,7 @@ export class SetCommentComponent implements OnInit {
    * @param
    */
   protected updateForm(
-    casAssessmentSubCriteriaPossibleScore:any
+    casAssessmentSubCriteriaPossibleScore:AssessmentCriteria
   ): void {
     this.commentForm.patchValue({
       id: casAssessmentSubCriteriaPossibleScore.cas_assessment_result_comment_id,

@@ -58,31 +58,33 @@
           <input id="query_params" type="text" pInputText formControlName="query_params" />
           <label for="query_params">Query Params </label>
         </span>
-<!--        <span class="p-float-label">-->
-<!--          <p-multiSelect id="parameters"-->
-<!--                         [options]="parameters!"-->
-<!--                         [virtualScroll]="true"-->
-<!--                         [filter]="true"-->
-<!--                         optionLabel="name"-->
-<!--                         display="chip"-->
-<!--                         appendTo="body"-->
-<!--                         dataKey="id"-->
-<!--                         formControlName="query_params"-->
-<!--          ></p-multiSelect>-->
+      </div>
+    <div class="p-field p-col-12 p-md-4" fxFlex>
+      <span class="p-float-label">
+          <p-dropdown
+            id="orientation"
+            optionValue="value"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="orientations!"
+            formControlName="orientation"
+          ></p-dropdown>
 
-<!--          <label for="parameters">Query Params </label>-->
-<!--        </span>-->
-        <span
-          *ngIf="
-            editForm.get('query_params')!.invalid &&
-            (editForm.get('query_params')!.dirty ||
-              editForm.get('query_params')!.touched ||
+          <label for="orientation">Orientation</label>
+        </span>
+      <span
+        *ngIf="
+            editForm.get('orientation')!.invalid &&
+            (editForm.get('orientation')!.dirty ||
+              editForm.get('orientation')!.touched ||
               formError)
           "
-        >
+      >
         </span>
-      </div>
-
+    </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <textarea

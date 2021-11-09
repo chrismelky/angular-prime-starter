@@ -39,4 +39,5 @@ export class BudgetStatus {
   public usedAmount?: number;
   public activityAmount?: number;
   public ceilingAmount?: number;
+  public balanceAmount?: number;
 }

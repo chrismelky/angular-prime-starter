@@ -205,7 +205,6 @@ export class ActivityInputComponent implements OnInit {
       })
       .subscribe((resp) => {
         this.budgetStatus = resp.data;
-        console.log(this.budgetStatus);
       });
   }
 

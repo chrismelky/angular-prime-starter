@@ -341,6 +341,28 @@ p-card.filter-no-adv {
    border: 1px solid rgba(0, 0, 0, 0.38)
   }
 }
+.activity-total, .ceiling-total {
+  fieldset {
+    background-color: #eff6ff;
+  }
+}
+.used-total {
+  fieldset {
+    background-color: #ecfdf5;
+  }
+}
+
+.balance-warn {
+  fieldset {
+    background-color: #fef3c7;
+  }
+}
+.balance-success {
+  fieldset {
+    background-color: #ecfdf5;
+  }
+}
+
 
 .in-table-header {
   margin-bottom: -4px;

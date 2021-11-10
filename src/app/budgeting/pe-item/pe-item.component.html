@@ -9,7 +9,7 @@
         </p-divider>
       </div>
     </ng-template>
-          <div fxLayout="column" fxLayoutGap="10px">
+          <div fxLayout="column" fxLayoutGap="15px">
             <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
               <div class="p-field" fxFlex="0 1 50%">
                 <span class="p-float-label">
@@ -172,7 +172,7 @@
                 <div *ngIf="input?.output_type === 'CURRENCY'; else notCurrencyBlock">
                   <p-inputNumber
                     [size]="14"
-                    [disabled]="!!input.formula || financialYear !== null?false:true"
+                    [disabled]="(!!input.formula)  || (financialYear !== null?false:true)"
                     [(ngModel)]="peValuesArray[i.uid!][input.id].value"
                     (onBlur)="updateValue(peValuesArray[i.uid!][input.id])"
                     autocomplete="off"

@@ -94,6 +94,7 @@ export class PeItemComponent implements OnInit {
   balanceAmount: any = 0;
   defaultValue: any = null;
   selectRow?: string;
+  financialYear: any = null;
 
 
   //Mandatory filter
@@ -171,6 +172,18 @@ export class PeItemComponent implements OnInit {
           }
         );
     }
+
+    
+    this.financialYearService.findByStatus(1).subscribe(
+      (resp: CustomResponse<FinancialYear>) => {
+        if(resp.data){
+         this.financialYear =  resp.data.name!
+        } else {
+          this.toastService.error('Planning Financial Year is not defined');
+        }
+       }
+    )
+
     this.splitButtons();
     this.handleNavigation();
     this.calenderYearRange();

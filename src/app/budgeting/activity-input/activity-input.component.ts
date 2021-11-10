@@ -379,6 +379,7 @@ export class ActivityInputComponent implements OnInit {
         facilityActivity: this.facilityActivity,
         gfsCodes: this.gfsCodes,
         budgetIsLocked: this.budgetIsLocked,
+        balanceAmount: this.budgetStatus?.balanceAmount,
       },
       width: '900px',
       header: 'Create/Update Activity Input',

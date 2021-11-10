@@ -192,9 +192,17 @@
         </div>
 
         <!-- Total -->
-        <p-fieldset fxFlex legend="Total" class="total-fieldset">
-          <strong>{{ total | currency: " " }}</strong>
-        </p-fieldset>
+        <div fxLayout="column" fxLayoutGap="2px" fxFlex>
+          <p-fieldset legend="Total" class="total-fieldset">
+            <strong>{{ total | currency: " " }}</strong>
+          </p-fieldset>
+          <small
+            class="p-error"
+            *ngIf="editForm.get('totalAmountValid')?.errors?.required"
+            >Total must be zero or less than
+            {{ balanceAmount | currency: " " }}</small
+          >
+        </div>
 
         <div fxLayout="column" fxLayoutGap="2px">
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">

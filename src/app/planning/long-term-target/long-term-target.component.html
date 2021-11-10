@@ -177,15 +177,23 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Long Term Targets</span>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!strategicPlan || !objective"
-            (click)="createOrUpdate()"
-            label="Add Long Term Target"
-          ></button>
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+            <p-checkbox
+              name="showPrevious"
+              [binary]="true"
+              label="Show Previous Years"
+              [(ngModel)]="showPrevious"
+            ></p-checkbox>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-plus"
+              class="p-button-raised"
+              [disabled]="!strategicPlan || !objective"
+              (click)="createOrUpdate()"
+              label="Add Long Term Target"
+            ></button>
+          </div>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
@@ -194,13 +202,16 @@
             Target<p-sortIcon field="description"></p-sortIcon>
           </th>
           <th>Performance Indicator</th>
-          <th
-            *ngFor="let y of financialYears"
-            class="fit"
-            style="padding-right: 24px"
-          >
-            {{ y.name }}
-          </th>
+          <ng-container *ngFor="let y of financialYears">
+            <th
+              *ngIf="y.id === currentFinancialYear?.id || showPrevious"
+              class="fit"
+              style="padding-right: 24px"
+            >
+              {{ y.name }}
+            </th>
+          </ng-container>
+
           <th class="fit"></th>
         </tr>
       </ng-template>
@@ -223,21 +234,36 @@
               [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
             ></button>
           </td>
-          <td *ngFor="let y of financialYears" style="padding-right: 24px">
-            <button
-              pButton
-              pRipple
-              [pTooltip]="y.name + ' Targets'"
-              tooltipPosition="bottom"
-              class="
-                p-button-text p-button-plain p-button-rounded p-button-icon
-              "
-              icon="pi pi-external-link"
-              (click)="
-                financialYearTarget(rowData, y.id!, currentFinancialYear!)
-              "
-            ></button>
-          </td>
+          <ng-container *ngFor="let y of financialYears">
+            <td
+              *ngIf="y.id === currentFinancialYear?.id || showPrevious"
+              style="padding-right: 24px"
+            >
+              <button
+                pButton
+                pRipple
+                [pTooltip]="y.name + ' Targets'"
+                tooltipPosition="bottom"
+                [ngClass]="{
+                  'p-button-success':
+                    y.id === rowData.financial_year_target?.financial_year_id
+                }"
+                class="
+                  p-button-text p-button-plain p-button-rounded p-button-icon
+                "
+                [label]="
+                  y.id === rowData.financial_year_target?.financial_year_id ||
+                  currentFinancialYear?.id !== y.id
+                    ? 'View'
+                    : 'Confirm'
+                "
+                icon="pi pi-external-link"
+                (click)="
+                  financialYearTarget(rowData, y.id!, currentFinancialYear!)
+                "
+              ></button>
+            </td>
+          </ng-container>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

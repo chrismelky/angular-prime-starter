@@ -9,6 +9,7 @@ import {CasAssessmentSubCriteriaPossibleScoreService} from "../../../setup/cas-a
 import {CustomResponse} from "../../../utils/custom-response";
 import {CasAssessmentSubCriteriaPossibleScore} from "../../../setup/cas-assessment-sub-criteria-possible_score/cas-assessment-sub-criteria-possible_score.model";
 import {PER_PAGE_OPTIONS} from "../../../config/pagination.constants";
+import {AssessmentCriteria} from "../assessment-criteria.model";
 @Component({
   selector: "app-set-scores",
   templateUrl: "./set-scores.component.html",
@@ -98,7 +99,7 @@ export class SetScoresComponent implements OnInit {
    * @param
    */
   protected updateForm(
-    casAssessmentSubCriteriaPossibleScore:any
+    casAssessmentSubCriteriaPossibleScore:AssessmentCriteria
   ): void {
     this.scoreForm.patchValue({
       id: casAssessmentSubCriteriaPossibleScore.id,

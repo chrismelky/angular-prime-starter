@@ -15,7 +15,6 @@
             <strong>{{ adminHierarchyCostCentre?.section?.name }}</strong>
           </span>
         </p-divider>
-        <!-- <span class="card-header-text">Filter</span> -->
         <p-divider fxFlex class="title" align="center">
           <span fxLayout="column" fxLayoutAlign="centre center">
             <small>Budget Type</small>
@@ -44,7 +43,7 @@
             [ngSwitch]="budget_type"
           >
             <small>Decision Level</small>
-            <p-tag severity="success" *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
+            <p-tag severity="primary" *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
               adminHierarchyCostCentre?.current_budget_decision_level?.name
             }}</p-tag>
             <strong *ngSwitchCase="'CARRYOVER'">{{
@@ -63,7 +62,7 @@
           pButton
           class="
             p-button-rounded
-            p-button-success
+            p-button-primary
             p-button-outline
             p-button-icon-only
           "
@@ -90,7 +89,7 @@
               fxLayoutAlign="start center"
             >
               <!-- Facility -->
-              <div class="p-field" fxFlex="0 1 30%">
+              <div class="p-field" fxFlex="0 1 25%">
                 <span class="p-float-label">
                   <p-dropdown
                     #facility
@@ -112,7 +111,7 @@
               </div>
 
               <!-- Fund source -->
-              <div class="p-field" fxFlex="0 1 70%">
+              <div class="p-field" fxFlex="0 1 75%">
                 <span class="p-float-label">
                   <p-dropdown
                     id="fund_source_id"
@@ -170,35 +169,29 @@
             fxLayoutAlign="end"
           >
             <p-fieldset
-              class="total-fieldset"
-              fxFlex="0 1 25%"
-              legend="Activity Amount"
+              class="total-fieldset ceiling-total"
+              fxFlex="0 1 20%"
+              legend="Ceiling Total"
             >
-              {{ budgetStatus?.activityAmount | currency: " " }}
+              <strong>{{ budgetStatus?.ceilingAmount | currency: " " }}</strong>
+            </p-fieldset>
+            <p-fieldset
+              class="total-fieldset used-total"
+              fxFlex="0 1 20%"
+              legend="Used Total"
+            >
+              <strong>{{ budgetStatus?.usedAmount | currency: " " }}</strong>
             </p-fieldset>
             <p-fieldset
               class="total-fieldset"
-              fxFlex="0 1 25%"
-              legend="Total Ceiling"
+              [ngClass]="{
+                'balance-warn': budgetStatus?.balanceAmount! < 1000,
+                'balance-success': budgetStatus?.balanceAmount! > 0
+              }"
+              fxFlex="0 1 20%"
+              legend="Balance Total"
             >
-              {{ budgetStatus?.ceilingAmount | currency: " " }}
-            </p-fieldset>
-            <p-fieldset
-              class="total-fieldset"
-              fxFlex="0 1 25%"
-              legend="Used Amount"
-            >
-              {{ budgetStatus?.usedAmount | currency: " " }}
-            </p-fieldset>
-            <p-fieldset
-              class="total-fieldset"
-              fxFlex="0 1 25%"
-              legend="Ceiling Balance"
-            >
-              {{
-                (budgetStatus?.ceilingAmount || 0) -
-                  (budgetStatus?.usedAmount || 0) | currency: " "
-              }}
+              <strong>{{ budgetStatus?.balanceAmount | currency: " " }}</strong>
             </p-fieldset>
           </div>
         </div>
@@ -221,14 +214,33 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Activity Inputs</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]="!facilityActivity || !financialYear || !fund_source_id"
-            (click)="createOrUpdate()"
-            label="Add Input"
-          ></button>
+          <div
+            fxLayout="row"
+            fxFlex
+            fxLayoutGap="10px"
+            fxLayoutAlign="end center"
+          >
+            <p-fieldset
+              *ngIf="facilityActivity"
+              class="total-fieldset"
+              fxFlex="0 1 200px"
+              legend="Activity Total"
+            >
+              <strong>{{
+                budgetStatus?.activityAmount | currency: " "
+              }}</strong>
+            </p-fieldset>
+            <button
+              pButton
+              icon="pi pi-plus"
+              class="p-button-raised"
+              [disabled]="
+                !facilityActivity || !financialYear || !fund_source_id
+              "
+              (click)="createOrUpdate()"
+              label="Add Input"
+            ></button>
+          </div>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
@@ -294,6 +306,7 @@
                   (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
+                  *ngIf="!budgetIsLocked"
                   pButton
                   pTooltip="Delete"
                   tooltipPosition="bottom"

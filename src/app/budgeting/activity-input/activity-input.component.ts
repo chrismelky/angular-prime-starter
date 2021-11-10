@@ -205,7 +205,6 @@ export class ActivityInputComponent implements OnInit {
       })
       .subscribe((resp) => {
         this.budgetStatus = resp.data;
-        console.log(this.budgetStatus);
       });
   }
 
@@ -387,6 +386,7 @@ export class ActivityInputComponent implements OnInit {
     ref.onClose.subscribe((result) => {
       if (result) {
         this.loadPage(this.page);
+        this.loadBudgetingStatus();
       }
     });
   }
@@ -454,6 +454,7 @@ export class ActivityInputComponent implements OnInit {
           .delete(activityInput.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
+            this.loadBudgetingStatus();
             this.toastService.info(resp.message);
           });
       },

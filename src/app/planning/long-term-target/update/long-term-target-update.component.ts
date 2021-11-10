@@ -84,7 +84,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
     this.sections = dialogData.sections;
     this.objectives = dialogData.objectives;
 
-    this.target?.id &&
+    this.target?.section_id &&
       this.loadReferences(this.target?.section_id!, this.target?.id);
 
     this.updateForm(this.target!); //Initialize form with data from dialog
@@ -211,6 +211,9 @@ export class LongTermTargetUpdateComponent implements OnInit {
   prepareReferenceControls(selectedReferences: NationalReference[]): void {
     this.referenceLoading = false;
     const ref = this.referenceControls;
+    while (ref.length !== 0) {
+      ref.removeAt(0);
+    }
     this.referenceTypes?.forEach((type) => {
       const value = type.multi_select
         ? selectedReferences.filter((r) => r.reference_type_id === type.id)

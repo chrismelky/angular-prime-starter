@@ -226,19 +226,22 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     });
   }
 
-  selectionLevelChange(sectionId:number) {
-    this.position = sectionId;
+  selectionLevelChange(section:number) {
+    this.section_id = this.userService.getCurrentUser().section_id;
+    this.position = section;
     this.sectionService
       .query({ position: this.position })
       .subscribe((resp: CustomResponse<Section[]>) => {
         this.sections = resp.data;
-        // @ts-ignore
-        if (this.rootSection.position === this.position) {
+        if (this.rootSection!.position === this.position) {
           this.section_id = this.rootSection?.id;
           this.sections = this.sections!.filter(s => (s.id === this.rootSection!.id))
         } else {
-          // @ts-ignore
-          this.section_id = this.sections[0].id;
+          let filtered = this.sections!.filter(s => (s.parent_id === this.section_id));
+          if(filtered.length > 0){
+            this.sections = filtered;
+          }
+          this.section_id = this.sections![0].id;
         }
         this.loadPage();
       });

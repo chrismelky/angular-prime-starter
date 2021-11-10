@@ -47,6 +47,8 @@ export class ScrutinizationComponent implements OnInit {
   departments?: Section[] = [];
   activities?: ScrutinyActivity[] = [];
   expandedRowKeys: any = {};
+  adminAreaIsLoading = false;
+  costCentreIsLoading = false;
 
   columns = []; //Table display columns
 
@@ -97,6 +99,7 @@ export class ScrutinizationComponent implements OnInit {
   }
 
   createRootAdminHierarchy(): void {
+    this.adminAreaIsLoading = true;
     if (this.userAdminHierarchy && this.userDecionLevel) {
       this.scrutinizationService
         .getSubmittedAdminHierarchies(
@@ -106,18 +109,24 @@ export class ScrutinizationComponent implements OnInit {
           `p${this.userAdminHierarchy.admin_hierarchy_position}`,
           `p${this.userAdminHierarchy.admin_hierarchy_position! + 1}`
         )
-        .subscribe((resp) => {
-          this.nodes = [
-            {
-              label: this.userAdminHierarchy?.name,
-              data: this.userAdminHierarchy,
-              key: this.userAdminHierarchy?.id?.toString(),
-              children: this.getNodes(resp.data || []),
-              leaf: false,
-              expanded: true,
-            },
-          ];
-        });
+        .subscribe(
+          (resp) => {
+            this.adminAreaIsLoading = false;
+            this.nodes = [
+              {
+                label: this.userAdminHierarchy?.name,
+                data: this.userAdminHierarchy,
+                key: this.userAdminHierarchy?.id?.toString(),
+                children: this.getNodes(resp.data || []),
+                leaf: false,
+                expanded: true,
+              },
+            ];
+          },
+          (error) => {
+            this.adminAreaIsLoading = false;
+          }
+        );
 
       this.selectedAdminHierarchy = this.nodes[0];
 
@@ -126,15 +135,22 @@ export class ScrutinizationComponent implements OnInit {
   }
 
   loadSubmittedCostCentres(adminHierarchyId: number): void {
+    this.costCentreIsLoading = true;
     this.scrutinizationService
       .getSubmittedCostCentres(
         this.userDecionLevel?.id!,
         this.financialYearId!,
         adminHierarchyId
       )
-      .subscribe((resp) => {
-        this.submittedCostCentres = resp.data;
-      });
+      .subscribe(
+        (resp) => {
+          this.submittedCostCentres = resp.data;
+          this.costCentreIsLoading = false;
+        },
+        (error) => {
+          this.costCentreIsLoading = false;
+        }
+      );
   }
 
   nodeExpand(event: any): any {
@@ -265,10 +281,23 @@ export class ScrutinizationComponent implements OnInit {
           is_returned: isReturned,
         };
         this.scrutinizationService.create(data).subscribe((resp) => {
-          this.loadSubmittedCostCentres(this.selectedAdminHierarchy.data.id);
+          this.reloadSubmission();
+          this.toastService.info(
+            `Cost centre has been ${
+              isReturned ? 'Returned' : 'Forwarded'
+            } successfully`
+          );
         });
       },
     });
+  }
+
+  private reloadSubmission(): void {
+    this.selectedCostCentre = undefined;
+    this.selectedAdminHierarchy = undefined;
+    this.submittedCostCentres = [];
+    this.activities = [];
+    this.createRootAdminHierarchy();
   }
 
   returnCostCentre(): void {

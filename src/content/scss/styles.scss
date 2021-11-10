@@ -335,12 +335,35 @@ p-card.filter-no-adv {
 
 .total-fieldset {
   fieldset {
-    margin-top: -8px
+    margin-top: -8px;
+    text-align: right;
   }
   .p-fieldset {
    border: 1px solid rgba(0, 0, 0, 0.38)
   }
 }
+.activity-total, .ceiling-total {
+  fieldset {
+    background-color: #eff6ff;
+  }
+}
+.used-total {
+  fieldset {
+    background-color: #ecfdf5;
+  }
+}
+
+.balance-warn {
+  fieldset {
+    background-color: #fef3c7;
+  }
+}
+.balance-success {
+  fieldset {
+    background-color: #ecfdf5;
+  }
+}
+
 
 .in-table-header {
   margin-bottom: -4px;
@@ -373,7 +396,7 @@ p-card.filter-no-adv {
   min-width: 10px !important;
 }
 
-.tree-input .p-disabled, .p-component:disabled {
+.tree-input .p-disabled{
   opacity: 1;
 }
 

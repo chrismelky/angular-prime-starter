@@ -423,6 +423,7 @@ export class ProjectionComponent implements OnInit {
       let amount = (+projection.q1_amount!) + (+projection.q2_amount!) + (+projection.q3_amount!) + (+projection.q4_amount!);
       projection.amount = amount;
       this.projections![index]= projection;
+      this.totalProjection.amount = ((+this.totalProjection.amount)-(+this.clonedProjection[projection.id!].amount!))+(+projection.amount);
       let payload = this.createFrom(projection)
       if(this.totalAllocatedAmount <= this.totalProjection.amount){
         this.subscribeToSaveResponse(this.projectionService.update(payload),projection,index);
@@ -430,10 +431,12 @@ export class ProjectionComponent implements OnInit {
       }else{
         this.projections![index] = this.clonedProjection[projection.id!];
         this.toastService.error('Allocated Amount Is Higher than Total Projection Amount');
+        this.totalProjection.amount = ((+this.totalProjection.amount)-(+projection.amount)) + (+this.clonedProjection[projection.id!].amount!);
       }
     }else{
       this.toastService.error(this.projectionValidity(projection).massage);
       this.projections![index] = this.clonedProjection[projection.id!];
+      this.totalProjection.amount = ((+this.totalProjection.amount)-(+projection.amount!)) + (+this.clonedProjection[projection.id!].amount!);
     }
   }
 
@@ -570,6 +573,7 @@ export class ProjectionComponent implements OnInit {
         section_ids:this.sectionIds,
         financial_year_id:this.financial_year_id,
         admin_hierarchy_id:this.admin_hierarchy_id,
+        facility_id:this.facility_id,
         budget_type:'CURRENT'
       })
       .subscribe(

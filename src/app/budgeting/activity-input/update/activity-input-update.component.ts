@@ -33,7 +33,9 @@ import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
 export class ActivityInputUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
+  breakDownFormError = false;
   errors = [];
+  budgetIsLocked? = false;
 
   activities?: Activity[] = [];
   fundSources?: FundSource[] = [];
@@ -44,10 +46,22 @@ export class ActivityInputUpdateComponent implements OnInit {
   gfsCodes?: GfsCode[] = [];
   facilityActivity?: FacilityActivity;
   total = 0.0;
+  totalYrOne = 0.0;
+  totalYrTwo = 0.0;
   periodSum = 0.0;
+  totalToAdd = 0.0;
+  totalToBreakDown = 0.0;
   /**
    * Declare form
    */
+  breakDownForm = this.fb.group({
+    item: [null, [Validators.required]],
+    unit_price: [null, [Validators.required]],
+    quantity: [null, [Validators.required]],
+    frequency: [null, [Validators.required]],
+    unit: [null, [Validators.required]],
+  });
+
   editForm = this.fb.group({
     id: [null, []],
     gfs_code_id: [null, [Validators.required]],
@@ -55,8 +69,10 @@ export class ActivityInputUpdateComponent implements OnInit {
     quantity: [null, [Validators.required]],
     frequency: [null, [Validators.required]],
     unit: [null, [Validators.required]],
-    forward_year_one_amount: [null, [Validators.required]],
-    forward_year_two_amount: [null, [Validators.required]],
+    quantity_yr_one: [null, [Validators.required]],
+    quantity_yr_two: [null, [Validators.required]],
+    frequency_yr_one: [null, [Validators.required]],
+    frequency_yr_two: [null, [Validators.required]],
     activity_id: [null, [Validators.required]],
     activity_fund_source_id: [null, [Validators.required]],
     budget_class_id: [null, [Validators.required]],
@@ -73,6 +89,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     has_breakdown: [null, []],
     is_inkind: [null, []],
     breakdowns: this.fb.array([]),
+    breakdownValid: [null, []],
   });
 
   constructor(
@@ -90,9 +107,33 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
     const input: ActivityInput = dialogData.activityInput;
-    input?.id &&
+    if (input.id) {
       this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
+      this.updateTotalYrOne(
+        input.unit_price!,
+        input.quantity_yr_one!,
+        input.frequency_yr_one!
+      );
+      this.updateTotalYrTwo(
+        input.unit_price!,
+        input.quantity_yr_one!,
+        input.frequency_yr_one!
+      );
+      this.onPeriodChange(
+        input.period_one,
+        input.period_two,
+        input.period_three,
+        input.period_four
+      );
+      this.onHasBreakDownChange(input.has_breakdown);
+    }
     this.updateForm(input); //Initialize form with data from dialog
+
+    this.budgetIsLocked = dialogData?.budgetIsLocked;
+
+    if (this.budgetIsLocked) {
+      this.editForm.disable();
+    }
   }
 
   /**
@@ -125,6 +166,22 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.total = (unit_price || 0) * (quantity || 0) * (frequency || 0);
   }
 
+  updateTotalYrOne(
+    unit_price?: number,
+    quantity?: number,
+    frequency?: number
+  ): void {
+    this.totalYrOne = (unit_price || 0) * (quantity || 0) * (frequency || 0);
+  }
+
+  updateTotalYrTwo(
+    unit_price?: number,
+    quantity?: number,
+    frequency?: number
+  ): void {
+    this.totalYrTwo = (unit_price || 0) * (quantity || 0) * (frequency || 0);
+  }
+
   onPeriodChange(q1?: number, q2?: number, q3?: number, q4?: number): void {
     this.periodSum = (q1 || 0) + (q2 || 0) + (q3 || 0) + (q4 || 0);
     if (this.periodSum !== 100) {
@@ -133,6 +190,21 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.editForm.get('period')?.clearValidators();
     }
     this.editForm.get('period')?.updateValueAndValidity();
+  }
+
+  onHasBreakDownChange(hasBreakdown: any): void {
+    if (hasBreakdown) {
+      this.updateBreakdownTotal();
+      if (this.total !== this.totalToBreakDown) {
+        this.editForm
+          .get('breakdownValid')
+          ?.setValidators([Validators.required]);
+      }
+    } else {
+      this.editForm.get('breakdowns')?.reset();
+      this.editForm.get('breakdownValid')?.clearValidators();
+    }
+    this.editForm.get('breakdownValid')?.updateValueAndValidity();
   }
 
   protected subscribeToSaveResponse(
@@ -168,17 +240,9 @@ export class ActivityInputUpdateComponent implements OnInit {
     return this.editForm.controls['breakdowns'] as FormArray;
   }
 
-  addItem(item: any, unit_price: any, quantity: any, frequency: any): void {
-    this.addControl({
-      item: item.value,
-      unit_price: unit_price.value,
-      quantity: quantity.value,
-      frequency: frequency.value,
-    });
-    item.value = undefined;
-    unit_price.value = undefined;
-    quantity.value = undefined;
-    frequency.value = undefined;
+  addItem(): void {
+    this.addControl(this.breakDownForm.value);
+    this.breakDownForm.reset();
   }
 
   addControl(data?: any): void {
@@ -186,15 +250,35 @@ export class ActivityInputUpdateComponent implements OnInit {
     controlArray.push(
       this.fb.group({
         item: data?.item,
+        unit: data?.unit,
         quantity: data?.quantity,
         frequency: data?.frequency,
         unit_price: data?.unit_price,
       })
     );
+    this.updateBreakdownTotal();
+  }
+
+  private updateBreakDownValidity(): void {
+    if (this.total !== this.totalToBreakDown) {
+      this.editForm.get('breakdownValid')?.setValidators([Validators.required]);
+    } else {
+      this.editForm.get('breakdownValid')?.clearValidators();
+    }
+    this.editForm.get('breakdownValid')?.updateValueAndValidity();
   }
 
   removeControl(index: number): void {
     this.breakDownControls.removeAt(index);
+    this.updateBreakdownTotal();
+  }
+
+  private updateBreakdownTotal(): void {
+    this.totalToBreakDown = 0.0;
+    this.editForm.get('breakdowns')?.value.forEach((b: any) => {
+      this.totalToBreakDown += b.unit_price * b.quantity * b.frequency;
+    });
+    this.updateBreakDownValidity();
   }
 
   /**
@@ -208,9 +292,11 @@ export class ActivityInputUpdateComponent implements OnInit {
       unit_price: activityInput.unit_price,
       quantity: activityInput.quantity,
       frequency: activityInput.frequency,
+      frequency_yr_one: activityInput.frequency_yr_one,
+      frequency_yr_two: activityInput.frequency_yr_two,
       unit: activityInput.unit,
-      forward_year_one_amount: activityInput.forward_year_one_amount,
-      forward_year_two_amount: activityInput.forward_year_two_amount,
+      quantity_yr_one: activityInput.quantity_yr_one,
+      quantity_yr_two: activityInput.quantity_yr_two,
       activity_id: activityInput.activity_id,
       fund_source_id: activityInput.fund_source_id,
       financial_year_id: activityInput.financial_year_id,
@@ -276,31 +362,6 @@ export class ActivityInputUpdateComponent implements OnInit {
     return {
       ...new ActivityInput(),
       ...this.editForm.value,
-      // id: this.editForm.get(['id'])!.value,
-      // gfs_code_id: this.editForm.get(['gfs_code_id'])!.value,
-      // unit_price: this.editForm.get(['unit_price'])!.value,
-      // quantity: this.editForm.get(['quantity'])!.value,
-      // frequency: this.editForm.get(['frequency'])!.value,
-      // unit: this.editForm.get(['unit'])!.value,
-      // forward_year_one_amount: this.editForm.get(['forward_year_one_amount'])!
-      //   .value,
-      // forward_year_two_amount: this.editForm.get(['forward_year_two_amount'])!
-      //   .value,
-      // activity_id: this.editForm.get(['activity_id'])!.value,
-      // fund_source_id: this.editForm.get(['fund_source_id'])!.value,
-      // financial_year_id: this.editForm.get(['financial_year_id'])!.value,
-      // admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
-      // facility_id: this.editForm.get(['facility_id'])!.value,
-      // section_id: this.editForm.get(['section_id'])!.value,
-      // budget_class_id: this.editForm.get(['budget_class_id'])!.value,
-      // activity_fund_source_id: this.editForm.get(['activity_fund_source_id'])!
-      //   .value,
-      // period_one: this.editForm.get(['period_one'])!.value,
-      // period_two: this.editForm.get(['period_two'])!.value,
-      // period_three: this.editForm.get(['period_three'])!.value,
-      // period_four: this.editForm.get(['period_four'])!.value,
-      // has_breakdown: this.editForm.get(['has_breakdown'])!.value,
-      // is_inkind: this.editForm.get(['is_inkind'])!.value,
       breakdowns: breakdowns ? JSON.stringify(breakdowns) : breakdowns,
     };
   }

@@ -205,7 +205,6 @@ export class ActivityInputComponent implements OnInit {
       })
       .subscribe((resp) => {
         this.budgetStatus = resp.data;
-        console.log(this.budgetStatus);
       });
   }
 
@@ -382,11 +381,12 @@ export class ActivityInputComponent implements OnInit {
         budgetIsLocked: this.budgetIsLocked,
       },
       width: '900px',
-      header: 'Create/Update ActivityInput',
+      header: 'Create/Update Activity Input',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
         this.loadPage(this.page);
+        this.loadBudgetingStatus();
       }
     });
   }
@@ -454,6 +454,7 @@ export class ActivityInputComponent implements OnInit {
           .delete(activityInput.id!)
           .subscribe((resp) => {
             this.loadPage(this.page);
+            this.loadBudgetingStatus();
             this.toastService.info(resp.message);
           });
       },

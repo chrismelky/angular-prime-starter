@@ -52,6 +52,23 @@ export class SectionService {
     );
   }
 
+  /**
+   * ie. section by parent or section by current user section
+   * @param parent user section position as parent name e.g p1 for position 1 or p2 for position 2
+   * @param parentId user mappred section id
+   * @param userSectionId user mapped section id
+   * @returns
+   */
+  sectionsByParent(
+    parent: string,
+    parentId: number,
+    userSectionId: number
+  ): Observable<CustomResponse<Section[]>> {
+    return this.http.get<CustomResponse<Section[]>>(
+      `${this.resourceUrl}/sections-by-parent/${parent}/${parentId}/${userSectionId}`
+    );
+  }
+
   costCentreSections(): Observable<CustomResponse<Section[]>> {
     return this.http.get<CustomResponse<Section[]>>(
       `${this.resourceUrl}/cost-centre-sections`

@@ -16,28 +16,31 @@
   </p-card>
   <p-card>
     <div class="card">
-      <p-tabView (onChange)="handleChange($event.index)" [(activeIndex)]="activeIndex">
-        <p-tabPanel header="{{item.label}}" *ngFor="let item of items; index as i;">
-          <p-table class="configuration" #dt1 [value]="groupData!" responsiveLayout="scroll" [globalFilterFields]="['name']">
+      <p-tabView
+        (onChange)="handleChange($event.index)"
+        [(activeIndex)]="activeIndex"
+      >
+        <p-tabPanel
+          header="{{ item.label }}"
+          *ngFor="let item of items; index as i"
+        >
+          <p-table
+            class="configuration"
+            #dt1
+            [value]="groupData!"
+            responsiveLayout="scroll"
+            [globalFilterFields]="['name']"
+          >
             <ng-template pTemplate="header">
               <tr>
-                <th style="width:50%">Name</th>
+                <th style="width: 50%">Name</th>
                 <th>Value</th>
                 <th>Action</th>
               </tr>
             </ng-template>
-<!--            <ng-template pTemplate="caption">-->
-<!--              <div fxLayout="row" fxLayoutAlign="space-between center">-->
-<!--                <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>-->
-<!--                <span class="p-input-icon-left p-ml-auto">-->
-<!--                    <i class="pi pi-search"></i>-->
-<!--                    <input pInputText type="text" (input)="dt1.filterGlobal($event, 'contains')" placeholder="Search keyword" />-->
-<!--                </span>-->
-<!--              </div>-->
-<!--            </ng-template>-->
             <ng-template pTemplate="body" let-item let-index="rowIndex">
               <tr>
-                <td style="width:50%">{{item.name}}</td>
+                <td style="width: 50%">{{ item.name }}</td>
                 <td>
                   <p-dropdown
                     [(ngModel)]="item.value"
@@ -48,53 +51,82 @@
                     [autoDisplayFirst]="false"
                   >
                     <ng-template let-item pTemplate="item">
-                      {{item.name}}
+                      {{ item.name }}
                     </ng-template>
                     <ng-template let-item pTemplate="selectedItem">
-                      {{item.name}}
+                      {{ item.name }}
                     </ng-template>
                   </p-dropdown>
-                  <input *ngIf="(item.html_type === 'TEXT' || item.html_type === 'NUMBER')" type="{{item.value_type}}" pInputText [(ngModel)]="item.value">
-                  <p-multiSelect appendTo="body" *ngIf="item.html_type === 'MULT_SELECT'" [options]="item.options" [(ngModel)]="item.multselected"  optionValue="value"  defaultLabel="Select Options" optionLabel="name" selectedItemsLabel="{0} items selected"></p-multiSelect>
+                  <input
+                    *ngIf="
+                      item.html_type === 'TEXT' || item.html_type === 'NUMBER'
+                    "
+                    type="{{ item.value_type }}"
+                    pInputText
+                    [(ngModel)]="item.value"
+                  />
+                  <p-multiSelect
+                    appendTo="body"
+                    *ngIf="item.html_type === 'MULT_SELECT'"
+                    [options]="item.options"
+                    [(ngModel)]="item.multselected"
+                    optionValue="value"
+                    defaultLabel="Select Options"
+                    optionLabel="name"
+                    selectedItemsLabel="{0} items selected"
+                  ></p-multiSelect>
+                  <span style="color: red" *ngIf="item.hasQueryError"
+                    ><i class="pi pi-exclamation-triangle"></i> Query
+                    error</span
+                  >
                 </td>
                 <td>
-                              <div fxLayout="row" fxLayoutAlign="end">
-                                <div fxLayout="row" fxLayoutGap="2px">
-                                  <button
-                                    pButton
-                                    pTooltip="Save"
-                                    tooltipPosition="bottom"
-                                    class="
-                                      p-button-text p-button-success p-button-rounded p-button-icon
-                                    "
-                                    icon="pi pi-check
+                  <div fxLayout="row" fxLayoutAlign="end">
+                    <div fxLayout="row" fxLayoutGap="2px">
+                      <button
+                        pButton
+                        pTooltip="Save"
+                        tooltipPosition="bottom"
+                        class="
+                          p-button-text
+                          p-button-success
+                          p-button-rounded
+                          p-button-icon
+                        "
+                        icon="pi pi-check
                                 "
-                                    (click)="updateValue(item)"
-                                  ></button>
-                                  <button
-                                    pButton
-                                    pTooltip="Edit"
-                                    tooltipPosition="bottom"
-                                    class="
-                                      p-button-text p-button-plain p-button-rounded p-button-icon
-                                    "
-                                    icon="pi pi-pencil
+                        (click)="updateValue(item)"
+                      ></button>
+                      <button
+                        pButton
+                        pTooltip="Edit"
+                        tooltipPosition="bottom"
+                        class="
+                          p-button-text
+                          p-button-plain
+                          p-button-rounded
+                          p-button-icon
+                        "
+                        icon="pi pi-pencil
                                 "
-                                    (click)="createOrUpdate(item)"
-                                  ></button>
-                                  <button
-                                    pButton
-                                    pTooltip="Delete"
-                                    tooltipPosition="bottom"
-                                    class="
-                                      p-button-text p-button-plain p-button-rounded p-button-icon
-                                    "
-                                    icon="pi pi-trash
+                        (click)="createOrUpdate(item)"
+                      ></button>
+                      <button
+                        pButton
+                        pTooltip="Delete"
+                        tooltipPosition="bottom"
+                        class="
+                          p-button-text
+                          p-button-plain
+                          p-button-rounded
+                          p-button-icon
+                        "
+                        icon="pi pi-trash
                                 "
-                                    (click)="delete(item)"
-                                  ></button>
-                                </div>
-                              </div>
+                        (click)="delete(item)"
+                      ></button>
+                    </div>
+                  </div>
                 </td>
               </tr>
             </ng-template>

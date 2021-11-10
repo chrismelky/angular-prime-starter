@@ -22,6 +22,8 @@ import { HelperService } from 'src/app/utils/helper.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { AdminHierarchyCostCentre } from './admin-hierarchy-cost-centre.model';
 import { AdminHierarchyCostCentreService } from './admin-hierarchy-cost-centre.service';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
 
 @Component({
   selector: 'app-admin-hierarchy-cost-centre',
@@ -45,6 +47,7 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
   section_id!: number;
   section_position!: number;
   budget_type?: string;
+  currentFinancialYear?: FinancialYear;
 
   constructor(
     protected adminHierarchyCostCentresService: AdminHierarchyCostCentreService,
@@ -53,10 +56,14 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    protected financialYearService: FinancialYearService
   ) {}
 
   ngOnInit(): void {
+    this.financialYearService.findByStatus(1).subscribe((resp) => {
+      this.currentFinancialYear = resp.data;
+    });
     this.handleNavigation();
   }
 
@@ -116,7 +123,6 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-
     });
   }
 

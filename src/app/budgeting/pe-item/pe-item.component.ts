@@ -5,48 +5,48 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest} from 'rxjs';
-import {ConfirmationService, LazyLoadEvent, MenuItem} from 'primeng/api';
-import {DialogService} from 'primeng/dynamicdialog';
-import {Paginator} from 'primeng/paginator';
-import {Table} from 'primeng/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from '../../utils/custom-response';
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import {HelperService} from 'src/app/utils/helper.service';
-import {ToastService} from 'src/app/shared/toast.service';
-import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import {FinancialYear} from 'src/app/setup/financial-year/financial-year.model';
-import {FinancialYearService} from 'src/app/setup/financial-year/financial-year.service';
-import {PeSubForm} from 'src/app/setup/pe-sub-form/pe-sub-form.model';
-import {PeSubFormService} from 'src/app/setup/pe-sub-form/pe-sub-form.service';
-import {BudgetClass} from 'src/app/setup/budget-class/budget-class.model';
-import {BudgetClassService} from 'src/app/setup/budget-class/budget-class.service';
-import {FundSource} from 'src/app/setup/fund-source/fund-source.model';
-import {FundSourceService} from 'src/app/setup/fund-source/fund-source.service';
-import {Section} from 'src/app/setup/section/section.model';
-import {SectionService} from 'src/app/setup/section/section.service';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { PeSubForm } from 'src/app/setup/pe-sub-form/pe-sub-form.model';
+import { PeSubFormService } from 'src/app/setup/pe-sub-form/pe-sub-form.service';
+import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
+import { BudgetClassService } from 'src/app/setup/budget-class/budget-class.service';
+import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
+import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
 
-import {PeItem} from './pe-item.model';
-import {PeItemService} from './pe-item.service';
-import {PeItemUpdateComponent} from './update/pe-item-update.component';
-import {UserService} from '../../setup/user/user.service';
-import {User} from '../../setup/user/user.model';
-import {PeFormService} from '../../setup/pe-form/pe-form.service';
-import {FundSourceBudgetClassService} from '../../setup/fund-source-budget-class/fund-source-budget-class.service';
-import {FundSourceBudgetClass} from '../../setup/fund-source-budget-class/fund-source-budget-class.model';
-import {PeDefinitionService} from '../../setup/pe-definition/pe-definition.service';
-import {isNumeric} from 'rxjs/internal-compatibility';
-import {FacilityService} from '../../setup/facility/facility.service';
-import {Facility} from '../../setup/facility/facility.model';
-import {BudgetCeilingService} from '../../shared/budget-ceiling.service';
-import {ActivityInputService} from "../activity-input/activity-input.service";
+import { PeItem } from './pe-item.model';
+import { PeItemService } from './pe-item.service';
+import { PeItemUpdateComponent } from './update/pe-item-update.component';
+import { UserService } from '../../setup/user/user.service';
+import { User } from '../../setup/user/user.model';
+import { PeFormService } from '../../setup/pe-form/pe-form.service';
+import { FundSourceBudgetClassService } from '../../setup/fund-source-budget-class/fund-source-budget-class.service';
+import { FundSourceBudgetClass } from '../../setup/fund-source-budget-class/fund-source-budget-class.model';
+import { PeDefinitionService } from '../../setup/pe-definition/pe-definition.service';
+import { isNumeric } from 'rxjs/internal-compatibility';
+import { FacilityService } from '../../setup/facility/facility.service';
+import { Facility } from '../../setup/facility/facility.model';
+import { BudgetCeilingService } from '../../shared/budget-ceiling.service';
+import { ActivityInputService } from '../activity-input/activity-input.service';
 
 @Component({
   selector: 'app-pe-item',
@@ -96,7 +96,6 @@ export class PeItemComponent implements OnInit {
   selectRow?: string;
   financialYear: any = null;
 
-
   //Mandatory filter
   admin_hierarchy_id!: number;
   admin_hierarchy_code!: string;
@@ -111,7 +110,7 @@ export class PeItemComponent implements OnInit {
   parent_sub_budget_class?: any;
   yearRange?: string;
   councilHQFacilityCode?: string;
-  isTableReady?: boolean = false
+  isTableReady?: boolean = false;
 
   constructor(
     protected peItemService: PeItemService,
@@ -139,9 +138,11 @@ export class PeItemComponent implements OnInit {
     if (this.currentUser.admin_hierarchy) {
       this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
       this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
-      this.financial_year_id = this.currentUser.admin_hierarchy?.current_financial_year_id!
-      this.is_current_budget_locked = this.currentUser.admin_hierarchy?.is_current_budget_locked!
-      this.admin_hierarchy_code = this.currentUser.admin_hierarchy?.code!
+      this.financial_year_id =
+        this.currentUser.admin_hierarchy?.current_financial_year_id!;
+      this.is_current_budget_locked =
+        this.currentUser.admin_hierarchy?.is_current_budget_locked!;
+      this.admin_hierarchy_code = this.currentUser.admin_hierarchy?.code!;
     }
   }
 
@@ -152,37 +153,34 @@ export class PeItemComponent implements OnInit {
         (resp: CustomResponse<PeSubForm[]>) => (this.peSubForms = resp.data)
       );
 
-    this.sectionService.peCostCenters().subscribe(
-      (resp: CustomResponse<Section[]>) => {
-        this.sections = resp.data
-      }
-    )
+    this.sectionService
+      .peCostCenters()
+      .subscribe((resp: CustomResponse<Section[]>) => {
+        this.sections = resp.data;
+      });
 
     if (this.admin_hierarchy_id) {
-     this.councilHQFacilityCode = '0000' + this.admin_hierarchy_code
+      this.councilHQFacilityCode = '0000' + this.admin_hierarchy_code;
       this.facilityService
         .query({
           columns: ['id', 'name', 'code'],
           admin_hierarchy_id: this.admin_hierarchy_id,
           code: this.councilHQFacilityCode,
         })
-        .subscribe(
-          (resp: CustomResponse<Facility[]>) => {
-            this.facilities = resp.data
-          }
-        );
+        .subscribe((resp: CustomResponse<Facility[]>) => {
+          this.facilities = resp.data;
+        });
     }
 
-    
-    this.financialYearService.findByStatus(1).subscribe(
-      (resp: CustomResponse<FinancialYear>) => {
-        if(resp.data){
-         this.financialYear =  resp.data.name!
+    this.financialYearService
+      .findByStatus(1)
+      .subscribe((resp: CustomResponse<FinancialYear>) => {
+        if (resp.data) {
+          this.financialYear = resp.data.name!;
         } else {
           this.toastService.error('Planning Financial Year is not defined');
         }
-       }
-    )
+      });
 
     this.splitButtons();
     this.handleNavigation();
@@ -321,7 +319,9 @@ export class PeItemComponent implements OnInit {
           this.isTableReady = true;
         });
     } else {
-      this.toastService.error('Facility HQ with code node  '+this.councilHQFacilityCode+' defined');
+      this.toastService.error(
+        'Facility HQ with code node  ' + this.councilHQFacilityCode + ' defined'
+      );
     }
   }
 
@@ -387,7 +387,9 @@ export class PeItemComponent implements OnInit {
             pedv.uid === fetched.row_uid && pedv.id === fetched.pe_definition_id
           );
         });
-        this.peDataValues[index].value = fetched.field_value ? fetched.field_value : 0;
+        this.peDataValues[index].value = fetched.field_value
+          ? fetched.field_value
+          : 0;
 
         /** if row number is greater than one */
         // if (this.round.length > 1) {
@@ -410,7 +412,7 @@ export class PeItemComponent implements OnInit {
           budget_type: 'CURRENT',
           fund_source_id: this.fund_source_id,
           budget_class_id: this.budget_class_id,
-          per_page: 1000
+          per_page: 1000,
         })
         .subscribe((resp) => {
           let amount = 0;
@@ -425,25 +427,30 @@ export class PeItemComponent implements OnInit {
   }
 
   fetchBudgetAmount() {
-    this.activityInputService.query({
-      columns: ['id', 'unit_price', 'quantity', 'frequency'],
-      admin_hierarchy_id: this.admin_hierarchy_id,
-      facility_id: this.facilities[0]?.id,
-      financial_year_id: this.financial_year_id,
-      section_id: this.section_id,
-      budget_class_id: this.budget_class_id,
-      fund_source_id: this.fund_source_id,
-      per_page: 1000
-    }).subscribe((resp) => {
-      let amount = 0;
-      if (resp.data?.length) {
-        resp.data?.forEach((d: any) => {
-          amount += (parseFloat(d.unit_price) * parseInt(d.quantity) * parseInt(d.frequency));
-        });
-      }
-      this.budgetedAmount = amount;
-      this.budgetBalance();
-    })
+    this.activityInputService
+      .query({
+        columns: ['id', 'unit_price', 'quantity', 'frequency'],
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        facility_id: this.facilities[0]?.id,
+        financial_year_id: this.financial_year_id,
+        section_id: this.section_id,
+        budget_class_id: this.budget_class_id,
+        fund_source_id: this.fund_source_id,
+        per_page: 1000,
+      })
+      .subscribe((resp) => {
+        let amount = 0;
+        if (resp.data?.length) {
+          resp.data?.forEach((d: any) => {
+            amount +=
+              parseFloat(d.unit_price) *
+              parseInt(d.quantity) *
+              parseInt(d.frequency);
+          });
+        }
+        this.budgetedAmount = amount;
+        this.budgetBalance();
+      });
   }
 
   /** check balance, ceiling - budget */
@@ -593,7 +600,7 @@ export class PeItemComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -704,7 +711,6 @@ export class PeItemComponent implements OnInit {
       ceiling_amount: this.cellingAmount,
       balanceAmount: this.balanceAmount,
     };
-
 
     this.peItemService.create(object).subscribe((response) => {
       if (response.success) {
@@ -956,7 +962,7 @@ export class PeItemComponent implements OnInit {
         peTableFields: JSON.stringify(this.peTableFields),
       };
       this.peItemService.printPeFormStatus(object).subscribe((resp) => {
-        let file = new Blob([resp], {type: 'application/pdf'});
+        let file = new Blob([resp], { type: 'application/pdf' });
         let fileURL = URL.createObjectURL(file);
         window.open(fileURL, '_blank');
       });

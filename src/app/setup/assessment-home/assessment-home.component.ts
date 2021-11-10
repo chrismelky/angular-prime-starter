@@ -66,8 +66,7 @@ export class AssessmentHomeComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.casAssessmentRondService
@@ -80,9 +79,7 @@ export class AssessmentHomeComponent implements OnInit {
       .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
-          (
-            this.financialYears = resp.data
-          )
+          (this.financialYears = resp.data)
       );
     this.handleNavigation();
   }
@@ -233,7 +230,6 @@ export class AssessmentHomeComponent implements OnInit {
     });
   }
 
-
   /**
    * When successfully data loaded
    * @param resp
@@ -253,7 +249,7 @@ export class AssessmentHomeComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }

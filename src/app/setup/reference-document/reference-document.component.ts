@@ -30,7 +30,7 @@ import { ReferenceDocumentService } from './reference-document.service';
 import { ReferenceDocumentUpdateComponent } from './update/reference-document-update.component';
 import { FinancialYear } from '../financial-year/financial-year.model';
 import { FinancialYearService } from '../financial-year/financial-year.service';
-import {error} from "@angular/compiler/src/util";
+import { error } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-reference-document',
@@ -140,7 +140,7 @@ export class ReferenceDocumentComponent implements OnInit {
    */
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
-    this.admin_hierarchy_position =event.admin_hierarchy_position;
+    this.admin_hierarchy_position = event.admin_hierarchy_position;
   }
   /**
    * Called initialy/onInit to
@@ -293,7 +293,7 @@ export class ReferenceDocumentComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -310,11 +310,10 @@ export class ReferenceDocumentComponent implements OnInit {
   }
 
   download(id: number) {
-    this.referenceDocumentService.fileDownload(id).subscribe( resp =>{
-      let file = new Blob([resp], { type: 'application/pdf'});
+    this.referenceDocumentService.fileDownload(id).subscribe((resp) => {
+      let file = new Blob([resp], { type: 'application/pdf' });
       let fileURL = URL.createObjectURL(file);
-      window.open(fileURL,"_blank");
+      window.open(fileURL, '_blank');
     });
-
   }
 }

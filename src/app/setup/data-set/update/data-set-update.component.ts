@@ -51,6 +51,7 @@ export class DataSetUpdateComponent implements OnInit {
     is_submitted: [false, []],
     facility_types: [null, [Validators.required]],
     periods: [null, [Validators.required]],
+    sort_order: [null, []],
   });
 
   constructor(
@@ -157,6 +158,7 @@ export class DataSetUpdateComponent implements OnInit {
       cas_plan_id: dataSet.cas_plan_id,
       is_locked: dataSet.is_locked,
       is_submitted: dataSet.is_submitted,
+      sort_order: dataSet.sort_order,
       facility_types:
         dataSet.facility_types !== undefined
           ? JSON.parse(dataSet.facility_types!)
@@ -182,6 +184,7 @@ export class DataSetUpdateComponent implements OnInit {
       cas_plan_id: this.editForm.get(['cas_plan_id'])!.value,
       is_locked: this.editForm.get(['is_locked'])!.value,
       is_submitted: this.editForm.get(['is_submitted'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
       facility_types:
         this.editForm.get(['facility_types'])!.value !== undefined
           ? JSON.stringify(this.editForm.get(['facility_types'])!.value)

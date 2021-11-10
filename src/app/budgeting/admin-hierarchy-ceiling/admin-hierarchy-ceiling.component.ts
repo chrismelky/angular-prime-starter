@@ -50,6 +50,7 @@ import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
 import {AdminCeilingDisseminationComponent} from "./update/admin-ceiling-dissemination.component";
 import {ProjectionAllocationComponent} from "../../shared/projection-allocation/projection-allocation.component";
+import {ConfigurationSettingService} from "../../setup/configuration-setting/configuration-setting.service";
 
 @Component({
   selector: 'app-admin-hierarchy-ceiling',
@@ -66,7 +67,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   parents?: AdminHierarchyCeiling[] = [];
   sections?: Section[] = [];
   planingLevels?: SectionLevel[] = [];
-  budgetTypes?: PlanrepEnum[] = [];
   isSaving?: boolean = false;
   clonedCeiling: { [s: string]: AdminHierarchyCeiling } = {};
 
@@ -86,6 +86,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   //Mandatory filter
   admin_hierarchy_id!: number;
   financial_year_id!: number;
+  planingFinancialYear_id!:number
   budget_type!: string;
   position!: number | undefined;
   section_id!: number | undefined;
@@ -93,6 +94,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   ceilingStartSectionPosition!: number;
   section_level_id!:number;
   activeAdminHierarchy: AdminHierarchy = {};
+  attachmentBudgetType:boolean = false;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -111,6 +113,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected sectionLevelService: SectionLevelService,
     protected userService: UserService,
     protected ceilingChainService: CeilingChainService,
+    protected configurationSettingService: ConfigurationSettingService
   ) {
     this.currentUser = userService.getCurrentUser();
     this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
@@ -160,7 +163,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         (resp: CustomResponse<AdminHierarchyCeiling[]>) =>
           (this.parents = resp.data)
       );
-    // this.budgetTypes = this.enumService.get('budgetTypes');
     this.handleNavigation();
     this.items = [
       {
@@ -168,20 +170,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         icon: 'pi pi-download',
         command: () => {
           this.downloadTemplate();
-        },
-      },
-      {
-        label: 'Upload Ceiling',
-        icon: 'pi pi-upload',
-        command: () => {
-          this.uploadCeiling();
-        },
-      },
-      {
-        label: 'Lock/Unlock Ceiling',
-        icon: 'pi pi-lock',
-        command: () => {
-          this.lockUnlockCeiling();
         },
       },
     ];
@@ -208,6 +196,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       .queryDownloadTemplate({
         admin_hierarchy_id: this.admin_hierarchy_id,
         section_id: this.section_id,
+        ceilingStartSectionPosition:this.ceilingStartSectionPosition,
+        position:this.position
       })
       .subscribe((response: BlobPart) => {
         saveAs(
@@ -237,7 +227,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
 
   selectionLevelChange(sectionId:number) {
     this.position = sectionId;
-    console.log(sectionId);
     this.sectionService
       .query({ position: this.position })
       .subscribe((resp: CustomResponse<Section[]>) => {
@@ -245,6 +234,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         // @ts-ignore
         if (this.rootSection.position === this.position) {
           this.section_id = this.rootSection?.id;
+          this.sections = this.sections!.filter(s => (s.id === this.rootSection!.id))
         } else {
           // @ts-ignore
           this.section_id = this.sections[0].id;
@@ -319,6 +309,15 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
         this.loadPage();
+        this.configurationSettingService
+          .query({key:'BUDGET_TYPES_NEED_ATTACHMENT'})
+          .subscribe(
+            (resp: CustomResponse<any>) => {
+              if((resp.data ?? []).length > 0){
+                this.attachmentBudgetType = (resp.data)[0].value.replace(',','').split(',').includes(this.budget_type);
+              }
+            }
+          );
       }
     });
   }
@@ -475,6 +474,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
    */
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
+    this.planingFinancialYear_id = event.current_financial_year_id?event.current_financial_year_id:(event.carryover_financial_year_id?event.carryover_financial_year_id:event.supplementary_financial_year_id);
     this.activeAdminHierarchy = event;
     this.admin_hierarchy_position = event.admin_hierarchy_position;
     this.loadPage();
@@ -659,7 +659,11 @@ export class AdminHierarchyCeilingComponent implements OnInit {
                 ceilingChain:resp.data[0]
               }
             });
-            ref.onClose.subscribe((result) => {});
+            ref.onClose.subscribe((result) => {
+              if(result){
+                this.loadPage();
+              }
+            });
           }else{
             this.toastService.error('No ceiling Chain Configured');
           }

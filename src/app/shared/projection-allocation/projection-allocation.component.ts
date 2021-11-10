@@ -113,15 +113,11 @@ export class ProjectionAllocationComponent implements OnInit {
 
   saveAllocation(){
     if(!(this.projectionAmount < this.totalAllocatedAmount)){
-      if(this.totalAllocatedAmount > 0){
-        let payload = {
-          admin_ceilings:this.completeCeiling,
-          adminHierarchyPosition: this.adminHierarchyPosition,
-        }
-        this.subscribeToSaveResponse(this.adminHierarchyCeilingService.projectionAllocation(payload));
-      }else{
-        this.toastService.error('Total Allocated Amount Should be grater than zero')
+      let payload = {
+        admin_ceilings:this.completeCeiling,
+        adminHierarchyPosition: this.adminHierarchyPosition,
       }
+      this.subscribeToSaveResponse(this.adminHierarchyCeilingService.projectionAllocation(payload));
     }else{
       this.toastService.error('Allocation Exceeded Total Projection Amount')
     }

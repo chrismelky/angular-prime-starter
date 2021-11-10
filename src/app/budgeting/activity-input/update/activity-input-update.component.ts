@@ -33,6 +33,7 @@ import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
 export class ActivityInputUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
+  breakDownFormError = false;
   errors = [];
 
   activities?: Activity[] = [];
@@ -47,9 +48,19 @@ export class ActivityInputUpdateComponent implements OnInit {
   totalYrOne = 0.0;
   totalYrTwo = 0.0;
   periodSum = 0.0;
+  totalToAdd = 0.0;
+  totalToBreakDown = 0.0;
   /**
    * Declare form
    */
+  breakDownForm = this.fb.group({
+    item: [null, [Validators.required]],
+    unit_price: [null, [Validators.required]],
+    quantity: [null, [Validators.required]],
+    frequency: [null, [Validators.required]],
+    unit: [null, [Validators.required]],
+  });
+
   editForm = this.fb.group({
     id: [null, []],
     gfs_code_id: [null, [Validators.required]],
@@ -77,6 +88,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     has_breakdown: [null, []],
     is_inkind: [null, []],
     breakdowns: this.fb.array([]),
+    breakdownValid: [null, []],
   });
 
   constructor(
@@ -112,6 +124,7 @@ export class ActivityInputUpdateComponent implements OnInit {
         input.period_three,
         input.period_four
       );
+      this.onHasBreakDownChange(input.has_breakdown);
     }
     this.updateForm(input); //Initialize form with data from dialog
   }
@@ -164,16 +177,26 @@ export class ActivityInputUpdateComponent implements OnInit {
 
   onPeriodChange(q1?: number, q2?: number, q3?: number, q4?: number): void {
     this.periodSum = (q1 || 0) + (q2 || 0) + (q3 || 0) + (q4 || 0);
-    console.log(q1);
-    console.log(q2);
-    console.log(q3);
-    console.log(q4);
     if (this.periodSum !== 100) {
       this.editForm.get('period')?.setValidators([Validators.required]);
     } else {
       this.editForm.get('period')?.clearValidators();
     }
     this.editForm.get('period')?.updateValueAndValidity();
+  }
+
+  onHasBreakDownChange(hasBreakdown: any): void {
+    if (hasBreakdown) {
+      this.updateBreakdownTotal();
+      if (this.total !== this.totalToBreakDown) {
+        this.editForm
+          .get('breakdownValid')
+          ?.setValidators([Validators.required]);
+      }
+    } else {
+      this.editForm.get('breakdowns')?.reset();
+      this.editForm.get('breakdownValid')?.clearValidators();
+    }
   }
 
   protected subscribeToSaveResponse(
@@ -209,17 +232,9 @@ export class ActivityInputUpdateComponent implements OnInit {
     return this.editForm.controls['breakdowns'] as FormArray;
   }
 
-  addItem(item: any, unit_price: any, quantity: any, frequency: any): void {
-    this.addControl({
-      item: item.value,
-      unit_price: unit_price.value,
-      quantity: quantity.value,
-      frequency: frequency.value,
-    });
-    item.value = undefined;
-    unit_price.value = undefined;
-    quantity.value = undefined;
-    frequency.value = undefined;
+  addItem(): void {
+    this.addControl(this.breakDownForm.value);
+    this.breakDownForm.reset();
   }
 
   addControl(data?: any): void {
@@ -227,15 +242,35 @@ export class ActivityInputUpdateComponent implements OnInit {
     controlArray.push(
       this.fb.group({
         item: data?.item,
+        unit: data?.unit,
         quantity: data?.quantity,
         frequency: data?.frequency,
         unit_price: data?.unit_price,
       })
     );
+    this.updateBreakdownTotal();
+  }
+
+  private updateBreakDownValidity(): void {
+    if (this.total !== this.totalToBreakDown) {
+      this.editForm.get('breakdownValid')?.setValidators([Validators.required]);
+    } else {
+      this.editForm.get('breakdownValid')?.clearValidators();
+    }
+    this.editForm.get('breakdownValid')?.updateValueAndValidity();
   }
 
   removeControl(index: number): void {
     this.breakDownControls.removeAt(index);
+    this.updateBreakdownTotal();
+  }
+
+  private updateBreakdownTotal(): void {
+    this.totalToBreakDown = 0.0;
+    this.editForm.get('breakdowns')?.value.forEach((b: any) => {
+      this.totalToBreakDown += b.unit_price * b.quantity * b.frequency;
+    });
+    this.updateBreakDownValidity();
   }
 
   /**

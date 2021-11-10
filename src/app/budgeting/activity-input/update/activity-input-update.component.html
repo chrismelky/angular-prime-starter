@@ -86,7 +86,7 @@
             <small
               class="p-error"
               *ngIf="editForm.get('unit')?.errors?.required"
-              >Unit is required.</small
+              >Required!</small
             >
           </span>
         </div>
@@ -121,7 +121,7 @@
             <small
               class="p-error"
               *ngIf="editForm.get('unit_price')?.errors?.required"
-              >Unit Price is required.</small
+              >Required!</small
             >
           </span>
         </div>
@@ -153,7 +153,7 @@
             <small
               class="p-error"
               *ngIf="editForm.get('quantity')?.errors?.required"
-              >Quantity is required.</small
+              >Required!</small
             >
           </span>
         </div>
@@ -185,7 +185,7 @@
             <small
               class="p-error"
               *ngIf="editForm.get('frequency')?.errors?.required"
-              >Frequency is required.</small
+              >Required!</small
             >
           </span>
         </div>
@@ -338,11 +338,15 @@
         </div>
       </div>
 
+      <p-divider fxFlex class="title" align="center">
+        <small>Forward Estimates</small>
+      </p-divider>
+
       <!-- Forward  Yr1 row -->
-      <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end center">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
         <span fxFlex></span>
         <!-- Quantity+1 -->
-        <span>Forward Year One</span>
+        <span>Year+1</span>
         <div class="p-field" fxFlex="0 0 80px">
           <span class="p-float-label">
             <p-inputNumber
@@ -373,7 +377,7 @@
             <small
               class="p-error"
               *ngIf="editForm.get('quantity_yr_one')?.errors?.required"
-              >Qty yr+1 required</small
+              >Required!</small
             >
           </span>
         </div>
@@ -408,21 +412,21 @@
             <small
               class="p-error"
               *ngIf="editForm.get('frequency_yr_one')?.errors?.required"
-              >Freq yr+1 required.</small
+              >Required</small
             >
           </span>
         </div>
 
         <!-- Year+1 total -->
-        <p-fieldset fxFlex="200px" legend="Total" class="total-fieldset">
+        <p-fieldset fxFlex="200px" legend="Total Year+1" class="total-fieldset">
           <strong>{{ totalYrOne | currency: " " }}</strong>
         </p-fieldset>
       </div>
       <!-- Forward  Yr2 row -->
-      <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end center">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
         <span fxFlex></span>
         <!-- Quantity+1 -->
-        <span>Forward Year Two</span>
+        <span>Year+2</span>
         <div class="p-field" fxFlex="0 0 80px">
           <span class="p-float-label">
             <p-inputNumber
@@ -453,7 +457,7 @@
             <small
               class="p-error"
               *ngIf="editForm.get('quantity_yr_two')?.errors?.required"
-              >Qty required</small
+              >Required!</small
             >
           </span>
         </div>
@@ -488,13 +492,13 @@
             <small
               class="p-error"
               *ngIf="editForm.get('frequency_yr_two')?.errors?.required"
-              >Freq required.</small
+              >Required!</small
             >
           </span>
         </div>
 
         <!-- Year+2 total -->
-        <p-fieldset fxFlex="200px" legend="Total" class="total-fieldset">
+        <p-fieldset fxFlex="200px" legend="Total Year+2" class="total-fieldset">
           <strong>{{ totalYrTwo | currency: " " }}</strong>
         </p-fieldset>
       </div>
@@ -511,92 +515,68 @@
           #hasBeakDown
           name="has_breakdown"
           [binary]="true"
+          (onChange)="onHasBreakDownChange($event.checked)"
           label="Has breakdown"
           formControlName="has_breakdown"
         ></p-checkbox>
       </div>
+      <!-- Break downs -->
+
       <div
         fxLayout="column"
         fxLayoutGap="10px"
         fxLayoutAlign="start"
         *ngIf="editForm.get('has_breakdown')?.value"
       >
+        <p-divider fxFlex class="title" align="center">
+          <small>Breakdowns</small>
+        </p-divider>
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
+          <button
+            icon="pi pi-plus"
+            pButton
+            type="button"
+            class="p-button-sm p-button-text"
+            label="Add Item"
+            (click)="breakDownPanel.toggle($event)"
+          ></button>
+          <span fxLayout="row" fxLayoutAlign="end">
+            <small
+              class="p-error"
+              *ngIf="
+                formError && editForm.get('breakdownValid')?.errors?.required
+              "
+              >Breakdown sum must equal to {{ total }}</small
+            >
+            <p-fieldset
+              fxFlex="200px"
+              legend="Total Breakdown"
+              class="total-fieldset"
+            >
+              <strong>{{ totalToBreakDown | currency: " " }}</strong>
+            </p-fieldset>
+          </span>
+        </div>
+
         <p-table
           [value]="breakDownControls.controls"
           dataKey="controls.item.value"
           editMode="row"
-          responsiveLayout="scroll"
-          styleClass="p-datatable-gridlines breakdown"
+          [resizableColumns]="true"
+          [responsive]="true"
+          [autoLayout]="true"
+          styleClass="p-datatable-gridlines"
           formArrayName="breakdowns"
         >
           <ng-template pTemplate="header">
             <tr>
               <th>Item</th>
+              <th>Unit</th>
               <th>Unit Price</th>
               <th>Quantity</th>
               <th>Frequency</th>
               <th>Sub Total</th>
               <th style="width: 80px"></th>
-            </tr>
-            <tr class="add-table-row">
-              <th>
-                <input #itemToAdd id="itemToAdd" type="text" pInputText />
-              </th>
-              <th>
-                <p-inputNumber
-                  [style]="{ 'min-width': '140px' }"
-                  #unitPriceToAdd
-                  id="unitPriceToAdd"
-                  mode="decimal"
-                  [minFractionDigits]="2"
-                  [maxFractionDigits]="2"
-                ></p-inputNumber>
-              </th>
-              <th style="width: 100px">
-                <p-inputNumber
-                  [style]="{ 'min-width': '80px', width: '80px' }"
-                  #quantityToAdd
-                  id="quantityToAdd"
-                  mode="decimal"
-                  [minFractionDigits]="2"
-                  [maxFractionDigits]="2"
-                ></p-inputNumber>
-              </th>
-              <th style="width: 100px">
-                <p-inputNumber
-                  [style]="{ 'min-width': '80px', width: '80px' }"
-                  #frequencyToAdd
-                  id="frequencyToAdd"
-                  mode="decimal"
-                  [minFractionDigits]="2"
-                  [maxFractionDigits]="2"
-                ></p-inputNumber>
-              </th>
-              <th></th>
-              <th style="width: 100px">
-                <div
-                  fxFlex
-                  fxLayout="row"
-                  fxLayoutGap="2px"
-                  fxLayoutAlign="end"
-                >
-                  <button
-                    type="button"
-                    icon="pi pi-plus"
-                    label="Add"
-                    pButton
-                    class="p-button-text p-button-rounded p-button-icon"
-                    (click)="
-                      addItem(
-                        itemToAdd,
-                        unitPriceToAdd,
-                        quantityToAdd,
-                        frequencyToAdd
-                      )
-                    "
-                  ></button>
-                </div>
-              </th>
             </tr>
           </ng-template>
           <ng-template
@@ -628,6 +608,26 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
+              <td style="width: 80px">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown
+                      id="unit_{{ ri }}"
+                      optionLabel="display"
+                      optionValue="value"
+                      [autoDisplayFirst]="false"
+                      [filter]="true"
+                      class="p-inputtext-sm"
+                      [options]="units!"
+                      formControlName="unit"
+                    >
+                    </p-dropdown>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ breakdown.get("unit")?.value! }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
               <td>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
@@ -645,11 +645,10 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td>
+              <td style="width: 100px">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
                     <p-inputNumber
-                      [style]="{ 'min-width': '70px', width: '70px' }"
                       id="quantity_{{ ri }}"
                       mode="decimal"
                       [minFractionDigits]="2"
@@ -662,11 +661,10 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td>
+              <td style="width: 100px">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
                     <p-inputNumber
-                      [style]="{ 'min-width': '70px', width: '70px' }"
                       id="frequency_{{ ri }}"
                       mode="decimal"
                       [minFractionDigits]="2"
@@ -680,10 +678,9 @@
                 </p-cellEditor>
               </td>
               <td></td>
-
               <td style="text-align: center">
                 <div fxLayout="row" fxLayoutGap="2px" fxLayoutAlign="end">
-                  <button
+                  <!-- <button
                     *ngIf="!editing"
                     pButton
                     pRipple
@@ -691,7 +688,7 @@
                     pInitEditableRow
                     icon="pi pi-pencil"
                     class="p-button-rounded p-button-text p-button-plain"
-                  ></button>
+                  ></button> -->
                   <button
                     *ngIf="!editing"
                     pButton
@@ -739,3 +736,179 @@
     </div>
   </form>
 </div>
+
+<p-overlayPanel
+  #breakDownPanel
+  [dismissable]="false"
+  [showCloseIcon]="true"
+  appendTo="body"
+>
+  <ng-template pTemplate>
+    <form
+      name="breakDownForm"
+      [formGroup]="breakDownForm"
+      (ngSubmit)="addItem()"
+    >
+      <div style="width: 840px" fxLayout="column" fxLayoutGap="20px">
+        <!-- Params -->
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <input
+                formControlName="item"
+                #itemToAdd
+                id="itemToAdd"
+                type="text"
+                pInputText
+              />
+              <label for="itemToAdd">Item</label>
+            </span>
+            <span
+              *ngIf="
+                breakDownForm.get('item')!.invalid &&
+                (breakDownForm.get('item')!.dirty ||
+                  breakDownForm.get('item')!.touched ||
+                  breakDownFormError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="breakDownForm.get('item')?.errors?.required"
+                >Item is required.</small
+              >
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex="0 1 140px">
+            <span class="p-float-label">
+              <p-inputNumber
+                #unitPriceToAdd
+                id="unit_price"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                formControlName="unit_price"
+              ></p-inputNumber>
+              <label for="unit_price">Unit Price</label>
+            </span>
+            <span
+              *ngIf="
+                breakDownForm.get('unit_price')!.invalid &&
+                (breakDownForm.get('unit_price')!.dirty ||
+                  breakDownForm.get('unit_price')!.touched ||
+                  breakDownFormError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="breakDownForm.get('unit_price')?.errors?.required"
+                >Required!</small
+              >
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex="0 0 80px">
+            <span class="p-float-label">
+              <p-inputNumber
+                #quantityToAdd
+                id="quantityToAdd"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                formControlName="quantity"
+              ></p-inputNumber>
+              <label for="quantityToAdd">Quantity</label>
+            </span>
+            <span
+              *ngIf="
+                breakDownForm.get('quantity')!.invalid &&
+                (breakDownForm.get('quantity')!.dirty ||
+                  breakDownForm.get('quantity')!.touched ||
+                  breakDownFormError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="breakDownForm.get('quantity')?.errors?.required"
+                >Required!</small
+              >
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex="0 0 80px">
+            <span class="p-float-label">
+              <p-inputNumber
+                #frequencyToAdd
+                id="frequencyToAdd"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                formControlName="frequency"
+              ></p-inputNumber>
+              <label for="frequencyToAdd">Frequency</label>
+            </span>
+            <span
+              *ngIf="
+                breakDownForm.get('frequency')!.invalid &&
+                (breakDownForm.get('frequency')!.dirty ||
+                  breakDownForm.get('frequency')!.touched ||
+                  breakDownFormError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="breakDownForm.get('frequency')?.errors?.required"
+                >Required!</small
+              >
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex="0 1 100px">
+            <span class="p-float-label">
+              <p-dropdown
+                id="unit"
+                optionLabel="display"
+                optionValue="value"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="units!"
+                formControlName="unit"
+              >
+              </p-dropdown>
+              <label for="unit">Unit</label>
+            </span>
+            <span
+              *ngIf="
+                breakDownForm.get('unit')!.invalid &&
+                (breakDownForm.get('unit')!.dirty ||
+                  breakDownForm.get('unit')!.touched ||
+                  breakDownFormError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="breakDownForm.get('unit')?.errors?.required"
+                >Required!</small
+              >
+            </span>
+          </div>
+
+          <p-fieldset fxFlex legend="Total" class="total-fieldset">
+            <strong>{{ totalToAdd | currency: " " }}</strong>
+          </p-fieldset>
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Add"
+          pButton
+          pRipple
+          type="submit"
+        ></button>
+      </div>
+    </form>
+  </ng-template>
+</p-overlayPanel>

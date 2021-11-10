@@ -167,9 +167,38 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Ceiling Amounts</span>
-          <div class="card-header-text" *ngxPermissionsOnly="['INITIATE_CEILING']">
-            <p-splitButton   *ngIf="position === ceilingStartSectionPosition && admin_hierarchy_position === ceilingStartPosition && financial_year_id !== undefined && admin_hierarchy_id !== undefined" label="Initiate Ceiling" icon="pi pi pi-wallet" (onClick)="initiateCeiling()" [model]="items!"
-            styleClass="p-button-raised"></p-splitButton>
+          <div class="card-header-text">
+            <span *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">
+              <button  *ngIf="adminHierarchyCeilings!.length > 0 && planingFinancialYear_id===financial_year_id"  pButton pRipple icon="pi pi-lock" (click)="lockUnlockCeiling()"  type="button" label="Lock/Unlock Ceiling" class="p-button-outlined"></button>
+            </span>
+            <span *ngxPermissionsOnly="['INITIATE_CEILING']">
+              <button *ngIf="attachmentBudgetType && planingFinancialYear_id===financial_year_id" pButton pRipple icon="pi pi-upload"  type="button" label="Add Attachment" class="p-button-outlined"></button>
+            </span>&nbsp;
+            <span *ngxPermissionsOnly="['INITIATE_CEILING']">
+              <button
+                pButton pRipple icon="pi pi pi-wallet"
+                type="button"
+                label="Initiate Ceiling"
+                class="p-button-outlined"
+                (click)="initiateCeiling()"
+                *ngIf="planingFinancialYear_id===financial_year_id &&
+                position === ceilingStartSectionPosition &&
+                admin_hierarchy_position === ceilingStartPosition &&
+                financial_year_id !== undefined &&
+                admin_hierarchy_id !== undefined"
+              >
+            </button>
+            </span>&nbsp;
+            <span *ngxPermissionsOnly="['EDIT_CEILING']">
+              <p-splitButton
+                label="Upload Ceiling"
+                (onClick)="uploadCeiling();"
+                icon="pi pi-upload"
+                [model]="items!"
+                *ngIf="adminHierarchyCeilings!.length > 0 && planingFinancialYear_id===financial_year_id"
+                styleClass="p-button-outlined">
+            </p-splitButton>
+            </span>
           </div>
         </div>
       </ng-template>
@@ -213,17 +242,18 @@
             <p-inputSwitch
               (onChange)="toggleActivation(rowData)"
               [(ngModel)]="rowData['is_locked']"
+              *ngIf="planingFinancialYear_id===financial_year_id"
             ></p-inputSwitch>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" *ngxPermissionsOnly="['ALLOCATE_CEILING']" fxLayoutGap="2px">
-                <button  *ngIf="rowData.amount > 0"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
+                <button  *ngIf="rowData.amount > 0 && planingFinancialYear_id===financial_year_id"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
               </div>
               <div fxLayout="row" *ngxPermissionsOnly="['DELETE_CEILING_AMOUNT']" fxLayoutGap="2px">
                 <button
                   pButton
-                  *ngIf="!rowData['is_locked']"
+                  *ngIf="!rowData['is_locked'] && planingFinancialYear_id===financial_year_id"
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="p-button-text p-button-plain p-button-rounded p-button-icon"
@@ -232,8 +262,8 @@
                 ></button>
               </div>
               <div fxLayout="row" *ngxPermissionsOnly="['EDIT_CEILING']" fxLayoutGap="2px">
-                <button *ngIf="!editing && !rowData['is_locked'] && position === ceilingStartSectionPosition && !rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
-                <button *ngIf="!rowData['is_locked'] && position === ceilingStartSectionPosition && rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button"  icon="pi pi-pencil" (click)="editOwnSource(rowData)" class="p-button-rounded p-button-text"></button>
+                <button *ngIf="!editing && !rowData['is_locked'] && planingFinancialYear_id===financial_year_id && position === ceilingStartSectionPosition && !rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+                <button *ngIf="!rowData['is_locked'] && planingFinancialYear_id===financial_year_id  && position === ceilingStartSectionPosition && rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button"  icon="pi pi-pencil" (click)="editOwnSource(rowData)" class="p-button-rounded p-button-text"></button>
                 <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
                 <button *ngIf="editing"  pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(rowData, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
               </div>

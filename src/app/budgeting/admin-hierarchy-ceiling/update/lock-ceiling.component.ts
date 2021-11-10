@@ -3,7 +3,6 @@ import {CustomResponse} from "../../../utils/custom-response";
 import {Sector} from "../../../setup/sector/sector.model";
 import {FormBuilder, Validators} from "@angular/forms";
 import {BudgetClassService} from "../../../setup/budget-class/budget-class.service";
-import {FundSourceBudgetClassService} from "../../../setup/fund-source-budget-class/fund-source-budget-class.service";
 import {ToastService} from "../../../shared/toast.service";
 import {SectorService} from "../../../setup/sector/sector.service";
 import {FundSourceService} from "../../../setup/fund-source/fund-source.service";
@@ -11,7 +10,6 @@ import {SelectItemGroup} from "primeng/api";
 import {FundSource} from "../../../setup/fund-source/fund-source.model";
 import {AdminHierarchyLevel} from "../../../setup/admin-hierarchy-level/admin-hierarchy-level.model";
 import {AdminHierarchyService} from "../../../setup/admin-hierarchy/admin-hierarchy.service";
-import {AdminHierarchyLevelService} from "../../../setup/admin-hierarchy-level/admin-hierarchy-level.service";
 import {CeilingChainService} from "../../../setup/ceiling-chain/ceiling-chain.service";
 import {SectionLevel} from "../../../setup/section-level/section-level.model";
 import {AdminHierarchy} from "../../../setup/admin-hierarchy/admin-hierarchy.model";
@@ -62,7 +60,6 @@ export class LockCeilingComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
   ) {
     this.currentUser = userService.getCurrentUser();
-    console.log(this.currentUser)
   }
 
   ngOnInit(): void {

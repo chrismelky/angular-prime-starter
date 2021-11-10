@@ -95,6 +95,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   section_level_id!:number;
   activeAdminHierarchy: AdminHierarchy = {};
   attachmentBudgetType:boolean = false;
+  selectedCeilingAllocationSummary: any[] =[];
+  selectedCeiling: AdminHierarchyCeiling = {};
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -148,7 +150,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<any>) => {
           this.ceilingStartSectionPosition = +(resp.data);
-          console.log(this.ceilingStartSectionPosition);
         }
       );
     this.sectionLevelService
@@ -502,7 +503,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         for (let item of result.ceiling) {
           const adminHierarchyCeiling = this.createFromForm(item);
           this.subscribeToSaveResponse(
-            this.adminHierarchyCeilingService.initiateCeiling(adminHierarchyCeiling)
+            this.adminHierarchyCeilingService.initiateCeiling(adminHierarchyCeiling),item
           );
         }
         this.loadPage(this.page);
@@ -552,11 +553,11 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     };
   }
   public subscribeToSaveResponse(
-    result: Observable<CustomResponse<AdminHierarchyCeiling>>
+    result: Observable<CustomResponse<AdminHierarchyCeiling>>,ceiling:AdminHierarchyCeiling
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
-      (error) => this.onSaveError(error)
+      (error) => this.onSaveError(error,ceiling)
     );
   }
 
@@ -573,7 +574,10 @@ export class AdminHierarchyCeilingComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any,ceiling:AdminHierarchyCeiling): void {
+    let index = this.adminHierarchyCeilings!.findIndex(ahc =>(ahc.id === ceiling.id));
+    this.adminHierarchyCeilings![index] = this.clonedCeiling[ceiling.id!]
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -589,7 +593,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   onRowEditSave(ceiling: AdminHierarchyCeiling) {
     const adminHierarchyCeiling = this.updateFromForm(ceiling);
     this.subscribeToSaveResponse(
-      this.adminHierarchyCeilingService.update(adminHierarchyCeiling)
+      this.adminHierarchyCeilingService.update(adminHierarchyCeiling),ceiling
     );
   }
 
@@ -610,7 +614,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       accept: () => {
         const adminHierarchyCeiling = this.updateFromForm(row);
         this.subscribeToSaveResponse(
-          this.adminHierarchyCeilingService.update(adminHierarchyCeiling)
+          this.adminHierarchyCeilingService.update(adminHierarchyCeiling),row
         );
       },
       reject: () => {
@@ -669,6 +673,25 @@ export class AdminHierarchyCeilingComponent implements OnInit {
           }
         }
       )
+  }
+  showAllocation(event: Event,overlay:any,row:AdminHierarchyCeiling):void{
+    let req = {
+      admin_ceiling_id:row.id,
+      ceiling_id:row.ceiling_id,
+      position:row.section?.position,
+      admin_hierarchy_position: this.admin_hierarchy_position,
+      financial_year_id:row.financial_year_id,
+      admin_hierarchy_id:row.admin_hierarchy_id
+    }
+    this.selectedCeiling = row;
+    this.adminHierarchyCeilingService
+      .getCeilingAllocationSummary(req)
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          this.selectedCeilingAllocationSummary=(resp.data??[]).map((s: { data: any; }) => Object.assign(s,
+            {percent: ((s.data!/row!.amount!)*100)}));
+        });
+    overlay.toggle(event);
   }
 
 }

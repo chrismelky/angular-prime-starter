@@ -1,4 +1,5 @@
 <div class="dialog-content">
+  <app-loader [isLoading]="isSaving"></app-loader>
   <form
     name="editForm"
     role="form"
@@ -726,6 +727,7 @@
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button
+          [disabled]="budgetIsLocked"
           class="p-button-raised"
           icon="pi pi-check"
           label="Save"

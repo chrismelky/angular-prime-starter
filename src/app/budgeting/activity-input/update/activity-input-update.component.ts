@@ -35,6 +35,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   formError = false;
   breakDownFormError = false;
   errors = [];
+  budgetIsLocked? = false;
 
   activities?: Activity[] = [];
   fundSources?: FundSource[] = [];
@@ -127,6 +128,12 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.onHasBreakDownChange(input.has_breakdown);
     }
     this.updateForm(input); //Initialize form with data from dialog
+
+    this.budgetIsLocked = dialogData?.budgetIsLocked;
+
+    if (this.budgetIsLocked) {
+      this.editForm.disable();
+    }
   }
 
   /**
@@ -197,6 +204,7 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.editForm.get('breakdowns')?.reset();
       this.editForm.get('breakdownValid')?.clearValidators();
     }
+    this.editForm.get('breakdownValid')?.updateValueAndValidity();
   }
 
   protected subscribeToSaveResponse(

@@ -381,7 +381,7 @@ export class ActivityInputComponent implements OnInit {
         budgetIsLocked: this.budgetIsLocked,
       },
       width: '900px',
-      header: 'Create/Update ActivityInput',
+      header: 'Create/Update Activity Input',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

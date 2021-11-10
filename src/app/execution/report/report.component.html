@@ -33,7 +33,6 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="financialYears!"
-                (onChange)="filterChanged()"
                 [(ngModel)]="financial_year_id"
               ></p-dropdown>
               <label for="financial_year_id">Financial Year </label>
@@ -49,7 +48,6 @@
                 [filter]="true"
                 class="p-inputtext-sm"
                 [options]="budgetTypes!"
-                (onChange)="filterChanged()"
                 [(ngModel)]="budgetType"
               ></p-dropdown>
               <label for="budgetType">Budget Type </label>
@@ -183,7 +181,7 @@
                   class="p-button-icon p-button-outlined"
                   [disabled]="!this.admin_hierarchy_id ||
                               !this.financial_year_id ||
-                              !this.budgetType"
+                              !this.budgetType || admin_hierarchy_position !=3"
                   (click)="getReport(rowData)"
                   label="get report"
                 ></button>

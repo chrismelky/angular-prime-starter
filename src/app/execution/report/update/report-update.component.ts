@@ -48,6 +48,7 @@ export class ReportUpdateComponent implements OnInit {
   sectors?: Sector[] = [];
   departments?: Section[] = [];
   fundSources?: FundSource[] = [];
+  peFundSources?: FundSource[] = [];
   parameters: string[] | undefined;
 
   /**
@@ -113,6 +114,10 @@ export class ReportUpdateComponent implements OnInit {
               if (this.parameters![i] == 'sector_id'){
                 this.sectorService.query({ columns :['id','name']})
                   .subscribe((resp:CustomResponse<Sector[]>)=>(this.sectors = resp.data));
+              }
+              if (this.parameters![i] == 'fund_source_pe'){
+                this.fundSourceService.getPeFundSource()
+                  .subscribe((resp:CustomResponse<FundSource[]>)=>(this.peFundSources = resp.data));
               }
             }
           }

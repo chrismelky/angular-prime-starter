@@ -79,11 +79,6 @@ export class PeSelectOptionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.peSelectOptionService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<PeSelectOption[]>) => (this.parents = resp.data)
-      );
     this.handleNavigation();
   }
 

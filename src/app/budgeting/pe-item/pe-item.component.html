@@ -185,7 +185,8 @@
                   <ng-container *ngIf="input?.output_type === 'DATE'; else notDateBlock;">
                     <p-calendar
                       appendTo="body"
-                      [(ngModel)]="peValuesArray[i.uid!][input.id]?.value ? peValuesArray[i.uid!][input.id]?.value : defaultValue"
+                      [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                      (onSelect)="updateValue(peValuesArray[i.uid!][input.id])"
                       [monthNavigator]="true"
                       [yearNavigator]="true"
                       yearRange="{{yearRange}}"
@@ -200,7 +201,7 @@
                       class="p-inputtext-sm"
                       pInputText
                       [disabled]="!!input.formula || financialYear !== null?false:true"
-                      [(ngModel)]="peValuesArray[i.uid!][input.id]?.value ? peValuesArray[i.uid!][input.id]?.value : defaultValue"
+                      [(ngModel)]="peValuesArray[i.uid!][input.id].value"
                       (blur)="updateValue(peValuesArray[i.uid!][input.id])"
                       autocomplete="off"
                     >

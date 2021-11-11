@@ -118,7 +118,8 @@ export class CategoryCombinationComponent implements OnInit {
     ]).subscribe(([data, params]) => {
       const page = params.get('page');
       const perPage = params.get('per_page');
-      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
+      const sort = (params.get('sort') || data['defaultSort']).split(':');
+      console.log(sort);
       const predicate = sort[0];
       const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
@@ -246,7 +247,7 @@ export class CategoryCombinationComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }

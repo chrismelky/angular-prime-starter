@@ -38,6 +38,7 @@ export class CategoryCombinationUpdateComponent implements OnInit {
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
     skip_total: [false, [Validators.required]],
+    sort_order: [null, []],
   });
 
   constructor(
@@ -134,6 +135,7 @@ export class CategoryCombinationUpdateComponent implements OnInit {
       name: categoryCombination.name,
       code: categoryCombination.code,
       skip_total: categoryCombination.skip_total,
+      sort_order: categoryCombination.sort_order,
     });
   }
 
@@ -148,6 +150,7 @@ export class CategoryCombinationUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       code: this.editForm.get(['code'])!.value,
       skip_total: this.editForm.get(['skip_total'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
     };
   }
 }

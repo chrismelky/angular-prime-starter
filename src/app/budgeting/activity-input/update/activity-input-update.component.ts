@@ -36,6 +36,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   breakDownFormError = false;
   errors = [];
   budgetIsLocked? = false;
+  balanceAmount = 0.0;
 
   activities?: Activity[] = [];
   fundSources?: FundSource[] = [];
@@ -90,6 +91,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     is_inkind: [null, []],
     breakdowns: this.fb.array([]),
     breakdownValid: [null, []],
+    totalAmountValid: [null, []],
   });
 
   constructor(
@@ -106,6 +108,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.facilityActivity = dialogData.facilityActivity;
     this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
+    this.balanceAmount = dialogData.balanceAmount;
     const input: ActivityInput = dialogData.activityInput;
     if (input.id) {
       this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
@@ -164,6 +167,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     frequency?: number
   ): void {
     this.total = (unit_price || 0) * (quantity || 0) * (frequency || 0);
+    this.updateTotalAmountValidity();
   }
 
   updateTotalYrOne(
@@ -266,6 +270,21 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.editForm.get('breakdownValid')?.clearValidators();
     }
     this.editForm.get('breakdownValid')?.updateValueAndValidity();
+  }
+
+  /**
+   * Validate if totoal amout is greater than balance amount and set field required to
+   * display error message else clear message
+   */
+  private updateTotalAmountValidity(): void {
+    if (this.total !== 0 && this.total > this.balanceAmount) {
+      this.editForm
+        .get('totalAmountValid')
+        ?.setValidators([Validators.required]);
+    } else {
+      this.editForm.get('totalAmountValid')?.clearValidators();
+    }
+    this.editForm.get('totalAmountValid')?.updateValueAndValidity();
   }
 
   removeControl(index: number): void {

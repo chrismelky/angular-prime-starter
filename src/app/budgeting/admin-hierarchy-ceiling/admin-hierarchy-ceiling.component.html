@@ -210,6 +210,7 @@
           <th>Budget Class</th>
           <th>Bank Account</th>
           <th>Amount (TZS)</th>
+          <th>Allocation Status</th>
           <th>Status</th>
           <th *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">Lock/Unlock</th>
           <th  style="width:8rem"></th>
@@ -235,6 +236,22 @@
             </p-cellEditor>
           </td>
           <td>
+            <span *ngIf="rowData.amount <= 0">{{rowData.amount | currency: '' :''}}</span>
+            <button
+              type="text"
+              pButton
+              pRipple
+              pTooltip="Allocation"
+              tooltipPosition="bottom"
+              *ngIf="rowData.amount > 0"
+              iconPos="left"
+              class="p-button-text p-button-plain p-button-primary"
+              (click)="showAllocation($event, ao, rowData)"
+            >
+              <i class="pi pi-list"></i>
+            </button>
+          </td>
+          <td>
             <p-badge severity="success" *ngIf="rowData?.is_locked===false" value="unlocked"></p-badge>
             <p-badge severity="danger" *ngIf="rowData?.is_locked===true" value="Locked"></p-badge>
           </td>
@@ -253,7 +270,7 @@
               <div fxLayout="row" *ngxPermissionsOnly="['DELETE_CEILING_AMOUNT']" fxLayoutGap="2px">
                 <button
                   pButton
-                  *ngIf="!rowData['is_locked'] && planingFinancialYear_id===financial_year_id"
+                  *ngIf="!rowData['is_locked'] && planingFinancialYear_id===financial_year_id && position === ceilingStartSectionPosition"
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="p-button-text p-button-plain p-button-rounded p-button-icon"
@@ -294,3 +311,20 @@
   header="Confirmation Delete Admin Hierarchy Ceiling"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>
+
+<p-overlayPanel #ao [showCloseIcon]="true" [style]="{width: '450px'}">
+  <ng-template pTemplate>
+    <h4><b>Allocation Status</b></h4>
+    <p-fieldset  *ngFor="let pos of selectedCeilingAllocationSummary" legend="{{pos.name}}">
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <span  style="font-size:14px"><b>{{pos.data | currency: '' :'TZS'}}</b></span>
+        <span  style="font-size:14px"><b>
+          <p-badge *ngIf="pos.percent===100" [value]="pos.percent + '%'" severity="success" styleClass="p-mr-2"></p-badge>
+          <p-badge *ngIf="pos.percent>0 && pos.percent < 100" [value]="pos.percent  + '%'" severity="warning" styleClass="p-mr-2"></p-badge>
+          <p-badge *ngIf="pos.percent<=0 || pos.percent > 100" [value]="pos.percent  + '%'" severity="danger"></p-badge>
+<!--          ({{pos.percent | number : '1.2-2'}}%)-->
+        </b></span>
+      </div>
+    </p-fieldset>
+  </ng-template>
+</p-overlayPanel>

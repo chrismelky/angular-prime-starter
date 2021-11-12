@@ -78,6 +78,7 @@ export class DataValueComponent implements OnInit {
 
   //Mandatory filter
   admin_hierarchy_id?: number;
+  admin_hierarchy_position?: number;
   financial_year_id?: number;
   facility_type_id?: number;
   facility_id?: number;
@@ -109,6 +110,8 @@ export class DataValueComponent implements OnInit {
     if (this.currentUser.admin_hierarchy) {
       this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
       this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+      this.admin_hierarchy_position =
+        this.adminHierarchies[0].admin_hierarchy_position;
       this.parentAdminName = `p${this.currentUser.admin_hierarchy.admin_hierarchy_position}`;
     }
   }
@@ -117,7 +120,8 @@ export class DataValueComponent implements OnInit {
     this.casContentIsLoading = true;
     this.casPlanService
       .query({
-        columns: ['id', 'name'],
+        admin_hierarchy_position: this.admin_hierarchy_position,
+        columns: ['id', 'name', 'admin_hierarchy_position'],
       })
       .subscribe(
         (resp: CustomResponse<CasPlan[]>) => {

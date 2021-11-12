@@ -174,7 +174,7 @@ export class PeItemComponent implements OnInit {
 
 
     this.financialYearService
-      .findByStatus(1)
+      .findByStatus(2)
       .subscribe((resp: CustomResponse<FinancialYear>) => {
         if (resp.data) {
           this.financialYear = resp.data.name!;
@@ -724,11 +724,16 @@ export class PeItemComponent implements OnInit {
   }
 
   updateValue(data: any) {
-    if (data?.value !== undefined && data?.value >= 0) {
+    if (data?.value !== undefined) {
       const objectIndex = this.peDataValues?.findIndex((pdv: any) => {
         return pdv.uid === data.uid && pdv.id === data.id;
       });
-      this.peDataValues[objectIndex].value = data.value ? data.value : '';
+
+      if(data.output_type ==="DATE") {
+        this.peDataValues[objectIndex].value = data.value ? data.value.toISOString().split('T')[0] : '';
+      } else {
+        this.peDataValues[objectIndex].value = data.value ? data.value : '';
+      }
       /** Remove select_option */
       delete this.peDataValues[objectIndex]?.select_option;
       this.horizontalTotal(data); // per column parent

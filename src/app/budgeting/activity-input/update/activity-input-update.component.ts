@@ -25,6 +25,9 @@ import { ActivityInput } from '../activity-input.model';
 import { ActivityInputService } from '../activity-input.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
+import { GfsCodeService } from 'src/app/setup/gfs-code/gfs-code.service';
+import { ProcurementType } from 'src/app/setup/procurement-type/procurement-type.model';
+import { ProcurementMethod } from 'src/app/execution/activity-implementation/activity-implementation.model';
 
 @Component({
   selector: 'app-activity-input-update',
@@ -36,6 +39,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   breakDownFormError = false;
   errors = [];
   budgetIsLocked? = false;
+  isProcurement? = false;
   balanceAmount = 0.0;
 
   activities?: Activity[] = [];
@@ -52,6 +56,9 @@ export class ActivityInputUpdateComponent implements OnInit {
   periodSum = 0.0;
   totalToAdd = 0.0;
   totalToBreakDown = 0.0;
+
+  procurementTypes?: ProcurementType[] = [];
+  procurementMethods?: ProcurementMethod[] = [];
   /**
    * Declare form
    */
@@ -92,6 +99,8 @@ export class ActivityInputUpdateComponent implements OnInit {
     breakdowns: this.fb.array([]),
     breakdownValid: [null, []],
     totalAmountValid: [null, []],
+    procurement_method_id: [null, []],
+    procurement_type_id: [null, []],
   });
 
   constructor(
@@ -100,7 +109,8 @@ export class ActivityInputUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected enumService: EnumService
+    protected enumService: EnumService,
+    protected gfsCodeService: GfsCodeService
   ) {}
 
   ngOnInit(): void {
@@ -109,9 +119,13 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
     this.balanceAmount = dialogData.balanceAmount;
+    this.procurementMethods = dialogData.procurementMethods;
+    this.procurementTypes = dialogData.procurementTypes;
+
     const input: ActivityInput = dialogData.activityInput;
     if (input.id) {
       this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
+      this.updateProcurementValidity(input.gfs_code_id!);
       this.updateTotalYrOne(
         input.unit_price!,
         input.quantity_yr_one!,
@@ -140,7 +154,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create ActivityInput or Update Facility type if exist else set form has error and return
+   * When form is valid Create ActivityInput or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -287,6 +301,27 @@ export class ActivityInputUpdateComponent implements OnInit {
     this.editForm.get('totalAmountValid')?.updateValueAndValidity();
   }
 
+  updateProcurementValidity(selectedGfsId: number): void {
+    const gfsCode = this.gfsCodes?.find((gfs) => gfs.id === selectedGfsId);
+    if (gfsCode && gfsCode.is_procurement) {
+      this.isProcurement = true;
+      this.editForm
+        .get('procurement_type_id')
+        ?.setValidators([Validators.required]);
+      this.editForm
+        .get('procurement_method_id')
+        ?.setValidators([Validators.required]);
+    } else {
+      this.isProcurement = false;
+      this.editForm.get('procurement_type_id')?.clearValidators();
+      this.editForm.get('procurement_type_id')?.reset();
+      this.editForm.get('procurement_method_id')?.clearValidators();
+      this.editForm.get('procurement_method_id')?.reset();
+    }
+    this.editForm.get('procurement_type_id')?.updateValueAndValidity();
+    this.editForm.get('procurement_method_id')?.updateValueAndValidity();
+  }
+
   removeControl(index: number): void {
     this.breakDownControls.removeAt(index);
     this.updateBreakdownTotal();
@@ -330,6 +365,8 @@ export class ActivityInputUpdateComponent implements OnInit {
       period_four: activityInput.period_four,
       has_breakdown: activityInput.has_breakdown,
       is_inkind: activityInput.is_inkind,
+      procurement_type_id: activityInput.procurement_type_id,
+      procurement_method_id: activityInput.procurement_method_id,
     });
     const breakdowns = activityInput.breakdowns
       ? JSON.parse(activityInput.breakdowns)

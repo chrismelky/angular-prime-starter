@@ -5,28 +5,28 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { GfsCode } from "src/app/setup/gfs-code/gfs-code.model";
-import { GfsCodeService } from "src/app/setup/gfs-code/gfs-code.service";
-import { FundSource } from "src/app/setup/fund-source/fund-source.model";
-import { FundSourceService } from "src/app/setup/fund-source/fund-source.service";
-import { Projection } from "../projection.model";
-import { ProjectionService } from "../projection.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
+import { GfsCodeService } from 'src/app/setup/gfs-code/gfs-code.service';
+import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
+import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
+import { Projection } from '../projection.model';
+import { ProjectionService } from '../projection.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-projection-update",
-  templateUrl: "./projection-update.component.html",
+  selector: 'app-projection-update',
+  templateUrl: './projection-update.component.html',
 })
 export class ProjectionUpdateComponent implements OnInit {
   isSaving = false;
@@ -76,24 +76,24 @@ export class ProjectionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
       );
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
       );
     this.gfsCodeService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
       );
     this.fundSourceService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
       );
@@ -101,7 +101,7 @@ export class ProjectionUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create Projection or Update Facility type if exist else set form has error and return
+   * When form is valid Create Projection or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -182,25 +182,25 @@ export class ProjectionUpdateComponent implements OnInit {
   protected createFromForm(): Projection {
     return {
       ...new Projection(),
-      id: this.editForm.get(["id"])!.value,
-      projection_type_id: this.editForm.get(["projection_type_id"])!.value,
-      admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
-      financial_year_id: this.editForm.get(["financial_year_id"])!.value,
-      gfs_code_id: this.editForm.get(["gfs_code_id"])!.value,
-      fund_source_id: this.editForm.get(["fund_source_id"])!.value,
-      active: this.editForm.get(["active"])!.value,
-      deleted: this.editForm.get(["deleted"])!.value,
-      q1_amount: this.editForm.get(["q1_amount"])!.value,
-      q2_amount: this.editForm.get(["q2_amount"])!.value,
-      q3_amount: this.editForm.get(["q3_amount"])!.value,
-      q4_amount: this.editForm.get(["q4_amount"])!.value,
-      amount: this.editForm.get(["amount"])!.value,
-      forwad_year1_amount: this.editForm.get(["forwad_year1_amount"])!.value,
-      forwad_year2_amount: this.editForm.get(["forwad_year2_amount"])!.value,
-      chart_of_account: this.editForm.get(["chart_of_account"])!.value,
-      export_to: this.editForm.get(["export_to"])!.value,
-      is_sent: this.editForm.get(["is_sent"])!.value,
-      delivered: this.editForm.get(["delivered"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      projection_type_id: this.editForm.get(['projection_type_id'])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
+      gfs_code_id: this.editForm.get(['gfs_code_id'])!.value,
+      fund_source_id: this.editForm.get(['fund_source_id'])!.value,
+      active: this.editForm.get(['active'])!.value,
+      deleted: this.editForm.get(['deleted'])!.value,
+      q1_amount: this.editForm.get(['q1_amount'])!.value,
+      q2_amount: this.editForm.get(['q2_amount'])!.value,
+      q3_amount: this.editForm.get(['q3_amount'])!.value,
+      q4_amount: this.editForm.get(['q4_amount'])!.value,
+      amount: this.editForm.get(['amount'])!.value,
+      forwad_year1_amount: this.editForm.get(['forwad_year1_amount'])!.value,
+      forwad_year2_amount: this.editForm.get(['forwad_year2_amount'])!.value,
+      chart_of_account: this.editForm.get(['chart_of_account'])!.value,
+      export_to: this.editForm.get(['export_to'])!.value,
+      is_sent: this.editForm.get(['is_sent'])!.value,
+      delivered: this.editForm.get(['delivered'])!.value,
     };
   }
 }

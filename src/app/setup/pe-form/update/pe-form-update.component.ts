@@ -5,30 +5,30 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { PeForm } from "../pe-form.model";
-import { PeFormService } from "../pe-form.service";
-import { ToastService } from "src/app/shared/toast.service";
-import {BudgetClassService} from "../../budget-class/budget-class.service";
-import {SelectItemGroup} from "primeng/api";
-import {FundSourceService} from "../../fund-source/fund-source.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { PeForm } from '../pe-form.model';
+import { PeFormService } from '../pe-form.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { BudgetClassService } from '../../budget-class/budget-class.service';
+import { SelectItemGroup } from 'primeng/api';
+import { FundSourceService } from '../../fund-source/fund-source.service';
 
 @Component({
-  selector: "app-pe-form-update",
-  templateUrl: "./pe-form-update.component.html",
+  selector: 'app-pe-form-update',
+  templateUrl: './pe-form-update.component.html',
 })
 export class PeFormUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
   fundSources?: any[] = [];
-  budgetClasses?: SelectItemGroup[] =[];
+  budgetClasses?: SelectItemGroup[] = [];
 
   /**
    * Declare form
@@ -55,16 +55,21 @@ export class PeFormUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
 
-     this.budgetClassService.getParentChild().subscribe(
-        (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data));
+    this.budgetClassService
+      .getParentChild()
+      .subscribe(
+        (resp: CustomResponse<any[]>) => (this.budgetClasses = resp.data)
+      );
 
-     this.fundSourceService.getPeFundSource().subscribe(
-       (resp: CustomResponse<any[]>) => {
-         this.fundSources = resp.data });
+    this.fundSourceService
+      .getPeFundSource()
+      .subscribe((resp: CustomResponse<any[]>) => {
+        this.fundSources = resp.data;
+      });
   }
 
   /**
-   * When form is valid Create PeForm or Update Facility type if exist else set form has error and return
+   * When form is valid Create PeForm or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -132,12 +137,12 @@ export class PeFormUpdateComponent implements OnInit {
   protected createFromForm(): PeForm {
     return {
       ...new PeForm(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      description: this.editForm.get(["description"])!.value,
-      budget_classes: this.editForm.get(["budget_classes"])!.value,
-      fund_sources: this.editForm.get(["fund_sources"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      description: this.editForm.get(['description'])!.value,
+      budget_classes: this.editForm.get(['budget_classes'])!.value,
+      fund_sources: this.editForm.get(['fund_sources'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

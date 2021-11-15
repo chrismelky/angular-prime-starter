@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasAssessmentCategoryVersion } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model";
-import { CasAssessmentCategoryVersionService } from "src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service";
-import { CasAssessmentState } from "src/app/setup/cas-assessment-state/cas-assessment-state.model";
-import { CasAssessmentStateService } from "src/app/setup/cas-assessment-state/cas-assessment-state.service";
-import { CasAssessmentCategoryVersionState } from "../cas-assessment-category-version-state.model";
-import { CasAssessmentCategoryVersionStateService } from "../cas-assessment-category-version-state.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasAssessmentCategoryVersion } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.model';
+import { CasAssessmentCategoryVersionService } from 'src/app/setup/cas-assessment-category-version/cas-assessment-category-version.service';
+import { CasAssessmentState } from 'src/app/setup/cas-assessment-state/cas-assessment-state.model';
+import { CasAssessmentStateService } from 'src/app/setup/cas-assessment-state/cas-assessment-state.service';
+import { CasAssessmentCategoryVersionState } from '../cas-assessment-category-version-state.model';
+import { CasAssessmentCategoryVersionStateService } from '../cas-assessment-category-version-state.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-cas-assessment-category-version-state-update",
-  templateUrl: "./cas-assessment-category-version-state-update.component.html",
+  selector: 'app-cas-assessment-category-version-state-update',
+  templateUrl: './cas-assessment-category-version-state-update.component.html',
 })
 export class CasAssessmentCategoryVersionStateUpdateComponent
   implements OnInit
@@ -57,13 +57,13 @@ export class CasAssessmentCategoryVersionStateUpdateComponent
 
   ngOnInit(): void {
     this.casAssessmentCategoryVersionService
-      .query({ columns: ["id", "cas_assessment_category_id"] })
+      .query({ columns: ['id', 'cas_assessment_category_id'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentCategoryVersion[]>) =>
           (this.casAssessmentCategoryVersions = resp.data)
       );
     this.casAssessmentStateService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentState[]>) =>
           (this.casAssessmentStates = resp.data)
@@ -72,7 +72,7 @@ export class CasAssessmentCategoryVersionStateUpdateComponent
   }
 
   /**
-   * When form is valid Create CasAssessmentCategoryVersionState or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasAssessmentCategoryVersionState or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -151,14 +151,14 @@ export class CasAssessmentCategoryVersionStateUpdateComponent
   protected createFromForm(): CasAssessmentCategoryVersionState {
     return {
       ...new CasAssessmentCategoryVersionState(),
-      id: this.editForm.get(["id"])!.value,
-      min_value: this.editForm.get(["min_value"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      min_value: this.editForm.get(['min_value'])!.value,
       cas_assessment_category_version_id: this.editForm.get([
-        "cas_assessment_category_version_id",
+        'cas_assessment_category_version_id',
       ])!.value,
-      cas_assessment_state_id: this.editForm.get(["cas_assessment_state_id"])!
+      cas_assessment_state_id: this.editForm.get(['cas_assessment_state_id'])!
         .value,
-      max_value: this.editForm.get(["max_value"])!.value,
+      max_value: this.editForm.get(['max_value'])!.value,
     };
   }
 }

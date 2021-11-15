@@ -5,26 +5,26 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { GfsCode } from "src/app/setup/gfs-code/gfs-code.model";
-import { GfsCodeService } from "src/app/setup/gfs-code/gfs-code.service";
-import { FundSourceCategory } from "src/app/setup/fund-source-category/fund-source-category.model";
-import { FundSourceCategoryService } from "src/app/setup/fund-source-category/fund-source-category.service";
-import { FundSource } from "../fund-source.model";
-import { FundSourceService } from "../fund-source.service";
-import { ToastService } from "src/app/shared/toast.service";
-import {Sector} from "../../sector/sector.model";
-import {SectorService} from "../../sector/sector.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
+import { GfsCodeService } from 'src/app/setup/gfs-code/gfs-code.service';
+import { FundSourceCategory } from 'src/app/setup/fund-source-category/fund-source-category.model';
+import { FundSourceCategoryService } from 'src/app/setup/fund-source-category/fund-source-category.service';
+import { FundSource } from '../fund-source.model';
+import { FundSourceService } from '../fund-source.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Sector } from '../../sector/sector.model';
+import { SectorService } from '../../sector/sector.service';
 
 @Component({
-  selector: "app-fund-source-update",
-  templateUrl: "./fund-source-update.component.html",
+  selector: 'app-fund-source-update',
+  templateUrl: './fund-source-update.component.html',
 })
 export class FundSourceUpdateComponent implements OnInit {
   isSaving = false;
@@ -63,12 +63,12 @@ export class FundSourceUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.gfsCodeService
-      .queryRev({ columns: ["id",'code',"name"] })
+      .queryRev({ columns: ['id', 'code', 'name'] })
       .subscribe(
         (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
       );
     this.fundSourceCategoryService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FundSourceCategory[]>) =>
           (this.fundSourceCategories = resp.data)
@@ -77,7 +77,7 @@ export class FundSourceUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create FundSource or Update Facility type if exist else set form has error and return
+   * When form is valid Create FundSource or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -149,17 +149,17 @@ export class FundSourceUpdateComponent implements OnInit {
   protected createFromForm(): FundSource {
     return {
       ...new FundSource(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      gfs_code_id: this.editForm.get(["gfs_code_id"])!.value,
-      fund_source_category_id: this.editForm.get(["fund_source_category_id"])!
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      gfs_code_id: this.editForm.get(['gfs_code_id'])!.value,
+      fund_source_category_id: this.editForm.get(['fund_source_category_id'])!
         .value,
-      is_conditional: this.editForm.get(["is_conditional"])!.value,
-      is_foreign: this.editForm.get(["is_foreign"])!.value,
-      is_treasurer: this.editForm.get(["is_treasurer"])!.value,
-      can_project: this.editForm.get(["can_project"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      is_conditional: this.editForm.get(['is_conditional'])!.value,
+      is_foreign: this.editForm.get(['is_foreign'])!.value,
+      is_treasurer: this.editForm.get(['is_treasurer'])!.value,
+      can_project: this.editForm.get(['can_project'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

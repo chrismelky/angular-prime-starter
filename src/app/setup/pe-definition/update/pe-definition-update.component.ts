@@ -5,28 +5,28 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { GfsCode } from "src/app/setup/gfs-code/gfs-code.model";
-import { GfsCodeService } from "src/app/setup/gfs-code/gfs-code.service";
-import { PeForm } from "src/app/setup/pe-form/pe-form.model";
-import { PeFormService } from "src/app/setup/pe-form/pe-form.service";
-import { PeDefinition } from "../pe-definition.model";
-import { PeDefinitionService } from "../pe-definition.service";
-import { ToastService } from "src/app/shared/toast.service";
-import {PeSelectOption} from "../../pe-select-option/pe-select-option.model";
-import {PeSelectOptionService} from "../../pe-select-option/pe-select-option.service";
-import {style} from "@angular/animations";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
+import { GfsCodeService } from 'src/app/setup/gfs-code/gfs-code.service';
+import { PeForm } from 'src/app/setup/pe-form/pe-form.model';
+import { PeFormService } from 'src/app/setup/pe-form/pe-form.service';
+import { PeDefinition } from '../pe-definition.model';
+import { PeDefinitionService } from '../pe-definition.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { PeSelectOption } from '../../pe-select-option/pe-select-option.model';
+import { PeSelectOptionService } from '../../pe-select-option/pe-select-option.service';
+import { style } from '@angular/animations';
 
 @Component({
-  selector: "app-pe-definition-update",
-  templateUrl: "./pe-definition-update.component.html",
+  selector: 'app-pe-definition-update',
+  templateUrl: './pe-definition-update.component.html',
 })
 export class PeDefinitionUpdateComponent implements OnInit {
   isSaving = false;
@@ -41,12 +41,15 @@ export class PeDefinitionUpdateComponent implements OnInit {
   peOutPutValues?: PlanrepEnum[] = [];
   peInPutValues?: PlanrepEnum[] = [];
   peSelectOption?: PeSelectOption[] = [];
-  pe_selected_definition_id:number = 0
-  is_input_status:boolean = false;
-  select_option_status:boolean = false;
+  pe_selected_definition_id: number = 0;
+  is_input_status: boolean = false;
+  select_option_status: boolean = false;
   ColumnType?: string = 'CUSTOM';
-  columnTypes = [{'value':'CUSTOM','name':'Custom Column'},{'value':'FY','name':'Financial Year Column'}];
-  isNotFinancialYear:boolean = true;
+  columnTypes = [
+    { value: 'CUSTOM', name: 'Custom Column' },
+    { value: 'FY', name: 'Financial Year Column' },
+  ];
+  isNotFinancialYear: boolean = true;
 
   /**
    * Declare form
@@ -83,41 +86,48 @@ export class PeDefinitionUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.pe_selected_definition_id = this.dialogConfig.data?.id
+    this.pe_selected_definition_id = this.dialogConfig.data?.id;
     this.peDefinitionService
-      .query({ columns: ["id", "field_name"],pe_form_id:this.dialogConfig.data?.pe_form_id,parent_id:null })
-      .subscribe(
-        (resp: CustomResponse<PeDefinition[]>) => {
-          this.parents = (resp.data ?? []).filter(p => p.id !== this.pe_selected_definition_id)
-        }
-      );
+      .query({
+        columns: ['id', 'field_name'],
+        pe_form_id: this.dialogConfig.data?.pe_form_id,
+        parent_id: null,
+      })
+      .subscribe((resp: CustomResponse<PeDefinition[]>) => {
+        this.parents = (resp.data ?? []).filter(
+          (p) => p.id !== this.pe_selected_definition_id
+        );
+      });
     this.gfsCodeService
-      .query({ columns: ["id", "name","code"] })
+      .query({ columns: ['id', 'name', 'code'] })
       .subscribe(
         (resp: CustomResponse<GfsCode[]>) => (this.gfsCodes = resp.data)
       );
     this.peFormService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
       );
 
     this.peSelectOptionService
-      .query({ columns: ["id", "name"], parent_id: null })
+      .query({ columns: ['id', 'name'], parent_id: null })
       .subscribe(
-        (resp: CustomResponse<PeSelectOption[]>) => (this.peSelectOption = resp.data)
+        (resp: CustomResponse<PeSelectOption[]>) =>
+          (this.peSelectOption = resp.data)
       );
 
-    this.units = (this.enumService.get("units") ?? []).filter(u => u.value === "Lumpsum" || u.value === "Each");
-    this.valueTypes = this.enumService.get("valueTypes");
-    this.peOutPutValues = this.enumService.get("peOutPutValues");
-    this.peInPutValues = this.enumService.get("peInPutValues");
-    this.inputTypeChanged(null)
+    this.units = (this.enumService.get('units') ?? []).filter(
+      (u) => u.value === 'Lumpsum' || u.value === 'Each'
+    );
+    this.valueTypes = this.enumService.get('valueTypes');
+    this.peOutPutValues = this.enumService.get('peOutPutValues');
+    this.peInPutValues = this.enumService.get('peInPutValues');
+    this.inputTypeChanged(null);
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create PeDefinition or Update Facility type if exist else set form has error and return
+   * When form is valid Create PeDefinition or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -138,68 +148,67 @@ export class PeDefinitionUpdateComponent implements OnInit {
     }
   }
 
-  inputTypeChanged(event:any){
-    if(event !== null) {
-      if (event.value === "SELECT") {
-        this.editForm.get("is_input")?.disable()
-        this.editForm.get("gfs_code_id")?.disable()
-        this.editForm.get('select_option')?.enable()
-      } else if (event.value === "CURRENCY") {
-        this.editForm.get("is_input")?.enable()
-        this.editForm.get("gfs_code_id")?.enable()
-        this.editForm.get('select_option')?.disable()
+  inputTypeChanged(event: any) {
+    if (event !== null) {
+      if (event.value === 'SELECT') {
+        this.editForm.get('is_input')?.disable();
+        this.editForm.get('gfs_code_id')?.disable();
+        this.editForm.get('select_option')?.enable();
+      } else if (event.value === 'CURRENCY') {
+        this.editForm.get('is_input')?.enable();
+        this.editForm.get('gfs_code_id')?.enable();
+        this.editForm.get('select_option')?.disable();
       } else {
-        this.editForm.get('is_input')?.disable()
-        this.editForm.get('gfs_code_id')?.disable()
-        this.editForm.get('select_option')?.disable()
+        this.editForm.get('is_input')?.disable();
+        this.editForm.get('gfs_code_id')?.disable();
+        this.editForm.get('select_option')?.disable();
       }
     } else {
-      this.editForm.get('is_input')?.disable()
-      this.editForm.get('gfs_code_id')?.disable()
-      this.editForm.get('select_option')?.disable()
+      this.editForm.get('is_input')?.disable();
+      this.editForm.get('gfs_code_id')?.disable();
+      this.editForm.get('select_option')?.disable();
     }
   }
 
   /** handle if column Type changes  */
-  columnTypeChanged(event:any){
-    if(event === 'CUSTOM'){
-      this.editForm.enable()
+  columnTypeChanged(event: any) {
+    if (event === 'CUSTOM') {
+      this.editForm.enable();
       this.isNotFinancialYear = true;
       this.inputTypeChanged(null);
-    } else if(event === 'FY'){
+    } else if (event === 'FY') {
       this.isNotFinancialYear = false;
       this.disableInputsAndReset();
     }
   }
 
   /** disable some input and clear content if financialYear column selected */
-  disableInputsAndReset(){
+  disableInputsAndReset() {
     const inputs = Object.keys(this.editForm.value);
-    inputs.forEach(field => {
-      if(
-        field !== 'parent_id'
-        && field !== 'pe_form_id'
-        && field !== 'type'
-        && field !== 'select_option'
-        && field !== 'output_type') {
-        this.editForm.get(field)?.disable()
-        this.editForm.get(field)?.reset()
+    inputs.forEach((field) => {
+      if (
+        field !== 'parent_id' &&
+        field !== 'pe_form_id' &&
+        field !== 'type' &&
+        field !== 'select_option' &&
+        field !== 'output_type'
+      ) {
+        this.editForm.get(field)?.disable();
+        this.editForm.get(field)?.reset();
       }
-    })
+    });
   }
 
   /** Financial Year columns (Current & 2 Forwards) is initialized on selected PE Form */
   initializeFinancialYear(): void {
     const form = this.editForm.value;
-    if(form.parent_id !== undefined && form.parent_id !== null){
-      form.columnType = "FY";
-      form.field_name = "FY";
-      form.unit = "FY";
-      this.subscribeToSaveResponse(
-        this.peDefinitionService.create(form)
-      );
+    if (form.parent_id !== undefined && form.parent_id !== null) {
+      form.columnType = 'FY';
+      form.field_name = 'FY';
+      form.unit = 'FY';
+      this.subscribeToSaveResponse(this.peDefinitionService.create(form));
     } else {
-      this.toastService.error('Please select PE Parent Column')
+      this.toastService.error('Please select PE Parent Column');
     }
   }
 
@@ -264,22 +273,22 @@ export class PeDefinitionUpdateComponent implements OnInit {
   protected createFromForm(): PeDefinition {
     return {
       ...new PeDefinition(),
-      id: this.editForm.get(["id"])!.value,
-      field_name: this.editForm.get(["field_name"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      gfs_code_id: this.editForm.get(["gfs_code_id"])!.value,
-      sort_order: this.editForm.get(["sort_order"])!.value,
-      unit: this.editForm.get(["unit"])!.value,
-      is_input: this.editForm.get(["is_input"])!.value,
-      has_breakdown: this.editForm.get(["has_breakdown"])!.value,
-      pe_form_id: this.editForm.get(["pe_form_id"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
-      column_number: this.editForm.get(["column_number"])!.value,
-      formula: this.editForm.get(["formula"])!.value,
-      type: this.editForm.get(["type"])!.value,
-      select_option: this.editForm.get(["select_option"])!.value,
-      is_vertical: this.editForm.get(["is_vertical"])!.value,
-      output_type: this.editForm.get(["output_type"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      field_name: this.editForm.get(['field_name'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      gfs_code_id: this.editForm.get(['gfs_code_id'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
+      unit: this.editForm.get(['unit'])!.value,
+      is_input: this.editForm.get(['is_input'])!.value,
+      has_breakdown: this.editForm.get(['has_breakdown'])!.value,
+      pe_form_id: this.editForm.get(['pe_form_id'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
+      column_number: this.editForm.get(['column_number'])!.value,
+      formula: this.editForm.get(['formula'])!.value,
+      type: this.editForm.get(['type'])!.value,
+      select_option: this.editForm.get(['select_option'])!.value,
+      is_vertical: this.editForm.get(['is_vertical'])!.value,
+      output_type: this.editForm.get(['output_type'])!.value,
     };
   }
 }

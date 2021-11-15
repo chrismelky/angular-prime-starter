@@ -629,7 +629,7 @@ export class ActivityUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create Activity or Update Facility type if exist else set form has error and return
+   * When form is valid Create Activity or Update if exist else set form has error and return
    * @returns
    */
   save(): void {

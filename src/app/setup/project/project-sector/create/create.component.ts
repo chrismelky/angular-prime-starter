@@ -1,15 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {Project} from "../../project.model";
-import {ProjectSectorService} from "../../../project-sector/project-sector.service";
-import {ToastService} from "../../../../shared/toast.service";
-import {Sector} from "../../../sector/sector.model";
-import {SectorService} from "../../../sector/sector.service";
-import {CreateProjectSector, ProjectSector} from "../../../project-sector/project-sector.model";
-import {CustomResponse} from "../../../../utils/custom-response";
-import {finalize} from "rxjs/operators";
-import {Observable} from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Project } from '../../project.model';
+import { ProjectSectorService } from '../../../project-sector/project-sector.service';
+import { ToastService } from '../../../../shared/toast.service';
+import { Sector } from '../../../sector/sector.model';
+import { SectorService } from '../../../sector/sector.service';
+import {
+  CreateProjectSector,
+  ProjectSector,
+} from '../../../project-sector/project-sector.model';
+import { CustomResponse } from '../../../../utils/custom-response';
+import { finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-create',
@@ -35,7 +38,7 @@ export class CreateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService,
+    private toastService: ToastService
   ) {
     this.project = dialogConfig.data.project;
   }
@@ -46,21 +49,23 @@ export class CreateComponent implements OnInit {
 
   loadSectors() {
     this.sectorService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
   }
 
   /**
-   * When form is valid Create UserProject or Update Facility type if exist else set form has error and return
+   * When form is valid Create UserProject or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
     this.isSaving = true;
     const data = this.createFromForm();
     data.project_id = this.project?.id;
-    this.subscribeToSaveResponse(this.projectSectorService.addMultipleSectors(data));
+    this.subscribeToSaveResponse(
+      this.projectSectorService.addMultipleSectors(data)
+    );
   }
 
   /**
@@ -68,7 +73,9 @@ export class CreateComponent implements OnInit {
    * @param result
    * @protected
    */
-  protected subscribeToSaveResponse(result: Observable<CustomResponse<ProjectSector[]>>): void {
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<ProjectSector[]>>
+  ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
       (error) => this.onSaveError(error)
@@ -89,8 +96,7 @@ export class CreateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -103,7 +109,7 @@ export class CreateComponent implements OnInit {
   protected createFromForm(): CreateProjectSector {
     return {
       ...new CreateProjectSector(),
-      sectors: this.editForm.get(["sectors"])!.value,
+      sectors: this.editForm.get(['sectors'])!.value,
     };
   }
 }

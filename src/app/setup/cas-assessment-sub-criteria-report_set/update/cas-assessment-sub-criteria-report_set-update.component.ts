@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
-import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
-import { CasAssessmentSubCriteriaOption } from "src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
-import { CasAssessmentSubCriteriaOptionService } from "src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service";
-import { CasAssessmentSubCriteriaReportSet } from "../cas-assessment-sub-criteria-report_set.model";
-import { CasAssessmentSubCriteriaReportSetService } from "../cas-assessment-sub-criteria-report_set.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasPlanContent } from 'src/app/setup/cas-plan-content/cas-plan-content.model';
+import { CasPlanContentService } from 'src/app/setup/cas-plan-content/cas-plan-content.service';
+import { CasAssessmentSubCriteriaOption } from 'src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model';
+import { CasAssessmentSubCriteriaOptionService } from 'src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service';
+import { CasAssessmentSubCriteriaReportSet } from '../cas-assessment-sub-criteria-report_set.model';
+import { CasAssessmentSubCriteriaReportSetService } from '../cas-assessment-sub-criteria-report_set.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-cas-assessment-sub-criteria-report_set-update",
-  templateUrl: "./cas-assessment-sub-criteria-report_set-update.component.html",
+  selector: 'app-cas-assessment-sub-criteria-report_set-update',
+  templateUrl: './cas-assessment-sub-criteria-report_set-update.component.html',
 })
 export class CasAssessmentSubCriteriaReportSetUpdateComponent
   implements OnInit
@@ -57,13 +57,13 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
 
   ngOnInit(): void {
     this.casPlanContentService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasPlanContent[]>) =>
           (this.casPlanContents = resp.data)
       );
     this.casAssessmentSubCriteriaOptionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) =>
           (this.casAssessmentSubCriteriaOptions = resp.data)
@@ -72,7 +72,7 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
   }
 
   /**
-   * When form is valid Create CasAssessmentSubCriteriaReportSet or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasAssessmentSubCriteriaReportSet or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -151,13 +151,13 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
   protected createFromForm(): CasAssessmentSubCriteriaReportSet {
     return {
       ...new CasAssessmentSubCriteriaReportSet(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      cas_plan_content_id: this.editForm.get(["cas_plan_content_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      cas_plan_content_id: this.editForm.get(['cas_plan_content_id'])!.value,
       cas_assessment_sub_criteria_option_id: this.editForm.get([
-        "cas_assessment_sub_criteria_option_id",
+        'cas_assessment_sub_criteria_option_id',
       ])!.value,
-      report_path: this.editForm.get(["report_path"])!.value,
+      report_path: this.editForm.get(['report_path'])!.value,
     };
   }
 }

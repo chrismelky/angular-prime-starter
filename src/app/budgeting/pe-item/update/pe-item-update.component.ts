@@ -96,7 +96,7 @@ export class PeItemUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create PeItem or Update Facility type if exist else set form has error and return
+   * When form is valid Create PeItem or Update if exist else set form has error and return
    * @returns
    */
   save(): void {

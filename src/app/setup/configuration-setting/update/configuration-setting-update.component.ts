@@ -5,21 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { ConfigurationSetting } from "../configuration-setting.model";
-import { ConfigurationSettingService } from "../configuration-setting.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { ConfigurationSetting } from '../configuration-setting.model';
+import { ConfigurationSettingService } from '../configuration-setting.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-configuration-setting-update",
-  templateUrl: "./configuration-setting-update.component.html",
+  selector: 'app-configuration-setting-update',
+  templateUrl: './configuration-setting-update.component.html',
 })
 export class ConfigurationSettingUpdateComponent implements OnInit {
   isSaving = false;
@@ -55,16 +55,16 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.valueTypes = this.enumService.get("valueTypes");
-    if(this.dialogConfig.data.id !==undefined){
+    this.valueTypes = this.enumService.get('valueTypes');
+    if (this.dialogConfig.data.id !== undefined) {
       this.editing = true;
     }
-    this.htmlInputTypes = this.enumService.get("htmlInputTypes");
+    this.htmlInputTypes = this.enumService.get('htmlInputTypes');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create ConfigurationSetting or Update Facility type if exist else set form has error and return
+   * When form is valid Create ConfigurationSetting or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -126,7 +126,7 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
       name: configurationSetting.name,
       group_name: configurationSetting.group_name,
       value_type: configurationSetting.value_type,
-      html_type:configurationSetting.html_type,
+      html_type: configurationSetting.html_type,
       value_options: configurationSetting.value_options,
       value_option_query: configurationSetting.value_option_query,
     });
@@ -139,15 +139,15 @@ export class ConfigurationSettingUpdateComponent implements OnInit {
   protected createFromForm(): ConfigurationSetting {
     return {
       ...new ConfigurationSetting(),
-      id: this.editForm.get(["id"])!.value,
-      key: this.editForm.get(["key"])!.value,
-      value: this.editForm.get(["value"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      group_name: this.editForm.get(["group_name"])!.value,
-      value_type: this.editForm.get(["value_type"])!.value,
-      html_type:this.editForm.get(["html_type"])!.value,
-      value_options: this.editForm.get(["value_options"])!.value,
-      value_option_query: this.editForm.get(["value_option_query"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      key: this.editForm.get(['key'])!.value,
+      value: this.editForm.get(['value'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      group_name: this.editForm.get(['group_name'])!.value,
+      value_type: this.editForm.get(['value_type'])!.value,
+      html_type: this.editForm.get(['html_type'])!.value,
+      value_options: this.editForm.get(['value_options'])!.value,
+      value_option_query: this.editForm.get(['value_option_query'])!.value,
     };
   }
 }

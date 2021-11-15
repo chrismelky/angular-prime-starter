@@ -32,6 +32,8 @@ export class ActivityInput {
     public budget_class_id?: number,
     public activity_facility_id?: number,
     public activity_fund_source_id?: number,
+    public procurement_method_id?: number,
+    public procurement_type_id?: number,
     public fund_source?: FundSource,
     public comments: any[] = [],
     public gfs_code?: GfsCode,

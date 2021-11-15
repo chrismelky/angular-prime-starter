@@ -113,6 +113,7 @@ export class ActivityUpdateComponent implements OnInit {
   params: any[] = [];
   paramsError = false;
   objectiveId?: number;
+  activity?: Activity;
 
   /**
    * Declare form
@@ -196,7 +197,7 @@ export class ActivityUpdateComponent implements OnInit {
     this.adminHierarchyCostCentre = dialogData.adminHierarchyCostCentre;
 
     /** get activity to edit or create  from dialog   */
-    const activity: Activity = { ...dialogData.activity };
+    this.activity = { ...dialogData.activity };
 
     this.allFacilities = [...dialogData.facilities];
 
@@ -206,39 +207,44 @@ export class ActivityUpdateComponent implements OnInit {
 
     this.projectTypes = [...dialogData.projectTypes];
 
+    //Initialize form with data from dialog
+    this.updateForm(this.activity!);
+
     /** fetch activity task nature by selected activity_type_id if edit mode */
-    if (activity.id) {
-      this.loadFundSources(activity.budget_class_id!, false);
-      this.loadActivityTaskNature(activity.activity_type_id!);
-      this.loadProjectOutput(activity.project_id!);
-      this.loadActivityFundSource(activity.financial_year_id!, activity.id);
-      this.updateProjectTypeValidation(activity.project_id!);
-      activity.project_type_id &&
-        this.loadExpenditureCategory(activity.project_type_id);
-      activity.expenditure_category_id &&
-        this.loadProjectOutput(activity.expenditure_category_id);
+    if (this.activity?.id) {
+      this.loadFundSources(this.activity?.budget_class_id!, false);
+      this.loadActivityTaskNature(this.activity?.activity_type_id!);
+      this.loadProjectOutput(this.activity?.project_id!);
+      this.loadActivityFundSource(
+        this.activity?.financial_year_id!,
+        this.activity?.id!
+      );
+      this.activity.project_type_id &&
+        this.loadExpenditureCategory(this.activity.project_type_id);
+      this.activity.expenditure_category_id &&
+        this.loadProjectOutput(this.activity.expenditure_category_id);
+      this.updatePeriodValidity();
     }
 
     /** fetch budget class tree ie parent array with children array**/
-    this.loadMainBudgetClassesWithChildren(activity.budget_class?.parent_id);
+    this.loadMainBudgetClassesWithChildren(
+      this.activity?.budget_class?.parent_id
+    );
 
     /** Load responsible person by admin hiearch and sector */
     this.loadResponsiblePeople();
 
-    //Initialize form with data from dialog
-    this.updateForm(activity);
-
     /** Load National references  */
     this.loadReferenceTypes(
-      activity.long_term_target_id!,
-      activity.financial_year_id!,
-      activity.id
+      this.activity?.long_term_target_id!,
+      this.activity?.financial_year_id!,
+      this.activity?.id
     );
 
     this.loadPriorityAreas(
       dialogData.objectiveId,
-      activity.admin_hierarchy_id!,
-      activity.priority_area_id
+      this.activity?.admin_hierarchy_id!,
+      this.activity?.priority_area_id
     );
 
     /** If target has generic target load generic activities */
@@ -305,7 +311,7 @@ export class ActivityUpdateComponent implements OnInit {
       },
       (error) => (this.fundSourceIsLoading = false)
     );
-    this.loadProjects(budgetClassId);
+    this.loadProjects(budgetClassId, reset);
   }
 
   /**
@@ -478,9 +484,7 @@ export class ActivityUpdateComponent implements OnInit {
   }
 
   /** Load projects */
-  loadProjects(budgetClassId: number): void {
-    this.generalForm.get('project_id')?.reset();
-    this.updateProjectTypeValidation(0);
+  loadProjects(budgetClassId: number, reset?: boolean): void {
     this.projectIsLoading = false;
     this.projectService
       .byBudgetClassAndSection(budgetClassId, {
@@ -490,6 +494,12 @@ export class ActivityUpdateComponent implements OnInit {
         (resp) => {
           this.projects = resp.data;
           this.projectIsLoading = false;
+          if (reset) {
+            this.generalForm.get('project_id')?.reset();
+            this.updateProjectTypeValidation(0);
+          } else {
+            this.updateProjectTypeValidation(this.activity?.project_id!);
+          }
         },
         (error) => {
           this.projectIsLoading = false;
@@ -582,7 +592,7 @@ export class ActivityUpdateComponent implements OnInit {
       });
   }
 
-  onPeriodChange(): void {
+  updatePeriodValidity(): void {
     if (
       this.generalForm.get('period_one')?.value !== true &&
       this.generalForm.get('period_two')?.value !== true &&

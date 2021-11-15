@@ -393,7 +393,6 @@ export class ActivityInputComponent implements OnInit {
   }
 
   forward(): void {
-    console.log(this.decisionLevel);
     if (!this.decisionLevel || !this.decisionLevel.next_decision_level_id) {
       this.toastService.warn('No next decision level defined');
       return;
@@ -418,10 +417,18 @@ export class ActivityInputComponent implements OnInit {
               ?.admin_hierarchy_position,
           is_returned: false,
         };
-        this.scrutinizationService.create(data).subscribe((resp) => {
-          this.adminHierarchyCostCentre = resp.data;
-          this.setBudgetStatus();
-        });
+        this.scrutinizationService.create(data).subscribe(
+          (resp) => {
+            this.toastService.info(
+              `Cost centre budget forwarded to ${this.decisionLevel?.next_decision_level?.name} successfully`
+            );
+            this.adminHierarchyCostCentre = resp.data;
+            this.setBudgetStatus();
+          },
+          (error) => {
+            this.toastService.error('Could not forward this cost centre');
+          }
+        );
       },
     });
   }

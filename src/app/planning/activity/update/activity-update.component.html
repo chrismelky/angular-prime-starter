@@ -130,7 +130,7 @@
                     optionLabel="name"
                     class="p-inputtext-sm"
                   ></p-dropdown>
-                  <label for="budget_class_id">Budget Class </label>
+                  <label for="budget_class_id">Sub Budget Class </label>
                 </span>
                 <span
                   *ngIf="
@@ -143,7 +143,7 @@
                   <small
                     class="p-error"
                     *ngIf="generalForm.get('budget_class_id')?.errors?.required"
-                    >Budget Class is required.</small
+                    >Sub Budget Class is required.</small
                   >
                 </span>
               </div>
@@ -319,20 +319,20 @@
                   [value]="true"
                   label="Q1"
                   [binary]="true"
-                  (onChange)="onPeriodChange()"
+                  (onChange)="updatePeriodValidity()"
                   formControlName="period_one"
                 ></p-checkbox>
                 <p-checkbox
                   name="q2"
                   [binary]="true"
-                  (onChange)="onPeriodChange()"
+                  (onChange)="updatePeriodValidity()"
                   [value]="true"
                   label="Q2"
                   formControlName="period_two"
                 ></p-checkbox>
                 <p-checkbox
                   name="q3"
-                  (onChange)="onPeriodChange()"
+                  (onChange)="updatePeriodValidity()"
                   [value]="true"
                   [binary]="true"
                   label="Q3"
@@ -341,7 +341,7 @@
                 <p-checkbox
                   name="q4"
                   [value]="true"
-                  (onChange)="onPeriodChange()"
+                  (onChange)="updatePeriodValidity()"
                   [binary]="true"
                   label="Q4"
                   formControlName="period_four"
@@ -382,11 +382,13 @@
 
               <div class="p-field" fxFlex="100px">
                 <span class="p-float-label">
-                  <input
+                  <p-inputNumber
+                    [minFractionDigits]="2"
+                    mode="decimal"
                     id="indicator_value"
                     formControlName="indicator_value"
-                    pInputText
-                  />
+                  >
+                  </p-inputNumber>
                   <label for="indicator_value">Indicator Value </label>
                 </span>
                 <span
@@ -520,11 +522,13 @@
 
               <div class="p-field" fxFlex="100px">
                 <span class="p-float-label">
-                  <input
+                  <p-inputNumber
+                    [minFractionDigits]="2"
+                    mode="decimal"
                     id="project_output_value"
                     formControlName="project_output_value"
-                    pInputText
-                  />
+                  >
+                  </p-inputNumber>
                   <label for="project_output_value">Output Value </label>
                 </span>
                 <span
@@ -551,7 +555,7 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <p-multiSelect
-                    id="budget_class_id"
+                    id="fund_sources"
                     [filter]="true"
                     display="chip"
                     dataKey="id"
@@ -561,7 +565,7 @@
                     class="p-inputtext-sm"
                     appendTo="body"
                   ></p-multiSelect>
-                  <label for="budget_class_id">
+                  <label for="fund_sources">
                     <span>Fund Sources </span>
                   </label>
                 </span>

@@ -11,6 +11,7 @@ export class CategoryOptionCombination {
     public value_type?: string,
     public category_options?: CategoryOption[],
     public category_option_ids?: number[],
-    public option_set?: OptionSet
+    public option_set?: OptionSet,
+    public columnTotal?: number
   ) {}
 }

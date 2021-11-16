@@ -299,11 +299,11 @@ export class DataValueComponent implements OnInit {
 
       this.dataValuesTotalArray[de.id!] = {};
 
-      this.categoryCombinations?.forEach((co) => {
+      this.categoryCombinations?.forEach((cc) => {
         let rowTotal = 0;
 
-        if (de.category_combination_id === co.id) {
-          co.category_option_combinations?.forEach((coc) => {
+        if (de.category_combination_id === cc.id) {
+          cc.category_option_combinations?.forEach((coc) => {
             coc.value_type = coc.value_type || de.value_type;
             coc.option_set_id = coc.option_set_id || de.option_set_id;
             coc.option_set = coc.option_set || de.option_set;
@@ -314,9 +314,13 @@ export class DataValueComponent implements OnInit {
                 dv.category_option_combination_id === coc.id
               );
             });
+
             if (coc.value_type === 'NUMBER') {
-              rowTotal = rowTotal + parseFloat(existing?.value || '0');
+              const value = parseFloat(existing?.value || '0');
+              rowTotal = rowTotal + value;
+              coc.columnTotal = (coc.columnTotal || 0) + value;
             }
+
             this.dataValuesArray[de.id!][coc.id!] = {
               id: existing ? existing.id : undefined,
               value: existing ? existing.value : undefined,
@@ -329,28 +333,46 @@ export class DataValueComponent implements OnInit {
             };
           });
         }
-        this.dataValuesTotalArray[de.id!][co.id!] = rowTotal;
+
+        this.dataValuesTotalArray[de.id!][cc.id!] = rowTotal;
       });
     });
   }
 
   calculateTotal(
     valueChanged: number,
-    de: DataElement,
+    changedDE: DataElement,
     catComb: CategoryCombination,
-    cocId: number
+    changedCoc: CategoryOptionCombination
   ): void {
-    let total = valueChanged || 0;
+    let rowTotal = valueChanged || 0;
+    let columnTotal = valueChanged || 0;
+
+    //Calcucate row total
     catComb.category_option_combinations?.forEach((coc) => {
-      const value_type = coc.value_type || de.value_type;
-      if (value_type === 'NUMBER' && coc.id != cocId) {
-        total =
-          total + parseFloat(this.dataValuesArray[de.id!][coc.id!].value || 0);
-        console.log(this.dataValuesArray[de.id!][coc.id!].value);
-        console.log(total);
+      const value_type = coc.value_type || changedDE.value_type;
+      if (value_type === 'NUMBER' && coc.id != changedCoc.id) {
+        rowTotal =
+          rowTotal +
+          parseFloat(this.dataValuesArray[changedDE.id!][coc.id!].value || 0);
       }
     });
-    this.dataValuesTotalArray[de.id!][catComb.id!] = total;
+
+    //Calculate Column total
+    catComb.dataElementGroups?.forEach((g) => {
+      g.values.forEach((d) => {
+        const value_type = changedCoc.value_type || d.value_type;
+        if (value_type === 'NUMBER' && d.id != changedDE.id) {
+          columnTotal =
+            columnTotal +
+            parseFloat(this.dataValuesArray[d.id!][changedCoc.id!].value || 0);
+        }
+      });
+    });
+
+    changedCoc.columnTotal = columnTotal;
+
+    this.dataValuesTotalArray[changedDE.id!][catComb.id!] = rowTotal;
   }
 
   saveValue(event: any, dataValue: any): void {

@@ -48,8 +48,13 @@ export class CategoryCombinationComponent implements OnInit {
       sort: true,
     },
     {
-      field: 'skip_total',
-      header: 'Skip Total',
+      field: 'has_row_total',
+      header: 'Has row total',
+      sort: false,
+    },
+    {
+      field: 'has_column_total',
+      header: 'Has column total',
       sort: false,
     },
   ]; //Table display columns
@@ -196,7 +201,8 @@ export class CategoryCombinationComponent implements OnInit {
   createOrUpdate(categoryCombination?: CategoryCombination): void {
     const data: CategoryCombination = categoryCombination ?? {
       ...new CategoryCombination(),
-      skip_total: true,
+      has_column_total: false,
+      has_row_total: false,
     };
     const ref = this.dialogService.open(CategoryCombinationUpdateComponent, {
       data,

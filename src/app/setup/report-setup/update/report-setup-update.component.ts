@@ -12,7 +12,7 @@ import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
-import { OrientationList, ReportSetup } from '../report-setup.model';
+import {OrientationList, QueryParamsList, ReportSetup} from '../report-setup.model';
 import { ReportSetupService } from '../report-setup.service';
 import { ToastService } from 'src/app/shared/toast.service';
 
@@ -37,6 +37,7 @@ export class ReportSetupUpdateComponent implements OnInit {
     sql_query: [null, []],
   });
   orientations?: OrientationList[] = [];
+  paramList?: QueryParamsList[] = [];
 
   constructor(
     protected reportSetupService: ReportSetupService,
@@ -57,6 +58,51 @@ export class ReportSetupUpdateComponent implements OnInit {
         value: 'landscape',
       },
     ];
+    this.paramList = [
+      {
+        name: 'Period',
+        value: 'period_id',
+      },
+      {
+        name: 'Section',
+        value: 'section_id',
+      },{
+        name: 'Sector',
+        value: 'sector_id',
+      },{
+        name: 'Department',
+        value: 'department_id',
+      },
+      {
+        name: 'Fund Source',
+        value: 'fund_source_id',
+      },
+      {
+        name: 'Fund Source(PE)',
+        value: 'fund_source_pe',
+      },{
+        name: 'Is facility account',
+        value: 'is_facility_account',
+      },{
+        name: 'Intervention',
+        value: 'intervention_id',
+      },{
+        name: 'Priority Area',
+        value: 'priority_area_id',
+      },
+      {
+        name: 'Exchange rate',
+        value: 'exchange_rate',
+      },
+      {
+        name: 'Control code',
+        value: 'control_code',
+      },
+      {
+        name: 'Budget class',
+        value: 'budget_class_id',
+      },
+    ];
     //Initialize form with data from dialog
     this.updateForm(this.dialogConfig.data);
   }
@@ -73,6 +119,7 @@ export class ReportSetupUpdateComponent implements OnInit {
     this.isSaving = true;
 
     const reportSetup = this.createFromForm();
+
     if (reportSetup.id !== undefined) {
       this.subscribeToSaveResponse(this.reportSetupService.update(reportSetup));
     } else {

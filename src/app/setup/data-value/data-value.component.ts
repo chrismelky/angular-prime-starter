@@ -305,6 +305,7 @@ export class DataValueComponent implements OnInit {
         if (de.category_combination_id === cc.id) {
           cc.category_option_combinations?.forEach((coc) => {
             coc.value_type = coc.value_type || de.value_type;
+
             coc.option_set_id = coc.option_set_id || de.option_set_id;
             coc.option_set = coc.option_set || de.option_set;
 

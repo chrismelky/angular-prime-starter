@@ -149,7 +149,10 @@
             <!-- </p-divider> -->
             <table
               cellspacing="0"
-              class="p-datatable p-datavalue-table p-datatable-gridlines"
+              class="
+                table-styled
+                p-datatable p-datavalue-table p-datatable-gridlines
+              "
               style="width: 100%"
             >
               <thead class="p-datatable-thead">
@@ -165,7 +168,7 @@
                   >
                     {{ coc.name }}
                   </th>
-                  <th *ngIf="!catComb.skip_total">Total</th>
+                  <th *ngIf="catComb.has_row_total">Total</th>
                 </tr>
               </thead>
               <tbody class="p-datatable-tbody">
@@ -230,7 +233,7 @@
                         *ngIf="coc.value_type === 'NUMBER'"
                         autocomplete="off"
                         (onInput)="
-                          calculateTotal($event.value, de, catComb, coc.id!)
+                          calculateTotal($event.value, de, catComb, coc)
                         "
                         [disabled]="!valueLoaded"
                         id="{{ de.id! }}-{{ coc.id! }}"
@@ -241,6 +244,9 @@
                         [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                       ></p-inputNumber>
                       <p-inputNumber
+                        (onInput)="
+                          calculateTotal($event.value, de, catComb, coc)
+                        "
                         [style]="{ width: '100%' }"
                         *ngIf="coc.value_type === 'POSITIVE_INTEGER'"
                         [inputStyle]="
@@ -271,15 +277,35 @@
                         </ng-template>
                       </p-fileUpload>
                     </td>
-                    <td *ngIf="!catComb.skip_total">
-                      <p-inputNumber
-                        [disabled]="true"
-                        type="text"
-                        [(ngModel)]="dataValuesTotalArray[de.id!][catComb.id!]"
-                      ></p-inputNumber>
+                    <td
+                      class="total"
+                      style="font-weight: bold; padding: 0 0.75rem !important"
+                      *ngIf="catComb.has_row_total"
+                    >
+                      {{ dataValuesTotalArray[de.id!][catComb.id!] || 0 }}
                     </td>
                   </tr>
                 </ng-container>
+                <tr *ngIf="catComb?.has_column_total">
+                  <td
+                    class="total"
+                    style="
+                      text-align: right;
+                      font-weight: bold;
+                      padding: 0 0.75rem !important;
+                    "
+                  >
+                    Total
+                  </td>
+                  <td
+                    class="total"
+                    style="font-weight: bold; padding: 0.75rem !important"
+                    *ngFor="let coc of catComb.category_option_combinations"
+                  >
+                    {{ coc.columnTotal || 0 }}
+                  </td>
+                  <td class="total" *ngIf="catComb.has_row_total"></td>
+                </tr>
               </tbody>
             </table>
           </div>

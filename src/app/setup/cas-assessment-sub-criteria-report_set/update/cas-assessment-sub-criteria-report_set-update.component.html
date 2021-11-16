@@ -7,78 +7,13 @@
     [formGroup]="editForm"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <input id="name" type="text" pInputText formControlName="name" />
-          <label for="name">Name </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('name')!.invalid &&
-            (editForm.get('name')!.dirty ||
-              editForm.get('name')!.touched ||
-              formError)
-          "
-        >
-          <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
-            >Name is required.</small
-          >
-        </span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <textarea
-            id="report_path"
-            formControlName="report_path"
-            [rows]="5"
-            [cols]="30"
-            pInputTextarea
-            [autoResize]="true"
-          ></textarea>
-          <label for="report_path">Report Path </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('report_path')!.invalid &&
-            (editForm.get('report_path')!.dirty ||
-              editForm.get('report_path')!.touched ||
-              formError)
-          "
-        >
-        </span>
-      </div>
-
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="cas_plan_content_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="casPlanContents!"
-            formControlName="cas_plan_content_id"
-          ></p-dropdown>
-          <label for="cas_plan_content_id">Cas Plan Content </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('cas_plan_content_id')!.invalid &&
-            (editForm.get('cas_plan_content_id')!.dirty ||
-              editForm.get('cas_plan_content_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('cas_plan_content_id')?.errors?.required"
-            >Cas Plan Content is required.</small
-          >
-        </span>
-      </div>
+      <p-treeSelect formControlName="cas_plan_contents"
+                    [options]="nodes"
+                    display="chip"
+                    [metaKeySelection]="false"
+                    selectionMode="checkbox"
+                    placeholder="Select Cas Content">
+      </p-treeSelect>
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown

@@ -86,12 +86,6 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.admin_hierarchies = resp.data)
       );
-    this.adminHierarchyLevelService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
-      );
     this.casAssessmentRoundService
       .query({ columns: ["id", "name"] })
       .subscribe(

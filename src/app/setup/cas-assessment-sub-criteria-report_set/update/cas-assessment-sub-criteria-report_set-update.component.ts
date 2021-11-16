@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Observable } from "rxjs";
 import { finalize } from "rxjs/operators";
@@ -16,9 +16,14 @@ import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.
 import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
 import { CasAssessmentSubCriteriaOption } from "src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
 import { CasAssessmentSubCriteriaOptionService } from "src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service";
-import { CasAssessmentSubCriteriaReportSet } from "../cas-assessment-sub-criteria-report_set.model";
+import {CasAssessmentSubCriteriaReportSet, MyNode} from "../cas-assessment-sub-criteria-report_set.model";
 import { CasAssessmentSubCriteriaReportSetService } from "../cas-assessment-sub-criteria-report_set.service";
 import { ToastService } from "src/app/shared/toast.service";
+import {TreeNode} from "primeng/api";
+import {OverlayPanel} from "primeng/overlaypanel";
+import {AdminHierarchy} from "../../admin-hierarchy/admin-hierarchy.model";
+import {LocalStorageService} from "ngx-webstorage";
+import {ITEMS_PER_PAGE} from "../../../config/pagination.constants";
 
 @Component({
   selector: "app-cas-assessment-sub-criteria-report_set-update",
@@ -27,10 +32,20 @@ import { ToastService } from "src/app/shared/toast.service";
 export class CasAssessmentSubCriteriaReportSetUpdateComponent
   implements OnInit
 {
+  treeLoading: boolean = false;
+  nodes: MyNode[] = [];
+  selectedValue: any;
+  @Input() selectionMode: string = 'single';
+  @Input() returnType: string = 'id';
+  @Input() stateKey?: string;
+  @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  @ViewChild('op') panel!: OverlayPanel;
   isSaving = false;
   formError = false;
+  page?: number = 1;
+  per_page!: number;
   errors = [];
-
+  cas_plan_content_id: any;
   casPlanContents?: CasPlanContent[] = [];
   casAssessmentSubCriteriaOptions?: CasAssessmentSubCriteriaOption[] = [];
 
@@ -39,28 +54,38 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [null, [Validators.required]],
-    cas_plan_content_id: [null, [Validators.required]],
-    cas_assessment_sub_criteria_option_id: [null, [Validators.required]],
-    report_path: [null, []],
-  });
+     cas_plan_contents: [null, []],
+    cas_assessment_sub_criteria_option_id: [null, []],
+   });
 
   constructor(
     protected casAssessmentSubCriteriaReportSetService: CasAssessmentSubCriteriaReportSetService,
     protected casPlanContentService: CasPlanContentService,
     protected casAssessmentSubCriteriaOptionService: CasAssessmentSubCriteriaOptionService,
     public dialogRef: DynamicDialogRef,
+    protected localStorageService: LocalStorageService,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.casPlanContentService
-      .query({ columns: ["id", "name"] })
+    this.casAssessmentSubCriteriaReportSetService
+      .loadCasContents(this.dialogConfig.data.cas_plan_id)
       .subscribe(
-        (resp: CustomResponse<CasPlanContent[]>) =>
-          (this.casPlanContents = resp.data)
+        (resp: CustomResponse<CasPlanContent[]>) => {
+          this.casPlanContents = resp.data;
+          if (this.casPlanContents!.length > 0) {
+            for (let i=0; i<this.casPlanContents!.length;i++){
+              this.nodes.push({
+                id: this.casPlanContents![i].id,
+                label: this.casPlanContents![i].name,
+                children: this.casPlanContents![i].children,
+                leaf: false,
+              });
+            }
+          }
+        }
       );
     this.casAssessmentSubCriteriaOptionService
       .query({ columns: ["id", "name"] })
@@ -70,7 +95,6 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
-
   /**
    * When form is valid Create CasAssessmentSubCriteriaReportSet or Update Facility type if exist else set form has error and return
    * @returns
@@ -81,20 +105,20 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
       return;
     }
     this.isSaving = true;
+    let data:CasAssessmentSubCriteriaReportSet[] = [];
     const casAssessmentSubCriteriaReportSet = this.createFromForm();
-    if (casAssessmentSubCriteriaReportSet.id !== undefined) {
-      this.subscribeToSaveResponse(
-        this.casAssessmentSubCriteriaReportSetService.update(
-          casAssessmentSubCriteriaReportSet
-        )
-      );
-    } else {
-      this.subscribeToSaveResponse(
-        this.casAssessmentSubCriteriaReportSetService.create(
-          casAssessmentSubCriteriaReportSet
-        )
-      );
+    for (let i=0; i< casAssessmentSubCriteriaReportSet.cas_plan_contents.length; i++){
+      data.push({cas_assessment_sub_criteria_option_id:casAssessmentSubCriteriaReportSet.cas_assessment_sub_criteria_option_id,
+        cas_plan_content_id:casAssessmentSubCriteriaReportSet.cas_plan_contents[i].id,
+        id:casAssessmentSubCriteriaReportSet.id,
+        report_id:casAssessmentSubCriteriaReportSet.cas_plan_contents[i].report_id
+      });
     }
+    this.subscribeToSaveResponse(
+      this.casAssessmentSubCriteriaReportSetService.create(
+        data
+      )
+    );
   }
 
   protected subscribeToSaveResponse(
@@ -135,12 +159,10 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
   ): void {
     this.editForm.patchValue({
       id: casAssessmentSubCriteriaReportSet.id,
-      name: casAssessmentSubCriteriaReportSet.name,
-      cas_plan_content_id:
-        casAssessmentSubCriteriaReportSet.cas_plan_content_id,
+      cas_plan_contents:
+        casAssessmentSubCriteriaReportSet.cas_plan_contents,
       cas_assessment_sub_criteria_option_id:
         casAssessmentSubCriteriaReportSet.cas_assessment_sub_criteria_option_id,
-      report_path: casAssessmentSubCriteriaReportSet.report_path,
     });
   }
 
@@ -152,12 +174,10 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
     return {
       ...new CasAssessmentSubCriteriaReportSet(),
       id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      cas_plan_content_id: this.editForm.get(["cas_plan_content_id"])!.value,
+      cas_plan_contents: this.editForm.get(["cas_plan_contents"])!.value,
       cas_assessment_sub_criteria_option_id: this.editForm.get([
         "cas_assessment_sub_criteria_option_id",
       ])!.value,
-      report_path: this.editForm.get(["report_path"])!.value,
     };
   }
 }

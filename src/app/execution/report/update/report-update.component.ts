@@ -126,8 +126,8 @@ export class ReportUpdateComponent implements OnInit {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
-
-  getReport(format: string) {
+//get pdf report
+  getPdfReport(format: string) {
     const data = JSON.parse(JSON.stringify(this.editForm.value));
     data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
     data.financial_year_id = this.dialogConfig.data.financial_year_id;
@@ -138,6 +138,34 @@ export class ReportUpdateComponent implements OnInit {
       let file = new Blob([resp], { type: 'application/pdf'});
       let fileURL = URL.createObjectURL(file);
       window.open(fileURL,"_blank");
+    });
+  }
+  //get excel report
+  getExcelReport(format: string) {
+    const data = JSON.parse(JSON.stringify(this.editForm.value));
+    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+    data.financial_year_id = this.dialogConfig.data.financial_year_id;
+    data.report_id = this.dialogConfig.data.report_id;
+    data.budgetType = this.dialogConfig.data.budgetType;
+    data.format = format;
+    this.reportService.getReport(data).subscribe((resp) => {
+      let file = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank")
+    });
+  }
+//get excel report
+  getWordReport(format: string) {
+    const data = JSON.parse(JSON.stringify(this.editForm.value));
+    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+    data.financial_year_id = this.dialogConfig.data.financial_year_id;
+    data.report_id = this.dialogConfig.data.report_id;
+    data.budgetType = this.dialogConfig.data.budgetType;
+    data.format = format;
+    this.reportService.getReport(data).subscribe((resp) => {
+      let file = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank")
     });
   }
 

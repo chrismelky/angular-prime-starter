@@ -69,7 +69,7 @@ export class TargetPerformanceIndicatorUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create TargetPerformanceIndicator or Update Facility type if exist else set form has error and return
+   * When form is valid Create TargetPerformanceIndicator or Update if exist else set form has error and return
    * @returns
    */
   save(): void {

@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { DataElementGroupSet } from "../data-element-group-set.model";
-import { DataElementGroupSetService } from "../data-element-group-set.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { DataElementGroupSet } from '../data-element-group-set.model';
+import { DataElementGroupSetService } from '../data-element-group-set.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-data-element-group-set-update",
-  templateUrl: "./data-element-group-set-update.component.html",
+  selector: 'app-data-element-group-set-update',
+  templateUrl: './data-element-group-set-update.component.html',
 })
 export class DataElementGroupSetUpdateComponent implements OnInit {
   isSaving = false;
@@ -47,7 +47,7 @@ export class DataElementGroupSetUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create DataElementGroupSet or Update Facility type if exist else set form has error and return
+   * When form is valid Create DataElementGroupSet or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -116,9 +116,9 @@ export class DataElementGroupSetUpdateComponent implements OnInit {
   protected createFromForm(): DataElementGroupSet {
     return {
       ...new DataElementGroupSet(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
     };
   }
 }

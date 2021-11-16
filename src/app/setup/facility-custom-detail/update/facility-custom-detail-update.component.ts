@@ -5,21 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {FacilityCustomDetail} from "../facility-custom-detail.model";
-import {FacilityCustomDetailService} from "../facility-custom-detail.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {EnumService} from "../../../shared/enum.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { FacilityCustomDetail } from '../facility-custom-detail.model';
+import { FacilityCustomDetailService } from '../facility-custom-detail.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { EnumService } from '../../../shared/enum.service';
 
 @Component({
-  selector: "app-facility-custom-detail-update",
-  templateUrl: "./facility-custom-detail-update.component.html",
+  selector: 'app-facility-custom-detail-update',
+  templateUrl: './facility-custom-detail-update.component.html',
 })
 export class FacilityCustomDetailUpdateComponent implements OnInit {
   isSaving = false;
@@ -45,15 +45,14 @@ export class FacilityCustomDetailUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create FacilityCustomDetail or Update Facility type if exist else set form has error and return
+   * When form is valid Create FacilityCustomDetail or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -97,8 +96,7 @@ export class FacilityCustomDetailUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -124,10 +122,10 @@ export class FacilityCustomDetailUpdateComponent implements OnInit {
   protected createFromForm(): FacilityCustomDetail {
     return {
       ...new FacilityCustomDetail(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      value_type: this.editForm.get(["value_type"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      value_type: this.editForm.get(['value_type'])!.value,
     };
   }
 }

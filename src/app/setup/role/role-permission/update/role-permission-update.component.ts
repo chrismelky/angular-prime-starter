@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../../utils/custom-response";
-import { Role } from "src/app/setup/role/role.model";
-import { RoleService } from "src/app/setup/role/role.service";
-import { Permission } from "src/app/setup/permission/permission.model";
-import { PermissionService } from "src/app/setup/permission/permission.service";
-import { RolePermission } from "../role-permission.model";
-import { RolePermissionService } from "../role-permission.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../../utils/custom-response';
+import { Role } from 'src/app/setup/role/role.model';
+import { RoleService } from 'src/app/setup/role/role.service';
+import { Permission } from 'src/app/setup/permission/permission.model';
+import { PermissionService } from 'src/app/setup/permission/permission.service';
+import { RolePermission } from '../role-permission.model';
+import { RolePermissionService } from '../role-permission.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-role-permission-update",
-  templateUrl: "./role-permission-update.component.html",
+  selector: 'app-role-permission-update',
+  templateUrl: './role-permission-update.component.html',
 })
 export class RolePermissionUpdateComponent implements OnInit {
   isSaving = false;
@@ -53,7 +53,7 @@ export class RolePermissionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.permissionService
-      .query({ columns: ["id", "name","description"] })
+      .query({ columns: ['id', 'name', 'description'] })
       .subscribe(
         (resp: CustomResponse<Permission[]>) => (this.permissions = resp.data)
       );
@@ -61,7 +61,7 @@ export class RolePermissionUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create RolePermission or Update Facility type if exist else set form has error and return
+   * When form is valid Create RolePermission or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -126,8 +126,8 @@ export class RolePermissionUpdateComponent implements OnInit {
   protected createFromForm(): RolePermission {
     return {
       ...new RolePermission(),
-      id: this.editForm.get(["id"])!.value,
-      permission_id: this.editForm.get(["permission_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      permission_id: this.editForm.get(['permission_id'])!.value,
     };
   }
 }

@@ -1,16 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {finalize} from "rxjs/operators";
-import {Observable} from "rxjs";
-import {CreateProjectFundSource, ProjectFundSource} from "../../../project-fund-source/project-fund-source.model";
-import {Project} from "../../project.model";
-import {FundSource} from "../../../fund-source/fund-source.model";
-import {ToastService} from "../../../../shared/toast.service";
-import {ProjectFundSourceService} from "../../../project-fund-source/project-fund-source.service";
-import {FundSourceService} from "../../../fund-source/fund-source.service";
-import {CustomResponse} from "../../../../utils/custom-response";
-
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import {
+  CreateProjectFundSource,
+  ProjectFundSource,
+} from '../../../project-fund-source/project-fund-source.model';
+import { Project } from '../../project.model';
+import { FundSource } from '../../../fund-source/fund-source.model';
+import { ToastService } from '../../../../shared/toast.service';
+import { ProjectFundSourceService } from '../../../project-fund-source/project-fund-source.service';
+import { FundSourceService } from '../../../fund-source/fund-source.service';
+import { CustomResponse } from '../../../../utils/custom-response';
 
 @Component({
   selector: 'app-create',
@@ -36,7 +38,7 @@ export class CreateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService,
+    private toastService: ToastService
   ) {
     this.project = dialogConfig.data.project;
   }
@@ -47,21 +49,23 @@ export class CreateComponent implements OnInit {
 
   loadFundSources() {
     this.fundSourceService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
       );
   }
 
   /**
-   * When form is valid Create UserProject or Update Facility type if exist else set form has error and return
+   * When form is valid Create UserProject or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
     this.isSaving = true;
     const data = this.createFromForm();
     data.project_id = this.project?.id;
-    this.subscribeToSaveResponse(this.projectFundSourceService.addMultipleFundSources(data));
+    this.subscribeToSaveResponse(
+      this.projectFundSourceService.addMultipleFundSources(data)
+    );
   }
 
   /**
@@ -69,7 +73,9 @@ export class CreateComponent implements OnInit {
    * @param result
    * @protected
    */
-  protected subscribeToSaveResponse(result: Observable<CustomResponse<ProjectFundSource[]>>): void {
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<ProjectFundSource[]>>
+  ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
       (error) => this.onSaveError(error)
@@ -90,8 +96,7 @@ export class CreateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -104,7 +109,7 @@ export class CreateComponent implements OnInit {
   protected createFromForm(): CreateProjectFundSource {
     return {
       ...new CreateProjectFundSource(),
-      fund_sources: this.editForm.get(["fundSources"])!.value,
+      fund_sources: this.editForm.get(['fundSources'])!.value,
     };
   }
 }

@@ -5,21 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { GfsCodeCategory } from "../gfs-code-category.model";
-import { GfsCodeCategoryService } from "../gfs-code-category.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { GfsCodeCategory } from '../gfs-code-category.model';
+import { GfsCodeCategoryService } from '../gfs-code-category.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-gfs-code-category-update",
-  templateUrl: "./gfs-code-category-update.component.html",
+  selector: 'app-gfs-code-category-update',
+  templateUrl: './gfs-code-category-update.component.html',
 })
 export class GfsCodeCategoryUpdateComponent implements OnInit {
   isSaving = false;
@@ -50,16 +50,16 @@ export class GfsCodeCategoryUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.gfsCodeCategoryService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<GfsCodeCategory[]>) => (this.parents = resp.data)
       );
-    this.types = this.enumService.get("gfsCodeCategoryTypes");
+    this.types = this.enumService.get('gfsCodeCategoryTypes');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create GfsCodeCategory or Update Facility type if exist else set form has error and return
+   * When form is valid Create GfsCodeCategory or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -129,10 +129,10 @@ export class GfsCodeCategoryUpdateComponent implements OnInit {
   protected createFromForm(): GfsCodeCategory {
     return {
       ...new GfsCodeCategory(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      type: this.editForm.get(["type"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      type: this.editForm.get(['type'])!.value,
     };
   }
 }

@@ -31,6 +31,8 @@ import { OptionSetService } from 'src/app/setup/option-set/option-set.service';
 import { DataElement } from './data-element.model';
 import { DataElementService } from './data-element.service';
 import { DataElementUpdateComponent } from './update/data-element-update.component';
+import { CasPlan } from '../cas-plan/cas-plan.model';
+import { CasPlanService } from '../cas-plan/cas-plan.service';
 
 @Component({
   selector: 'app-data-element',
@@ -45,6 +47,8 @@ export class DataElementComponent implements OnInit {
   categoryCombinations?: CategoryCombination[] = [];
   optionSets?: OptionSet[] = [];
   valueTypes?: PlanrepEnum[] = [];
+  casPlans?: CasPlan[] = [];
+  cas_plan_id!: number;
 
   cols = [
     {
@@ -92,14 +96,17 @@ export class DataElementComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected enumService: EnumService
+    protected enumService: EnumService,
+    protected casPlanService: CasPlanService
   ) {}
 
   ngOnInit(): void {
-    this.dataSetService
-      .query({ columns: ['id', 'name'] })
+    this.casPlanService
+      .query({
+        columns: ['id', 'name'],
+      })
       .subscribe(
-        (resp: CustomResponse<DataSet[]>) => (this.dataSets = resp.data)
+        (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
       );
     this.categoryCombinationService
       .query({ columns: ['id', 'name'] })
@@ -114,6 +121,18 @@ export class DataElementComponent implements OnInit {
       );
     this.valueTypes = this.enumService.get('valueTypes');
     this.handleNavigation();
+  }
+
+  loadDataSet(): void {
+    this.dataSetService
+      .query({
+        cas_plan_id: this.cas_plan_id,
+        columns: ['id', 'name'],
+        sort: ['name:asc'],
+      })
+      .subscribe(
+        (resp: CustomResponse<DataSet[]>) => (this.dataSets = resp.data)
+      );
   }
 
   /**
@@ -300,7 +319,7 @@ export class DataElementComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }

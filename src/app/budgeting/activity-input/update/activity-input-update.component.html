@@ -29,11 +29,14 @@
         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <p-dropdown
+              [virtualScroll]="true"
+              [itemSize]="30"
               id="gfs_code_id"
               optionLabel="name"
               optionValue="id"
               [autoDisplayFirst]="false"
               [filter]="true"
+              (onChange)="updateProcurementValidity($event.value)"
               filterBy="code,name"
               class="p-inputtext-sm"
               [options]="gfsCodes!"
@@ -192,9 +195,17 @@
         </div>
 
         <!-- Total -->
-        <p-fieldset fxFlex legend="Total" class="total-fieldset">
-          <strong>{{ total | currency: " " }}</strong>
-        </p-fieldset>
+        <div fxLayout="column" fxLayoutGap="2px" fxFlex>
+          <p-fieldset legend="Total" class="total-fieldset">
+            <strong>{{ total | currency: " " }}</strong>
+          </p-fieldset>
+          <small
+            class="p-error"
+            *ngIf="editForm.get('totalAmountValid')?.errors?.required"
+            >Total must be zero or less than
+            {{ balanceAmount | currency: " " }}</small
+          >
+        </div>
 
         <div fxLayout="column" fxLayoutGap="2px">
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
@@ -339,171 +350,260 @@
         </div>
       </div>
 
-      <p-divider fxFlex class="title" align="center">
-        <small>Forward Estimates</small>
-      </p-divider>
-
-      <!-- Forward  Yr1 row -->
-      <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-        <span fxFlex></span>
-        <!-- Quantity+1 -->
-        <span>Year+1</span>
-        <div class="p-field" fxFlex="0 0 80px">
-          <span class="p-float-label">
-            <p-inputNumber
-              #quantityYrOne
-              id="quantity"
-              formControlName="quantity_yr_one"
-              mode="decimal"
-              (onInput)="
-                updateTotalYrOne(
-                  unitPrice.value,
-                  $event.value,
-                  frequencyYrOne.value
-                )
+      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
+        <!-- Procurement methods -->
+        <div
+          fxLayout="column"
+          fxLayoutGap="20px"
+          fxFlex="0 1 40%"
+          *ngIf="isProcurement"
+        >
+          <p-divider fxFlex class="title" align="center">
+            <small>Procument Detail</small>
+          </p-divider>
+          <!-- Procument method  -->
+          <div class="p-field">
+            <span class="p-float-label">
+              <p-dropdown
+                appendTo="body"
+                id="procurement_method_id"
+                optionLabel="name"
+                optionValue="id"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="procurementMethods!"
+                formControlName="procurement_method_id"
+              >
+              </p-dropdown>
+              <label for="procurement_method_id">Procurement Method</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('procurement_method_id')!.invalid &&
+                (editForm.get('procurement_method_id')!.dirty ||
+                  editForm.get('procurement_method_id')!.touched ||
+                  formError)
               "
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-            ></p-inputNumber>
-            <label for="quantity_yr_one">Quantity</label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('quantity_yr_one')!.invalid &&
-              (editForm.get('quantity_yr_one')!.dirty ||
-                editForm.get('quantity_yr_one')!.touched ||
-                formError)
-            "
-          >
-            <small
-              class="p-error"
-              *ngIf="editForm.get('quantity_yr_one')?.errors?.required"
-              >Required!</small
             >
-          </span>
-        </div>
-        <!-- frequnecy+1 -->
-        <div class="p-field" fxFlex="0 0 80px">
-          <span class="p-float-label">
-            <p-inputNumber
-              #frequencyYrOne
-              id="frequency_yr_one"
-              formControlName="frequency_yr_one"
-              (onInput)="
-                updateTotalYrOne(
-                  unitPrice.value,
-                  quantityYrOne.value,
-                  $event.value
-                )
+              <small
+                class="p-error"
+                *ngIf="editForm.get('procurement_method_id')?.errors?.required"
+                >Procurement Method is required</small
+              >
+            </span>
+          </div>
+          <!-- Procument type  -->
+          <div class="p-field">
+            <span class="p-float-label">
+              <p-dropdown
+                appendTo="body"
+                id="procurement_type_id"
+                optionLabel="name"
+                optionValue="id"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="procurementTypes!"
+                formControlName="procurement_type_id"
+              >
+              </p-dropdown>
+              <label for="procurement_type_id">Procurement Type</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('procurement_type_id')!.invalid &&
+                (editForm.get('procurement_type_id')!.dirty ||
+                  editForm.get('procurement_type_id')!.touched ||
+                  formError)
               "
-              mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-            ></p-inputNumber>
-            <label for="frequency_yr_one">Frequency</label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('frequency_yr_one')!.invalid &&
-              (editForm.get('frequency_yr_one')!.dirty ||
-                editForm.get('frequency_yr_one')!.touched ||
-                formError)
-            "
-          >
-            <small
-              class="p-error"
-              *ngIf="editForm.get('frequency_yr_one')?.errors?.required"
-              >Required</small
             >
-          </span>
+              <small
+                class="p-error"
+                *ngIf="editForm.get('procurement_type_id')?.errors?.required"
+                >Procurement Type is required</small
+              >
+            </span>
+          </div>
         </div>
 
-        <!-- Year+1 total -->
-        <p-fieldset fxFlex="200px" legend="Total Year+1" class="total-fieldset">
-          <strong>{{ totalYrOne | currency: " " }}</strong>
-        </p-fieldset>
+        <div fxLayout="column" fxLayoutGap="20px" fxFlex="1 0 60%">
+          <p-divider fxFlex class="title" align="center">
+            <small>Forward Estimates</small>
+          </p-divider>
+
+          <!-- Forward  Yr1 row -->
+          <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+            <span fxFlex></span>
+            <!-- Quantity+1 -->
+            <span>Year+1</span>
+            <div class="p-field" fxFlex="0 0 80px">
+              <span class="p-float-label">
+                <p-inputNumber
+                  #quantityYrOne
+                  id="quantity"
+                  formControlName="quantity_yr_one"
+                  mode="decimal"
+                  (onInput)="
+                    updateTotalYrOne(
+                      unitPrice.value,
+                      $event.value,
+                      frequencyYrOne.value
+                    )
+                  "
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                ></p-inputNumber>
+                <label for="quantity_yr_one">Quantity</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('quantity_yr_one')!.invalid &&
+                  (editForm.get('quantity_yr_one')!.dirty ||
+                    editForm.get('quantity_yr_one')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('quantity_yr_one')?.errors?.required"
+                  >Required!</small
+                >
+              </span>
+            </div>
+            <!-- frequnecy+1 -->
+            <div class="p-field" fxFlex="0 0 80px">
+              <span class="p-float-label">
+                <p-inputNumber
+                  #frequencyYrOne
+                  id="frequency_yr_one"
+                  formControlName="frequency_yr_one"
+                  (onInput)="
+                    updateTotalYrOne(
+                      unitPrice.value,
+                      quantityYrOne.value,
+                      $event.value
+                    )
+                  "
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                ></p-inputNumber>
+                <label for="frequency_yr_one">Frequency</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('frequency_yr_one')!.invalid &&
+                  (editForm.get('frequency_yr_one')!.dirty ||
+                    editForm.get('frequency_yr_one')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('frequency_yr_one')?.errors?.required"
+                  >Required</small
+                >
+              </span>
+            </div>
+
+            <!-- Year+1 total -->
+            <p-fieldset
+              fxFlex="200px"
+              legend="Total Year+1"
+              class="total-fieldset"
+            >
+              <strong>{{ totalYrOne | currency: " " }}</strong>
+            </p-fieldset>
+          </div>
+          <!-- Forward  Yr2 row -->
+          <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+            <span fxFlex></span>
+            <!-- Quantity+1 -->
+            <span>Year+2</span>
+            <div class="p-field" fxFlex="0 0 80px">
+              <span class="p-float-label">
+                <p-inputNumber
+                  #quantityYrTwo
+                  id="quantity_yr_two"
+                  formControlName="quantity_yr_two"
+                  mode="decimal"
+                  (onInput)="
+                    updateTotalYrTwo(
+                      unitPrice.value,
+                      $event.value,
+                      frequencyYrTwo.value
+                    )
+                  "
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                ></p-inputNumber>
+                <label for="quantity_yr_two">Quantity</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('quantity_yr_two')!.invalid &&
+                  (editForm.get('quantity_yr_two')!.dirty ||
+                    editForm.get('quantity_yr_two')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('quantity_yr_two')?.errors?.required"
+                  >Required!</small
+                >
+              </span>
+            </div>
+            <!-- frequnecy+1 -->
+            <div class="p-field" fxFlex="0 0 80px">
+              <span class="p-float-label">
+                <p-inputNumber
+                  #frequencyYrTwo
+                  id="frequency_yr_two"
+                  formControlName="frequency_yr_two"
+                  (onInput)="
+                    updateTotalYrTwo(
+                      unitPrice.value,
+                      quantityYrTwo.value,
+                      $event.value
+                    )
+                  "
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                ></p-inputNumber>
+                <label for="frequency_yr_two">Frequency</label>
+              </span>
+              <span
+                *ngIf="
+                  editForm.get('frequency_yr_two')!.invalid &&
+                  (editForm.get('frequency_yr_two')!.dirty ||
+                    editForm.get('frequency_yr_two')!.touched ||
+                    formError)
+                "
+              >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('frequency_yr_two')?.errors?.required"
+                  >Required!</small
+                >
+              </span>
+            </div>
+
+            <!-- Year+2 total -->
+            <p-fieldset
+              fxFlex="200px"
+              legend="Total Year+2"
+              class="total-fieldset"
+            >
+              <strong>{{ totalYrTwo | currency: " " }}</strong>
+            </p-fieldset>
+          </div>
+        </div>
       </div>
-      <!-- Forward  Yr2 row -->
-      <div fxFlex fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-        <span fxFlex></span>
-        <!-- Quantity+1 -->
-        <span>Year+2</span>
-        <div class="p-field" fxFlex="0 0 80px">
-          <span class="p-float-label">
-            <p-inputNumber
-              #quantityYrTwo
-              id="quantity_yr_two"
-              formControlName="quantity_yr_two"
-              mode="decimal"
-              (onInput)="
-                updateTotalYrTwo(
-                  unitPrice.value,
-                  $event.value,
-                  frequencyYrTwo.value
-                )
-              "
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-            ></p-inputNumber>
-            <label for="quantity_yr_two">Quantity</label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('quantity_yr_two')!.invalid &&
-              (editForm.get('quantity_yr_two')!.dirty ||
-                editForm.get('quantity_yr_two')!.touched ||
-                formError)
-            "
-          >
-            <small
-              class="p-error"
-              *ngIf="editForm.get('quantity_yr_two')?.errors?.required"
-              >Required!</small
-            >
-          </span>
-        </div>
-        <!-- frequnecy+1 -->
-        <div class="p-field" fxFlex="0 0 80px">
-          <span class="p-float-label">
-            <p-inputNumber
-              #frequencyYrTwo
-              id="frequency_yr_two"
-              formControlName="frequency_yr_two"
-              (onInput)="
-                updateTotalYrTwo(
-                  unitPrice.value,
-                  quantityYrTwo.value,
-                  $event.value
-                )
-              "
-              mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-            ></p-inputNumber>
-            <label for="frequency_yr_two">Frequency</label>
-          </span>
-          <span
-            *ngIf="
-              editForm.get('frequency_yr_two')!.invalid &&
-              (editForm.get('frequency_yr_two')!.dirty ||
-                editForm.get('frequency_yr_two')!.touched ||
-                formError)
-            "
-          >
-            <small
-              class="p-error"
-              *ngIf="editForm.get('frequency_yr_two')?.errors?.required"
-              >Required!</small
-            >
-          </span>
-        </div>
 
-        <!-- Year+2 total -->
-        <p-fieldset fxFlex="200px" legend="Total Year+2" class="total-fieldset">
-          <strong>{{ totalYrTwo | currency: " " }}</strong>
-        </p-fieldset>
-      </div>
-
+      <!-- Is Inkind / Has break down -->
       <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
         <p-checkbox
           name="is_inkind"

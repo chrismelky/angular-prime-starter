@@ -231,6 +231,7 @@
               }}</strong>
             </p-fieldset>
             <button
+              *ngIf="budgetStatus?.balanceAmount! > 0"
               pButton
               icon="pi pi-plus"
               class="p-button-raised"

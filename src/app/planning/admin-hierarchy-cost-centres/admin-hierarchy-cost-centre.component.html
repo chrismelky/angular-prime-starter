@@ -122,15 +122,16 @@
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
           <td style="height: 64px">
-            <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start">
+            <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start center">
               <p-tag
                 [value]="rowData.section?.code!"
                 severity="success"
               ></p-tag>
-              <p-tag
+              <strong>{{ rowData.section?.name! }}</strong>
+              <!-- <p-tag
                 [value]="rowData.section?.name!"
                 severity="success"
-              ></p-tag>
+              ></p-tag> -->
             </div>
           </td>
           <td>
@@ -138,7 +139,7 @@
               <span *ngSwitchCase="'CURRENT'">
                 <p-tag
                   [value]="rowData.current_budget_decision_level?.name!"
-                  severity="info"
+                  severity="success"
                 ></p-tag>
               </span>
               <span *ngSwitchCase="'APPROVED'">
@@ -225,7 +226,7 @@
           <td class="fit">
             <button
               pButton
-              class="p-button p-button-info p-button-text p-button-sm"
+              class="p-button p-button-primary p-button-text p-button-sm"
               label="Budget"
               icon="pi pi-money-bill"
               [routerLink]="['/activity-input', budget_type, rowData.id]"

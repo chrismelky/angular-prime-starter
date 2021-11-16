@@ -5,23 +5,23 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import {Project} from "../../project.model";
-import {ProjectSectorService} from "../../../project-sector/project-sector.service";
-import {ToastService} from "../../../../shared/toast.service";
-import {Sector} from "../../../sector/sector.model";
-import {SectorService} from "../../../sector/sector.service";
-import {ProjectSector} from "../../../project-sector/project-sector.model";
-import {ProjectService} from "../../project.service";
-import {CustomResponse} from "../../../../utils/custom-response";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Project } from '../../project.model';
+import { ProjectSectorService } from '../../../project-sector/project-sector.service';
+import { ToastService } from '../../../../shared/toast.service';
+import { Sector } from '../../../sector/sector.model';
+import { SectorService } from '../../../sector/sector.service';
+import { ProjectSector } from '../../../project-sector/project-sector.model';
+import { ProjectService } from '../../project.service';
+import { CustomResponse } from '../../../../utils/custom-response';
 
 @Component({
-  selector: "app-project-sector-update",
-  templateUrl: "./project-sector-update.component.html",
+  selector: 'app-project-sector-update',
+  templateUrl: './project-sector-update.component.html',
 })
 export class ProjectSectorUpdateComponent implements OnInit {
   isSaving = false;
@@ -54,12 +54,12 @@ export class ProjectSectorUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.projectService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
       );
     this.sectorService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
@@ -67,7 +67,7 @@ export class ProjectSectorUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create ProjectSector or Update Facility type if exist else set form has error and return
+   * When form is valid Create ProjectSector or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -136,9 +136,9 @@ export class ProjectSectorUpdateComponent implements OnInit {
   protected createFromForm(): ProjectSector {
     return {
       ...new ProjectSector(),
-      id: this.editForm.get(["id"])!.value,
-      project_id: this.editForm.get(["project_id"])!.value,
-      sector_id: this.editForm.get(["sector_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      project_id: this.editForm.get(['project_id'])!.value,
+      sector_id: this.editForm.get(['sector_id'])!.value,
     };
   }
 }

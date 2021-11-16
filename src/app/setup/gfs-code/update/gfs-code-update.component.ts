@@ -5,26 +5,29 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../utils/custom-response";
-import {AccountType} from "src/app/setup/account-type/account-type.model";
-import {AccountTypeService} from "src/app/setup/account-type/account-type.service";
-import {Category} from "src/app/setup/category/category.model";
-import {CategoryService} from "src/app/setup/category/category.service";
-import {GfsCode} from "../gfs-code.model";
-import {GfsCodeService} from "../gfs-code.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {GfsCodeCategory, GfsCodeCategoryTree} from "../../gfs-code-category/gfs-code-category.model";
-import {GfsCodeCategoryService} from "../../gfs-code-category/gfs-code-category.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { AccountType } from 'src/app/setup/account-type/account-type.model';
+import { AccountTypeService } from 'src/app/setup/account-type/account-type.service';
+import { Category } from 'src/app/setup/category/category.model';
+import { CategoryService } from 'src/app/setup/category/category.service';
+import { GfsCode } from '../gfs-code.model';
+import { GfsCodeService } from '../gfs-code.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import {
+  GfsCodeCategory,
+  GfsCodeCategoryTree,
+} from '../../gfs-code-category/gfs-code-category.model';
+import { GfsCodeCategoryService } from '../../gfs-code-category/gfs-code-category.service';
 
 @Component({
-  selector: "app-gfs-code-update",
-  templateUrl: "./gfs-code-update.component.html",
+  selector: 'app-gfs-code-update',
+  templateUrl: './gfs-code-update.component.html',
 })
 export class GfsCodeUpdateComponent implements OnInit {
   isSaving = false;
@@ -40,7 +43,10 @@ export class GfsCodeUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    code: [null, [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
+    code: [
+      null,
+      [Validators.required, Validators.minLength(8), Validators.maxLength(8)],
+    ],
     aggregated_code: [null],
     account_type_id: [null, [Validators.required]],
     category_id: [null, [Validators.required]],
@@ -56,25 +62,25 @@ export class GfsCodeUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.accountTypeService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AccountType[]>) => (this.accountTypes = resp.data)
       );
     this.categoryService
       .tree()
       .subscribe(
-        (resp: CustomResponse<GfsCodeCategoryTree[]>) => (this.categories = resp.data)
+        (resp: CustomResponse<GfsCodeCategoryTree[]>) =>
+          (this.categories = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create GfsCode or Update Facility type if exist else set form has error and return
+   * When form is valid Create GfsCode or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -114,8 +120,7 @@ export class GfsCodeUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -145,14 +150,14 @@ export class GfsCodeUpdateComponent implements OnInit {
   protected createFromForm(): GfsCode {
     return {
       ...new GfsCode(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      aggregated_code: this.editForm.get(["aggregated_code"])!.value,
-      account_type_id: this.editForm.get(["account_type_id"])!.value,
-      category_id: this.editForm.get(["category_id"])!.value,
-      is_procurement: this.editForm.get(["is_procurement"])!.value,
-      is_protected: this.editForm.get(["is_protected"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      aggregated_code: this.editForm.get(['aggregated_code'])!.value,
+      account_type_id: this.editForm.get(['account_type_id'])!.value,
+      category_id: this.editForm.get(['category_id'])!.value,
+      is_procurement: this.editForm.get(['is_procurement'])!.value,
+      is_protected: this.editForm.get(['is_protected'])!.value,
     };
   }
 }

@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../../utils/custom-response";
-import {FacilityType} from "src/app/setup/facility-type/facility-type.model";
-import {FacilityTypeService} from "src/app/setup/facility-type/facility-type.service";
-import {Section} from "src/app/setup/section/section.model";
-import {SectionService} from "src/app/setup/section/section.service";
-import {FacilityTypeSection} from "../facility-type-section.model";
-import {FacilityTypeSectionService} from "../facility-type-section.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../../utils/custom-response';
+import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
+import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
+import { Section } from 'src/app/setup/section/section.model';
+import { SectionService } from 'src/app/setup/section/section.service';
+import { FacilityTypeSection } from '../facility-type-section.model';
+import { FacilityTypeSectionService } from '../facility-type-section.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-facility-type-section-update",
-  templateUrl: "./facility-type-section-update.component.html",
+  selector: 'app-facility-type-section-update',
+  templateUrl: './facility-type-section-update.component.html',
 })
 export class FacilityTypeSectionUpdateComponent implements OnInit {
   isSaving = false;
@@ -47,20 +47,20 @@ export class FacilityTypeSectionUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService,
+    private toastService: ToastService
   ) {
     this.facilityType = dialogConfig.data.facility_type;
   }
 
   ngOnInit(): void {
     this.facilityTypeService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
       );
     this.sectionService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
       );
@@ -68,7 +68,7 @@ export class FacilityTypeSectionUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create FacilityTypeSection or Update Facility type if exist else set form has error and return
+   * When form is valid Create FacilityTypeSection or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -113,8 +113,7 @@ export class FacilityTypeSectionUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -138,8 +137,8 @@ export class FacilityTypeSectionUpdateComponent implements OnInit {
   protected createFromForm(): FacilityTypeSection {
     return {
       ...new FacilityTypeSection(),
-      id: this.editForm.get(["id"])!.value,
-      section_id: this.editForm.get(["section_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      section_id: this.editForm.get(['section_id'])!.value,
     };
   }
 }

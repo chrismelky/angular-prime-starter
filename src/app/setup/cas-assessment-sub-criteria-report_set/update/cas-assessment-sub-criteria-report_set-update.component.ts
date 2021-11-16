@@ -26,8 +26,8 @@ import {LocalStorageService} from "ngx-webstorage";
 import {ITEMS_PER_PAGE} from "../../../config/pagination.constants";
 
 @Component({
-  selector: "app-cas-assessment-sub-criteria-report_set-update",
-  templateUrl: "./cas-assessment-sub-criteria-report_set-update.component.html",
+  selector: 'app-cas-assessment-sub-criteria-report_set-update',
+  templateUrl: './cas-assessment-sub-criteria-report_set-update.component.html',
 })
 export class CasAssessmentSubCriteriaReportSetUpdateComponent
   implements OnInit
@@ -88,7 +88,7 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
         }
       );
     this.casAssessmentSubCriteriaOptionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) =>
           (this.casAssessmentSubCriteriaOptions = resp.data)
@@ -96,7 +96,7 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
   /**
-   * When form is valid Create CasAssessmentSubCriteriaReportSet or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasAssessmentSubCriteriaReportSet or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -175,8 +175,9 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
       ...new CasAssessmentSubCriteriaReportSet(),
       id: this.editForm.get(["id"])!.value,
       cas_plan_contents: this.editForm.get(["cas_plan_contents"])!.value,
+      cas_plan_content_id: this.editForm.get(['cas_plan_content_id'])!.value,
       cas_assessment_sub_criteria_option_id: this.editForm.get([
-        "cas_assessment_sub_criteria_option_id",
+        'cas_assessment_sub_criteria_option_id',
       ])!.value,
     };
   }

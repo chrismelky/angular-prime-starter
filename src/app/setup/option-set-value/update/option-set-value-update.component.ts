@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { OptionSet } from "src/app/setup/option-set/option-set.model";
-import { OptionSetService } from "src/app/setup/option-set/option-set.service";
-import { OptionSetValue } from "../option-set-value.model";
-import { OptionSetValueService } from "../option-set-value.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { OptionSet } from 'src/app/setup/option-set/option-set.model';
+import { OptionSetService } from 'src/app/setup/option-set/option-set.service';
+import { OptionSetValue } from '../option-set-value.model';
+import { OptionSetValueService } from '../option-set-value.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-option-set-value-update",
-  templateUrl: "./option-set-value-update.component.html",
+  selector: 'app-option-set-value-update',
+  templateUrl: './option-set-value-update.component.html',
 })
 export class OptionSetValueUpdateComponent implements OnInit {
   isSaving = false;
@@ -51,7 +51,7 @@ export class OptionSetValueUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.optionSetService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<OptionSet[]>) => (this.optionSets = resp.data)
       );
@@ -59,7 +59,7 @@ export class OptionSetValueUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create OptionSetValue or Update Facility type if exist else set form has error and return
+   * When form is valid Create OptionSetValue or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -130,11 +130,11 @@ export class OptionSetValueUpdateComponent implements OnInit {
   protected createFromForm(): OptionSetValue {
     return {
       ...new OptionSetValue(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      sort_order: this.editForm.get(["sort_order"])!.value,
-      option_set_id: this.editForm.get(["option_set_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
+      option_set_id: this.editForm.get(['option_set_id'])!.value,
     };
   }
 }

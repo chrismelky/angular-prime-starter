@@ -67,6 +67,15 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  getCeilingAllocationSummary(req?: any): Observable<CustomResponse<any[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/ceiling_allocation_summary';
+    return this.http.get<CustomResponse<any[]>>(
+      url,
+      { params: options }
+    );
+  }
+
   ceilingByFundSource(payload?: any): Observable<CustomResponse<any[]>> {
     const url = 'api/ceiling_by_fund_source';
     return this.http.post<CustomResponse<any[]>>(

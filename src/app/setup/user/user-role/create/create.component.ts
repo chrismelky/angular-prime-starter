@@ -1,21 +1,21 @@
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, Validators} from "@angular/forms";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {ToastService} from "../../../../shared/toast.service";
-import {CustomResponse} from "../../../../utils/custom-response";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {RoleService} from "../../../role/role.service";
-import {Role} from "../../../role/role.model";
-import {UserRoleService} from "../user-role.service";
-import {User} from "../../user.model";
-import {CreateUserRole} from "../user-role.model";
-import {AdminHierarchy} from "../../../admin-hierarchy/admin-hierarchy.model";
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ToastService } from '../../../../shared/toast.service';
+import { CustomResponse } from '../../../../utils/custom-response';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { RoleService } from '../../../role/role.service';
+import { Role } from '../../../role/role.model';
+import { UserRoleService } from '../user-role.service';
+import { User } from '../../user.model';
+import { CreateUserRole } from '../user-role.model';
+import { AdminHierarchy } from '../../../admin-hierarchy/admin-hierarchy.model';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss']
+  styleUrls: ['./create.component.scss'],
 })
 export class CreateComponent implements OnInit {
   isSaving = false;
@@ -38,16 +38,15 @@ export class CreateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService,
+    private toastService: ToastService
   ) {
     this.user = dialogConfig.data.user;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   /**
-   * When form is valid Create UserRole or Update Facility type if exist else set form has error and return
+   * When form is valid Create UserRole or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -56,12 +55,14 @@ export class CreateComponent implements OnInit {
     let roles = [];
     const roleId = this.editForm.get('roles')?.value as number;
     const role = {
-      id: roleId
+      id: roleId,
     } as Role;
-    roles.push(role)
+    roles.push(role);
     data.roles = roles;
     data.user_id = this.user?.id;
-    this.subscribeToSaveResponse(this.userRoleService.assignMultipleRoles(data));
+    this.subscribeToSaveResponse(
+      this.userRoleService.assignMultipleRoles(data)
+    );
   }
 
   /**
@@ -69,7 +70,9 @@ export class CreateComponent implements OnInit {
    * @param result
    * @protected
    */
-  protected subscribeToSaveResponse(result: Observable<CustomResponse<null>>): void {
+  protected subscribeToSaveResponse(
+    result: Observable<CustomResponse<null>>
+  ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
       (error) => this.onSaveError(error)
@@ -90,8 +93,7 @@ export class CreateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -104,7 +106,7 @@ export class CreateComponent implements OnInit {
   protected createFromForm(): CreateUserRole {
     return {
       ...new CreateUserRole(),
-      roles: this.editForm.get(["roles"])!.value,
+      roles: this.editForm.get(['roles'])!.value,
     };
   }
 
@@ -113,13 +115,10 @@ export class CreateComponent implements OnInit {
     this.editForm.get('roles')?.updateValueAndValidity();
     this.admin_hierarchy_position = adminHierarchy.admin_hierarchy_position;
     this.roleService
-      .query(
-        {
-          columns: ['id', 'name'],
-          admin_hierarchy_position: adminHierarchy.admin_hierarchy_position
-        })
-      .subscribe(
-        (resp: CustomResponse<Role[]>) => (this.roles = resp.data)
-      );
+      .query({
+        columns: ['id', 'name'],
+        admin_hierarchy_position: adminHierarchy.admin_hierarchy_position,
+      })
+      .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));
   }
 }

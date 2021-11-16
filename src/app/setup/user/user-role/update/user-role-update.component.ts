@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../../utils/custom-response";
-import {Role} from "src/app/setup/role/role.model";
-import {RoleService} from "src/app/setup/role/role.service";
-import {User} from "src/app/setup/user/user.model";
-import {UserService} from "src/app/setup/user/user.service";
-import {UserRole} from "../user-role.model";
-import {UserRoleService} from "../user-role.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../../utils/custom-response';
+import { Role } from 'src/app/setup/role/role.model';
+import { RoleService } from 'src/app/setup/role/role.service';
+import { User } from 'src/app/setup/user/user.model';
+import { UserService } from 'src/app/setup/user/user.service';
+import { UserRole } from '../user-role.model';
+import { UserRoleService } from '../user-role.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-user-role-update",
-  templateUrl: "./user-role-update.component.html",
+  selector: 'app-user-role-update',
+  templateUrl: './user-role-update.component.html',
 })
 export class UserRoleUpdateComponent implements OnInit {
   isSaving = false;
@@ -39,7 +39,7 @@ export class UserRoleUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    role_id: [null, [Validators.required]]
+    role_id: [null, [Validators.required]],
   });
 
   constructor(
@@ -56,13 +56,13 @@ export class UserRoleUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.roleService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));
     this.updateForm(this.dialogConfig.data.userRole);
   }
 
   /**
-   * When form is valid Create UserRole or Update Facility type if exist else set form has error and return
+   * When form is valid Create UserRole or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -104,8 +104,7 @@ export class UserRoleUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -118,7 +117,7 @@ export class UserRoleUpdateComponent implements OnInit {
   protected updateForm(userRole: UserRole): void {
     this.editForm.patchValue({
       id: userRole.id,
-      role_id: userRole.role_id
+      role_id: userRole.role_id,
     });
   }
 
@@ -129,8 +128,8 @@ export class UserRoleUpdateComponent implements OnInit {
   protected createFromForm(): UserRole {
     return {
       ...new UserRole(),
-      id: this.editForm.get(["id"])!.value,
-      role_id: this.editForm.get(["role_id"])!.value
+      id: this.editForm.get(['id'])!.value,
+      role_id: this.editForm.get(['role_id'])!.value,
     };
   }
 }

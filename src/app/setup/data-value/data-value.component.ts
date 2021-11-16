@@ -60,6 +60,13 @@ export class DataValueComponent implements OnInit {
   parentAdminName!: string;
   valueLoaded = false;
 
+  dataSetIsLoading = false;
+  dataElementIsLoading = false;
+  categoryComboIsLoading = false;
+  facilityIsLoading = false;
+  financialYearIsLoading = false;
+  casContentIsLoading = false;
+
   isLoading = false;
   page?: number = 1;
   per_page!: number;
@@ -71,6 +78,7 @@ export class DataValueComponent implements OnInit {
 
   //Mandatory filter
   admin_hierarchy_id?: number;
+  admin_hierarchy_position?: number;
   financial_year_id?: number;
   facility_type_id?: number;
   facility_id?: number;
@@ -102,38 +110,59 @@ export class DataValueComponent implements OnInit {
     if (this.currentUser.admin_hierarchy) {
       this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
       this.admin_hierarchy_id = this.adminHierarchies[0].id!;
+      this.admin_hierarchy_position =
+        this.adminHierarchies[0].admin_hierarchy_position;
       this.parentAdminName = `p${this.currentUser.admin_hierarchy.admin_hierarchy_position}`;
     }
   }
 
   ngOnInit(): void {
+    this.casContentIsLoading = true;
     this.casPlanService
       .query({
-        columns: ['id', 'name'],
+        admin_hierarchy_position: this.admin_hierarchy_position,
+        columns: ['id', 'name', 'admin_hierarchy_position'],
       })
       .subscribe(
-        (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
+        (resp: CustomResponse<CasPlan[]>) => {
+          this.casPlans = resp.data;
+          this.casContentIsLoading = false;
+        },
+        (error) => {
+          this.casContentIsLoading = false;
+        }
       );
 
-    this.financialYearService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<FinancialYear[]>) =>
-          (this.financialYears = resp.data)
-      );
+    this.financialYearIsLoading = true;
+    this.financialYearService.query({ columns: ['id', 'name'] }).subscribe(
+      (resp: CustomResponse<FinancialYear[]>) => {
+        this.financialYears = resp.data;
+        this.financialYearIsLoading = false;
+      },
+      (error) => {
+        this.financialYearIsLoading = false;
+      }
+    );
   }
 
   /**
    * Load data set by cas plan
    */
   loadDataSets(): void {
+    this.dataSetIsLoading = true;
     this.dataSetService
       .query({
         cas_plan_id: this.cas_plan_id,
         columns: ['id', 'name', 'facility_types', 'periods'],
       })
       .subscribe(
-        (resp: CustomResponse<DataSet[]>) => (this.dataSets = resp.data)
+        (resp: CustomResponse<DataSet[]>) => {
+          this.dataSetIsLoading = false;
+          this.dataSets = resp.data;
+        },
+        (error) => {
+          this.dataSetIsLoading = false;
+        }
       );
   }
 
@@ -165,6 +194,7 @@ export class DataValueComponent implements OnInit {
     if (!this.dataSet) {
       return;
     }
+    this.dataElementIsLoading = true;
     this.dataElementService
       .query({
         data_set_id: this.dataSet.id,
@@ -179,15 +209,22 @@ export class DataValueComponent implements OnInit {
         ],
         with: ['optionSet', 'optionSet.options', 'group'],
       })
-      .subscribe((resp: CustomResponse<DataElement[]>) => {
-        this.dataElements = resp.data?.map((de) => {
-          return {
-            ...de,
-            groupName: de.group ? de.group.name : 'NONE',
-          };
-        });
-        this.loadCategoryCombinations();
-      });
+      .subscribe(
+        (resp: CustomResponse<DataElement[]>) => {
+          this.dataElementIsLoading = false;
+
+          this.dataElements = resp.data?.map((de) => {
+            return {
+              ...de,
+              groupName: de.group ? de.group.name : 'NONE',
+            };
+          });
+          this.loadCategoryCombinations();
+        },
+        (error) => {
+          this.dataElementIsLoading = false;
+        }
+      );
   }
 
   /**
@@ -202,20 +239,27 @@ export class DataValueComponent implements OnInit {
         ids.push(de.category_combination_id!);
       }
     });
-    this.categoryCombinationService.getByIds({ ids }).subscribe((resp) => {
-      this.categoryCombinations = resp.data?.map((cc) => {
-        return {
-          ...cc,
-          dataElementGroups: this.helper.groupBy(
-            this.dataElements?.filter(
-              (de) => de.category_combination_id === cc.id
-            )!,
-            'groupName'
-          ),
-        };
-      });
-      this.prepareDataValuesArray();
-    });
+    this.categoryComboIsLoading = true;
+    this.categoryCombinationService.getByIds({ ids }).subscribe(
+      (resp) => {
+        this.categoryComboIsLoading = false;
+        this.categoryCombinations = resp.data?.map((cc) => {
+          return {
+            ...cc,
+            dataElementGroups: this.helper.groupBy(
+              this.dataElements?.filter(
+                (de) => de.category_combination_id === cc.id
+              )!,
+              'groupName'
+            ),
+          };
+        });
+        this.prepareDataValuesArray();
+      },
+      (error) => {
+        this.categoryComboIsLoading = false;
+      }
+    );
   }
 
   loadDataValues(): void {
@@ -411,6 +455,7 @@ export class DataValueComponent implements OnInit {
    * Load Facilities by parent admin hierarchy and facility Type
    */
   loadFacilities(): void {
+    this.facilityIsLoading = true;
     this.facilityService
       .search(
         this.facility_type_id!,
@@ -418,7 +463,13 @@ export class DataValueComponent implements OnInit {
         this.admin_hierarchy_id!
       )
       .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
+        (resp: CustomResponse<Facility[]>) => {
+          this.facilities = resp.data;
+          this.facilityIsLoading = false;
+        },
+        (error) => {
+          this.facilityIsLoading = false;
+        }
       );
   }
 

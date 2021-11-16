@@ -5,21 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import {OrientationList, ReportSetup} from "../report-setup.model";
-import { ReportSetupService } from "../report-setup.service";
-import { ToastService } from "src/app/shared/toast.service";
-
+import { CustomResponse } from '../../../utils/custom-response';
+import { OrientationList, ReportSetup } from '../report-setup.model';
+import { ReportSetupService } from '../report-setup.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-report-setup-update",
-  templateUrl: "./report-setup-update.component.html",
+  selector: 'app-report-setup-update',
+  templateUrl: './report-setup-update.component.html',
 })
 export class ReportSetupUpdateComponent implements OnInit {
   isSaving = false;
@@ -50,19 +49,20 @@ export class ReportSetupUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.orientations = [
       {
-        name:'Potrait',
-        value:'potrait'
-      },{
-        name:'Landscape',
-        value:'landscape'
-      }
+        name: 'Potrait',
+        value: 'potrait',
+      },
+      {
+        name: 'Landscape',
+        value: 'landscape',
+      },
     ];
     //Initialize form with data from dialog
     this.updateForm(this.dialogConfig.data);
   }
 
   /**
-   * When form is valid Create ReportSetup or Update Facility type if exist else set form has error and return
+   * When form is valid Create ReportSetup or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -131,12 +131,12 @@ export class ReportSetupUpdateComponent implements OnInit {
   protected createFromForm(): ReportSetup {
     return {
       ...new ReportSetup(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      template_name: this.editForm.get(["template_name"])!.value,
-      orientation: this.editForm.get(["orientation"])!.value,
-      query_params: this.editForm.get(["query_params"])!.value,
-      sql_query: this.editForm.get(["sql_query"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      template_name: this.editForm.get(['template_name'])!.value,
+      orientation: this.editForm.get(['orientation'])!.value,
+      query_params: this.editForm.get(['query_params'])!.value,
+      sql_query: this.editForm.get(['sql_query'])!.value,
     };
   }
 }

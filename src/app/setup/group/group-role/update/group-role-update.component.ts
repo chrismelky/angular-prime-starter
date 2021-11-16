@@ -5,23 +5,23 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {finalize} from "rxjs/operators";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from "../../../../utils/custom-response";
-import {Group} from "src/app/setup/group/group.model";
-import {Role} from "src/app/setup/role/role.model";
-import {RoleService} from "src/app/setup/role/role.service";
-import {GroupRole} from "../group-role.model";
-import {GroupRoleService} from "../group-role.service";
-import {ToastService} from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../../utils/custom-response';
+import { Group } from 'src/app/setup/group/group.model';
+import { Role } from 'src/app/setup/role/role.model';
+import { RoleService } from 'src/app/setup/role/role.service';
+import { GroupRole } from '../group-role.model';
+import { GroupRoleService } from '../group-role.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-group-role-update",
-  templateUrl: "./group-role-update.component.html",
+  selector: 'app-group-role-update',
+  templateUrl: './group-role-update.component.html',
 })
 export class GroupRoleUpdateComponent implements OnInit {
   isSaving = false;
@@ -51,13 +51,13 @@ export class GroupRoleUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.roleService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));
     this.updateForm(this.dialogConfig.data.groupRole); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create GroupRole or Update Facility type if exist else set form has error and return
+   * When form is valid Create GroupRole or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -67,7 +67,7 @@ export class GroupRoleUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const groupRole = this.createFromForm();
-    groupRole.group_id = this.group?.id
+    groupRole.group_id = this.group?.id;
     if (groupRole.id !== undefined) {
       this.subscribeToSaveResponse(this.groupRoleService.update(groupRole));
     } else {
@@ -98,8 +98,7 @@ export class GroupRoleUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -123,8 +122,8 @@ export class GroupRoleUpdateComponent implements OnInit {
   protected createFromForm(): GroupRole {
     return {
       ...new GroupRole(),
-      id: this.editForm.get(["id"])!.value,
-      role_id: this.editForm.get(["role_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      role_id: this.editForm.get(['role_id'])!.value,
     };
   }
 }

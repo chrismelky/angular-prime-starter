@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { PeSelectOption } from "../pe-select-option.model";
-import { PeSelectOptionService } from "../pe-select-option.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { PeSelectOption } from '../pe-select-option.model';
+import { PeSelectOptionService } from '../pe-select-option.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-pe-select-option-update",
-  templateUrl: "./pe-select-option-update.component.html",
+  selector: 'app-pe-select-option-update',
+  templateUrl: './pe-select-option-update.component.html',
 })
 export class PeSelectOptionUpdateComponent implements OnInit {
   isSaving = false;
@@ -49,7 +49,7 @@ export class PeSelectOptionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.parentService
-      .query({ columns: ["id", "name"], parent_id: null })
+      .query({ columns: ['id', 'name'], parent_id: null })
       .subscribe(
         (resp: CustomResponse<PeSelectOption[]>) => (this.parents = resp.data)
       );
@@ -57,7 +57,7 @@ export class PeSelectOptionUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create PeSelectOption or Update Facility type if exist else set form has error and return
+   * When form is valid Create PeSelectOption or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -128,11 +128,11 @@ export class PeSelectOptionUpdateComponent implements OnInit {
   protected createFromForm(): PeSelectOption {
     return {
       ...new PeSelectOption(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

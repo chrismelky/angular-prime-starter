@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../../utils/custom-response";
-import { Facility } from "src/app/setup/facility/facility.model";
-import { FacilityService } from "src/app/setup/facility/facility.service";
-import { FacilityBankAccount } from "../facility-bank-account.model";
-import { FacilityBankAccountService } from "../facility-bank-account.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../../utils/custom-response';
+import { Facility } from 'src/app/setup/facility/facility.model';
+import { FacilityService } from 'src/app/setup/facility/facility.service';
+import { FacilityBankAccount } from '../facility-bank-account.model';
+import { FacilityBankAccountService } from '../facility-bank-account.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-facility-bank-account-update",
-  templateUrl: "./facility-bank-account-update.component.html",
+  selector: 'app-facility-bank-account-update',
+  templateUrl: './facility-bank-account-update.component.html',
 })
 export class FacilityBankAccountUpdateComponent implements OnInit {
   isSaving = false;
@@ -52,7 +52,7 @@ export class FacilityBankAccountUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.facilityService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
       );
@@ -60,7 +60,7 @@ export class FacilityBankAccountUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create FacilityBankAccount or Update Facility type if exist else set form has error and return
+   * When form is valid Create FacilityBankAccount or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -132,12 +132,12 @@ export class FacilityBankAccountUpdateComponent implements OnInit {
   protected createFromForm(): FacilityBankAccount {
     return {
       ...new FacilityBankAccount(),
-      id: this.editForm.get(["id"])!.value,
-      bank: this.editForm.get(["bank"])!.value,
-      branch: this.editForm.get(["branch"])!.value,
-      account_name: this.editForm.get(["account_name"])!.value,
-      account_number: this.editForm.get(["account_number"])!.value,
-      facility_id: this.editForm.get(["facility_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      bank: this.editForm.get(['bank'])!.value,
+      branch: this.editForm.get(['branch'])!.value,
+      account_name: this.editForm.get(['account_name'])!.value,
+      account_number: this.editForm.get(['account_number'])!.value,
+      facility_id: this.editForm.get(['facility_id'])!.value,
     };
   }
 }

@@ -387,7 +387,7 @@ export class ActivityInputComponent implements OnInit {
    * @param activityInput ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(activityInput?: ActivityInput): void {
-    const data: ActivityInput = activityInput ?? {
+    const activityInputData: ActivityInput = activityInput ?? {
       ...new ActivityInput(),
       financial_year_id: this.financialYear.id,
       admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
@@ -400,10 +400,12 @@ export class ActivityInputComponent implements OnInit {
     };
     const ref = this.dialogService.open(ActivityInputUpdateComponent, {
       data: {
-        activityInput: data,
+        activityInput: activityInputData,
         facilityActivity: this.facilityActivity,
         gfsCodes: this.gfsCodes?.filter(
-          (gfs) => !this.existingGfsIds.includes(gfs.id!)
+          (gfs) =>
+            !this.existingGfsIds.includes(gfs.id!) ||
+            activityInputData.gfs_code_id === gfs.id
         ),
         budgetIsLocked: this.budgetIsLocked,
         procurementTypes: this.procurementTypes,

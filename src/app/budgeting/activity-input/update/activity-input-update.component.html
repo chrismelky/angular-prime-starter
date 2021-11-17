@@ -778,18 +778,15 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td></td>
+              <td>
+                {{
+                  breakdown.get("unit_price")?.value *
+                    breakdown.get("quantity")?.value *
+                    breakdown.get("frequency")?.value | currency: " "
+                }}
+              </td>
               <td style="text-align: center">
                 <div fxLayout="row" fxLayoutGap="2px" fxLayoutAlign="end">
-                  <!-- <button
-                    *ngIf="!editing"
-                    pButton
-                    pRipple
-                    type="button"
-                    pInitEditableRow
-                    icon="pi pi-pencil"
-                    class="p-button-rounded p-button-text p-button-plain"
-                  ></button> -->
                   <button
                     *ngIf="!editing"
                     pButton
@@ -852,7 +849,6 @@
       (ngSubmit)="addItem()"
     >
       <div style="width: 840px" fxLayout="column" fxLayoutGap="20px">
-        <!-- Params -->
         <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
           <div class="p-field" fxFlex>
             <span class="p-float-label">
@@ -887,6 +883,13 @@
                 #unitPriceToAdd
                 id="unit_price"
                 mode="decimal"
+                (onInput)="
+                  updateBreakdownToAddTotal(
+                    $event.value,
+                    quantityToAdd.value,
+                    frequencyToAdd.value
+                  )
+                "
                 [minFractionDigits]="2"
                 [maxFractionDigits]="2"
                 formControlName="unit_price"
@@ -913,6 +916,13 @@
             <span class="p-float-label">
               <p-inputNumber
                 #quantityToAdd
+                (onInput)="
+                  updateBreakdownToAddTotal(
+                    unitPriceToAdd.value,
+                    $event.value,
+                    frequencyToAdd.value
+                  )
+                "
                 id="quantityToAdd"
                 mode="decimal"
                 [minFractionDigits]="2"
@@ -942,6 +952,13 @@
               <p-inputNumber
                 #frequencyToAdd
                 id="frequencyToAdd"
+                (onInput)="
+                  updateBreakdownToAddTotal(
+                    unitPriceToAdd.value,
+                    quantityToAdd.value,
+                    $event.value
+                  )
+                "
                 mode="decimal"
                 [minFractionDigits]="2"
                 [maxFractionDigits]="2"
@@ -996,20 +1013,21 @@
             </span>
           </div>
 
-          <p-fieldset fxFlex legend="Total" class="total-fieldset">
+          <p-fieldset fxFlex legend="Sub Total" class="total-fieldset">
             <strong>{{ totalToAdd | currency: " " }}</strong>
           </p-fieldset>
         </div>
-      </div>
-      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-        <button
-          class="p-button-raised"
-          icon="pi pi-check"
-          label="Add"
-          pButton
-          pRipple
-          type="submit"
-        ></button>
+
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+          <button
+            class="p-button-raised"
+            icon="pi pi-check"
+            label="Add"
+            pButton
+            pRipple
+            type="submit"
+          ></button>
+        </div>
       </div>
     </form>
   </ng-template>

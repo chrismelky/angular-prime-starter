@@ -324,7 +324,9 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
       header: 'Financial Year Target/Priorities',
     });
     ref.onClose.subscribe((result) => {
-      this.loadPage(this.page);
+      if (result) {
+        this.loadPage(this.page);
+      }
     });
   }
 

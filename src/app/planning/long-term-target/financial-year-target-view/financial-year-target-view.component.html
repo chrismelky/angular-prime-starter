@@ -1,7 +1,7 @@
 <div class="dialog-content">
   <div fxLayout="column" fxLayoutGap="20px">
-    <p-fieldset legend="Long Term Target">
-      {{ longTermTarget?.description }}
+    <p-fieldset legend="Target">
+      <strong>{{ longTermTarget?.description }}</strong>
     </p-fieldset>
 
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
@@ -12,20 +12,60 @@
             pInputText
             [(ngModel)]="currentAdminTarget.description"
           />
-          <label for="target">Target</label>
+          <label for="target"
+            >Confirm Target for year {{ currentFinancialYear?.name }}</label
+          >
         </span>
       </div>
-      <button
-        class="p-button-raised"
-        icon="pi pi-check"
-        label="Save"
-        (click)="save(currentAdminTarget!)"
-        pButton
-        type="button"
-      ></button>
     </div>
 
-    <div fxLayout="column" fxLayoutGap="0px" fxLayoutAlign="start">
+    <div fxLayout="column" fxLayoutGap="20px" fxLayoutAlign="start">
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+        <div class="p-field" fxFlex="0 1 50%">
+          <span class="p-float-label">
+            <p-dropdown
+              id="admin_hierarchy_level"
+              appendTo="body"
+              [(ngModel)]="selectedLevel"
+              [autoDisplayFirst]="false"
+              [filter]="false"
+              (onChange)="loadChildrenTarget()"
+              [options]="adminLevels!"
+              optionLabel="name"
+              class="p-inputtext-sm"
+            ></p-dropdown>
+            <label for="admin_hierarchy_level">Lower Level</label>
+          </span>
+        </div>
+
+        <div class="p-field" fxFlex="0 1 50%">
+          <span class="p-float-label">
+            <p-dropdown
+              id="admin_hierarchy"
+              [(ngModel)]="adminAreaTargetToAdd"
+              appendTo="body"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              [options]="adminHierarchies!"
+              optionLabel="admin_area_name"
+              class="p-inputtext-sm"
+            ></p-dropdown>
+            <label for="admin_hierarchy"
+              >Select {{ selectedLevel?.name }} to Add</label
+            >
+          </span>
+        </div>
+
+        <button
+          fxFlex="1 0 120px"
+          icon="pi pi-plus"
+          pButton
+          type="button"
+          class="p-button-sm p-button-outlined"
+          label="Add Priority"
+          (click)="genericPriorityPanel.toggle($event)"
+        ></button>
+      </div>
       <p-table
         #dt
         [value]="childAdminHierarchyTargets!"
@@ -37,36 +77,14 @@
       >
         <ng-template pTemplate="header">
           <tr>
-            <th style="padding: 0px; border: none; width: 150px" colspan="2">
-              <div class="p-field in-table-header">
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="admin_hierarchy_level"
-                    appendTo="body"
-                    [autoDisplayFirst]="false"
-                    [filter]="false"
-                    (onChange)="loadChildrenTarget($event.value)"
-                    [options]="adminLevels!"
-                    optionLabel="name"
-                    optionValue="position"
-                    class="p-inputtext-sm"
-                  ></p-dropdown>
-                  <label for="admin_hierarchy_level">Lower level</label>
-                </span>
-              </div>
-            </th>
-            <th>{{ section?.name }} Priorities for the target</th>
-            <th style="width: 8rem"></th>
-          </tr>
-          <tr>
-            <th colspan="2" style="padding: 0px; width: 150px">
+            <th colspan="2" style="padding: 4px; width: 150px">
               <p-columnFilter
                 type="text"
                 class="in-table-header"
                 field="admin_area_name"
               ></p-columnFilter>
             </th>
-            <th></th>
+            <th>{{ section?.name }} Priorities for the target</th>
             <th></th>
           </tr>
         </ng-template>
@@ -121,7 +139,7 @@
                   *ngIf="editing"
                   pButton
                   pRipple
-                  (click)="save(target)"
+                  (click)="save(target, false)"
                   type="button"
                   pSaveEditableRow
                   icon="pi pi-check"
@@ -142,5 +160,77 @@
         </ng-template>
       </p-table>
     </div>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+      <button
+        class="p-button-raised"
+        icon="pi pi-check"
+        label="Save"
+        (click)="save(currentAdminTarget!, true)"
+        pButton
+        type="button"
+      ></button>
+    </div>
   </div>
 </div>
+
+<p-overlayPanel
+  #genericPriorityPanel
+  [dismissable]="false"
+  [showCloseIcon]="true"
+  appendTo="body"
+>
+  <ng-template pTemplate>
+    <div style="width: 840px" fxLayout="column" fxLayoutGap="20px">
+      <!-- Generic Target -->
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="genetic_priority"
+            optionLabel="description"
+            [autoDisplayFirst]="false"
+            (onChange)="prepareParams()"
+            [filter]="true"
+            dataKey="id"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="genericPriorities!"
+            [(ngModel)]="genericPriority"
+          ></p-dropdown>
+          <label for="genetic_priority">Generic Priority</label>
+        </span>
+        <span *ngIf="paramsError && !genericPriority">
+          <small class="p-error">Generic priority is required.</small>
+        </span>
+      </div>
+
+      <!-- Params -->
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field" fxFlex *ngFor="let p of params">
+          <span class="p-float-label">
+            <input
+              id="{{ p }}"
+              type="text"
+              pInputText
+              [(ngModel)]="paramValues[p]"
+            />
+            <label for="{{ p }}">{{ p }} </label>
+          </span>
+          <span *ngIf="paramsError && !paramValues[p]">
+            <small class="p-error">{{ p }} value is required.</small>
+          </span>
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Apply"
+          (click)="createFromGeneric()"
+          pButton
+          pRipple
+          type="button"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-overlayPanel>

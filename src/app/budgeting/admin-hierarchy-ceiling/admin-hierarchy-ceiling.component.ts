@@ -51,6 +51,7 @@ import { LockCeilingComponent } from './update/lock-ceiling.component';
 import {AdminCeilingDisseminationComponent} from "./update/admin-ceiling-dissemination.component";
 import {ProjectionAllocationComponent} from "../../shared/projection-allocation/projection-allocation.component";
 import {ConfigurationSettingService} from "../../setup/configuration-setting/configuration-setting.service";
+import {AddAttachmentComponent} from "./add-attachment/add-attachment.component";
 
 @Component({
   selector: 'app-admin-hierarchy-ceiling',
@@ -97,6 +98,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   attachmentBudgetType:boolean = false;
   selectedCeilingAllocationSummary: any[] =[];
   selectedCeiling: AdminHierarchyCeiling = {};
+  hasAttachment: boolean = false;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -319,11 +321,27 @@ export class AdminHierarchyCeilingComponent implements OnInit {
             (resp: CustomResponse<any>) => {
               if((resp.data ?? []).length > 0){
                 this.attachmentBudgetType = (resp.data)[0].value.replace(',','').split(',').includes(this.budget_type);
+                if(this.attachmentBudgetType){
+                  this.getAdminCeilingDocs();
+                }
               }
             }
           );
       }
     });
+  }
+
+
+  getAdminCeilingDocs() :void{
+    this.adminHierarchyCeilingService
+      .ceilingBudgetTypeAttachment({
+        admin_hierarchy_id:this.admin_hierarchy_id,
+        budget_type:this.budget_type,
+        financial_year_id:this.financial_year_id
+      })
+      .subscribe((resp) => {
+        this.hasAttachment = (resp.data ?? []).length>0;
+      });
   }
 
   /**
@@ -481,6 +499,9 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     this.planingFinancialYear_id = event.current_financial_year_id?event.current_financial_year_id:(event.carryover_financial_year_id?event.carryover_financial_year_id:event.supplementary_financial_year_id);
     this.activeAdminHierarchy = event;
     this.admin_hierarchy_position = event.admin_hierarchy_position;
+    if(this.attachmentBudgetType){
+      this.getAdminCeilingDocs();
+    }
     this.loadPage();
   }
 
@@ -695,6 +716,25 @@ export class AdminHierarchyCeilingComponent implements OnInit {
             {percent: ((s.data!/row!.amount!)*100)}));
         });
     overlay.toggle(event);
+  }
+
+  addCeilingDocs(is_multiple=false){
+    const ref = this.dialogService.open(AddAttachmentComponent, {
+      header: 'Add Ceiling Docs',
+      width: '50%',
+      data:{
+        financial_year_id:this.financial_year_id,
+        admin_hierarchy_id:this.admin_hierarchy_id,
+        budget_type:this.budget_type,
+        ceilingStartPosition:this.ceilingStartPosition,
+        is_multiple:is_multiple
+      }
+    });
+    ref.onClose.subscribe((result) => {
+      if(result){
+        this.loadPage();
+      }
+    });
   }
 
 }

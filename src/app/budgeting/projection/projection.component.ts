@@ -33,13 +33,11 @@ import { Projection } from "./projection.model";
 import { ProjectionService } from "./projection.service";
 import { ProjectionUpdateComponent } from "./update/projection-update.component";
 import {UserService} from "../../setup/user/user.service";
-import {Section} from "../../setup/section/section.model";
 import {User} from "../../setup/user/user.model";
 import {FacilityType} from "../../setup/facility-type/facility-type.model";
 import {FacilityTypeService} from "../../setup/facility-type/facility-type.service";
 import {FacilityService} from "../../setup/facility/facility.service";
 import {Facility} from "../../setup/facility/facility.model";
-import {AdminCeilingDisseminationComponent} from "../admin-hierarchy-ceiling/update/admin-ceiling-dissemination.component";
 import {InitiateProjectionComponent} from "./initiate-projection/initiate-projection.component";
 import {AdminHierarchyLevel} from "../../setup/admin-hierarchy-level/admin-hierarchy-level.model";
 import {AdminHierarchyLevelService} from "../../setup/admin-hierarchy-level/admin-hierarchy-level.service";
@@ -47,7 +45,7 @@ import {ProjectionAllocationComponent} from "../../shared/projection-allocation/
 import {finalize} from "rxjs/operators";
 import {AdminHierarchyCeilingService} from "../admin-hierarchy-ceiling/admin-hierarchy-ceiling.service";
 import {CeilingChainService} from "../../setup/ceiling-chain/ceiling-chain.service";
-import {CeilingChain} from "../../setup/ceiling-chain/ceiling-chain.model";
+import {FacilityTypeSectionService} from "../../setup/facility-type/facility-type-section/facility-type-section.service";
 
 @Component({
   selector: "app-projection",
@@ -61,6 +59,7 @@ export class ProjectionComponent implements OnInit {
   items: MenuItem[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
+  facilityType?: FacilityType = {};
   planningFinancialYears?:any = {};
   gfsCodes?: GfsCode[] = [];
   fundSources?: FundSource[] = [];
@@ -74,6 +73,7 @@ export class ProjectionComponent implements OnInit {
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
   currentUser!: User;
+  facilityAdminHierarchyPosition!:number;
   //Mandatory filter
   facility_id!:number;
   facility_type_id!: number;
@@ -90,6 +90,7 @@ export class ProjectionComponent implements OnInit {
   totalAllocatedAmount: number = 0.00;
   adminHierarchyPosition!:number
   totalProjection:any={};
+  facilityAdminHierarchyId!:number;
 
   constructor(
     protected projectionService: ProjectionService,
@@ -108,10 +109,10 @@ export class ProjectionComponent implements OnInit {
     protected facilityService: FacilityService,
     protected adminLevelHierarchyService: AdminHierarchyLevelService,
     protected adminHierarchyCeilingService:AdminHierarchyCeilingService,
-    protected ceilingChainService: CeilingChainService
+    protected ceilingChainService: CeilingChainService,
+    protected facilityTypeSectionService: FacilityTypeSectionService,
   ) {
     this.currentUser = userService.getCurrentUser();
-    // this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
     this.section_id = this.currentUser?.section_id!;
   }
 
@@ -152,7 +153,7 @@ export class ProjectionComponent implements OnInit {
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
-      !this.admin_hierarchy_id ||
+      !this.facilityAdminHierarchyId ||
       !this.financial_year_id ||
       !this.fund_source_id ||
       !this.facility_id
@@ -168,7 +169,7 @@ export class ProjectionComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        admin_hierarchy_id: this.admin_hierarchy_id,
+        admin_hierarchy_id: this.facilityAdminHierarchyId,
         financial_year_id: this.financial_year_id,
         fund_source_id: this.fund_source_id,
         facility_id:this.facility_id,
@@ -215,6 +216,11 @@ export class ProjectionComponent implements OnInit {
    * @param event
    */
   filterChanged(): void {
+    if(this.facility_id){
+      let position = 'p'+this.facilityAdminHierarchyPosition;
+      // @ts-ignore
+      this.facilityAdminHierarchyId = this.facilities!.find((f)=>f.id===this.facility_id)[position];
+    }
     if (this.page !== 1) {
       setTimeout(() => this.paginator.changePage(0));
     } else {
@@ -362,14 +368,13 @@ export class ProjectionComponent implements OnInit {
   onAdminHierarchySelection(event: any): void {
     this.adminHierarchyPosition = event.admin_hierarchy_position;
     this.admin_hierarchy_id = event.id;
-    this.loadCeilingChain();
     this.adminLevelHierarchyService
       .query({columns: ['id', 'name'],position:event.admin_hierarchy_position})
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>{
           this.admin_hierarchy_level_id = (resp.data??[])[0].id!;
           this.facilityTypeService
-            .query({columns: ['id', 'name', 'code'],planning_admin_hierarchy_level:this.admin_hierarchy_level_id})
+            .query({planning_admin_hierarchy_level:this.admin_hierarchy_level_id,per_page:100})
             .subscribe(
               (resp: CustomResponse<FacilityType[]>) =>{
                 this.facilityTypes = resp.data??[];
@@ -389,7 +394,7 @@ export class ProjectionComponent implements OnInit {
       data:{
         facility_id:this.facility_id,
         fund_source_id: this.fund_source_id,
-        admin_hierarchy_id: this.admin_hierarchy_id,
+        admin_hierarchy_id: this.facilityAdminHierarchyId,
         financial_year_id: this.financial_year_id,
         projection:this.projections
       }
@@ -408,8 +413,21 @@ export class ProjectionComponent implements OnInit {
         this.admin_hierarchy_id!,
       ).subscribe((resp:any) => {
       this.facilities = resp.data ?? [];
+      let facilityType = this.facilityTypes.find((ft)=>ft.id === this.facility_type_id!);
+      this.facilityAdminHierarchyPosition = facilityType!.admin_hierarchy_level.position;
+      this.facilityTypeSectionService
+        .query({facility_type_id:this.facility_type_id})
+        .subscribe(
+          (resp: CustomResponse<any[]>) =>{
+            this.facilityType = facilityType;
+            if(facilityType!.lga_level === 'LLG') {
+              this.sectionIds = (resp.data ?? []).map((c: { section_id: any; }) => (c.section_id));
+            }
+          }
+        );
       this.facility_id = undefined!
       this.projections = [];
+      this.loadCeilingChain();
       });
   }
 
@@ -446,35 +464,30 @@ export class ProjectionComponent implements OnInit {
   }
 
   allocateProjection() : void{
+    console.log(this.totalProjection.amount);
     if(this.totalProjection.amount > 0){
       this.ceilingChainService
         .queryWithChild({
-          for_admin_hierarchy_level_position:this.adminHierarchyPosition,
+          for_admin_hierarchy_level_position:this.facilityAdminHierarchyPosition,
           is_active:true,
           per_page:1000,
         })
         .subscribe(
           (resp: CustomResponse<any>) => {
             if((resp.data ?? []).length>0){
-              const ref = this.dialogService.open(ProjectionAllocationComponent, {
-                header: 'Allocate Ceiling',
-                width: '50%',
-                data: {
-                  fund_source_id: this.fund_source_id,
-                  financial_year_id: this.financial_year_id,
-                  admin_hierarchy_id: this.admin_hierarchy_id,
-                  adminHierarchyPosition:this.adminHierarchyPosition,
-                  budget_type: 'CURRENT',
-                  section_id: this.section_id,
-                  facility_id: this.facility_id,
-                  ceilingChain:resp.data[0]
-                }
-              });
-              ref.onClose.subscribe((result) => {
-                if(result){
-                  this.loadAllocated();
-                }
-              });
+              let ceilingChain = resp.data[0];
+              if(ceilingChain.section_level_position.is_cost_centre){
+                this.facilityTypeSectionService
+                  .query({facility_type_id:this.facility_type_id,per_page:100})
+                  .subscribe(
+                    (resp: CustomResponse<any[]>) =>{
+                      ceilingChain.section = (resp.data ?? []).map((c) => (c.section));
+                      this.openProjectionAllocation(ceilingChain);
+                    }
+                  );
+              }else{
+                this.openProjectionAllocation(ceilingChain);
+              }
             }else{
               this.toastService.error('No ceiling Chain Configured');
             }
@@ -482,6 +495,28 @@ export class ProjectionComponent implements OnInit {
     }else{
       this.toastService.error('Projection Amount Should Be Greater Than 0');
     }
+  }
+
+  openProjectionAllocation(ceilingChain: any){
+    const ref = this.dialogService.open(ProjectionAllocationComponent, {
+      header: 'Allocate Ceiling',
+      width: '50%',
+      data: {
+        fund_source_id: this.fund_source_id,
+        financial_year_id: this.financial_year_id,
+        admin_hierarchy_id: this.facilityAdminHierarchyId,
+        adminHierarchyPosition:this.facilityAdminHierarchyPosition,
+        budget_type: 'CURRENT',
+        section_id: this.section_id,
+        facility_id: this.facility_id,
+        ceilingChain:ceilingChain
+      }
+    });
+    ref.onClose.subscribe((result) => {
+      if(result){
+        this.loadAllocated();
+      }
+    });
   }
 
   getTotalAllocated(data:any){
@@ -497,7 +532,7 @@ export class ProjectionComponent implements OnInit {
     return {
       ...new Projection(),
       id: projection.id,
-      admin_hierarchy_id: projection.admin_hierarchy_id,
+      admin_hierarchy_id: this.facilityAdminHierarchyId,
       financial_year_id: projection.financial_year_id,
       gfs_code_id: projection.gfs_code_id,
       fund_source_id: projection.fund_source_id,
@@ -572,7 +607,7 @@ export class ProjectionComponent implements OnInit {
         fund_source_id:this.fund_source_id,
         section_ids:this.sectionIds,
         financial_year_id:this.financial_year_id,
-        admin_hierarchy_id:this.admin_hierarchy_id,
+        admin_hierarchy_id:this.facilityAdminHierarchyId,
         facility_id:this.facility_id,
         budget_type:'CURRENT'
       })
@@ -588,14 +623,16 @@ export class ProjectionComponent implements OnInit {
   loadCeilingChain(){
     this.ceilingChainService
       .queryWithChild({
-        for_admin_hierarchy_level_position:this.adminHierarchyPosition,
+        for_admin_hierarchy_level_position:this.facilityAdminHierarchyPosition,
         is_active:true,
         per_page:1000,
       })
       .subscribe(
         (resp: CustomResponse<any>) => {
           if((resp.data??[]).length > 0){
-            this.sectionIds=resp.data[0].section.map((c: { id: any; }) => (c.id))
+            if(this.facilityType!.lga_level === 'HLG'){
+              this.sectionIds=resp.data[0].section.map((c: { id: any; }) => (c.id))
+            }
           }else{
             this.sectionIds=[];
           }
@@ -607,7 +644,7 @@ export class ProjectionComponent implements OnInit {
         fund_source_id:this.fund_source_id,
         facility_id:this.facility_id,
         financial_year_id:this.financial_year_id,
-        admin_hierarchy_id:this.admin_hierarchy_id,
+        admin_hierarchy_id:this.facilityAdminHierarchyId,
       })
       .subscribe(
         (resp: CustomResponse<any>) => {

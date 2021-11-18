@@ -7,13 +7,10 @@ import {BudgetCeilingService} from "../../../shared/budget-ceiling.service";
 import {FacilityService} from "../../../setup/facility/facility.service";
 import {FormBuilder, Validators} from "@angular/forms";
 import {CustomResponse} from "../../../utils/custom-response";
-import {FinancialYear} from "../../../setup/financial-year/financial-year.model";
 import {CeilingChain} from "../../../setup/ceiling-chain/ceiling-chain.model";
-import {Section} from "../../../setup/section/section.model";
 import {SectionService} from "../../../setup/section/section.service";
-import {concatAll, finalize} from "rxjs/operators";
+import {finalize} from "rxjs/operators";
 import {AdminHierarchyCeiling} from "../admin-hierarchy-ceiling.model";
-import {Table} from "primeng/table";
 import {Observable} from "rxjs";
 import {Facility} from "../../../setup/facility/facility.model";
 import {BudgetCeiling} from "../../../shared/budget-ceiling.model";
@@ -219,7 +216,6 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   //Get Facility Percent
   getFacilityPercent(row: any,percent:number): void{
     const i = this.facilityCeiling!.findIndex(item => item.id === row.id);
-    console.log(percent);
     this.facilityCeiling![i].percent=percent;
     this.facilityCeiling![i].amount=(percent * this.finalCeiling!.amount!)/100;
     this.totalFacilityAllocatedAmount = this.getTotalAllocatedAmount(this.facilityCeiling!);
@@ -361,6 +357,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
               fund_source_id:this.ceiling!.ceiling.fund_source_id,
               council:ceiling.admin_hierarchy.name,
               facility: '['+facility.code+'] ' + facility.name,
+              is_approved:budgetCeiling==undefined?false:budgetCeiling.is_approved,
               amount:budgetCeiling==undefined?0.00:budgetCeiling.amount,
               is_locked:budgetCeiling==undefined?false:budgetCeiling!.is_locked,
               percent:budgetCeiling==undefined?0.00:((budgetCeiling.amount!)>0?(((budgetCeiling.amount!)/ceiling.amount)*100):0.00)

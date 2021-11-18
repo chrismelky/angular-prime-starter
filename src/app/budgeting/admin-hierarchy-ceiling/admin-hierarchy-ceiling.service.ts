@@ -28,6 +28,16 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  createAdminCeilingDocs(
+    docs: any
+  ): Observable<CustomResponse<any>> {
+    let url = "api/admin_hierarchy_ceiling_docs_store";
+    return this.http.post<CustomResponse<any>>(
+      url,
+      docs
+    );
+  }
+
   initiateCeiling(
     adminHierarchyCeiling: AdminHierarchyCeiling
   ): Observable<CustomResponse<AdminHierarchyCeiling>> {
@@ -61,6 +71,23 @@ export class AdminHierarchyCeilingService {
   getCeilingLockUnlockSummary(req?: any): Observable<CustomResponse<any[]>> {
     const options = createRequestOption(req);
     const url = 'api/ceiling_lock_summary';
+    return this.http.get<CustomResponse<any[]>>(
+      url,
+      { params: options }
+    );
+  }
+
+  ceilingDocsByAdminHierarchies(payload?: any): Observable<CustomResponse<any[]>> {
+    const url = 'api/admin_hierarchy_ceiling_docs_by_admin_hierarchies';
+    return this.http.post<CustomResponse<any[]>>(
+      url,
+      payload
+    );
+  }
+
+  ceilingBudgetTypeAttachment(req?: any): Observable<CustomResponse<any[]>> {
+    const options = createRequestOption(req);
+    const url = 'api/admin_hierarchy_ceiling_docs';
     return this.http.get<CustomResponse<any[]>>(
       url,
       { params: options }
@@ -185,5 +212,10 @@ export class AdminHierarchyCeilingService {
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  deleteCeilingDocs(id: number): Observable<CustomResponse<null>> {
+    let url = "api/admin_hierarchy_ceiling_docs";
+    return this.http.delete<CustomResponse<null>>(`${url}/${id}`);
   }
 }

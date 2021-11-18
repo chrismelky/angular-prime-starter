@@ -21,7 +21,12 @@
         </span>
       </div>
     </div>
-
+    <p-divider fxFlex class="title" align="center">
+      <small
+        >Lower levels {{ section?.name }} Priorities for
+        {{ currentFinancialYear?.name }}
+      </small>
+    </p-divider>
     <div fxLayout="column" fxLayoutGap="20px" fxLayoutAlign="start">
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
         <div class="p-field" fxFlex="0 1 50%">
@@ -60,6 +65,7 @@
         </div>
 
         <button
+          [disabled]="!adminAreaTargetToAdd"
           fxFlex="1 0 120px"
           icon="pi pi-plus"
           pButton
@@ -87,7 +93,7 @@
                 field="admin_area_name"
               ></p-columnFilter>
             </th>
-            <th>{{ section?.name }} Priorities for the target</th>
+            <th>Priorities</th>
             <th></th>
           </tr>
         </ng-template>
@@ -165,6 +171,7 @@
     </div>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
       <button
+        [disabled]="currentAdminTarget?.description?.length === 0"
         class="p-button-raised"
         icon="pi pi-check"
         label="Save"

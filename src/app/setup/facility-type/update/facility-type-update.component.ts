@@ -5,21 +5,21 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {finalize} from 'rxjs/operators';
-import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {CustomResponse} from '../../../utils/custom-response';
-import {EnumService, PlanrepEnum} from 'src/app/shared/enum.service';
-import {AdminHierarchyLevel} from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
-import {AdminHierarchyLevelService} from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
-import {FacilityType} from '../facility-type.model';
-import {FacilityTypeService} from '../facility-type.service';
-import {ToastService} from 'src/app/shared/toast.service';
-import {Section} from '../../section/section.model';
-import {SectionService} from '../../section/section.service';
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
+import { FacilityType } from '../facility-type.model';
+import { FacilityTypeService } from '../facility-type.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Section } from '../../section/section.model';
+import { SectionService } from '../../section/section.service';
 
 @Component({
   selector: 'app-facility-type-update',
@@ -48,7 +48,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
     planning_admin_hierarchy_level: [null, [Validators.required]],
   });
 
-  departmentControl = new FormControl(null, [Validators.required])
+  departmentControl = new FormControl(null, [Validators.required]);
 
   constructor(
     protected facilityTypeService: FacilityTypeService,
@@ -59,18 +59,15 @@ export class FacilityTypeUpdateComponent implements OnInit {
     private toastService: ToastService,
     protected enumService: EnumService,
     protected sectionService: SectionService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.adminHierarchyLevelService
-      .query({columns: ['id', 'name']})
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) => {
-          this.adminHierarchyLevels = resp.data;
-          this.planningLevels = resp.data;
-        }
-      );
+      .query({ columns: ['id', 'name'] })
+      .subscribe((resp: CustomResponse<AdminHierarchyLevel[]>) => {
+        this.adminHierarchyLevels = resp.data;
+        this.planningLevels = resp.data;
+      });
     this.sectionService
       .departments()
       .subscribe((resp) => (this.departments = resp.data));
@@ -79,7 +76,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create FacilityType or Update Facility type if exist else set form has error and return
+   * When form is valid Create FacilityType or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -123,8 +120,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -141,7 +137,8 @@ export class FacilityTypeUpdateComponent implements OnInit {
       name: facilityType.name,
       lga_level: facilityType.lga_level,
       admin_hierarchy_level_id: facilityType.admin_hierarchy_level_id,
-      planning_admin_hierarchy_level: facilityType.planning_admin_hierarchy_level,
+      planning_admin_hierarchy_level:
+        facilityType.planning_admin_hierarchy_level,
     });
   }
 
@@ -158,8 +155,9 @@ export class FacilityTypeUpdateComponent implements OnInit {
       lga_level: this.editForm.get(['lga_level'])!.value,
       admin_hierarchy_level_id: this.editForm.get(['admin_hierarchy_level_id'])!
         .value,
-      planning_admin_hierarchy_level: this.editForm.get(['planning_admin_hierarchy_level'])!
-        .value,
+      planning_admin_hierarchy_level: this.editForm.get([
+        'planning_admin_hierarchy_level',
+      ])!.value,
     };
   }
 
@@ -168,7 +166,7 @@ export class FacilityTypeUpdateComponent implements OnInit {
     this.editForm.get('sections')?.reset();
     this.editForm.get('sections')?.clearValidators();
     this.sectionService
-      .query({parent_id: department.id, columns: ["id", "name", "code"]})
+      .query({ parent_id: department.id, columns: ['id', 'name', 'code'] })
       .subscribe((resp) => (this.sections = resp.data));
   }
 }

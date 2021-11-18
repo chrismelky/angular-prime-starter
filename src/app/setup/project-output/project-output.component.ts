@@ -30,7 +30,7 @@ import { ExpenditureCategoryService } from '../expenditure-category/expenditure-
 import { SectorService } from '../sector/sector.service';
 import { ProjectType } from '../project-type/project-type.model';
 import { ProjectTypeService } from '../project-type/project-type.service';
-import {UploadComponent} from "./upload/upload.component";
+import { UploadComponent } from './upload/upload.component';
 
 @Component({
   selector: 'app-project-output',
@@ -313,7 +313,7 @@ export class ProjectOutputComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -330,14 +330,14 @@ export class ProjectOutputComponent implements OnInit {
   }
 
   upload(): void {
-    const item =  {
+    const item = {
       sectorId: this.sector_id,
       expenditureCategoryId: this.expenditure_category_id,
     };
     const ref = this.dialogService.open(UploadComponent, {
       width: '60%',
       header: 'Project Output Upload Form',
-      data: item
+      data: item,
     });
     ref.onClose.subscribe((result) => {
       if (result) {

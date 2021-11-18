@@ -92,7 +92,7 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create ReferenceDocument or Update Facility type if exist else set form has error and return
+   * When form is valid Create ReferenceDocument or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -164,16 +164,28 @@ export class ReferenceDocumentUpdateComponent implements OnInit {
    * @returns ReferenceDocument
    */
   protected createFromForm(): FormData {
-    const  formData = new FormData();
+    const formData = new FormData();
     formData.append('id', this.editForm.get(['id'])!.value);
     formData.append('name', this.editForm.get(['name'])!.value);
     formData.append('url', this.editForm.get(['url'])!.value);
     formData.append('file', this.editForm.get(['file'])!.value);
     formData.append('description', this.editForm.get(['description'])!.value);
-    formData.append('start_financial_year_id',this.editForm.get(['start_financial_year_id'])!.value);
-    formData.append('end_financial_year_id', this.editForm.get(['end_financial_year_id'])!.value);
-    formData.append('admin_hierarchy_id', this.editForm.get(['admin_hierarchy_id'])!.value);
-    formData.append('reference_document_type_id', this.editForm.get(['reference_document_type_id'])!.value);
+    formData.append(
+      'start_financial_year_id',
+      this.editForm.get(['start_financial_year_id'])!.value
+    );
+    formData.append(
+      'end_financial_year_id',
+      this.editForm.get(['end_financial_year_id'])!.value
+    );
+    formData.append(
+      'admin_hierarchy_id',
+      this.editForm.get(['admin_hierarchy_id'])!.value
+    );
+    formData.append(
+      'reference_document_type_id',
+      this.editForm.get(['reference_document_type_id'])!.value
+    );
     return formData;
   }
   onSelect(event: any) {

@@ -40,6 +40,10 @@ import { ScrutinizationService } from 'src/app/planning/scrutinization/scrutiniz
 import { Scrutinization } from 'src/app/planning/scrutinization/scrutinization.model';
 import { DecisionLevel } from 'src/app/setup/decision-level/decision-level.model';
 import { AddressCommentComponent } from 'src/app/shared/address-comment/address-comment.component';
+import { ProcurementTypeService } from 'src/app/setup/procurement-type/procurement-type.service';
+import { ProcurementMethodService } from 'src/app/setup/procurement-method/procurement-method.service';
+import { ProcurementType } from 'src/app/setup/procurement-type/procurement-type.model';
+import { ProcurementMethod } from 'src/app/execution/activity-implementation/activity-implementation.model';
 
 @Component({
   selector: 'app-activity-input',
@@ -66,10 +70,11 @@ export class ActivityInputComponent implements OnInit {
 
   units?: PlanrepEnum[] = [];
   gfsCodes?: GfsCode[] = [];
+  existingGfsIds: number[] = [];
 
   isLoading = false;
   page?: number = 1;
-  per_page!: number;
+  per_page: number = 20;
   totalItems = 0;
   perPageOptions = PER_PAGE_OPTIONS;
   predicate!: string; //Sort column
@@ -85,6 +90,8 @@ export class ActivityInputComponent implements OnInit {
   fundSources?: FundSource[] = [];
   budget_type!: string;
   decisionLevel?: DecisionLevel;
+  procurementTypes?: ProcurementType[] = [];
+  procurementMethods?: ProcurementMethod[] = [];
 
   constructor(
     protected activityInputService: ActivityInputService,
@@ -100,13 +107,31 @@ export class ActivityInputComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected gfsCodeService: GfsCodeService,
-    protected scrutinizationService: ScrutinizationService
+    protected scrutinizationService: ScrutinizationService,
+    protected procurementTypeService: ProcurementTypeService,
+    protected procurementMethodService: ProcurementMethodService
   ) {}
 
   ngOnInit(): void {
-    this.gfsCodeService
-      .expenditure()
-      .subscribe((resp) => (this.gfsCodes = resp.data));
+    this.procurementMethodService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe((resp) => {
+        this.procurementMethods = resp.data;
+      });
+
+    this.procurementTypeService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe((resp) => {
+        this.procurementTypes = resp.data;
+      });
+    this.gfsCodeService.expenditure().subscribe((resp) => {
+      this.gfsCodes = resp.data;
+    });
+
     this.handleNavigation();
   }
 
@@ -121,7 +146,7 @@ export class ActivityInputComponent implements OnInit {
     }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
-    this.per_page = this.per_page ?? ITEMS_PER_PAGE;
+    this.per_page = this.per_page ?? 20;
     this.activityInputService
       .query({
         page: pageToLoad,
@@ -362,7 +387,7 @@ export class ActivityInputComponent implements OnInit {
    * @param activityInput ; If undefined initize new model to create else edit existing model
    */
   createOrUpdate(activityInput?: ActivityInput): void {
-    const data: ActivityInput = activityInput ?? {
+    const activityInputData: ActivityInput = activityInput ?? {
       ...new ActivityInput(),
       financial_year_id: this.financialYear.id,
       admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
@@ -375,10 +400,17 @@ export class ActivityInputComponent implements OnInit {
     };
     const ref = this.dialogService.open(ActivityInputUpdateComponent, {
       data: {
-        activityInput: data,
+        activityInput: activityInputData,
         facilityActivity: this.facilityActivity,
-        gfsCodes: this.gfsCodes,
+        gfsCodes: this.gfsCodes?.filter(
+          (gfs) =>
+            !this.existingGfsIds.includes(gfs.id!) ||
+            activityInputData.gfs_code_id === gfs.id
+        ),
         budgetIsLocked: this.budgetIsLocked,
+        procurementTypes: this.procurementTypes,
+        procurementMethods: this.procurementMethods,
+        balanceAmount: this.budgetStatus?.balanceAmount,
       },
       width: '900px',
       header: 'Create/Update Activity Input',
@@ -392,7 +424,6 @@ export class ActivityInputComponent implements OnInit {
   }
 
   forward(): void {
-    console.log(this.decisionLevel);
     if (!this.decisionLevel || !this.decisionLevel.next_decision_level_id) {
       this.toastService.warn('No next decision level defined');
       return;
@@ -417,10 +448,18 @@ export class ActivityInputComponent implements OnInit {
               ?.admin_hierarchy_position,
           is_returned: false,
         };
-        this.scrutinizationService.create(data).subscribe((resp) => {
-          this.adminHierarchyCostCentre = resp.data;
-          this.setBudgetStatus();
-        });
+        this.scrutinizationService.create(data).subscribe(
+          (resp) => {
+            this.toastService.info(
+              `Cost centre budget forwarded to ${this.decisionLevel?.next_decision_level?.name} successfully`
+            );
+            this.adminHierarchyCostCentre = resp.data;
+            this.setBudgetStatus();
+          },
+          (error) => {
+            this.toastService.error('Could not forward this cost centre');
+          }
+        );
       },
     });
   }
@@ -474,20 +513,8 @@ export class ActivityInputComponent implements OnInit {
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
-    if (navigate) {
-      this.router.navigate(
-        ['/activity-input', this.budget_type, this.adminHierarchyCostCentre.id],
-        {
-          queryParams: {
-            page: this.page,
-            per_page: this.per_page,
-            sort:
-              this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
-          },
-        }
-      );
-    }
     this.activityInputs = resp?.data ?? [];
+    this.existingGfsIds = this.activityInputs.map((i) => i.gfs_code_id!);
   }
 
   /**

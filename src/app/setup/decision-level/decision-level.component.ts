@@ -5,26 +5,29 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest} from 'rxjs';
-import {ConfirmationService, LazyLoadEvent} from 'primeng/api';
-import {DialogService} from 'primeng/dynamicdialog';
-import {Paginator} from 'primeng/paginator';
-import {Table} from 'primeng/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from '../../utils/custom-response';
-import {ITEMS_PER_PAGE, PER_PAGE_OPTIONS,} from '../../config/pagination.constants';
-import {HelperService} from 'src/app/utils/helper.service';
-import {ToastService} from 'src/app/shared/toast.service';
-import {AdminHierarchyLevel} from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
-import {AdminHierarchyLevelService} from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
-import {SectionLevel} from 'src/app/setup/section-level/section-level.model';
-import {SectionLevelService} from 'src/app/setup/section-level/section-level.service';
+import { CustomResponse } from '../../utils/custom-response';
+import {
+  ITEMS_PER_PAGE,
+  PER_PAGE_OPTIONS,
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
+import { AdminHierarchyLevelService } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.service';
+import { SectionLevel } from 'src/app/setup/section-level/section-level.model';
+import { SectionLevelService } from 'src/app/setup/section-level/section-level.service';
 
-import {DecisionLevel} from './decision-level.model';
-import {DecisionLevelService} from './decision-level.service';
-import {DecisionLevelUpdateComponent} from './update/decision-level-update.component';
+import { DecisionLevel } from './decision-level.model';
+import { DecisionLevelService } from './decision-level.service';
+import { DecisionLevelUpdateComponent } from './update/decision-level-update.component';
 
 @Component({
   selector: 'app-decision-level',
@@ -43,7 +46,7 @@ export class DecisionLevelComponent implements OnInit {
       field: 'name',
       header: 'Name',
       sort: true,
-    }
+    },
   ]; //Table display columns
 
   isLoading = false;
@@ -67,8 +70,7 @@ export class DecisionLevelComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.adminHierarchyLevelService
@@ -251,7 +253,7 @@ export class DecisionLevelComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -268,6 +270,6 @@ export class DecisionLevelComponent implements OnInit {
   }
 
   nextDecisionLevels(data: any): DecisionLevel[] {
-    return (JSON.parse(data) as DecisionLevel[]);
+    return JSON.parse(data) as DecisionLevel[];
   }
 }

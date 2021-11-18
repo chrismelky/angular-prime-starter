@@ -50,8 +50,13 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'sub_criteria',
+      header: 'Sub Criteria',
+      sort: false,
+    },
+    {
+      field: 'cas_content',
+      header: 'Cas Plan Content',
       sort: false,
     },
   ]; //Table display columns
@@ -101,7 +106,6 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
     if (
-      !this.cas_plan_id ||
       !this.cas_assessment_sub_criteria_option_id
     ) {
       return;
@@ -114,7 +118,6 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        cas_plan_id: this.cas_plan_id,
         cas_assessment_sub_criteria_option_id:
           this.cas_assessment_sub_criteria_option_id,
         ...this.helper.buildFilter(this.search),
@@ -163,10 +166,20 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
     if (this.page !== 1) {
       setTimeout(() => this.paginator.changePage(0));
     } else {
-      this.loadPage(1);
+      this.loadItems();
     }
   }
-
+  loadItems (){
+    this.casAssessmentSubCriteriaReportSetService.queryReportSet(
+      {
+        perPage: this.per_page,
+        page: this.page,
+        cas_assessment_sub_criteria_option_id: this.cas_assessment_sub_criteria_option_id
+      }
+    ).subscribe((resp)=>{
+      this.casAssessmentSubCriteriaReportSets = resp.data
+    });
+  }
   /**
    * search items by @var search params
    */
@@ -174,7 +187,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
     if (this.page !== 1) {
       this.paginator.changePage(0);
     } else {
-      this.loadPage();
+      this.loadItems();
     }
   }
 
@@ -186,7 +199,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
     if (this.page !== 1) {
       this.paginator.changePage(0);
     } else {
-      this.loadPage();
+      this.loadItems();
     }
   }
 
@@ -200,7 +213,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
     if ($event.sortField) {
       this.predicate = $event.sortField!;
       this.ascending = $event.sortOrder === 1;
-      this.loadPage();
+      this.loadItems();
     }
   }
 
@@ -211,7 +224,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
   pageChanged(event: any): void {
     this.page = event.page + 1;
     this.per_page = event.rows!;
-    this.loadPage();
+    this.loadItems();
   }
 
   /**
@@ -242,12 +255,12 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
       CasAssessmentSubCriteriaReportSetUpdateComponent,
       {
         data,
-        header: "Create/Update CasAssessmentSubCriteriaReportSet",
+        header: "Create/Update CasAssessmentSubCriteriaReportSet"
       }
     );
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadPage(this.page);
+        this.loadItems();
       }
     });
   }
@@ -266,7 +279,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
         this.casAssessmentSubCriteriaReportSetService
           .delete(casAssessmentSubCriteriaReportSet.id!)
           .subscribe((resp) => {
-            this.loadPage(this.page);
+            this.loadItems();
             this.toastService.info(resp.message);
           });
       },
@@ -296,7 +309,7 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
         },
       });
     }
-    this.casAssessmentSubCriteriaReportSets = resp?.data ?? [];
+      this.casAssessmentSubCriteriaReportSets = resp?.data ?? [];
   }
 
   /**

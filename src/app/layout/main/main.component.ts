@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { LocalStorageService } from "ngx-webstorage";
 import { AuthService } from "../../core/auth.service";
 import {
@@ -20,7 +20,7 @@ import { DialogService } from "primeng/dynamicdialog";
   templateUrl: "./main.component.html",
   styleUrls: ["./main.component.scss"],
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
   gtMd!: Observable<boolean>;
   isGtMd = true;
   user: any = this.localStorage.retrieve("user");
@@ -58,6 +58,11 @@ export class MainComponent implements OnInit {
         icon: "pi pi-fw pi-user",
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.localStorage.clear("planrep-admin_cost_centre_state");
+    this.localStorage.clear("planrep-planrep-admin_cost_centre_selected");
   }
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
@@ -654,6 +659,16 @@ export class MainComponent implements OnInit {
       label: "Generic Activities",
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "generic-activity",
+    },
+    {
+      label: "Procurement Types",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "procurement-type",
+    },
+    {
+      label: "Procurement Methods",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "procurement-method",
     },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
     {

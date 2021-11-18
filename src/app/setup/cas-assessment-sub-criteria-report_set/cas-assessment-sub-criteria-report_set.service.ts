@@ -15,14 +15,14 @@ import { CasAssessmentSubCriteriaReportSet } from "./cas-assessment-sub-criteria
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentSubCriteriaReportSetService {
-  public resourceUrl = "api/cas_sub_criteria_report_sets";
+  public resourceUrl = "api/cas_report_sets";
 
   constructor(protected http: HttpClient) {}
 
   create(
-    casAssessmentSubCriteriaReportSet: CasAssessmentSubCriteriaReportSet
-  ): Observable<CustomResponse<CasAssessmentSubCriteriaReportSet>> {
-    return this.http.post<CustomResponse<CasAssessmentSubCriteriaReportSet>>(
+    casAssessmentSubCriteriaReportSet: any
+  ): Observable<CustomResponse<any>> {
+     return this.http.post<CustomResponse<any>>(
       this.resourceUrl,
       casAssessmentSubCriteriaReportSet
     );
@@ -54,8 +54,21 @@ export class CasAssessmentSubCriteriaReportSetService {
       { params: options }
     );
   }
+  loadCasContents(id:number): Observable<CustomResponse<CasAssessmentSubCriteriaReportSet[]>> {
+    return this.http.get<CustomResponse<CasAssessmentSubCriteriaReportSet[]>>(
+      `${this.resourceUrl}/load_cas_contents/${id}`
+    );
+  }
 
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  }
+
+  queryReportSet(req?: any): Observable<CustomResponse<CasAssessmentSubCriteriaReportSet[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<CasAssessmentSubCriteriaReportSet[]>>(
+      `${this.resourceUrl}/load_report_set`,
+      { params: options }
+    );
   }
 }

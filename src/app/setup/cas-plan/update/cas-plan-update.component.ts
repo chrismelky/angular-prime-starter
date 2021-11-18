@@ -42,7 +42,7 @@ export class CasPlanUpdateComponent implements OnInit {
     id: [null, []],
     name: ['', [Validators.required, Validators.maxLength(250)]],
     sector_id: [null, [Validators.required]],
-    admin_hierarchy_level_id: [null, [Validators.required]],
+    admin_hierarchy_position: [null, [Validators.required]],
     period_type: ['Quarterly', [Validators.required]],
     content_type: ['CAS', [Validators.required]],
     is_active: [false, [Validators.required]],
@@ -66,7 +66,7 @@ export class CasPlanUpdateComponent implements OnInit {
         (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
       );
     this.adminHierarchyLevelService
-      .query({ columns: ['id', 'name'] })
+      .query({ columns: ['id', 'name', 'position'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
           (this.adminHierarchyLevels = resp.data)
@@ -132,7 +132,7 @@ export class CasPlanUpdateComponent implements OnInit {
       id: casPlan.id,
       name: casPlan.name,
       sector_id: casPlan.sector_id,
-      admin_hierarchy_level_id: casPlan.admin_hierarchy_level_id,
+      admin_hierarchy_position: casPlan.admin_hierarchy_position,
       period_type: casPlan.period_type,
       content_type: casPlan.content_type,
       is_active: casPlan.is_active,
@@ -149,7 +149,7 @@ export class CasPlanUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
       sector_id: this.editForm.get(['sector_id'])!.value,
-      admin_hierarchy_level_id: this.editForm.get(['admin_hierarchy_level_id'])!
+      admin_hierarchy_position: this.editForm.get(['admin_hierarchy_position'])!
         .value,
       period_type: this.editForm.get(['period_type'])!.value,
       content_type: this.editForm.get(['content_type'])!.value,

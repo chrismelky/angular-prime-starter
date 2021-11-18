@@ -10,257 +10,308 @@
         </p-divider>
       </div>
     </ng-template>
-    <div fxLayout="column" fxLayoutGap="10px">
-      <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
-        <!-- Plan -->
-        <div class="p-field" fxFlex="0 1 30%">
-          <span class="p-float-label">
-            <p-dropdown
-              id="cas_plan_id"
-              optionValue="id"
-              optionLabel="name"
-              [autoDisplayFirst]="false"
-              [filter]="true"
-              class="p-inputtext-sm"
-              [options]="casPlans!"
-              (onChange)="loadDataSets()"
-              [(ngModel)]="cas_plan_id"
-            ></p-dropdown>
-            <label for="cas_plan_id">Comprehensive Plan </label>
-          </span>
-        </div>
-        <div class="p-field" fxFlex="0 0 70%">
-          <span class="p-float-label">
-            <p-dropdown
-              id="data_set"
-              optionLabel="name"
-              [autoDisplayFirst]="false"
-              [filter]="true"
-              class="p-inputtext-sm"
-              [options]="dataSets!"
-              (onChange)="onDataSetChange()"
-              [(ngModel)]="dataSet"
-            ></p-dropdown>
-            <label for="data_set">Data Set </label>
-          </span>
+    <ng-template pTemplate="content">
+      <div class="loader-area">
+        <app-loader
+          [isLoading]="
+            facilityIsLoading ||
+            casContentIsLoading ||
+            financialYearIsLoading ||
+            dataSetIsLoading
+          "
+        ></app-loader>
+        <div fxLayout="column" fxLayoutGap="10px">
+          <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
+            <!-- Plan -->
+            <div class="p-field" fxFlex="0 1 30%">
+              <span class="p-float-label">
+                <p-dropdown
+                  id="cas_plan_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="casPlans!"
+                  (onChange)="loadDataSets()"
+                  [(ngModel)]="cas_plan_id"
+                ></p-dropdown>
+                <label for="cas_plan_id">Comprehensive Plan </label>
+              </span>
+            </div>
+            <div class="p-field" fxFlex="0 0 70%">
+              <span class="p-float-label">
+                <p-dropdown
+                  id="data_set"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="dataSets!"
+                  (onChange)="onDataSetChange()"
+                  [(ngModel)]="dataSet"
+                ></p-dropdown>
+                <label for="data_set">Data Set </label>
+              </span>
+            </div>
+          </div>
+          <div fxLayout="row" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="financial_year_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="financialYears!"
+                  (onChange)="filterChanged()"
+                  [(ngModel)]="financial_year_id"
+                ></p-dropdown>
+                <label for="financial_year_id">Financial Year </label>
+              </span>
+            </div>
+
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="period_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="periods!"
+                  (onChange)="filterChanged()"
+                  [(ngModel)]="period_id"
+                ></p-dropdown>
+                <label for="period_id">Period</label>
+              </span>
+            </div>
+
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="facility_type_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="facilityTypes!"
+                  (onChange)="loadFacilities()"
+                  [(ngModel)]="facility_type_id"
+                ></p-dropdown>
+                <label for="facility_type_id">Facility Type</label>
+              </span>
+            </div>
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="facility_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="facilities!"
+                  (onChange)="filterChanged()"
+                  [(ngModel)]="facility_id"
+                ></p-dropdown>
+                <label for="facility_id">Facility </label>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
-      <div fxLayout="row" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
-        <div class="p-field" fxFlex>
-          <span class="p-float-label">
-            <p-dropdown
-              id="financial_year_id"
-              optionValue="id"
-              optionLabel="name"
-              [autoDisplayFirst]="false"
-              [filter]="true"
-              class="p-inputtext-sm"
-              [options]="financialYears!"
-              (onChange)="filterChanged()"
-              [(ngModel)]="financial_year_id"
-            ></p-dropdown>
-            <label for="financial_year_id">Financial Year </label>
-          </span>
-        </div>
-
-        <div class="p-field" fxFlex>
-          <span class="p-float-label">
-            <p-dropdown
-              id="period_id"
-              optionValue="id"
-              optionLabel="name"
-              [autoDisplayFirst]="false"
-              [filter]="true"
-              class="p-inputtext-sm"
-              [options]="periods!"
-              (onChange)="filterChanged()"
-              [(ngModel)]="period_id"
-            ></p-dropdown>
-            <label for="period_id">Period</label>
-          </span>
-        </div>
-
-        <div class="p-field" fxFlex>
-          <span class="p-float-label">
-            <p-dropdown
-              id="facility_type_id"
-              optionValue="id"
-              optionLabel="name"
-              [autoDisplayFirst]="false"
-              [filter]="true"
-              class="p-inputtext-sm"
-              [options]="facilityTypes!"
-              (onChange)="loadFacilities()"
-              [(ngModel)]="facility_type_id"
-            ></p-dropdown>
-            <label for="facility_type_id">Facility Type</label>
-          </span>
-        </div>
-        <div class="p-field" fxFlex>
-          <span class="p-float-label">
-            <p-dropdown
-              id="facility_id"
-              optionValue="id"
-              optionLabel="name"
-              [autoDisplayFirst]="false"
-              [filter]="true"
-              class="p-inputtext-sm"
-              [options]="facilities!"
-              (onChange)="filterChanged()"
-              [(ngModel)]="facility_id"
-            ></p-dropdown>
-            <label for="facility_id">Facility </label>
-          </span>
-        </div>
-      </div>
-    </div>
+    </ng-template>
   </p-card>
   <!-- <router-outlet></router-outlet> -->
 
   <!-- Table Panel -->
   <p-card>
-    <div fxLayout="column" fxLayoutGap="10px">
-      <div
-        fxLayout="column"
-        fxLayoutGap="10px"
-        style="overflow-x: scroll; padding: 10px 0"
-        *ngFor="let catComb of categoryCombinations"
-      >
-        <!-- <p-divider *ngIf="catComb.name !== 'None'"> -->
-        <span *ngIf="catComb.name !== 'None'">{{ catComb.name }}</span>
-        <!-- </p-divider> -->
-        <table
-          cellspacing="0"
-          class="p-datatable p-datavalue-table p-datatable-gridlines"
-          style="width: 100%"
-        >
-          <thead class="p-datatable-thead">
-            <tr>
-              <th *ngIf="catComb?.dataElementGroups?.length! > 1">Group</th>
-              <th>Data Elements</th>
-              <th
-                [ngClass]="{
-                  rotated: catComb.category_option_combinations?.length! > 10
-                }"
-                *ngFor="let coc of catComb.category_option_combinations"
-              >
-                {{ coc.name }}
-              </th>
-              <th *ngIf="!catComb.skip_total">Total</th>
-            </tr>
-          </thead>
-          <tbody class="p-datatable-tbody">
-            <ng-container *ngFor="let g of catComb?.dataElementGroups">
-              <tr *ngIf="catComb?.dataElementGroups?.length! > 1">
-                <td [attr.rowspan]="g.values?.length! + 1">
-                  {{ g.name }}
-                </td>
-              </tr>
-              <tr *ngFor="let de of g.values">
-                <td>
-                  {{ de.name }}
-                </td>
-                <td *ngFor="let coc of catComb.category_option_combinations">
-                  <input
-                    [style]="{ width: '100%' }"
-                    *ngIf="coc.value_type === 'TEXT' && !coc.option_set_id"
-                    autocomplete="off"
-                    id="{{ de.id! }}-{{ coc.id! }}"
-                    (blur)="saveValue($event, dataValuesArray[de.id!][coc.id!])"
-                    type="text"
-                    [style]="
-                      dataValuesArray[de.id!][coc.id!].isSaved
-                        ? { background: '#B3E5FC' }
-                        : { background: '#FFF' }
-                    "
-                    pInputText
-                    [disabled]="!valueLoaded"
-                    [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                  />
-                  <p-dropdown
-                    [style]="{ width: '100%' }"
-                    [showClear]="true"
-                    *ngIf="coc.value_type === 'TEXT' && coc.option_set_id"
-                    id="{{ de.id! }}-{{ coc.id! }}"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    optionValue="name"
-                    [disabled]="!valueLoaded"
-                    dataKey="name"
-                    optionLabel="name"
-                    (onChange)="
-                      saveValue($event, dataValuesArray[de.id!][coc.id!])
-                    "
-                    class="p-inputtext-sm"
-                    appendTo="body"
-                    [options]="coc.option_set?.options!"
-                    [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                  ></p-dropdown>
-                  <p-inputNumber
-                    [style]="{ width: '100%' }"
-                    mode="decimal"
-                    [inputStyle]="
-                      dataValuesArray[de.id!][coc.id!].isSaved
-                        ? { background: '#B3E5FC' }
-                        : { background: '#FFF' }
-                    "
-                    *ngIf="coc.value_type === 'NUMBER'"
-                    autocomplete="off"
-                    (onInput)="
-                      calculateTotal($event.value, de, catComb, coc.id!)
-                    "
-                    [disabled]="!valueLoaded"
-                    id="{{ de.id! }}-{{ coc.id! }}"
-                    (onBlur)="
-                      saveValue($event, dataValuesArray[de.id!][coc.id!])
-                    "
-                    type="text"
-                    [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                  ></p-inputNumber>
-                  <p-inputNumber
-                    [style]="{ width: '100%' }"
-                    *ngIf="coc.value_type === 'POSITIVE_INTEGER'"
-                    [inputStyle]="
-                      dataValuesArray[de.id!][coc.id!].isSaved
-                        ? { background: '#B3E5FC' }
-                        : { background: '#FFF' }
-                    "
-                    autocomplete="off"
-                    id="{{ de.id! }}-{{ coc.id! }}"
-                    [disabled]="!valueLoaded"
-                    (onBlur)="
-                      saveValue($event, dataValuesArray[de.id!][coc.id!])
-                    "
-                    type="text"
-                    [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                  ></p-inputNumber>
-                  <p-fileUpload
-                    *ngIf="coc.value_type === 'FILE'"
-                    name="myfile[]"
-                    [customUpload]="true"
-                    [disabled]="!valueLoaded"
-                    (uploadHandler)="
-                      fileUploader($event, dataValuesArray[de.id!][coc.id!])
+    <ng-template pTemplate="content">
+      <div class="loader-area">
+        <app-loader
+          [isLoading]="dataElementIsLoading || categoryComboIsLoading"
+        ></app-loader>
+
+        <div fxLayout="column" fxLayoutGap="10px">
+          <div
+            fxLayout="column"
+            fxLayoutGap="10px"
+            style="overflow-x: scroll; padding: 10px 0"
+            *ngFor="let catComb of categoryCombinations"
+          >
+            <!-- <p-divider *ngIf="catComb.name !== 'None'"> -->
+            <span *ngIf="catComb.name !== 'None'">{{ catComb.name }}</span>
+            <!-- </p-divider> -->
+            <table
+              cellspacing="0"
+              class="
+                table-styled
+                p-datatable p-datavalue-table p-datatable-gridlines
+              "
+              style="width: 100%"
+            >
+              <thead class="p-datatable-thead">
+                <tr>
+                  <th *ngIf="catComb?.dataElementGroups?.length! > 1">Group</th>
+                  <th>Data Elements</th>
+                  <th
+                    [ngClass]="{
+                      rotated:
+                        catComb.category_option_combinations?.length! > 10
+                    }"
+                    *ngFor="let coc of catComb.category_option_combinations"
+                  >
+                    {{ coc.name }}
+                  </th>
+                  <th *ngIf="catComb.has_row_total">Total</th>
+                </tr>
+              </thead>
+              <tbody class="p-datatable-tbody">
+                <ng-container *ngFor="let g of catComb?.dataElementGroups">
+                  <tr *ngIf="catComb?.dataElementGroups?.length! > 1">
+                    <td [attr.rowspan]="g.values?.length! + 1">
+                      {{ g.name }}
+                    </td>
+                  </tr>
+                  <tr *ngFor="let de of g.values">
+                    <td>
+                      {{ de.name }}
+                    </td>
+                    <td
+                      *ngFor="let coc of catComb.category_option_combinations"
+                    >
+                      <input
+                        [style]="{ width: '100%' }"
+                        *ngIf="coc.value_type === 'TEXT' && !coc.option_set_id"
+                        autocomplete="off"
+                        id="{{ de.id! }}-{{ coc.id! }}"
+                        (blur)="
+                          saveValue($event, dataValuesArray[de.id!][coc.id!])
+                        "
+                        type="text"
+                        [style]="
+                          dataValuesArray[de.id!][coc.id!].isSaved
+                            ? { background: '#B3E5FC' }
+                            : { background: '#FFF' }
+                        "
+                        pInputText
+                        [disabled]="!valueLoaded"
+                        [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                      />
+                      <p-dropdown
+                        [style]="{ width: '100%' }"
+                        [showClear]="true"
+                        *ngIf="coc.value_type === 'TEXT' && coc.option_set_id"
+                        id="{{ de.id! }}-{{ coc.id! }}"
+                        [autoDisplayFirst]="false"
+                        [filter]="true"
+                        optionValue="name"
+                        [disabled]="!valueLoaded"
+                        dataKey="name"
+                        optionLabel="name"
+                        (onChange)="
+                          saveValue($event, dataValuesArray[de.id!][coc.id!])
+                        "
+                        class="p-inputtext-sm"
+                        appendTo="body"
+                        [options]="coc.option_set?.options!"
+                        [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                      ></p-dropdown>
+                      <p-inputNumber
+                        [style]="{ width: '100%' }"
+                        mode="decimal"
+                        [inputStyle]="
+                          dataValuesArray[de.id!][coc.id!].isSaved
+                            ? { background: '#B3E5FC' }
+                            : { background: '#FFF' }
+                        "
+                        *ngIf="coc.value_type === 'NUMBER'"
+                        autocomplete="off"
+                        (onInput)="
+                          calculateTotal($event.value, de, catComb, coc)
+                        "
+                        [disabled]="!valueLoaded"
+                        id="{{ de.id! }}-{{ coc.id! }}"
+                        (onBlur)="
+                          saveValue($event, dataValuesArray[de.id!][coc.id!])
+                        "
+                        type="text"
+                        [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                      ></p-inputNumber>
+                      <p-inputNumber
+                        (onInput)="
+                          calculateTotal($event.value, de, catComb, coc)
+                        "
+                        [style]="{ width: '100%' }"
+                        *ngIf="coc.value_type === 'POSITIVE_INTEGER'"
+                        [inputStyle]="
+                          dataValuesArray[de.id!][coc.id!].isSaved
+                            ? { background: '#B3E5FC' }
+                            : { background: '#FFF' }
+                        "
+                        autocomplete="off"
+                        id="{{ de.id! }}-{{ coc.id! }}"
+                        [disabled]="!valueLoaded"
+                        (onBlur)="
+                          saveValue($event, dataValuesArray[de.id!][coc.id!])
+                        "
+                        type="text"
+                        [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                      ></p-inputNumber>
+                      <p-fileUpload
+                        *ngIf="coc.value_type === 'FILE'"
+                        name="myfile[]"
+                        [customUpload]="true"
+                        [disabled]="!valueLoaded"
+                        (uploadHandler)="
+                          fileUploader($event, dataValuesArray[de.id!][coc.id!])
+                        "
+                      >
+                        <ng-template let-file pTemplate="content">
+                          <a>{{ dataValuesArray[de.id!][coc.id!].value }}</a>
+                        </ng-template>
+                      </p-fileUpload>
+                    </td>
+                    <td
+                      class="total"
+                      style="font-weight: bold; padding: 0 0.75rem !important"
+                      *ngIf="catComb.has_row_total"
+                    >
+                      {{ dataValuesTotalArray[de.id!][catComb.id!] || 0 }}
+                    </td>
+                  </tr>
+                </ng-container>
+                <tr *ngIf="catComb?.has_column_total">
+                  <td
+                    class="total"
+                    style="
+                      text-align: right;
+                      font-weight: bold;
+                      padding: 0 0.75rem !important;
                     "
                   >
-                    <ng-template let-file pTemplate="content">
-                      <a>{{ dataValuesArray[de.id!][coc.id!].value }}</a>
-                    </ng-template>
-                  </p-fileUpload>
-                </td>
-                <td *ngIf="!catComb.skip_total">
-                  <p-inputNumber
-                    [disabled]="true"
-                    type="text"
-                    [(ngModel)]="dataValuesTotalArray[de.id!][catComb.id!]"
-                  ></p-inputNumber>
-                </td>
-              </tr>
-            </ng-container>
-          </tbody>
-        </table>
+                    Total
+                  </td>
+                  <td
+                    class="total"
+                    style="font-weight: bold; padding: 0.75rem !important"
+                    *ngFor="let coc of catComb.category_option_combinations"
+                  >
+                    {{ coc.columnTotal || 0 }}
+                  </td>
+                  <td class="total" *ngIf="catComb.has_row_total"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
+    </ng-template>
   </p-card>
 </div>
 

@@ -8,10 +8,12 @@ export class CategoryCombination {
     public id?: number,
     public name?: string,
     public code?: string,
-    public skip_total?: boolean,
+    public has_row_total?: boolean,
+    public has_column_total?: boolean,
     public category_category_combinations?: CategoryCategoryCombination[],
     public categories?: Category[],
     public category_option_combinations?: CategoryOptionCombination[],
-    public dataElementGroups?: { name: string; values: DataElement[] }[]
+    public dataElementGroups?: { name: string; values: DataElement[] }[],
+    public sort_order?: number
   ) {}
 }

@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../../utils/custom-response";
-import { FacilityCustomDetail } from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
-import { FacilityCustomDetailService } from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
-import { FacilityCustomDetailOption } from "../facility-custom-detail-option.model";
-import { FacilityCustomDetailOptionService } from "../facility-custom-detail-option.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../../utils/custom-response';
+import { FacilityCustomDetail } from 'src/app/setup/facility-custom-detail/facility-custom-detail.model';
+import { FacilityCustomDetailService } from 'src/app/setup/facility-custom-detail/facility-custom-detail.service';
+import { FacilityCustomDetailOption } from '../facility-custom-detail-option.model';
+import { FacilityCustomDetailOptionService } from '../facility-custom-detail-option.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-facility-custom-detail-option-update",
-  templateUrl: "./facility-custom-detail-option-update.component.html",
+  selector: 'app-facility-custom-detail-option-update',
+  templateUrl: './facility-custom-detail-option-update.component.html',
 })
 export class FacilityCustomDetailOptionUpdateComponent implements OnInit {
   isSaving = false;
@@ -53,7 +53,7 @@ export class FacilityCustomDetailOptionUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create FacilityCustomDetailOption or Update Facility type if exist else set form has error and return
+   * When form is valid Create FacilityCustomDetailOption or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -63,8 +63,13 @@ export class FacilityCustomDetailOptionUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const facilityCustomDetailOption = this.createFromForm();
-    facilityCustomDetailOption.facility_custom_detail_id = this.facilityCustomDetail.id;
-    if (facilityCustomDetailOption.id === undefined || facilityCustomDetailOption.id === null || !facilityCustomDetailOption.id) {
+    facilityCustomDetailOption.facility_custom_detail_id =
+      this.facilityCustomDetail.id;
+    if (
+      facilityCustomDetailOption.id === undefined ||
+      facilityCustomDetailOption.id === null ||
+      !facilityCustomDetailOption.id
+    ) {
       this.subscribeToSaveResponse(
         this.facilityCustomDetailOptionService.create(
           facilityCustomDetailOption
@@ -118,7 +123,7 @@ export class FacilityCustomDetailOptionUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: facilityCustomDetailOption?.id,
       value: facilityCustomDetailOption?.value,
-      label: facilityCustomDetailOption?.label
+      label: facilityCustomDetailOption?.label,
     });
   }
 
@@ -129,9 +134,9 @@ export class FacilityCustomDetailOptionUpdateComponent implements OnInit {
   protected createFromForm(): FacilityCustomDetailOption {
     return {
       ...new FacilityCustomDetailOption(),
-      id: this.editForm.get(["id"])!.value,
-      value: this.editForm.get(["value"])!.value,
-      label: this.editForm.get(["label"])!.value
+      id: this.editForm.get(['id'])!.value,
+      value: this.editForm.get(['value'])!.value,
+      label: this.editForm.get(['label'])!.value,
     };
   }
 }

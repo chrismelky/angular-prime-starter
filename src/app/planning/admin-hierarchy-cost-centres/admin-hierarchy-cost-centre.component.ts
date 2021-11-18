@@ -24,6 +24,11 @@ import { AdminHierarchyCostCentre } from './admin-hierarchy-cost-centre.model';
 import { AdminHierarchyCostCentreService } from './admin-hierarchy-cost-centre.service';
 import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { DecisionLevel } from 'src/app/setup/decision-level/decision-level.model';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { Section } from 'src/app/setup/section/section.model';
+import { UserService } from 'src/app/setup/user/user.service';
+import { User } from 'src/app/setup/user/user.model';
 
 @Component({
   selector: 'app-admin-hierarchy-cost-centre',
@@ -48,6 +53,9 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
   section_position!: number;
   budget_type?: string;
   currentFinancialYear?: FinancialYear;
+  userDecionLevel?: DecisionLevel;
+  admin_hierarchy_position?: number;
+  currentUser: User;
 
   constructor(
     protected adminHierarchyCostCentresService: AdminHierarchyCostCentreService,
@@ -57,8 +65,12 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService,
-    protected financialYearService: FinancialYearService
-  ) {}
+    protected financialYearService: FinancialYearService,
+    protected userService: UserService
+  ) {
+    this.currentUser = userService.getCurrentUser();
+    this.userDecionLevel = this.currentUser.decision_level;
+  }
 
   ngOnInit(): void {
     this.financialYearService.findByStatus(1).subscribe((resp) => {
@@ -127,7 +139,9 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
   }
 
   onAdminHierarchySelection(event: any): void {
+    console.log(event);
     this.admin_hierarchy_id = event.id;
+    this.admin_hierarchy_position = event.position;
     this.loadPage(1);
   }
 
@@ -215,7 +229,9 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
             page: this.page,
             per_page: this.per_page,
             sort:
-              this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+              (this.predicate || 'id') +
+              ':' +
+              (this.ascending ? 'asc' : 'desc'),
           },
         }
       );

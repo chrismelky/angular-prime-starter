@@ -1,4 +1,7 @@
 <div class="dialog-content">
+  <app-loader
+    [isLoading]="isSaving || levelIsLoading || adminIsLoading"
+  ></app-loader>
   <div fxLayout="column" fxLayoutGap="20px">
     <p-fieldset legend="Target">
       <strong>{{ longTermTarget?.description }}</strong>

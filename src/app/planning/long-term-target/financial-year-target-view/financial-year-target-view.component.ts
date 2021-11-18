@@ -44,7 +44,8 @@ export class FinancialYearTargetViewComponent implements OnInit {
 
   formError = false;
   isSaving = false;
-  isLoading = false;
+  levelIsLoading = false;
+  adminIsLoading = false;
   // position?: number;
   selectedLevel?: AdminHierarchyLevel;
 
@@ -74,15 +75,18 @@ export class FinancialYearTargetViewComponent implements OnInit {
       .subscribe((resp) => {
         this.genericPriorities = resp.data;
       });
-    this.adminLevelService
-      .lowerLevelsCanBudget(this.currentPosition)
-      .subscribe((resp) => {
+    this.levelIsLoading = true;
+    this.adminLevelService.lowerLevelsCanBudget(this.currentPosition).subscribe(
+      (resp) => {
         this.adminLevels = resp.data;
         if (this.adminLevels?.length) {
           this.selectedLevel = this.adminLevels[0];
           this.loadChildrenTarget();
         }
-      });
+        this.levelIsLoading = false;
+      },
+      (error) => (this.levelIsLoading = false)
+    );
     this.financialYearTargetService
       .findByTargetAndAdminArea(
         this.longTermTarget?.id!,
@@ -103,7 +107,7 @@ export class FinancialYearTargetViewComponent implements OnInit {
     if (!this.selectedLevel) {
       return;
     }
-
+    this.adminIsLoading = true;
     this.adminAreaService
       .withTargets({
         parent: `p${this.currentPosition}`,
@@ -112,7 +116,15 @@ export class FinancialYearTargetViewComponent implements OnInit {
         financial_year_id: this.financialYearId,
         position: this.selectedLevel.position,
       })
-      .subscribe((resp) => this.filterAdminAreas(resp.data));
+      .subscribe(
+        (resp) => {
+          this.adminIsLoading = false;
+          this.filterAdminAreas(resp.data);
+        },
+        (error) => {
+          this.adminIsLoading = false;
+        }
+      );
   }
 
   private filterAdminAreas(adminAreaWithTarget?: AdminHierarchyTarget[]): void {

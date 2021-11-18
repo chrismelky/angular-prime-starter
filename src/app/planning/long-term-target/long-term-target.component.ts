@@ -295,7 +295,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
         sections: this.sections,
         objectives: this.objectives,
       },
-      header: 'Create/Update LongTermTarget',
+      header: 'Create/Update Target',
       width: '900px',
     });
     ref.onClose.subscribe((result) => {
@@ -321,7 +321,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
           this.currentUser?.admin_hierarchy?.admin_hierarchy_position,
       },
       width: '900px',
-      header: 'Financial Year Target/Priorities',
+      header: 'Confirm Target and Priorities',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

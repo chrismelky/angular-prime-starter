@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../../utils/custom-response";
-import { Menu } from "src/app/setup/menu/menu.model";
-import { MenuService } from "src/app/setup/menu/menu.service";
-import { Permission } from "src/app/setup/permission/permission.model";
-import { PermissionService } from "src/app/setup/permission/permission.service";
-import { MenuPermission } from "../menu-permission.model";
-import { MenuPermissionService } from "../menu-permission.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../../utils/custom-response';
+import { Menu } from 'src/app/setup/menu/menu.model';
+import { MenuService } from 'src/app/setup/menu/menu.service';
+import { Permission } from 'src/app/setup/permission/permission.model';
+import { PermissionService } from 'src/app/setup/permission/permission.service';
+import { MenuPermission } from '../menu-permission.model';
+import { MenuPermissionService } from '../menu-permission.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-menu-permission-update",
-  templateUrl: "./menu-permission-update.component.html",
+  selector: 'app-menu-permission-update',
+  templateUrl: './menu-permission-update.component.html',
 })
 export class MenuPermissionUpdateComponent implements OnInit {
   isSaving = false;
@@ -53,7 +53,7 @@ export class MenuPermissionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.permissionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Permission[]>) => (this.permissions = resp.data)
       );
@@ -61,7 +61,7 @@ export class MenuPermissionUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create MenuPermission or Update Facility type if exist else set form has error and return
+   * When form is valid Create MenuPermission or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -71,7 +71,7 @@ export class MenuPermissionUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const menuPermission = this.createFromForm();
-    menuPermission.menu_id = this.menu?.id
+    menuPermission.menu_id = this.menu?.id;
     if (menuPermission.id !== undefined) {
       this.subscribeToSaveResponse(
         this.menuPermissionService.update(menuPermission)
@@ -130,8 +130,8 @@ export class MenuPermissionUpdateComponent implements OnInit {
   protected createFromForm(): MenuPermission {
     return {
       ...new MenuPermission(),
-      id: this.editForm.get(["id"])!.value,
-      permission_id: this.editForm.get(["permission_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      permission_id: this.editForm.get(['permission_id'])!.value,
     };
   }
 }

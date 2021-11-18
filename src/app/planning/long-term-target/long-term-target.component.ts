@@ -5,7 +5,13 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
@@ -42,7 +48,7 @@ import { FinancialYearTargetViewComponent } from './financial-year-target-view/f
   selector: 'app-long-term-target',
   templateUrl: './long-term-target.component.html',
 })
-export class LongTermTargetComponent implements OnInit {
+export class LongTermTargetComponent implements OnInit, OnDestroy {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
   longTermTargets?: LongTermTarget[] = [];
@@ -361,7 +367,9 @@ export class LongTermTargetComponent implements OnInit {
             page: this.page,
             per_page: this.per_page,
             sort:
-              this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+              (this.predicate || 'id') +
+              ':' +
+              (this.ascending ? 'asc' : 'desc'),
           },
         }
       );
@@ -376,5 +384,10 @@ export class LongTermTargetComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Long Term Target');
+  }
+
+  ngOnDestroy(): void {
+    this.sectorId.next();
+    this.sectorId.complete();
   }
 }

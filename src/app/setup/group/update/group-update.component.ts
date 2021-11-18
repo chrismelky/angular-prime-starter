@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { Group } from "../group.model";
-import { GroupService } from "../group.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { Group } from '../group.model';
+import { GroupService } from '../group.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-group-update",
-  templateUrl: "./group-update.component.html",
+  selector: 'app-group-update',
+  templateUrl: './group-update.component.html',
 })
 export class GroupUpdateComponent implements OnInit {
   isSaving = false;
@@ -46,7 +46,7 @@ export class GroupUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create Group or Update Facility type if exist else set form has error and return
+   * When form is valid Create Group or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -110,8 +110,8 @@ export class GroupUpdateComponent implements OnInit {
   protected createFromForm(): Group {
     return {
       ...new Group(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
     };
   }
 }

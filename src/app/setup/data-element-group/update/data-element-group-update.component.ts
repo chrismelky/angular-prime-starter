@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { DataElementGroupSet } from "src/app/setup/data-element-group-set/data-element-group-set.model";
-import { DataElementGroupSetService } from "src/app/setup/data-element-group-set/data-element-group-set.service";
-import { DataElementGroup } from "../data-element-group.model";
-import { DataElementGroupService } from "../data-element-group.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { DataElementGroupSet } from 'src/app/setup/data-element-group-set/data-element-group-set.model';
+import { DataElementGroupSetService } from 'src/app/setup/data-element-group-set/data-element-group-set.service';
+import { DataElementGroup } from '../data-element-group.model';
+import { DataElementGroupService } from '../data-element-group.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-data-element-group-update",
-  templateUrl: "./data-element-group-update.component.html",
+  selector: 'app-data-element-group-update',
+  templateUrl: './data-element-group-update.component.html',
 })
 export class DataElementGroupUpdateComponent implements OnInit {
   isSaving = false;
@@ -50,7 +50,7 @@ export class DataElementGroupUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataElementGroupSetService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<DataElementGroupSet[]>) =>
           (this.dataElementGroupSets = resp.data)
@@ -59,7 +59,7 @@ export class DataElementGroupUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create DataElementGroup or Update Facility type if exist else set form has error and return
+   * When form is valid Create DataElementGroup or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -129,11 +129,11 @@ export class DataElementGroupUpdateComponent implements OnInit {
   protected createFromForm(): DataElementGroup {
     return {
       ...new DataElementGroup(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
       data_element_group_set_id: this.editForm.get([
-        "data_element_group_set_id",
+        'data_element_group_set_id',
       ])!.value,
     };
   }

@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { FundSourceCategory } from "../fund-source-category.model";
-import { FundSourceCategoryService } from "../fund-source-category.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { FundSourceCategory } from '../fund-source-category.model';
+import { FundSourceCategoryService } from '../fund-source-category.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-fund-source-category-update",
-  templateUrl: "./fund-source-category-update.component.html",
+  selector: 'app-fund-source-category-update',
+  templateUrl: './fund-source-category-update.component.html',
 })
 export class FundSourceCategoryUpdateComponent implements OnInit {
   isSaving = false;
@@ -47,7 +47,7 @@ export class FundSourceCategoryUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create FundSourceCategory or Update Facility type if exist else set form has error and return
+   * When form is valid Create FundSourceCategory or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -116,9 +116,9 @@ export class FundSourceCategoryUpdateComponent implements OnInit {
   protected createFromForm(): FundSourceCategory {
     return {
       ...new FundSourceCategory(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
     };
   }
 }

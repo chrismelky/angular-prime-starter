@@ -154,18 +154,15 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text"
-            >CAS Sub Criteria Report Sets</span
-          >
+          <span class="card-header-text">Cas Sub Category Report Sets</span>
           <button
             pButton
+            pRipple
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="
-              !cas_plan_id || !cas_assessment_sub_criteria_option_id
-            "
+            [disabled]="!cas_plan_id || !cas_assessment_sub_criteria_option_id"
             (click)="createOrUpdate()"
-            label="Add CAS Sub Criteria Report Set"
+            label="Add Cas Sub Category Report Set"
           ></button>
         </div>
       </ng-template>
@@ -178,10 +175,7 @@
             {{ col.header
             }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th [pSortableColumn]="'cas_plan_id'">
-            Cas Plan Content <p-sortIcon  [field]="'cas_plan_id'"></p-sortIcon>
-          </th>
-          <th style="flex: 0 0 2rem"></th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -189,23 +183,13 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{rowData.cas_plan_content.name}}</td>
-          <td style="flex: 0 0 2rem">
+          <td></td>
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-pencil
-              "
-                  (click)="createOrUpdate(rowData)"
-                ></button>
-                <button
-                  pButton
+                  pRipple
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="

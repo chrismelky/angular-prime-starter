@@ -8,6 +8,7 @@ export class DataSet {
     public is_locked?: string,
     public is_submitted?: string,
     public facility_types?: string,
-    public periods?: string
+    public periods?: string,
+    public sort_order?: number
   ) {}
 }

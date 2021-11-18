@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { Project } from "src/app/setup/project/project.model";
-import { ProjectService } from "src/app/setup/project/project.service";
-import { FundSource } from "src/app/setup/fund-source/fund-source.model";
-import { FundSourceService } from "src/app/setup/fund-source/fund-source.service";
-import { ProjectFundSource } from "../project-fund-source.model";
-import { ProjectFundSourceService } from "../project-fund-source.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { Project } from 'src/app/setup/project/project.model';
+import { ProjectService } from 'src/app/setup/project/project.service';
+import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
+import { FundSourceService } from 'src/app/setup/fund-source/fund-source.service';
+import { ProjectFundSource } from '../project-fund-source.model';
+import { ProjectFundSourceService } from '../project-fund-source.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-project-fund-source-update",
-  templateUrl: "./project-fund-source-update.component.html",
+  selector: 'app-project-fund-source-update',
+  templateUrl: './project-fund-source-update.component.html',
 })
 export class ProjectFundSourceUpdateComponent implements OnInit {
   isSaving = false;
@@ -53,12 +53,12 @@ export class ProjectFundSourceUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.projectService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<Project[]>) => (this.projects = resp.data)
       );
     this.fundSourceService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FundSource[]>) => (this.fundSources = resp.data)
       );
@@ -66,7 +66,7 @@ export class ProjectFundSourceUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create ProjectFundSource or Update Facility type if exist else set form has error and return
+   * When form is valid Create ProjectFundSource or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -135,9 +135,9 @@ export class ProjectFundSourceUpdateComponent implements OnInit {
   protected createFromForm(): ProjectFundSource {
     return {
       ...new ProjectFundSource(),
-      id: this.editForm.get(["id"])!.value,
-      project_id: this.editForm.get(["project_id"])!.value,
-      fund_source_id: this.editForm.get(["fund_source_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      project_id: this.editForm.get(['project_id'])!.value,
+      fund_source_id: this.editForm.get(['fund_source_id'])!.value,
     };
   }
 }

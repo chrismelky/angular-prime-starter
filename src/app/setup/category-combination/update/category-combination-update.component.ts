@@ -37,7 +37,9 @@ export class CategoryCombinationUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     code: [null, [Validators.required]],
-    skip_total: [false, [Validators.required]],
+    has_row_total: [false, []],
+    has_column_total: [false, []],
+    sort_order: [null, []],
   });
 
   constructor(
@@ -133,7 +135,9 @@ export class CategoryCombinationUpdateComponent implements OnInit {
       id: categoryCombination.id,
       name: categoryCombination.name,
       code: categoryCombination.code,
-      skip_total: categoryCombination.skip_total,
+      has_row_total: categoryCombination.has_row_total,
+      has_column_total: categoryCombination.has_column_total,
+      sort_order: categoryCombination.sort_order,
     });
   }
 
@@ -144,10 +148,7 @@ export class CategoryCombinationUpdateComponent implements OnInit {
   protected createFromForm(): CategoryCombination {
     return {
       ...new CategoryCombination(),
-      id: this.editForm.get(['id'])!.value,
-      name: this.editForm.get(['name'])!.value,
-      code: this.editForm.get(['code'])!.value,
-      skip_total: this.editForm.get(['skip_total'])!.value,
+      ...this.editForm.value,
     };
   }
 }

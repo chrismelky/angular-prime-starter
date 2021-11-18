@@ -5,35 +5,35 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
-import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
-import { Report } from "../report.model";
-import { ReportService } from "../report.service";
-import { ToastService } from "src/app/shared/toast.service";
-import {PeriodService} from "../../../setup/period/period.service";
-import {Period} from "../../../setup/period/period.model";
-import {FundSource} from "../../../setup/fund-source/fund-source.model";
-import {FundSourceService} from "../../../setup/fund-source/fund-source.service";
-import {Section} from "../../../setup/section/section.model";
-import {SectionService} from "../../../setup/section/section.service";
-import {Sector} from "../../../setup/sector/sector.model";
-import {SectorService} from "../../../setup/sector/sector.service";
-import {J} from "@angular/cdk/keycodes";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasPlanContent } from 'src/app/setup/cas-plan-content/cas-plan-content.model';
+import { CasPlanContentService } from 'src/app/setup/cas-plan-content/cas-plan-content.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
+import { Report } from '../report.model';
+import { ReportService } from '../report.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { PeriodService } from '../../../setup/period/period.service';
+import { Period } from '../../../setup/period/period.model';
+import { FundSource } from '../../../setup/fund-source/fund-source.model';
+import { FundSourceService } from '../../../setup/fund-source/fund-source.service';
+import { Section } from '../../../setup/section/section.model';
+import { SectionService } from '../../../setup/section/section.service';
+import { Sector } from '../../../setup/sector/sector.model';
+import { SectorService } from '../../../setup/sector/sector.service';
+import { J } from '@angular/cdk/keycodes';
 
 @Component({
-  selector: "app-report-update",
-  templateUrl: "./report-update.component.html",
+  selector: 'app-report-update',
+  templateUrl: './report-update.component.html',
 })
 export class ReportUpdateComponent implements OnInit {
   isSaving = false;
@@ -89,45 +89,65 @@ export class ReportUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.reportService
       .getParams(this.dialogConfig.data.report_id)
-      .subscribe(
-        (resp: CustomResponse<Report[]>) =>{
-          const params = resp.data;
-          if (params) {
-            this.parameters = params[0].query_params?.split(',');
-            for (let i=0; i < this.parameters?.length!; i++){
-              if (this.parameters![i] == 'period_id'){
-                this.periodService.query({ columns :['id','name']})
-                  .subscribe((resp:CustomResponse<Period[]>)=>(this.periods = resp.data));
-              }
-              if (this.parameters![i] == 'fund_source_id'){
-                this.fundSourceService.query({ columns :['id','name']})
-                  .subscribe((resp:CustomResponse<FundSource[]>)=>(this.fundSources = resp.data));
-              }
-              if (this.parameters![i] == 'section_id'){
-                this.sectionService.query({ position: 4})
-                  .subscribe((resp:CustomResponse<Section[]>)=>(this.sections = resp.data));
-              }
-              if (this.parameters![i] == 'department_id'){
-                this.sectionService.query({ position: 3})
-                  .subscribe((resp:CustomResponse<Section[]>)=>(this.departments = resp.data));
-              }
-              if (this.parameters![i] == 'sector_id'){
-                this.sectorService.query({ columns :['id','name']})
-                  .subscribe((resp:CustomResponse<Sector[]>)=>(this.sectors = resp.data));
-              }
-              if (this.parameters![i] == 'fund_source_pe'){
-                this.fundSourceService.getPeFundSource()
-                  .subscribe((resp:CustomResponse<FundSource[]>)=>(this.peFundSources = resp.data));
-              }
+      .subscribe((resp: CustomResponse<Report[]>) => {
+        const params = resp.data;
+        if (params) {
+          this.parameters = params[0].query_params?.split(',');
+          for (let i = 0; i < this.parameters?.length!; i++) {
+            if (this.parameters![i] == 'period_id') {
+              this.periodService
+                .query({ columns: ['id', 'name'] })
+                .subscribe(
+                  (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
+                );
+            }
+            if (this.parameters![i] == 'fund_source_id') {
+              this.fundSourceService
+                .query({ columns: ['id', 'name'] })
+                .subscribe(
+                  (resp: CustomResponse<FundSource[]>) =>
+                    (this.fundSources = resp.data)
+                );
+            }
+            if (this.parameters![i] == 'section_id') {
+              this.sectionService
+                .query({ position: 4 })
+                .subscribe(
+                  (resp: CustomResponse<Section[]>) =>
+                    (this.sections = resp.data)
+                );
+            }
+            if (this.parameters![i] == 'department_id') {
+              this.sectionService
+                .query({ position: 3 })
+                .subscribe(
+                  (resp: CustomResponse<Section[]>) =>
+                    (this.departments = resp.data)
+                );
+            }
+            if (this.parameters![i] == 'sector_id') {
+              this.sectorService
+                .query({ columns: ['id', 'name'] })
+                .subscribe(
+                  (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
+                );
+            }
+            if (this.parameters![i] == 'fund_source_pe') {
+              this.fundSourceService
+                .getPeFundSource()
+                .subscribe(
+                  (resp: CustomResponse<FundSource[]>) =>
+                    (this.peFundSources = resp.data)
+                );
             }
           }
         }
-      );
+      });
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
-
-  getReport(format: string) {
+//get pdf report
+  getPdfReport(format: string) {
     const data = JSON.parse(JSON.stringify(this.editForm.value));
     data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
     data.financial_year_id = this.dialogConfig.data.financial_year_id;
@@ -135,14 +155,42 @@ export class ReportUpdateComponent implements OnInit {
     data.budgetType = this.dialogConfig.data.budgetType;
     data.format = format;
     this.reportService.getReport(data).subscribe((resp) => {
-      let file = new Blob([resp], { type: 'application/pdf'});
+      let file = new Blob([resp], { type: 'application/pdf' });
       let fileURL = URL.createObjectURL(file);
-      window.open(fileURL,"_blank");
+      window.open(fileURL, '_blank');
+    });
+  }
+  //get excel report
+  getExcelReport(format: string) {
+    const data = JSON.parse(JSON.stringify(this.editForm.value));
+    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+    data.financial_year_id = this.dialogConfig.data.financial_year_id;
+    data.report_id = this.dialogConfig.data.report_id;
+    data.budgetType = this.dialogConfig.data.budgetType;
+    data.format = format;
+    this.reportService.getReport(data).subscribe((resp) => {
+      let file = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank")
+    });
+  }
+//get excel report
+  getWordReport(format: string) {
+    const data = JSON.parse(JSON.stringify(this.editForm.value));
+    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
+    data.financial_year_id = this.dialogConfig.data.financial_year_id;
+    data.report_id = this.dialogConfig.data.report_id;
+    data.budgetType = this.dialogConfig.data.budgetType;
+    data.format = format;
+    this.reportService.getReport(data).subscribe((resp) => {
+      let file = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank")
     });
   }
 
   /**
-   * When form is valid Create Report or Update Facility type if exist else set form has error and return
+   * When form is valid Create Report or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -218,20 +266,20 @@ export class ReportUpdateComponent implements OnInit {
   protected createFromForm(): Report {
     return {
       ...new Report(),
-      id: this.editForm.get(["id"])!.value,
-      period_id: this.editForm.get(["period_id"])!.value,
-      fund_source_id: this.editForm.get(["fund_source_id"])!.value,
-      fund_source_pe: this.editForm.get(["fund_source_pe"])!.value,
-      is_facility_account: this.editForm.get(["is_facility_account"])!.value,
-      intervention_id: this.editForm.get(["intervention_id"])!.value,
-      exchange_rate: this.editForm.get(["exchange_rate"])!.value,
-      control_code: this.editForm.get(["control_code"])!.value,
-      budget_class_id: this.editForm.get(["budget_class_id"])!.value,
-      department_id: this.editForm.get(["department_id"])!.value,
-      section_id: this.editForm.get(["section_id"])!.value,
-      sector_id: this.editForm.get(["sector_id"])!.value,
-      admin_hierarchy_id: this.editForm.get(["admin_hierarchy_id"])!.value,
-      financial_year_id: this.editForm.get(["financial_year_id"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      period_id: this.editForm.get(['period_id'])!.value,
+      fund_source_id: this.editForm.get(['fund_source_id'])!.value,
+      fund_source_pe: this.editForm.get(['fund_source_pe'])!.value,
+      is_facility_account: this.editForm.get(['is_facility_account'])!.value,
+      intervention_id: this.editForm.get(['intervention_id'])!.value,
+      exchange_rate: this.editForm.get(['exchange_rate'])!.value,
+      control_code: this.editForm.get(['control_code'])!.value,
+      budget_class_id: this.editForm.get(['budget_class_id'])!.value,
+      department_id: this.editForm.get(['department_id'])!.value,
+      section_id: this.editForm.get(['section_id'])!.value,
+      sector_id: this.editForm.get(['sector_id'])!.value,
+      admin_hierarchy_id: this.editForm.get(['admin_hierarchy_id'])!.value,
+      financial_year_id: this.editForm.get(['financial_year_id'])!.value,
     };
   }
 }

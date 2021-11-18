@@ -51,7 +51,7 @@ export class MyAssessmentUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create MyAssessment or Update Facility type if exist else set form has error and return
+   * When form is valid Create MyAssessment or Update if exist else set form has error and return
    * @returns
    */
   save(): void {

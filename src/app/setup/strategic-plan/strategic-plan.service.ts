@@ -56,12 +56,13 @@ export class StrategicPlanService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  download(id: number){
+  download(id: number) {
     const httpOptions = {
-      'responseType'  : 'arraybuffer' as 'json'
+      responseType: 'arraybuffer' as 'json',
     };
     return this.http.get<any>(
-      `${this.downloadUrl}/${id}`,httpOptions
-    )
+      `${this.resourceUrl}/download/${id}`,
+      httpOptions
+    );
   }
 }

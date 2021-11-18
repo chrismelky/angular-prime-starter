@@ -38,6 +38,7 @@ import {SetCommentComponent} from "./update/set-comment.component";
 import {FormBuilder, Validators} from "@angular/forms";
 import {UserService} from "../../setup/user/user.service";
 import {User} from "../../setup/user/user.model";
+import {ReportUpdateComponent} from "../../execution/report/update/report-update.component";
 
 
 
@@ -394,7 +395,19 @@ export class AssessmentCriteriaComponent implements OnInit {
   }
 
   getReport(assessmentSubCriteriaOption: any) {
-    alert('getReport')
+    const data = assessmentSubCriteriaOption;
+    data.admin_hierarchy_id = this.admin_hierarchy_id;
+    data.financial_year_id = this.financial_year_id;
+    data.budgetType = 'CURRENT';
+    const ref = this.dialogService.open(ReportUpdateComponent, {
+      data,
+      header: '',
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        // this.loadPage(this.page);
+      }
+    });
   }
 
   getAssessmentReport() {

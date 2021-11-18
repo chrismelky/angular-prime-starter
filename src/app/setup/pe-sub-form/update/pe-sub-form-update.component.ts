@@ -5,22 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { PeForm } from "src/app/setup/pe-form/pe-form.model";
-import { PeFormService } from "src/app/setup/pe-form/pe-form.service";
-import { PeSubForm } from "../pe-sub-form.model";
-import { PeSubFormService } from "../pe-sub-form.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { PeForm } from 'src/app/setup/pe-form/pe-form.model';
+import { PeFormService } from 'src/app/setup/pe-form/pe-form.service';
+import { PeSubForm } from '../pe-sub-form.model';
+import { PeSubFormService } from '../pe-sub-form.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-pe-sub-form-update",
-  templateUrl: "./pe-sub-form-update.component.html",
+  selector: 'app-pe-sub-form-update',
+  templateUrl: './pe-sub-form-update.component.html',
 })
 export class PeSubFormUpdateComponent implements OnInit {
   isSaving = false;
@@ -29,7 +29,7 @@ export class PeSubFormUpdateComponent implements OnInit {
 
   parents?: PeSubForm[] = [];
   peForms?: PeForm[] = [];
-  sub_form_id:number = 0
+  sub_form_id: number = 0;
 
   /**
    * Declare form
@@ -57,18 +57,18 @@ export class PeSubFormUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log("PE")
-    console.log(this.dialogConfig.data?.id)
-    this.sub_form_id = this.dialogConfig.data?.id
+    console.log('PE');
+    console.log(this.dialogConfig.data?.id);
+    this.sub_form_id = this.dialogConfig.data?.id;
     this.parentService
-      .query({ columns: ["id", "name"],parent_id:null })
-      .subscribe(
-        (resp: CustomResponse<PeSubForm[]>) => {
-          this.parents = (resp.data ?? []).filter(p => p.id !== this.sub_form_id)
-        }
-      );
+      .query({ columns: ['id', 'name'], parent_id: null })
+      .subscribe((resp: CustomResponse<PeSubForm[]>) => {
+        this.parents = (resp.data ?? []).filter(
+          (p) => p.id !== this.sub_form_id
+        );
+      });
     this.peFormService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
       );
@@ -76,7 +76,7 @@ export class PeSubFormUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create PeSubForm or Update Facility type if exist else set form has error and return
+   * When form is valid Create PeSubForm or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -147,15 +147,15 @@ export class PeSubFormUpdateComponent implements OnInit {
   protected createFromForm(): PeSubForm {
     return {
       ...new PeSubForm(),
-      id: this.editForm.get(["id"])!.value,
-      parent_id: this.editForm.get(["parent_id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      code: this.editForm.get(["code"])!.value,
-      pe_form_id: this.editForm.get(["pe_form_id"])!.value,
-      is_lowest: this.editForm.get(["is_lowest"])!.value,
-      sort_order: this.editForm.get(["sort_order"])!.value,
-      is_multiple: this.editForm.get(["is_multiple"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      parent_id: this.editForm.get(['parent_id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      code: this.editForm.get(['code'])!.value,
+      pe_form_id: this.editForm.get(['pe_form_id'])!.value,
+      is_lowest: this.editForm.get(['is_lowest'])!.value,
+      sort_order: this.editForm.get(['sort_order'])!.value,
+      is_multiple: this.editForm.get(['is_multiple'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

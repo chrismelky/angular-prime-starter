@@ -5,20 +5,20 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { FundType } from "../fund-type.model";
-import { FundTypeService } from "../fund-type.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { FundType } from '../fund-type.model';
+import { FundTypeService } from '../fund-type.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-fund-type-update",
-  templateUrl: "./fund-type-update.component.html",
+  selector: 'app-fund-type-update',
+  templateUrl: './fund-type-update.component.html',
 })
 export class FundTypeUpdateComponent implements OnInit {
   isSaving = false;
@@ -49,7 +49,7 @@ export class FundTypeUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create FundType or Update Facility type if exist else set form has error and return
+   * When form is valid Create FundType or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -116,12 +116,12 @@ export class FundTypeUpdateComponent implements OnInit {
   protected createFromForm(): FundType {
     return {
       ...new FundType(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      current_budget_code: this.editForm.get(["current_budget_code"])!.value,
-      carry_over_budget_code: this.editForm.get(["carry_over_budget_code"])!
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      current_budget_code: this.editForm.get(['current_budget_code'])!.value,
+      carry_over_budget_code: this.editForm.get(['carry_over_budget_code'])!
         .value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

@@ -5,6 +5,7 @@ export class CasPlanContent {
     public parent_id?: number,
     public report_id?: number,
     public cas_plan_id?: number,
+    public children?: CasPlanContent[],
     public sort_order?: number
   ) {}
 }

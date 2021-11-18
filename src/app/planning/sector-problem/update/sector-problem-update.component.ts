@@ -73,7 +73,7 @@ export class SectorProblemUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create SectorProblem or Update Facility type if exist else set form has error and return
+   * When form is valid Create SectorProblem or Update if exist else set form has error and return
    * @returns
    */
   save(): void {

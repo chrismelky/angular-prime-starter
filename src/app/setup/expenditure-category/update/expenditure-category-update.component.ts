@@ -5,24 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { ActivityTaskNature } from "src/app/setup/activity-task-nature/activity-task-nature.model";
-import { ActivityTaskNatureService } from "src/app/setup/activity-task-nature/activity-task-nature.service";
-import { ProjectType } from "src/app/setup/project-type/project-type.model";
-import { ProjectTypeService } from "src/app/setup/project-type/project-type.service";
-import { ExpenditureCategory } from "../expenditure-category.model";
-import { ExpenditureCategoryService } from "../expenditure-category.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { ActivityTaskNature } from 'src/app/setup/activity-task-nature/activity-task-nature.model';
+import { ActivityTaskNatureService } from 'src/app/setup/activity-task-nature/activity-task-nature.service';
+import { ProjectType } from 'src/app/setup/project-type/project-type.model';
+import { ProjectTypeService } from 'src/app/setup/project-type/project-type.service';
+import { ExpenditureCategory } from '../expenditure-category.model';
+import { ExpenditureCategoryService } from '../expenditure-category.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-expenditure-category-update",
-  templateUrl: "./expenditure-category-update.component.html",
+  selector: 'app-expenditure-category-update',
+  templateUrl: './expenditure-category-update.component.html',
 })
 export class ExpenditureCategoryUpdateComponent implements OnInit {
   isSaving = false;
@@ -55,13 +55,13 @@ export class ExpenditureCategoryUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.activityTaskNatureService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<ActivityTaskNature[]>) =>
           (this.activityTaskNatures = resp.data)
       );
     this.projectTypeService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<ProjectType[]>) => (this.projectTypes = resp.data)
       );
@@ -69,7 +69,7 @@ export class ExpenditureCategoryUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create ExpenditureCategory or Update Facility type if exist else set form has error and return
+   * When form is valid Create ExpenditureCategory or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -140,12 +140,12 @@ export class ExpenditureCategoryUpdateComponent implements OnInit {
   protected createFromForm(): ExpenditureCategory {
     return {
       ...new ExpenditureCategory(),
-      id: this.editForm.get(["id"])!.value,
-      name: this.editForm.get(["name"])!.value,
-      activity_task_nature_id: this.editForm.get(["activity_task_nature_id"])!
+      id: this.editForm.get(['id'])!.value,
+      name: this.editForm.get(['name'])!.value,
+      activity_task_nature_id: this.editForm.get(['activity_task_nature_id'])!
         .value,
-      project_type_id: this.editForm.get(["project_type_id"])!.value,
-      is_active: this.editForm.get(["is_active"])!.value,
+      project_type_id: this.editForm.get(['project_type_id'])!.value,
+      is_active: this.editForm.get(['is_active'])!.value,
     };
   }
 }

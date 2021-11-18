@@ -244,7 +244,7 @@ export class CategoryComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }

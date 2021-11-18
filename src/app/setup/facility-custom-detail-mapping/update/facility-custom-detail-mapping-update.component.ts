@@ -5,25 +5,25 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { EnumService, PlanrepEnum } from "src/app/shared/enum.service";
-import { FacilityCustomDetail } from "src/app/setup/facility-custom-detail/facility-custom-detail.model";
-import { FacilityCustomDetailService } from "src/app/setup/facility-custom-detail/facility-custom-detail.service";
-import { FacilityType } from "src/app/setup/facility-type/facility-type.model";
-import { FacilityTypeService } from "src/app/setup/facility-type/facility-type.service";
-import { FacilityCustomDetailMapping } from "../facility-custom-detail-mapping.model";
-import { FacilityCustomDetailMappingService } from "../facility-custom-detail-mapping.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { FacilityCustomDetail } from 'src/app/setup/facility-custom-detail/facility-custom-detail.model';
+import { FacilityCustomDetailService } from 'src/app/setup/facility-custom-detail/facility-custom-detail.service';
+import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
+import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
+import { FacilityCustomDetailMapping } from '../facility-custom-detail-mapping.model';
+import { FacilityCustomDetailMappingService } from '../facility-custom-detail-mapping.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-facility-custom-detail-mapping-update",
-  templateUrl: "./facility-custom-detail-mapping-update.component.html",
+  selector: 'app-facility-custom-detail-mapping-update',
+  templateUrl: './facility-custom-detail-mapping-update.component.html',
 })
 export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
   isSaving = false;
@@ -55,13 +55,13 @@ export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.facilityCustomDetailService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FacilityCustomDetail[]>) =>
           (this.facilityCustomDetails = resp.data)
       );
     this.facilityTypeService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
@@ -70,7 +70,7 @@ export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
   }
 
   /**
-   * When form is valid Create FacilityCustomDetailMapping or Update Facility type if exist else set form has error and return
+   * When form is valid Create FacilityCustomDetailMapping or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -146,11 +146,11 @@ export class FacilityCustomDetailMappingUpdateComponent implements OnInit {
   protected createFromForm(): FacilityCustomDetailMapping {
     return {
       ...new FacilityCustomDetailMapping(),
-      id: this.editForm.get(["id"])!.value,
+      id: this.editForm.get(['id'])!.value,
       facility_custom_detail_id: this.editForm.get([
-        "facility_custom_detail_id",
+        'facility_custom_detail_id',
       ])!.value,
-      facility_type_id: this.editForm.get(["facility_type_id"])!.value,
+      facility_type_id: this.editForm.get(['facility_type_id'])!.value,
     };
   }
 }

@@ -5,41 +5,46 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import {
+  ConfirmationService,
+  LazyLoadEvent,
+  MenuItem,
+  TreeNode,
+} from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { CasPlanContent } from "src/app/setup/cas-plan-content/cas-plan-content.model";
-import { CasPlanContentService } from "src/app/setup/cas-plan-content/cas-plan-content.service";
-import { AdminHierarchy } from "src/app/setup/admin-hierarchy/admin-hierarchy.model";
-import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hierarchy.service";
-import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
-import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { CasPlanContent } from 'src/app/setup/cas-plan-content/cas-plan-content.model';
+import { CasPlanContentService } from 'src/app/setup/cas-plan-content/cas-plan-content.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
+import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 
-import {BudgetType, Report} from "./report.model";
-import { ReportService } from "./report.service";
-import { ReportUpdateComponent } from "./update/report-update.component";
-import {CasPlan} from "../../setup/cas-plan/cas-plan.model";
-import {CasPlanService} from "../../setup/cas-plan/cas-plan.service";
-import {TreeTable} from "primeng/treetable";
+import { BudgetType, Report } from './report.model';
+import { ReportService } from './report.service';
+import { ReportUpdateComponent } from './update/report-update.component';
+import { CasPlan } from '../../setup/cas-plan/cas-plan.model';
+import { CasPlanService } from '../../setup/cas-plan/cas-plan.service';
+import { TreeTable } from 'primeng/treetable';
 
 @Component({
-  selector: "app-report",
-  templateUrl: "./report.component.html",
+  selector: 'app-report',
+  templateUrl: './report.component.html',
 })
 export class ReportComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
+  @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: TreeTable;
   reports?: Report[] = [];
 
@@ -54,7 +59,8 @@ export class ReportComponent implements OnInit {
       field: 'name',
       header: 'Name',
       sort: true,
-    },]; //Table display columns
+    },
+  ]; //Table display columns
 
   isLoading = false;
   page?: number = 1;
@@ -92,25 +98,24 @@ export class ReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.budgetTypes = [
-      {id:1, name:'CURRENT'},
-      {id:2, name:'APPROVED'},
-      {id:3, name:'CARRYOVER'},
-      {id:4, name:'SUPPLEMENTARY'},
+      { id: 1, name: 'CURRENT' },
+      { id: 2, name: 'APPROVED' },
+      { id: 3, name: 'CARRYOVER' },
+      { id: 4, name: 'SUPPLEMENTARY' },
     ];
     this.casPlanService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
-        (resp: CustomResponse<CasPlan[]>) =>
-          (this.casPlans = resp.data)
+        (resp: CustomResponse<CasPlan[]>) => (this.casPlans = resp.data)
       );
     this.adminHierarchyService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.adminHierarchies = resp.data)
       );
     this.financialYearService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<FinancialYear[]>) =>
           (this.financialYears = resp.data)
@@ -160,11 +165,11 @@ export class ReportComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -239,8 +244,8 @@ export class ReportComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -256,7 +261,7 @@ export class ReportComponent implements OnInit {
     };
     const ref = this.dialogService.open(ReportUpdateComponent, {
       data,
-      header: "Create/Update Report",
+      header: 'Create/Update Report',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -271,7 +276,7 @@ export class ReportComponent implements OnInit {
    */
   delete(report: Report): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Report?",
+      message: 'Are you sure that you want to delete this Report?',
       accept: () => {
         this.reportService.delete(report.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -300,7 +305,7 @@ export class ReportComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            (this.predicate ?? 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -319,26 +324,26 @@ export class ReportComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Report");
+    this.toastService.error('Error loading Report');
   }
   /**
    *
    * @param event adminhierarchyId or Ids
    */
   onAdminHierarchySelection(event: any): void {
-
     this.admin_hierarchy_id = event.id;
-    this.admin_hierarchy_position =event.admin_hierarchy_position;
+    this.admin_hierarchy_position = event.admin_hierarchy_position;
   }
 
   getReport(report: any) {
-  if (
-    !this.admin_hierarchy_id ||
-    !this.financial_year_id ||
-    !this.budgetType){
-    return;
-  }
-  const data = report;
+    if (
+      !this.admin_hierarchy_id ||
+      !this.financial_year_id ||
+      !this.budgetType
+    ) {
+      return;
+    }
+    const data = report;
     data.admin_hierarchy_id = this.admin_hierarchy_id;
     data.financial_year_id = this.financial_year_id;
     data.budgetType = this.budgetType;
@@ -354,11 +359,14 @@ export class ReportComponent implements OnInit {
   }
 
   loadContents() {
-    this.casPlanContentService.query({
-      cas_plan_id: this.cas_plan_id,
-      parent_id: null
-    })
-      .subscribe((resp:CustomResponse<CasPlanContent[]>)=>(this.parents  = resp.data));
+    this.casPlanContentService
+      .query({
+        cas_plan_id: this.cas_plan_id,
+        parent_id: null,
+      })
+      .subscribe(
+        (resp: CustomResponse<CasPlanContent[]>) => (this.parents = resp.data)
+      );
   }
 
   /**

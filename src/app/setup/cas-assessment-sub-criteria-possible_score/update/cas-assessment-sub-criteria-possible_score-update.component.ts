@@ -5,23 +5,23 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Observable } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { CustomResponse } from "../../../utils/custom-response";
-import { CasAssessmentSubCriteriaOption } from "src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
-import { CasAssessmentSubCriteriaOptionService } from "src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service";
-import { CasAssessmentSubCriteriaPossibleScore } from "../cas-assessment-sub-criteria-possible_score.model";
-import { CasAssessmentSubCriteriaPossibleScoreService } from "../cas-assessment-sub-criteria-possible_score.service";
-import { ToastService } from "src/app/shared/toast.service";
+import { CustomResponse } from '../../../utils/custom-response';
+import { CasAssessmentSubCriteriaOption } from 'src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model';
+import { CasAssessmentSubCriteriaOptionService } from 'src/app/setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service';
+import { CasAssessmentSubCriteriaPossibleScore } from '../cas-assessment-sub-criteria-possible_score.model';
+import { CasAssessmentSubCriteriaPossibleScoreService } from '../cas-assessment-sub-criteria-possible_score.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
 @Component({
-  selector: "app-cas-assessment-sub-criteria-possible_score-update",
+  selector: 'app-cas-assessment-sub-criteria-possible_score-update',
   templateUrl:
-    "./cas-assessment-sub-criteria-possible_score-update.component.html",
+    './cas-assessment-sub-criteria-possible_score-update.component.html',
 })
 export class CasAssessmentSubCriteriaPossibleScoreUpdateComponent
   implements OnInit
@@ -53,7 +53,7 @@ export class CasAssessmentSubCriteriaPossibleScoreUpdateComponent
 
   ngOnInit(): void {
     this.casAssessmentSubCriteriaOptionService
-      .query({ columns: ["id", "name"] })
+      .query({ columns: ['id', 'name'] })
       .subscribe(
         (resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) =>
           (this.casAssessmentSubCriteriaOptions = resp.data)
@@ -62,7 +62,7 @@ export class CasAssessmentSubCriteriaPossibleScoreUpdateComponent
   }
 
   /**
-   * When form is valid Create CasAssessmentSubCriteriaPossibleScore or Update Facility type if exist else set form has error and return
+   * When form is valid Create CasAssessmentSubCriteriaPossibleScore or Update if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -139,11 +139,11 @@ export class CasAssessmentSubCriteriaPossibleScoreUpdateComponent
   protected createFromForm(): CasAssessmentSubCriteriaPossibleScore {
     return {
       ...new CasAssessmentSubCriteriaPossibleScore(),
-      id: this.editForm.get(["id"])!.value,
-      value: this.editForm.get(["value"])!.value,
-      description: this.editForm.get(["description"])!.value,
+      id: this.editForm.get(['id'])!.value,
+      value: this.editForm.get(['value'])!.value,
+      description: this.editForm.get(['description'])!.value,
       cas_assessment_sub_criteria_option_id: this.editForm.get([
-        "cas_assessment_sub_criteria_option_id",
+        'cas_assessment_sub_criteria_option_id',
       ])!.value,
     };
   }

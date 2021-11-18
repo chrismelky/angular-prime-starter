@@ -107,9 +107,7 @@ export class ActivityImplementationComponent implements OnInit {
       .findByStatus(2)
       .subscribe(
         (resp: CustomResponse<FinancialYear>) =>
-        {
-          this.financial_year_id = resp.data?.id;
-        }
+        (this.financial_year_id = resp.data?.id)
       );
     this.periodService
       .query({ columns: ["id", "name"] })

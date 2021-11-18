@@ -1,7 +1,14 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { ObjectiveType } from 'src/app/setup/objective-type/objective-type.model';
 import { ObjectiveTypeService } from 'src/app/setup/objective-type/objective-type.service';
 import { Objective } from 'src/app/setup/objective/objective.model';
@@ -15,7 +22,7 @@ import { CustomResponse } from 'src/app/utils/custom-response';
   templateUrl: './objective-tree.component.html',
   styleUrls: ['./objective-tree.component.scss'],
 })
-export class ObjectiveTreeComponent implements OnInit {
+export class ObjectiveTreeComponent implements OnInit, OnDestroy {
   currentUser!: User;
 
   @Input() sectorId!: Subject<number>;
@@ -29,6 +36,7 @@ export class ObjectiveTreeComponent implements OnInit {
   objectives?: any[] = [];
   objectiveTypes?: ObjectiveType[] = [];
   lowestType?: ObjectiveType;
+  subscription?: Subscription;
 
   constructor(
     protected userService: UserService,
@@ -36,6 +44,12 @@ export class ObjectiveTreeComponent implements OnInit {
     protected objectiveTypeService: ObjectiveTypeService
   ) {
     this.currentUser = userService.getCurrentUser();
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   ngOnInit(): void {
@@ -50,7 +64,8 @@ export class ObjectiveTreeComponent implements OnInit {
         );
         this.allSectors && this.loadTree();
       });
-    this.sectorId?.subscribe((sectorId) => {
+
+    this.subscription = this.sectorId?.subscribe((sectorId) => {
       this.loadTree(sectorId);
       this.objectiveNode = undefined;
       this.onSelectionChange();

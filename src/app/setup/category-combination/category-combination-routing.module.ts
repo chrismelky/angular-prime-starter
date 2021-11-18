@@ -6,18 +6,17 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { CategoryCombinationComponent } from "./category-combination.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { CategoryCombinationComponent } from './category-combination.component';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: CategoryCombinationComponent,
     data: {
-      defaultSort: "id:asc",
+      defaultSort: 'sort_order:asc',
     },
-    //canActivate: [UserRouteAccessService],
   },
 ];
 

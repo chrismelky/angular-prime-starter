@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
@@ -35,7 +35,7 @@ import { UserService } from '../user/user.service';
   selector: 'app-performance-indicator',
   templateUrl: './performance-indicator.component.html',
 })
-export class PerformanceIndicatorComponent implements OnInit {
+export class PerformanceIndicatorComponent implements OnInit, OnDestroy {
   @ViewChild('paginator') paginator!: Paginator;
   @ViewChild('table') table!: Table;
   performanceIndicators?: PerformanceIndicator[] = [];
@@ -322,7 +322,7 @@ export class PerformanceIndicatorComponent implements OnInit {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
+            (this.predicate || 'id') + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -336,5 +336,10 @@ export class PerformanceIndicatorComponent implements OnInit {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
     this.toastService.error('Error loading Performance Indicator');
+  }
+
+  ngOnDestroy(): void {
+    this.sectorId.next();
+    this.sectorId.complete();
   }
 }

@@ -1,9 +1,14 @@
-import { AfterViewInit, EventEmitter, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  EventEmitter,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { LocalStorageService } from 'ngx-webstorage';
 import { TreeNode } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 import { User } from 'src/app/setup/user/user.model';
@@ -14,7 +19,9 @@ import { UserService } from 'src/app/setup/user/user.service';
   templateUrl: './admin-hierarchy-tree.component.html',
   styleUrls: ['./admin-hierarchy-tree.component.scss'],
 })
-export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
+export class AdminHierarchyTreeComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   currentUser!: User;
   treeLoading: boolean = false;
   nodes: TreeNode[] = [];
@@ -28,6 +35,7 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
   @Input() label: string = 'Admin Hierarchy';
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @ViewChild('op') panel!: OverlayPanel;
+  subscription?: Subscription;
 
   constructor(
     protected userService: UserService,
@@ -39,7 +47,7 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     if (this.selectionSubject) {
-      this.selectionSubject?.subscribe((value) => {
+      this.subscription = this.selectionSubject?.subscribe((value) => {
         this.selectedValue = value;
       });
     }
@@ -142,5 +150,11 @@ export class AdminHierarchyTreeComponent implements OnInit, AfterViewInit {
       data: this.selectedValue.data,
       leaf: this.selectedValue.leaf,
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

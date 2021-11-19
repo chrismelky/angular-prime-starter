@@ -126,7 +126,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.strategicPlan || !this.objective) {
+    if (!this.strategicPlan || !this.objective || !this.section) {
       return;
     }
     this.isLoading = true;
@@ -139,6 +139,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
         sort: this.sort(),
         strategic_plan_id: this.strategicPlan.id,
         objective_id: this.objective.id,
+        section_id: this.section.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(

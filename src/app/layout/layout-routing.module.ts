@@ -1294,6 +1294,13 @@ const routes: Routes = [
             (m) => m.ProcurementMethodModule
           ),
       },
+      {
+        path: "generic-priority",
+        loadChildren: () =>
+          import("../setup/generic-priority/generic-priority.module").then(
+            (m) => m.GenericPriorityModule
+          ),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

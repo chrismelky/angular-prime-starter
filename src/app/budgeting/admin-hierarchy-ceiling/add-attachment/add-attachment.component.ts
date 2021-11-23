@@ -67,10 +67,8 @@ export class AddAttachmentComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>{
           let councils = (resp.data ?? []);
-          console.log(councils);
           if(councils.length === 0){
             this.selectedCouncils = [this.admin_hierarchy_id];
-            console.log(this.selectedCouncils);
             this.editForm.get("councils")?.setValue(this.selectedCouncils);
           }
           this.councilWithAttachment = councils.length>0?councils.map((c)=>(c.id)):[this.admin_hierarchy_id];

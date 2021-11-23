@@ -3,7 +3,7 @@
     <div *ngIf="is_multiple!" fxLayout="row wrap" fxLayoutGap="10px">
       <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
         <div class="p-field" fxFlex>
-          <p-multiSelect [options]="councils" optionValue="id" [(ngModel)]="selectedCouncils" defaultLabel="Select a Council" optionLabel="name" selectedItemsLabel="{0} Council selected"></p-multiSelect>
+          <p-multiSelect [options]="councils" (ngModelChange)="councilSelectionChange($event)" optionValue="id" [(ngModel)]="selectedCouncils" defaultLabel="Select a Council" optionLabel="name" selectedItemsLabel="{0} Council selected"></p-multiSelect>
         </div>
       </div>
     </div>
@@ -11,7 +11,6 @@
                 accept="application/pdf" [maxFileSize]="2000000">
     <ng-template pTemplate="content">
       <ul *ngIf="uploadedFiles.length">
-        <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
       </ul>
     </ng-template>
   </p-fileUpload>
@@ -66,7 +65,7 @@
   </p-table>
 </div>
 <div class="p-dialog-footer">
-  <p-button (click)="onUpload($event)"  [disabled]="selectedCouncils.length===0 || uploadedFiles.length ===0" label="Upload" icon="pi pi-upload"></p-button>
+  <p-button (click)="onUpload($event)"  [disabled]="!editForm.valid" label="Upload" icon="pi pi-upload"></p-button>
 </div>
   <p-overlayPanel  appendTo="body" [dismissable]="false" #aop [showCloseIcon]="true" [style]="{width: '450px'}">
     <ng-template pTemplate>

@@ -9,6 +9,7 @@ import {finalize} from "rxjs/operators";
 import {ToastService} from "../../../shared/toast.service";
 import {Attachment} from "./Attachment.model";
 import {ConfirmationService} from "primeng/api";
+import {FormBuilder, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-add-attachment',
@@ -28,6 +29,15 @@ export class AddAttachmentComponent implements OnInit {
   ceilingStartPosition!: number;
   councilWithAttachment: any[] =[];
   budget_type!:string;
+
+  editForm = this.fb.group({
+    councils: [null, [Validators.required]],
+    file: [null, [Validators.required]],
+    financial_year_id:[null, [Validators.required]],
+    budget_type:[null, [Validators.required]],
+    document_url:[null, []],
+  });
+
   constructor(
     public dialogRef: DynamicDialogRef,
     public config: DynamicDialogConfig,
@@ -35,6 +45,7 @@ export class AddAttachmentComponent implements OnInit {
     public adminHierarchyCeilingService: AdminHierarchyCeilingService,
     protected toastService: ToastService,
     protected confirmationService: ConfirmationService,
+    protected fb: FormBuilder,
   ) {
     this.is_multiple=this.config.data.is_multiple;
     this.admin_hierarchy_id =this.config.data.admin_hierarchy_id;
@@ -44,6 +55,10 @@ export class AddAttachmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.editForm.patchValue({
+      budget_type:this.budget_type,
+      financial_year_id:this.financial_year_id
+    });
     this.loadData();
   }
   loadData(){
@@ -52,6 +67,12 @@ export class AddAttachmentComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>{
           let councils = (resp.data ?? []);
+          console.log(councils);
+          if(councils.length === 0){
+            this.selectedCouncils = [this.admin_hierarchy_id];
+            console.log(this.selectedCouncils);
+            this.editForm.get("councils")?.setValue(this.selectedCouncils);
+          }
           this.councilWithAttachment = councils.length>0?councils.map((c)=>(c.id)):[this.admin_hierarchy_id];
           this.adminHierarchyCeilingService
             .ceilingDocsByAdminHierarchies({admin_hierarchy_ids:this.councilWithAttachment,budget_type:this.budget_type,financial_year_id:this.financial_year_id,per_page:1000})
@@ -70,9 +91,14 @@ export class AddAttachmentComponent implements OnInit {
 
 
   onUpload(event:any) {
-    for(let file of event.files) {
-      this.uploadedFiles.push(file);
-    }
+    const $ceilingDocs = this.createFromForm();
+    this.subscribeToSaveResponse(
+      this.adminHierarchyCeilingService.createNewCeilingDocs($ceilingDocs)
+    );
+  }
+
+  councilSelectionChange(councils:number){
+    this.editForm.get("councils")?.setValue(councils);
   }
 
   addAttachment(table:any,event:any,row:any){
@@ -86,16 +112,13 @@ export class AddAttachmentComponent implements OnInit {
       return rv;
     }, {});
   }
+
   onSelect(event: any) {
-    // this.uploadedFiles=[];
-    // for(let file of event.files) {
-    //   const reader = new FileReader();
-    //   reader.onload = this.handleReaderLoaded.bind(this);
-    //   reader.readAsBinaryString(file);
-    // }
-  }
-  handleReaderLoaded(e:any) {
-    this.uploadedFiles.push('data:image/png;base64,' + btoa(e.target.result));
+    // @ts-ignore
+    if (event.files?.length)
+      this.editForm.patchValue({
+        file: event.files[0],
+      });
   }
 
   addCouncilsToAttachment(){
@@ -130,6 +153,7 @@ export class AddAttachmentComponent implements OnInit {
   protected onSaveSuccess(result: any): void {
     this.loadData();
     this.toastService.info(result.message);
+    this.dialogRef.close(result.data);
   }
 
   /**
@@ -143,6 +167,7 @@ export class AddAttachmentComponent implements OnInit {
 
   protected onSaveFinalize(): void {
   }
+
   delete(row:any,event:any){
     this.confirmationService.confirm({
       target: event.target,
@@ -158,5 +183,22 @@ export class AddAttachmentComponent implements OnInit {
           });
       },
     });
+  }
+
+  /**
+   * Return form values as object
+   * @returns StrategicPlan
+   */
+  protected createFromForm(): FormData {
+    const fd = new FormData();
+    fd.append(
+      'financial_year_id',
+      this.editForm.get(['financial_year_id'])!.value
+    );
+    fd.append('budget_type', this.editForm.get(['budget_type'])!.value);
+    fd.append('document_url', this.editForm.get(['document_url'])!.value);
+    fd.append('file', this.editForm.get(['file'])!.value);
+    fd.append('councils', this.editForm.get(['councils'])!.value);
+    return fd;
   }
 }

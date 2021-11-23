@@ -175,7 +175,7 @@
               <button *ngIf="(attachmentBudgetType && !hasAttachment) && admin_hierarchy_position === ceilingStartPosition  && planingFinancialYear_id===financial_year_id" pButton pRipple icon="pi pi-upload" (click)="addCeilingDocs()"  type="button" label="Add Attachment" class="p-button-outlined"></button>
             </span>&nbsp;
             <span *ngxPermissionsOnly="['INITIATE_CEILING']">
-              <button *ngIf="attachmentBudgetType  && planingFinancialYear_id===financial_year_id" pButton pRipple icon="pi pi-eye" (click)="addCeilingDocs(true)" type="button" label="Attachments" class="p-button-outlined"></button>
+              <button *ngIf="attachmentBudgetType && admin_hierarchy_position === 2  && financial_year_id" pButton pRipple icon="pi pi-eye" (click)="addCeilingDocs(true)" type="button" label="Attachments" class="p-button-outlined"></button>
             </span>&nbsp;
             <span *ngxPermissionsOnly="['INITIATE_CEILING']">
               <button
@@ -263,7 +263,7 @@
             <p-inputSwitch
               (onChange)="toggleActivation(rowData)"
               [(ngModel)]="rowData['is_locked']"
-              *ngIf="planingFinancialYear_id===financial_year_id && !rowData['is_approved']"
+              *ngIf="budget_type!=='APPROVED' && !rowData['is_approved']"
             ></p-inputSwitch>
           </td>
           <td>

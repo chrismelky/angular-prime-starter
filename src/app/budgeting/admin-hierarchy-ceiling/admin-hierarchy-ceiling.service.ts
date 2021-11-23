@@ -85,6 +85,16 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  createNewCeilingDocs(
+    payload: any
+  ): Observable<CustomResponse<any>> {
+    const url = 'api/admin_hierarchy_ceiling_docs_create';
+    return this.http.post<CustomResponse<any>>(
+      url,
+      payload
+    );
+  }
+
   ceilingBudgetTypeAttachment(req?: any): Observable<CustomResponse<any[]>> {
     const options = createRequestOption(req);
     const url = 'api/admin_hierarchy_ceiling_docs';

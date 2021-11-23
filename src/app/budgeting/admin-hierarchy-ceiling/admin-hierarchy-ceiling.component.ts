@@ -99,6 +99,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   selectedCeilingAllocationSummary: any[] =[];
   selectedCeiling: AdminHierarchyCeiling = {};
   hasAttachment: boolean = false;
+  active_financial_year!: number;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -496,7 +497,19 @@ export class AdminHierarchyCeilingComponent implements OnInit {
    */
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
-    this.planingFinancialYear_id = event.current_financial_year_id?event.current_financial_year_id:(event.carryover_financial_year_id?event.carryover_financial_year_id:event.supplementary_financial_year_id);
+    if(this.budget_type === 'CURRENT'){
+      this.financial_year_id =event.current_financial_year_id;
+      this.active_financial_year = event.current_financial_year_id;
+    }else if(this.budget_type === 'CARRYOVER'){
+      this.financial_year_id =event.carryover_financial_year_id;
+      this.active_financial_year = event.carryover_financial_year_id;
+    }else if (this.budget_type === 'SUPPLEMENTARY'){
+      this.financial_year_id =event.supplementary_financial_year_id;
+      this.active_financial_year = event.supplementary_financial_year_id;
+    }else{
+      this.financial_year_id =event.current_financial_year_id;
+    }
+    this.planingFinancialYear_id = event.current_financial_year_id;
     this.activeAdminHierarchy = event;
     this.admin_hierarchy_position = event.admin_hierarchy_position;
     if(this.attachmentBudgetType){
@@ -733,6 +746,18 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     ref.onClose.subscribe((result) => {
       if(result){
         this.loadPage();
+        this.configurationSettingService
+          .query({key:'BUDGET_TYPES_NEED_ATTACHMENT'})
+          .subscribe(
+            (resp: CustomResponse<any>) => {
+              if((resp.data ?? []).length > 0){
+                this.attachmentBudgetType = (resp.data)[0].value.replace(',','').split(',').includes(this.budget_type);
+                if(this.attachmentBudgetType){
+                  this.getAdminCeilingDocs();
+                }
+              }
+            }
+          );
       }
     });
   }

@@ -323,9 +323,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
             (resp: CustomResponse<any>) => {
               if((resp.data ?? []).length > 0){
                 this.attachmentBudgetType = (resp.data)[0].value.replace(',','').split(',').includes(this.budget_type);
-                if(this.attachmentBudgetType){
-                  this.getAdminCeilingDocs();
-                }
               }
             }
           );
@@ -514,9 +511,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     this.planingFinancialYear_id = event.current_financial_year_id;
     this.activeAdminHierarchy = event;
     this.admin_hierarchy_position = event.admin_hierarchy_position;
-    if(this.attachmentBudgetType){
-      this.getAdminCeilingDocs();
-    }
     this.loadPage();
   }
 

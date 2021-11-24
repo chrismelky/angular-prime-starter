@@ -166,14 +166,45 @@
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
+          <p-messages severity="info" style="width: 100%" *ngIf="hasAttachment">
+            <ng-template pTemplate>
+              <div fxLayout="row" style="width: 100%" fxLayoutAlign="space-between center">
+                <span class="p-ml-2" style="cursor: pointer" (click)="downloadReferenceDocuments()">
+                   <a style="cursor: pointer">Download Reallocation Reference Document</a>&nbsp;&nbsp;<span><i class="pi pi-download"></i></span>
+                </span>
+                <span class="p-ml-2">
+                  <button pButton pRipple type="button" (click)="removeReferenceDocument($event)" label="Remove" class="p-button-outlined p-button-danger"></button>
+                </span>
+              </div>
+            </ng-template>
+          </p-messages>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" *ngxPermissionsOnly="['INITIATE_CEILING']">
+          <p-messages severity="error" style="width: 100%" *ngIf="ceilingStartPosition === admin_hierarchy_position && !hasAttachment">
+            <ng-template pTemplate>
+              <div fxLayout="row" style="width: 100%" fxLayoutAlign="space-between center">
+                <span style="width: 100%;">
+                  <button *ngIf="(attachmentBudgetType && !hasAttachment)
+                  && admin_hierarchy_position === ceilingStartPosition
+                  && planingFinancialYear_id===financial_year_id"
+                          pButton pRipple icon="pi pi-upload"
+                          (click)="addCeilingDocs()"
+                          type="button"
+                          label="Upload Reallocation Reference Document To proceed"
+                          class="p-button-text">
+                  </button>
+                </span>&nbsp;
+              </div>
+            </ng-template>
+          </p-messages>
+        </div>
+        <br><br>
+        <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Ceiling Amounts</span>
           <div class="card-header-text">
             <span *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">
               <button  *ngIf="adminHierarchyCeilings!.length > 0  && planingFinancialYear_id===financial_year_id && budget_type !== 'APPROVED'"  pButton pRipple icon="pi pi-lock" (click)="lockUnlockCeiling()"  type="button" label="Lock/Unlock Ceiling" class="p-button-outlined"></button>
             </span>
-            <span *ngxPermissionsOnly="['INITIATE_CEILING']">
-              <button *ngIf="(attachmentBudgetType && !hasAttachment) && admin_hierarchy_position === ceilingStartPosition  && planingFinancialYear_id===financial_year_id" pButton pRipple icon="pi pi-upload" (click)="addCeilingDocs()"  type="button" label="Add Attachment" class="p-button-outlined"></button>
-            </span>&nbsp;
             <span *ngxPermissionsOnly="['INITIATE_CEILING']">
               <button *ngIf="attachmentBudgetType && admin_hierarchy_position === 2  && financial_year_id" pButton pRipple icon="pi pi-eye" (click)="addCeilingDocs(true)" type="button" label="Attachments" class="p-button-outlined"></button>
             </span>&nbsp;

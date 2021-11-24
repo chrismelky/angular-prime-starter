@@ -100,6 +100,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   selectedCeiling: AdminHierarchyCeiling = {};
   hasAttachment: boolean = false;
   active_financial_year!: number;
+  reallocationReferenceDocument: any={};
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -342,6 +343,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       })
       .subscribe((resp) => {
         this.hasAttachment = (resp.data ?? []).length>0;
+        this.reallocationReferenceDocument = (resp.data ?? []).length >0?(resp.data ?? [])[0]:{};
       });
   }
 
@@ -759,6 +761,30 @@ export class AdminHierarchyCeilingComponent implements OnInit {
             }
           );
       }
+    });
+  }
+
+  downloadReferenceDocuments(): void{
+    this.adminHierarchyCeilingService.download(this.reallocationReferenceDocument.id).subscribe( resp =>{
+      let file = new Blob([resp], { type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank");
+    });
+  }
+  removeReferenceDocument(event:any): void{
+    this.confirmationService.confirm({
+      target: event.target,
+      icon: 'pi pi-exclamation-triangle',
+      message:
+        'Are you sure that you want to Rem this Document?',
+      accept: () => {
+        this.adminHierarchyCeilingService
+          .deleteCeilingDocs(this.reallocationReferenceDocument.id!)
+          .subscribe((resp) => {
+            this.getAdminCeilingDocs();
+            this.toastService.info(resp.message);
+          });
+      },
     });
   }
 

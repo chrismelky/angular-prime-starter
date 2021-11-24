@@ -199,4 +199,12 @@ export class AddAttachmentComponent implements OnInit {
     fd.append('councils', this.editForm.get(['councils'])!.value);
     return fd;
   }
+
+  downloadReferenceDocuments(row:any): void{
+    this.adminHierarchyCeilingService.download(row.id).subscribe( resp =>{
+      let file = new Blob([resp], { type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL,"_blank");
+    });
+  }
 }

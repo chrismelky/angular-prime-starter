@@ -95,6 +95,17 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  download(id: number) {
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json',
+    };
+    let url ='api/admin_hierarchy_ceiling_docs'
+    return this.http.get<any>(
+      `${url}/download/${id}`,
+      httpOptions
+    );
+  }
+
   ceilingBudgetTypeAttachment(req?: any): Observable<CustomResponse<any[]>> {
     const options = createRequestOption(req);
     const url = 'api/admin_hierarchy_ceiling_docs';

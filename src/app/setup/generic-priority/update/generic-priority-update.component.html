@@ -1,0 +1,141 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="editForm"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <textarea
+            id="description"
+            formControlName="description"
+            [rows]="5"
+            [cols]="30"
+            pInputTextarea
+            [autoResize]="true"
+          ></textarea>
+          <label for="description">Description </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('description')!.invalid &&
+            (editForm.get('description')!.dirty ||
+              editForm.get('description')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('description')?.errors?.required"
+            >Description is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="params" type="text" pInputText formControlName="params" />
+          <label for="params">Params </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('params')!.invalid &&
+            (editForm.get('params')!.dirty ||
+              editForm.get('params')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('params')?.errors?.required"
+            >Params is required.</small
+          >
+        </span>
+      </div>
+
+      <div class="p-field" fxFlex="0 0 100%">
+        <span class="p-float-label">
+          <p-multiSelect
+            id="sectors"
+            optionLabel="name"
+            [filter]="true"
+            dataKey="id"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="sectors!"
+            formControlName="sectors"
+          >
+          </p-multiSelect>
+          <label for="params">Sectors </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('sectors')!.invalid &&
+            (editForm.get('sectors')!.dirty ||
+              editForm.get('sectors')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('sectors')?.errors?.required"
+            >Sector is required</small
+          >
+        </span>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="2px">
+        <p-inputSwitch
+          id="is_active"
+          name="is_active"
+          formControlName="is_active"
+        ></p-inputSwitch>
+        <label for="is_active">Is Active</label>
+      </div>
+
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <p-dropdown
+            id="planning_matrix_id"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="planningMatrices!"
+            formControlName="planning_matrix_id"
+          ></p-dropdown>
+          <label for="planning_matrix_id">Planning Matrix </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('planning_matrix_id')!.invalid &&
+            (editForm.get('planning_matrix_id')!.dirty ||
+              editForm.get('planning_matrix_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('planning_matrix_id')?.errors?.required"
+            >Planning Matrix is required.</small
+          >
+        </span>
+      </div>
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+</div>

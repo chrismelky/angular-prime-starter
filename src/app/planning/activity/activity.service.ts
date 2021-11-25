@@ -47,8 +47,11 @@ export class ActivityService {
     });
   }
 
-  delete(id: number): Observable<CustomResponse<null>> {
-    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
+  delete(id: number, req?: any): Observable<CustomResponse<null>> {
+    const options = createRequestOption(req);
+    return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`, {
+      params: options,
+    });
   }
 
   facilityActivity(req: any): Observable<CustomResponse<FacilityActivity[]>> {

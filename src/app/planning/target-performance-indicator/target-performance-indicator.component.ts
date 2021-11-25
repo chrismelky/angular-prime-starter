@@ -84,7 +84,8 @@ export class TargetPerformanceIndicatorComponent implements OnInit {
           financialYears: this.financialYears,
           longTermTargets: [this.longTermTarget],
         },
-        header: 'Create/Update TargetPerformanceIndicator',
+        header: 'Create/Update Target Performance Indicator',
+        width: '900px',
       }
     );
     ref.onClose.subscribe((result) => {

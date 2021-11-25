@@ -126,7 +126,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.strategicPlan || !this.objective) {
+    if (!this.strategicPlan || !this.objective || !this.section) {
       return;
     }
     this.isLoading = true;
@@ -139,6 +139,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
         sort: this.sort(),
         strategic_plan_id: this.strategicPlan.id,
         objective_id: this.objective.id,
+        section_id: this.section.id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -295,7 +296,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
         sections: this.sections,
         objectives: this.objectives,
       },
-      header: 'Create/Update LongTermTarget',
+      header: 'Create/Update Target',
       width: '900px',
     });
     ref.onClose.subscribe((result) => {
@@ -321,10 +322,12 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
           this.currentUser?.admin_hierarchy?.admin_hierarchy_position,
       },
       width: '900px',
-      header: 'Financial Year Target/Priorities',
+      header: 'Confirm Target and Priorities',
     });
     ref.onClose.subscribe((result) => {
-      this.loadPage(this.page);
+      if (result) {
+        this.loadPage(this.page);
+      }
     });
   }
 

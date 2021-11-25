@@ -175,7 +175,6 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
       ...new CasAssessmentSubCriteriaReportSet(),
       id: this.editForm.get(["id"])!.value,
       cas_plan_contents: this.editForm.get(["cas_plan_contents"])!.value,
-      cas_plan_content_id: this.editForm.get(['cas_plan_content_id'])!.value,
       cas_assessment_sub_criteria_option_id: this.editForm.get([
         'cas_assessment_sub_criteria_option_id',
       ])!.value,

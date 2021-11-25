@@ -86,6 +86,7 @@
             [filter]="true"
             [showClear]="true"
             class="p-inputtext-sm"
+            (onChange)="onchangePeParent($event)"
             appendTo="body"
             [options]="parents!"
             filterBy="id,sub_form_id"
@@ -112,7 +113,6 @@
             optionLabel="name"
             [autoDisplayFirst]="false"
             [filter]="true"
-            [showClear]="true"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="peForms!"
@@ -146,23 +146,49 @@
           ></p-inputSwitch>
           <label for="is_lowest">Is Lowest </label>
         </div-->
-
-        <div fxLayout="row" fxLayoutGap="2px">
-          <p-inputSwitch
-            id="is_multiple"
-            name="is_multiple"
-            formControlName="is_multiple"
-          ></p-inputSwitch>
-          <label for="is_multiple">Is Multiple </label>
+        <div class="p-field" fxFlex>
+          <div fxLayout="row" fxLayoutGap="2px">
+            <p-inputSwitch
+              id="is_multiple"
+              name="is_multiple"
+              formControlName="is_multiple"
+              [(ngModel)]="isMultiple"
+            ></p-inputSwitch>
+            <label for="is_multiple"> Is Multiple </label>
+          </div>
         </div>
 
-        <div fxLayout="row" fxLayoutGap="2px">
-          <p-inputSwitch
-            id="is_active"
-            name="is_active"
-            formControlName="is_active"
-          ></p-inputSwitch>
-          <label for="is_active">Is Active </label>
+        <div class="p-field" fxFlex>
+          <div fxLayout="row" fxLayoutGap="2px">
+            <p-inputSwitch
+              id="is_active"
+              name="is_active"
+              formControlName="is_active"
+            ></p-inputSwitch>
+            <label for="is_active"> Is Active </label>
+          </div>
+        </div>
+
+        <div class="p-field" fxFlex>
+          <div fxLayout="row" fxLayoutGap="2px">
+            <p-inputSwitch
+              id="is_sbc_required"
+              name="is_sbc_required"
+              formControlName="is_sbc_required"
+            ></p-inputSwitch>
+            <label for="is_sbc_required"> Is SBC required </label>
+          </div>
+        </div>
+
+        <div class="p-field" fxFlex>
+          <div fxLayout="row" fxLayoutGap="2px">
+            <p-inputSwitch
+              id="is_fund_source_required"
+              name="is_fund_source_required"
+              formControlName="is_fund_source_required"
+            ></p-inputSwitch>
+            <label for="is_fund_source_required"> Is Fund Source required </label>
+          </div>
         </div>
       </div>
 

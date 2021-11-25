@@ -223,6 +223,7 @@ export class PeSubFormComponent implements OnInit {
     };
     const ref = this.dialogService.open(PeSubFormUpdateComponent, {
       data,
+      width:"800px",
       header: "Create/Update PeSubForm",
     });
     ref.onClose.subscribe((result) => {

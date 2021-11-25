@@ -35,41 +35,6 @@
                 </span>
               </div>
               <div class="p-field" fxFlex="0 1 50%">
-              <span class="p-float-label">
-                <p-dropdown
-                  id="budget_class_id"
-                  optionValue="id"
-                  optionLabel="name"
-                  [autoDisplayFirst]=false
-                  [filter]="true"
-                  class="p-inputtext-sm"
-                  [options]="budgetClasses!"
-                  (onChange)="getFundSources($event)"
-                  [(ngModel)]="budget_class_id"
-                ></p-dropdown>
-                <label for="budget_class_id">Sub Budget Class </label>
-              </span>
-              </div>
-            </div>
-
-            <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
-              <div class="p-field" fxFlex="0 1 50%">
-                <span class="p-float-label">
-                  <p-dropdown
-                    id="fund_source_id"
-                    optionValue="id"
-                    optionLabel="name"
-                    [autoDisplayFirst]="false"
-                    [filter]="true"
-                    class="p-inputtext-sm"
-                    [options]="fundSources!"
-                    (onChange)="filterChanged()"
-                    [(ngModel)]="fund_source_id"
-                  ></p-dropdown>
-                  <label for="fund_source_id">Fund Source </label>
-                </span>
-              </div>
-              <div class="p-field" fxFlex="0 1 50%">
                 <span class="p-float-label">
                   <p-dropdown
                     id="section_id"
@@ -88,6 +53,41 @@
                     </ng-template>
                   </p-dropdown>
                   <label for="section_id">Planning Unit </label>
+                </span>
+              </div>
+            </div>
+
+            <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
+              <div *ngIf="showSbc" class="p-field" fxFlex="0 1 50%">
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="budget_class_id"
+                    optionValue="id"
+                    optionLabel="name"
+                    [autoDisplayFirst]=false
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="budgetClasses!"
+                    (onChange)="getFundSources($event)"
+                    [(ngModel)]="budget_class_id"
+                  ></p-dropdown>
+                <label for="budget_class_id">Sub Budget Class </label>
+                </span>
+              </div>
+              <div *ngIf="showFundSource" class="p-field" fxFlex="0 1 50%">
+                <span class="p-float-label">
+                  <p-dropdown
+                    id="fund_source_id"
+                    optionValue="id"
+                    optionLabel="name"
+                    [autoDisplayFirst]="false"
+                    [filter]="true"
+                    class="p-inputtext-sm"
+                    [options]="fundSources!"
+                    (onChange)="filterChanged()"
+                    [(ngModel)]="fund_source_id"
+                  ></p-dropdown>
+                  <label for="fund_source_id">Fund Source </label>
                 </span>
               </div>
             </div>

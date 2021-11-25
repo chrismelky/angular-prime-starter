@@ -30,6 +30,7 @@ export class PeSubFormUpdateComponent implements OnInit {
   parents?: PeSubForm[] = [];
   peForms?: PeForm[] = [];
   sub_form_id: number = 0;
+  isMultiple: boolean = false;
 
   /**
    * Declare form
@@ -44,6 +45,8 @@ export class PeSubFormUpdateComponent implements OnInit {
     sort_order: [null, []],
     is_multiple: [false, []],
     is_active: [false, []],
+    is_sbc_required: [false, []],
+    is_fund_source_required: [false, []],
   });
 
   constructor(
@@ -57,8 +60,6 @@ export class PeSubFormUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('PE');
-    console.log(this.dialogConfig.data?.id);
     this.sub_form_id = this.dialogConfig.data?.id;
     this.parentService
       .query({ columns: ['id', 'name'], parent_id: null })
@@ -73,6 +74,7 @@ export class PeSubFormUpdateComponent implements OnInit {
         (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
       );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.checkParentOnSubFormOnLoad(this.dialogConfig.data);
   }
 
   /**
@@ -137,6 +139,8 @@ export class PeSubFormUpdateComponent implements OnInit {
       sort_order: peSubForm.sort_order,
       is_multiple: peSubForm.is_multiple,
       is_active: peSubForm.is_active,
+      is_sbc_required: peSubForm.is_sbc_required,
+      is_fund_source_required: peSubForm.is_fund_source_required,
     });
   }
 
@@ -156,6 +160,50 @@ export class PeSubFormUpdateComponent implements OnInit {
       sort_order: this.editForm.get(['sort_order'])!.value,
       is_multiple: this.editForm.get(['is_multiple'])!.value,
       is_active: this.editForm.get(['is_active'])!.value,
+      is_sbc_required: this.editForm.get(['is_sbc_required'])!.value,
+      is_fund_source_required: this.editForm.get(['is_fund_source_required'])!.value,
     };
   }
+
+  checkParentOnSubFormOnLoad(data:PeSubForm){
+    this.handleActivateInputs(data.parent_id);
+  }
+
+  onchangePeParent(event: any): void {
+    this.handleActivateInputs(event.value);
+  }
+
+  handleActivateInputs(parent_id:any){
+    if(parent_id === null || parent_id === undefined){
+      /** disable PE FORM and hide scb and fund source options */
+      const inputs = Object.keys((this.dialogConfig.data));
+      inputs.forEach((field) => {
+        if (
+          field === 'pe_form_id' ||
+          field === 'is_fund_source_required' ||
+          field === 'is_sbc_required'
+        ) {
+          this.editForm.get(field)?.disable();
+          this.editForm.get(field)?.reset();
+        }
+      });
+      this.editForm.get('is_multiple')?.enable();
+    } else {
+      /** Enable PE FORM and show scb and fund source options */
+      const inputs = Object.keys((this.dialogConfig.data));
+      inputs.forEach((field) => {
+        if (
+          field === 'pe_form_id' ||
+          field === 'is_fund_source_required' ||
+          field === 'is_sbc_required'
+        ) {
+          this.editForm.get(field)?.enable();
+        }
+      });
+      this.editForm.get('is_multiple')?.disable();
+      this.editForm.get('is_multiple')?.reset();
+    }
+  }
+
+
 }

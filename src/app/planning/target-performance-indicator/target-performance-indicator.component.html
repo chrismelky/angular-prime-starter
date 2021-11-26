@@ -40,10 +40,8 @@
         <td class="fit-center">
           {{ rowData.actual_value }}
         </td>
-        <td class="fit-center" *ngFor="let y of financialYears">
-          <ng-container *ngFor="let yrValue of rowData.year_values">
-            <span *ngIf="y.id === yrValue.id">{{ yrValue.value }}</span>
-          </ng-container>
+        <td class="fit-center" *ngFor="let y of financialYears; let i = index">
+          <span>{{ rowData["y" + i] }}</span>
         </td>
         <td class="fit-center">
           <div fxLayout="row" fxLayoutAlign="end">

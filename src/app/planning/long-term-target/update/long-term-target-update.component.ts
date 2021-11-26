@@ -58,6 +58,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
     id: [null, []],
     description: [null, [Validators.required]],
     strategic_plan_id: [null, [Validators.required]],
+    admin_hierarchy_id: [null, [Validators.required]],
     objective_id: [null, [Validators.required]],
     generic_target_id: [null, []],
     code: [null, []],
@@ -290,6 +291,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
       id: longTermTarget.id,
       description: longTermTarget.description,
       strategic_plan_id: longTermTarget.strategic_plan_id,
+      admin_hierarchy_id: longTermTarget.admin_hierarchy_id,
       objective_id: longTermTarget.objective_id,
       code: longTermTarget.code,
       section_id: longTermTarget.section_id,
@@ -304,13 +306,7 @@ export class LongTermTargetUpdateComponent implements OnInit {
   protected createFromForm(): LongTermTarget {
     return {
       ...new LongTermTarget(),
-      id: this.editForm.get(['id'])!.value,
-      description: this.editForm.get(['description'])!.value,
-      strategic_plan_id: this.editForm.get(['strategic_plan_id'])!.value,
-      objective_id: this.editForm.get(['objective_id'])!.value,
-      code: this.editForm.get(['code'])!.value,
-      section_id: this.editForm.get(['section_id'])!.value,
-      generic_target_id: this.editForm.get(['generic_target_id'])!.value,
+      ...this.editForm.value,
       references: this.editForm
         .get(['references'])!
         .value.map((ref: any) => {

@@ -7,6 +7,7 @@ export class PerformanceIndicator {
     public section_id?: number,
     public is_qualitative?: string,
     public less_is_good?: string,
-    public is_active?: string
+    public is_active?: boolean,
+    public data_source?: string
   ) {}
 }

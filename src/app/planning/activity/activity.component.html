@@ -8,7 +8,11 @@
           pButton
           (click)="back()"
           class="
-            p-button-rounded p-button-text p-button-outline p-button-icon-only
+            p-button-rounded
+            p-button-plain
+            p-button-text
+            p-button-outline
+            p-button-icon-only
           "
         ></button>
         <p-divider fxFlex class="title" align="center">
@@ -52,7 +56,7 @@
             [ngSwitch]="budget_type"
           >
             <small>Decision Level</small>
-            <p-tag severity="success" *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
+            <p-tag severity="primary" *ngSwitchCase="'CURRENT' || 'APPROVED'">{{
               adminHierarchyCostCentre?.current_budget_decision_level?.name
             }}</p-tag>
             <strong *ngSwitchCase="'CARRYOVER'">{{
@@ -74,11 +78,7 @@
             adminHierarchyCostCentre?.id
           ]"
           class="
-            p-button-rounded
-            p-button-text
-            p-button-success
-            p-button-outline
-            p-button-icon-only
+            p-button-rounded p-button-text p-button-outline p-button-icon-only
           "
         ></button>
       </div>

@@ -42,7 +42,11 @@ export class TargetPerformanceIndicatorUpdateComponent implements OnInit {
     performance_indicator_id: [null, [Validators.required]],
     baseline_value: [null, [Validators.required]],
     actual_value: [null, [Validators.required]],
-    year_values: this.fb.array([]),
+    y0: [],
+    y1: [],
+    y2: [],
+    y3: [],
+    y4: [],
   });
 
   constructor(
@@ -137,21 +141,11 @@ export class TargetPerformanceIndicatorUpdateComponent implements OnInit {
         targetPerformanceIndicator.performance_indicator_id,
       baseline_value: targetPerformanceIndicator.baseline_value,
       actual_value: targetPerformanceIndicator.actual_value,
-    });
-    const yearValues = this.yearValues;
-    const existingValues =
-      targetPerformanceIndicator.year_values !== undefined
-        ? targetPerformanceIndicator.year_values
-        : [];
-    this.financialYears.forEach((fy) => {
-      const existing = existingValues.find((e: any) => e.id === fy.id);
-      yearValues.push(
-        this.fb.group({
-          id: [fy.id],
-          name: [fy.name],
-          value: [existing?.value!, [Validators.required]],
-        })
-      );
+      y0: targetPerformanceIndicator.y0,
+      y1: targetPerformanceIndicator.y1,
+      y2: targetPerformanceIndicator.y2,
+      y3: targetPerformanceIndicator.y3,
+      y4: targetPerformanceIndicator.y4,
     });
   }
 
@@ -166,16 +160,7 @@ export class TargetPerformanceIndicatorUpdateComponent implements OnInit {
   protected createFromForm(): TargetPerformanceIndicator {
     return {
       ...new TargetPerformanceIndicator(),
-      id: this.editForm.get(['id'])!.value,
-      long_term_target_id: this.editForm.get(['long_term_target_id'])!.value,
-      performance_indicator_id: this.editForm.get(['performance_indicator_id'])!
-        .value,
-      baseline_value: this.editForm.get(['baseline_value'])!.value,
-      actual_value: this.editForm.get(['actual_value'])!.value,
-      year_values:
-        this.editForm.get(['year_values'])!.value !== undefined
-          ? JSON.stringify(this.editForm.get(['year_values'])!.value)
-          : undefined,
+      ...this.editForm.value,
     };
   }
 }

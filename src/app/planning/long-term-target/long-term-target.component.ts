@@ -289,6 +289,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
       strategic_plan_id: this.strategicPlan.id,
       objective_id: this.objective.id,
       section_id: this.section?.id,
+      admin_hierarchy_id: this.strategicPlan.admin_hierarchy_id,
     };
     const ref = this.dialogService.open(LongTermTargetUpdateComponent, {
       data: {

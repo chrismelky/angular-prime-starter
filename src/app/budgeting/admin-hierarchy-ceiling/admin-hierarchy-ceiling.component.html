@@ -16,10 +16,10 @@
           fxLayoutAlign="start center"
         >
           <div class="p-field" fxFlex>
-          <app-admin-hierarchy-tree
-            (onSelect)="onAdminHierarchySelection($event)"
-            [returnType]="'object'"
-          ></app-admin-hierarchy-tree>
+            <app-admin-hierarchy-tree
+              (onSelect)="onAdminHierarchySelection($event)"
+              [returnType]="'object'"
+            ></app-admin-hierarchy-tree>
           </div>
           <div class="p-field" fxFlex>
             <span class="p-float-label">
@@ -130,8 +130,7 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            >
-            </div>
+            ></div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -169,74 +168,114 @@
           <span class="card-header-text">Ceiling Amounts</span>
           <div class="card-header-text">
             <span *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">
-              <button  *ngIf="adminHierarchyCeilings!.length > 0 && planingFinancialYear_id===financial_year_id"  pButton pRipple icon="pi pi-lock" (click)="lockUnlockCeiling()"  type="button" label="Lock/Unlock Ceiling" class="p-button-outlined"></button>
+              <button
+                *ngIf="
+                  adminHierarchyCeilings!.length > 0 &&
+                  planingFinancialYear_id === financial_year_id
+                "
+                pButton
+                pRipple
+                icon="pi pi-lock"
+                (click)="lockUnlockCeiling()"
+                type="button"
+                label="Lock/Unlock Ceiling"
+                class="p-button-outlined"
+              ></button>
             </span>
             <span *ngxPermissionsOnly="['INITIATE_CEILING']">
-              <button *ngIf="attachmentBudgetType && planingFinancialYear_id===financial_year_id" pButton pRipple icon="pi pi-upload"  type="button" label="Add Attachment" class="p-button-outlined"></button>
-            </span>&nbsp;
+              <button
+                *ngIf="
+                  attachmentBudgetType &&
+                  planingFinancialYear_id === financial_year_id
+                "
+                pButton
+                pRipple
+                icon="pi pi-upload"
+                type="button"
+                label="Add Attachment"
+                class="p-button-outlined"
+              ></button> </span
+            >&nbsp;
             <span *ngxPermissionsOnly="['INITIATE_CEILING']">
               <button
-                pButton pRipple icon="pi pi pi-wallet"
+                pButton
+                pRipple
+                icon="pi pi pi-wallet"
                 type="button"
                 label="Initiate Ceiling"
                 class="p-button-outlined"
                 (click)="initiateCeiling()"
-                *ngIf="planingFinancialYear_id===financial_year_id &&
-                position === ceilingStartSectionPosition &&
-                admin_hierarchy_position === ceilingStartPosition &&
-                financial_year_id !== undefined &&
-                admin_hierarchy_id !== undefined"
-              >
-            </button>
-            </span>&nbsp;
+                *ngIf="
+                  planingFinancialYear_id === financial_year_id &&
+                  position === ceilingStartSectionPosition &&
+                  admin_hierarchy_position === ceilingStartPosition &&
+                  financial_year_id !== undefined &&
+                  admin_hierarchy_id !== undefined
+                "
+              ></button> </span
+            >&nbsp;
             <span *ngxPermissionsOnly="['EDIT_CEILING']">
               <p-splitButton
                 label="Upload Ceiling"
-                (onClick)="uploadCeiling();"
+                (onClick)="uploadCeiling()"
                 icon="pi pi-upload"
                 [model]="items!"
-                *ngIf="adminHierarchyCeilings!.length > 0 && planingFinancialYear_id===financial_year_id"
-                styleClass="p-button-outlined">
-            </p-splitButton>
+                *ngIf="
+                  adminHierarchyCeilings!.length > 0 &&
+                  planingFinancialYear_id === financial_year_id
+                "
+                styleClass="p-button-outlined"
+              >
+              </p-splitButton>
             </span>
           </div>
         </div>
       </ng-template>
-      <ng-template pTemplate="header" >
+      <ng-template pTemplate="header">
         <tr *ngIf="adminHierarchyCeilings?.length">
-          <th  style="width: 3em">SN</th>
-          <th >Revenue Source</th>
-          <th  >Fund Source</th>
+          <th style="width: 3em">SN</th>
+          <th>Revenue Source</th>
+          <th>Fund Source</th>
           <th>Budget Class</th>
           <th>Bank Account</th>
           <th>Amount (TZS)</th>
           <th>Allocation Status</th>
           <th>Status</th>
           <th *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">Lock/Unlock</th>
-          <th  style="width:8rem"></th>
+          <th style="width: 8rem"></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-editing="editing"
+        let-ri="rowIndex"
+      >
         <tr [pEditableRow]="rowData">
-          <td>{{ri+1}}</td>
-          <td>[{{rowData?.ceiling?.fund_source?.gfs_code?.code}}] {{rowData?.ceiling.fund_source.gfs_code.name}}</td>
-          <td>{{rowData?.ceiling?.fund_source?.name}}</td>
-          <td>{{rowData?.ceiling?.budget_class?.name}}</td>
-          <td>{{rowData?.ceiling?.bank_account?.name}}</td>
-          <td [pEditableRow]="rowData" style="min-width:200px !important;">
+          <td>{{ ri + 1 }}</td>
+          <td>
+            [{{ rowData?.ceiling?.fund_source?.gfs_code?.code }}]
+            {{ rowData?.ceiling.fund_source.gfs_code.name }}
+          </td>
+          <td>{{ rowData?.ceiling?.fund_source?.name }}</td>
+          <td>{{ rowData?.ceiling?.budget_class?.name }}</td>
+          <td>{{ rowData?.ceiling?.bank_account?.name }}</td>
+          <td [pEditableRow]="rowData" style="min-width: 200px !important">
             <p-cellEditor>
               <ng-template pTemplate="input">
                 <p-inputNumber [(ngModel)]="rowData.amount"></p-inputNumber>
               </ng-template>
               <ng-template pTemplate="output">
-                <div class="p-field" fxFlex style="text-align:end">
-                {{rowData?.amount | currency: '' :''}}
+                <div class="p-field" fxFlex style="text-align: end">
+                  {{ rowData?.amount | currency: "":"" }}
                 </div>
               </ng-template>
             </p-cellEditor>
           </td>
           <td>
-            <span *ngIf="rowData.amount <= 0">{{rowData.amount | currency: '' :''}}</span>
+            <span *ngIf="rowData.amount <= 0">{{
+              rowData.amount | currency: "":""
+            }}</span>
             <button
               type="text"
               pButton
@@ -252,43 +291,128 @@
             </button>
           </td>
           <td>
-            <p-badge severity="success" *ngIf="rowData?.is_locked===false" value="unlocked"></p-badge>
-            <p-badge severity="danger" *ngIf="rowData?.is_locked===true" value="Locked"></p-badge>
+            <i
+              *ngIf="rowData?.is_locked === true"
+              class="pi pi-lock"
+              style="color: red"
+            ></i>
+            <i
+              *ngIf="rowData?.is_locked === false"
+              class="pi pi-lock-open pi-primary"
+              style="color: green"
+            ></i>
           </td>
           <td *ngxPermissionsOnly="['LOCK_UNLOCK_CEILING']">
             <p-inputSwitch
               (onChange)="toggleActivation(rowData)"
               [(ngModel)]="rowData['is_locked']"
-              *ngIf="planingFinancialYear_id===financial_year_id"
+              *ngIf="planingFinancialYear_id === financial_year_id"
             ></p-inputSwitch>
           </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" *ngxPermissionsOnly="['ALLOCATE_CEILING']" fxLayoutGap="2px">
-                <button  *ngIf="rowData.amount > 0 && planingFinancialYear_id===financial_year_id"  pButton pRipple type="button" (click)="allocateCeiling(rowData)" label="Allocate" class="p-button-outlined"></button>
+              <div
+                fxLayout="row"
+                *ngxPermissionsOnly="['ALLOCATE_CEILING']"
+                fxLayoutGap="2px"
+              >
+                <button
+                  *ngIf="
+                    rowData.amount > 0 &&
+                    planingFinancialYear_id === financial_year_id
+                  "
+                  pButton
+                  pRipple
+                  type="button"
+                  (click)="allocateCeiling(rowData)"
+                  label="Allocate"
+                  class="p-button-outlined"
+                ></button>
               </div>
-              <div fxLayout="row" *ngxPermissionsOnly="['DELETE_CEILING_AMOUNT']" fxLayoutGap="2px">
+              <div
+                fxLayout="row"
+                *ngxPermissionsOnly="['DELETE_CEILING_AMOUNT']"
+                fxLayoutGap="2px"
+              >
                 <button
                   pButton
-                  *ngIf="!rowData['is_locked'] && planingFinancialYear_id===financial_year_id && position === ceilingStartSectionPosition"
+                  *ngIf="
+                    !rowData['is_locked'] &&
+                    planingFinancialYear_id === financial_year_id &&
+                    position === ceilingStartSectionPosition
+                  "
                   pTooltip="Delete"
                   tooltipPosition="bottom"
-                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
                   icon="pi pi-trash"
                   (click)="delete(rowData)"
                 ></button>
               </div>
-              <div fxLayout="row" *ngxPermissionsOnly="['EDIT_CEILING']" fxLayoutGap="2px">
-                <button *ngIf="!editing && !rowData['is_locked'] && planingFinancialYear_id===financial_year_id && position === ceilingStartSectionPosition && !rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
-                <button *ngIf="!rowData['is_locked'] && planingFinancialYear_id===financial_year_id  && position === ceilingStartSectionPosition && rowData?.ceiling?.fund_source?.can_project" pButton pRipple type="button"  icon="pi pi-pencil" (click)="editOwnSource(rowData)" class="p-button-rounded p-button-text"></button>
-                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-                <button *ngIf="editing"  pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(rowData, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+              <div
+                fxLayout="row"
+                *ngxPermissionsOnly="['EDIT_CEILING']"
+                fxLayoutGap="2px"
+              >
+                <button
+                  *ngIf="
+                    !editing &&
+                    !rowData['is_locked'] &&
+                    planingFinancialYear_id === financial_year_id &&
+                    position === ceilingStartSectionPosition &&
+                    !rowData?.ceiling?.fund_source?.can_project
+                  "
+                  pButton
+                  pRipple
+                  type="button"
+                  pInitEditableRow
+                  icon="pi pi-pencil"
+                  (click)="onRowEditInit(rowData)"
+                  class="p-button-rounded p-button-text"
+                ></button>
+                <button
+                  *ngIf="
+                    !rowData['is_locked'] &&
+                    planingFinancialYear_id === financial_year_id &&
+                    position === ceilingStartSectionPosition &&
+                    rowData?.ceiling?.fund_source?.can_project
+                  "
+                  pButton
+                  pRipple
+                  type="button"
+                  icon="pi pi-pencil"
+                  (click)="editOwnSource(rowData)"
+                  class="p-button-rounded p-button-text"
+                ></button>
+                <button
+                  *ngIf="editing"
+                  pButton
+                  pRipple
+                  type="button"
+                  pSaveEditableRow
+                  icon="pi pi-check"
+                  (click)="onRowEditSave(rowData)"
+                  class="p-button-rounded p-button-text p-button-success p-mr-2"
+                ></button>
+                <button
+                  *ngIf="editing"
+                  pButton
+                  pRipple
+                  type="button"
+                  pCancelEditableRow
+                  icon="pi pi-times"
+                  (click)="onRowEditCancel(rowData, ri)"
+                  class="p-button-rounded p-button-text p-button-danger"
+                ></button>
               </div>
             </div>
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No Ceiling At this Level </ng-template>
+      <ng-template pTemplate="emptymessage">
+        No Ceiling At this Level
+      </ng-template>
     </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
@@ -312,18 +436,39 @@
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>
 
-<p-overlayPanel #ao [showCloseIcon]="true" [style]="{width: '450px'}">
+<p-overlayPanel #ao [showCloseIcon]="true" [style]="{ width: '450px' }">
   <ng-template pTemplate>
     <h4><b>Allocation Status</b></h4>
-    <p-fieldset  *ngFor="let pos of selectedCeilingAllocationSummary" legend="{{pos.name}}">
+    <p-fieldset
+      *ngFor="let pos of selectedCeilingAllocationSummary"
+      legend="{{ pos.name }}"
+    >
       <div fxLayout="row" fxLayoutAlign="space-between center">
-        <span  style="font-size:14px"><b>{{pos.data | currency: '' :'TZS'}}</b></span>
-        <span  style="font-size:14px"><b>
-          <p-badge *ngIf="pos.percent===100" [value]="pos.percent + '%'" severity="success" styleClass="p-mr-2"></p-badge>
-          <p-badge *ngIf="pos.percent>0 && pos.percent < 100" [value]="pos.percent  + '%'" severity="warning" styleClass="p-mr-2"></p-badge>
-          <p-badge *ngIf="pos.percent<=0 || pos.percent > 100" [value]="pos.percent  + '%'" severity="danger"></p-badge>
-<!--          ({{pos.percent | number : '1.2-2'}}%)-->
-        </b></span>
+        <span style="font-size: 14px"
+          ><b>{{ pos.data | currency: "":"TZS" }}</b></span
+        >
+        <span style="font-size: 14px"
+          ><b>
+            <p-badge
+              *ngIf="pos.percent === 100"
+              [value]="pos.percent + '%'"
+              severity="success"
+              styleClass="p-mr-2"
+            ></p-badge>
+            <p-badge
+              *ngIf="pos.percent > 0 && pos.percent < 100"
+              [value]="pos.percent + '%'"
+              severity="warning"
+              styleClass="p-mr-2"
+            ></p-badge>
+            <p-badge
+              *ngIf="pos.percent <= 0 || pos.percent > 100"
+              [value]="pos.percent + '%'"
+              severity="danger"
+            ></p-badge>
+            <!--          ({{pos.percent | number : '1.2-2'}}%)-->
+          </b></span
+        >
       </div>
     </p-fieldset>
   </ng-template>

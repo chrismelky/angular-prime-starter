@@ -24,6 +24,7 @@ export class InitiateProjectionComponent implements OnInit {
   financial_year_id: number;
   admin_hierarchy_id: number;
   projections: any[] = [];
+  section_id: number;
   public revenueSources: any[]= [];
   public selectedRevenueSources: any[]= [];
   public fundSource: FundSource={};
@@ -38,6 +39,7 @@ export class InitiateProjectionComponent implements OnInit {
   ) {
     this.fund_source_id=this.config.data.fund_source_id;
     this.facility_id = this.config.data.facility_id;
+    this.section_id = this.config.data.section_id;
     this.financial_year_id = this.config.data.financial_year_id;
     this.admin_hierarchy_id = this.config.data.admin_hierarchy_id;
     this.projections = this.config.data.projection;
@@ -69,6 +71,7 @@ export class InitiateProjectionComponent implements OnInit {
       admin_hierarchy_id: this.admin_hierarchy_id,
       facility_id:this.facility_id,
       fund_source_id:this.fund_source_id,
+      section_id:this.section_id,
       source:this.selectedRevenueSources.map(srs => (srs.id))
     }
     this.subscribeToSaveResponse(this.projectionService.initiate(payload));

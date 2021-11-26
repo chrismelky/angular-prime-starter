@@ -1015,6 +1015,19 @@ const routes: Routes = [
         },
       },
       {
+        path: "planning/facility",
+        loadChildren: () =>
+          import("../planning/facility/facility.module").then(
+            (m) => m.FacilityModule
+          ),
+        canLoad: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: "READ_FACILITY",
+          },
+        },
+      },
+      {
         path: "assessment-home",
         loadChildren: () =>
           import("../setup/assessment-home/assessment-home.module").then(

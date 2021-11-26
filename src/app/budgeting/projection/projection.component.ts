@@ -405,31 +405,36 @@ export class ProjectionComponent implements OnInit {
                   (resp: CustomResponse<any[]>) =>{
                     ceilingChain.section = (resp.data ?? []).map((c) => (c.section));
                     section_id = ceilingChain.section[0].id;
-                    const ref = this.dialogService.open(InitiateProjectionComponent, {
-                      header: 'Initiate Projections',
-                      width: '60%',
-                      styleClass:'planrep-dialogy',
-                      data:{
-                        facility_id:this.facility_id,
-                        fund_source_id: this.fund_source_id,
-                        admin_hierarchy_id: this.facilityAdminHierarchyId,
-                        financial_year_id: this.financial_year_id,
-                        section_id:section_id,
-                        projection:this.projections
-                      }
-                    });
-                    ref.onClose.subscribe((result) => {
-                      if(result){
-                        this.loadPage();
-                      }
-                    });
+                    this.lunchAllocateModal(section_id);
                   }
                 );
+            }else{
+              this.lunchAllocateModal(section_id);
             }
           }else{
             this.toastService.error('No ceiling Chain Configured');
           }
         });
+  }
+  lunchAllocateModal(section_id:number){
+    const ref = this.dialogService.open(InitiateProjectionComponent, {
+      header: 'Initiate Projections',
+      width: '60%',
+      styleClass:'planrep-dialogy',
+      data:{
+        facility_id:this.facility_id,
+        fund_source_id: this.fund_source_id,
+        admin_hierarchy_id: this.facilityAdminHierarchyId,
+        financial_year_id: this.financial_year_id,
+        section_id:section_id,
+        projection:this.projections
+      }
+    });
+    ref.onClose.subscribe((result) => {
+      if(result){
+        this.loadPage();
+      }
+    });
   }
   loadFacilities(){
     this.facilityService

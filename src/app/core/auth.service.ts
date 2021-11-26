@@ -9,6 +9,7 @@ import { StateStorageService } from './state-storage.service';
 import { CustomResponse } from '../utils/custom-response';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { MenuItem } from 'primeng/api';
+import {User} from "../setup/user/user.model";
 
 type LoginResponse = {
   token: string;
@@ -33,6 +34,12 @@ export class AuthService {
       'authenticationToken'
     );
     return tokenInLocalStorage ?? tokenInSessionStorage ?? '';
+  }
+
+  getUser(): User {
+    const userInLocalStorage: User | null = this.$localStorage.retrieve('user');
+    const userInSessionStorage: User | null = this.$sessionStorage.retrieve('user');
+    return <User>userInLocalStorage ?? userInSessionStorage ?? null;
   }
 
   login(credentials: Login): Observable<void> {

@@ -119,7 +119,7 @@
                         pInputText
                         [(ngModel)]="search['last_name']"
                       />
-                      <label for="middle_name">Last Name </label>
+                      <label for="last_name">Last Name </label>
                       <i
                         class="pi pi-times clear"
                         (click)="search['last_name'] = undefined; onSearch()"
@@ -242,8 +242,8 @@
             {{ col.header }}
             <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
-          <th>Admin Area</th>
           <th>Planning Unit</th>
+          <th>Active</th>
           <th></th>
         </tr>
       </ng-template>
@@ -252,8 +252,13 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{ rowData.admin_hierarchy?.name }}</td>
           <td>{{ rowData.section?.name }}</td>
+          <td>
+            <p-inputSwitch
+              (onChange)="toggleActive(rowData, $event)"
+              [(ngModel)]="rowData.active"
+            ></p-inputSwitch>
+          </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
@@ -295,6 +300,7 @@
                   pButton
                   pRipple
                   pTooltip="Edit"
+                  [disabled]="currentUser.id===rowData.id"
                   tooltipPosition="bottom"
                   class="
                     p-button-text p-button-plain p-button-rounded p-button-icon
@@ -306,7 +312,7 @@
                 <button
                   pButton
                   pRipple
-                  [disabled]="rowData!.is_super_user"
+                  [disabled]="currentUser.id===rowData.id"
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="

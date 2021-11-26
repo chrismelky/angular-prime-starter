@@ -5,38 +5,40 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {combineLatest, Observable} from 'rxjs';
+import {ConfirmationService, LazyLoadEvent, MenuItem} from 'primeng/api';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Paginator} from 'primeng/paginator';
+import {Table} from 'primeng/table';
 
-import { CustomResponse } from '../../utils/custom-response';
+import {CustomResponse} from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import { HelperService } from 'src/app/utils/helper.service';
-import { ToastService } from 'src/app/shared/toast.service';
-import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import {HelperService} from 'src/app/utils/helper.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {Section} from 'src/app/setup/section/section.model';
+import {SectionService} from 'src/app/setup/section/section.service';
+import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
 
-import { User } from './user.model';
-import { UserService } from './user.service';
-import { UserUpdateComponent } from './update/user-update.component';
-import { AdminHierarchyLevelService } from '../admin-hierarchy-level/admin-hierarchy-level.service';
-import { AdminHierarchyLevel } from '../admin-hierarchy-level/admin-hierarchy-level.model';
-import { UserRoleComponent } from './user-role/user-role.component';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { finalize } from 'rxjs/operators';
-import { UserGroupComponent } from './user-group/user-group.component';
-import { PasswordResetComponent } from './password-reset/password-reset.component';
-import { Role } from '../role/role.model';
-import { RoleUpdateComponent } from '../role/update/role-update.component';
+import {User} from './user.model';
+import {UserService} from './user.service';
+import {UserUpdateComponent} from './update/user-update.component';
+import {AdminHierarchyLevelService} from '../admin-hierarchy-level/admin-hierarchy-level.service';
+import {AdminHierarchyLevel} from '../admin-hierarchy-level/admin-hierarchy-level.model';
+import {UserRoleComponent} from './user-role/user-role.component';
+import {MatCheckboxChange} from '@angular/material/checkbox';
+import {finalize} from 'rxjs/operators';
+import {UserGroupComponent} from './user-group/user-group.component';
+import {PasswordResetComponent} from './password-reset/password-reset.component';
+import {Role} from '../role/role.model';
+import {RoleUpdateComponent} from '../role/update/role-update.component';
+import {AuthService} from "../../core/auth.service";
+import {randomString} from "../../shared/helpers";
 
 @Component({
   selector: 'app-user',
@@ -62,11 +64,11 @@ export class UserComponent implements OnInit {
       header: 'Last Name',
       sort: false,
     },
-    {
+    /*{
       field: 'email',
       header: 'Email',
       sort: false,
-    },
+    },*/
     {
       field: 'cheque_number',
       header: 'Cheque Number',
@@ -75,8 +77,8 @@ export class UserComponent implements OnInit {
     {
       field: 'title',
       header: 'Title',
-      sort: false,
-    },
+      sort: true,
+    }
   ]; //Table display columns
 
   isLoading = false;
@@ -87,7 +89,7 @@ export class UserComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-
+  currentUser!: User;
   //Mandatory filter
   adminHierarchy!: AdminHierarchy;
   admin_hierarchy_position!: number;
@@ -99,11 +101,14 @@ export class UserComponent implements OnInit {
     protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
+    protected authService: AuthService,
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+    this.currentUser = this.authService.getUser();
+  }
 
   ngOnInit(): void {
     this.handleNavigation();
@@ -333,6 +338,7 @@ export class UserComponent implements OnInit {
   roles(rowData: User): void {
     const data = {
       user: rowData,
+      currentUser: this.currentUser
     };
     const ref = this.dialogService.open(UserRoleComponent, {
       data,
@@ -348,6 +354,7 @@ export class UserComponent implements OnInit {
   groups(rowData: User): void {
     const data = {
       user: rowData,
+      currentUser: this.currentUser
     };
     const ref = this.dialogService.open(UserGroupComponent, {
       data,
@@ -360,9 +367,11 @@ export class UserComponent implements OnInit {
     });
   }
 
-  toggleActive(user: User, change: MatCheckboxChange): void {
+
+  toggleActive(user: User, event: any): void {
     this.isSaving = true;
-    user.active = change.checked;
+    user.active = event.checked;
+    user.username = user.username ? user.username : randomString(16)
     this.subscribeToSaveResponse(this.userService.update(user));
   }
 
@@ -379,7 +388,8 @@ export class UserComponent implements OnInit {
     this.toastService.info(result.message);
   }
 
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

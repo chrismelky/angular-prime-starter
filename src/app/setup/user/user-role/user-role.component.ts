@@ -38,7 +38,7 @@ export class UserRoleComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
   @ViewChild("table") table!: Table;
   userRoles?: UserRole[] = [];
-
+  currentUser!: User;
   roles?: Role[] = [];
   users?: User[] = [];
   user: User | undefined;
@@ -69,6 +69,7 @@ export class UserRoleComponent implements OnInit {
     protected toastService: ToastService
   ) {
     this.user = this.dialogConfig.data.user;
+    this.currentUser = this.dialogConfig.data.currentUser;
   }
 
   ngOnInit(): void {

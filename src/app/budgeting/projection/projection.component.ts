@@ -387,23 +387,49 @@ export class ProjectionComponent implements OnInit {
   }
 
   initiateProjection(): void{
-    const ref = this.dialogService.open(InitiateProjectionComponent, {
-      header: 'Initiate Projections',
-      width: '60%',
-      styleClass:'planrep-dialogy',
-      data:{
-        facility_id:this.facility_id,
-        fund_source_id: this.fund_source_id,
-        admin_hierarchy_id: this.facilityAdminHierarchyId,
-        financial_year_id: this.financial_year_id,
-        projection:this.projections
-      }
-    });
-    ref.onClose.subscribe((result) => {
-      if(result){
-        this.loadPage();
-      }
-    });
+    this.ceilingChainService
+      .queryWithChild({
+        for_admin_hierarchy_level_position:this.facilityAdminHierarchyPosition,
+        is_active:true,
+        per_page:1000,
+      })
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          if((resp.data ?? []).length>0){
+            let ceilingChain = resp.data[0];
+            let section_id = ceilingChain.section.length>0?ceilingChain.section[0].id:null;
+            if(ceilingChain.section_level_position.is_cost_centre){
+              this.facilityTypeSectionService
+                .query({facility_type_id:this.facility_type_id,per_page:100})
+                .subscribe(
+                  (resp: CustomResponse<any[]>) =>{
+                    ceilingChain.section = (resp.data ?? []).map((c) => (c.section));
+                    section_id = ceilingChain.section[0].id;
+                    const ref = this.dialogService.open(InitiateProjectionComponent, {
+                      header: 'Initiate Projections',
+                      width: '60%',
+                      styleClass:'planrep-dialogy',
+                      data:{
+                        facility_id:this.facility_id,
+                        fund_source_id: this.fund_source_id,
+                        admin_hierarchy_id: this.facilityAdminHierarchyId,
+                        financial_year_id: this.financial_year_id,
+                        section_id:section_id,
+                        projection:this.projections
+                      }
+                    });
+                    ref.onClose.subscribe((result) => {
+                      if(result){
+                        this.loadPage();
+                      }
+                    });
+                  }
+                );
+            }
+          }else{
+            this.toastService.error('No ceiling Chain Configured');
+          }
+        });
   }
   loadFacilities(){
     this.facilityService
@@ -436,6 +462,7 @@ export class ProjectionComponent implements OnInit {
   }
 
   onRowEditSave(projection: Projection ,index: number) {
+    console.log(projection);
     if(this.projectionValidity(projection).success){
       const index = this.projections!.findIndex(item => item.id === projection.id);
       let amount = (+projection.q1_amount!) + (+projection.q2_amount!) + (+projection.q3_amount!) + (+projection.q4_amount!);
@@ -464,7 +491,6 @@ export class ProjectionComponent implements OnInit {
   }
 
   allocateProjection() : void{
-    console.log(this.totalProjection.amount);
     if(this.totalProjection.amount > 0){
       this.ceilingChainService
         .queryWithChild({
@@ -537,6 +563,7 @@ export class ProjectionComponent implements OnInit {
       gfs_code_id: projection.gfs_code_id,
       fund_source_id: projection.fund_source_id,
       facility_id:projection.facility_id,
+      section_id:projection.section_id,
       q1_amount: projection.q1_amount,
       q2_amount: projection.q2_amount,
       q3_amount: projection.q3_amount,

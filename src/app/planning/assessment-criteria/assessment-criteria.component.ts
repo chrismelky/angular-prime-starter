@@ -93,6 +93,7 @@ export class AssessmentCriteriaComponent implements OnInit {
   position2 = false;
   position1 = false;
   selectedIndex = 0;
+  reportViewed: boolean = false;
 
   constructor(
     protected assessmentCriteriaService: AssessmentCriteriaService,
@@ -348,6 +349,7 @@ export class AssessmentCriteriaComponent implements OnInit {
   }
 
   loadSubCriteria(id: any, i: number) {
+    this.reportViewed = false;
     this.selectedIndex = i;
     this.casAssessmentSubCriteriaService.getSubCriteriaWithScores(
       id,this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id,
@@ -401,11 +403,11 @@ export class AssessmentCriteriaComponent implements OnInit {
     data.budgetType = 'CURRENT';
     const ref = this.dialogService.open(ReportUpdateComponent, {
       data,
-      header: '',
+      header: 'Preview Report for '+assessmentSubCriteriaOption.name,
     });
     ref.onClose.subscribe((result) => {
       if (result) {
-        // this.loadPage(this.page);
+        this.reportViewed = result;
       }
     });
   }

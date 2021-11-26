@@ -7,9 +7,7 @@
     [formGroup]="editForm"
     autocomplete="off"
   >
-
     <div fxLayout="column" fxLayoutGap="1rem">
-
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
         <div class="p-field p-col-12 p-md-4" fxFlex>
           <span class="p-float-label">
@@ -24,44 +22,45 @@
                 formError)
             "
           >
-            <small class="p-error" *ngIf="editForm.get('name')?.errors?.required"
+            <small
+              class="p-error"
+              *ngIf="editForm.get('name')?.errors?.required"
               >Name is required.</small
             >
           </span>
         </div>
 
         <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="admin_hierarchy_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                appendTo="body"
-                [options]="adminHierarchies!"
-                formControlName="admin_hierarchy_id"
-              ></p-dropdown>
-              <label for="admin_hierarchy_id">Admin Hierarchy </label>
-            </span>
+          <span class="p-float-label">
+            <p-dropdown
+              id="admin_hierarchy_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="adminHierarchies!"
+              formControlName="admin_hierarchy_id"
+            ></p-dropdown>
+            <label for="admin_hierarchy_id">Admin Hierarchy </label>
+          </span>
           <span
             *ngIf="
-                editForm.get('admin_hierarchy_id')!.invalid &&
-                (editForm.get('admin_hierarchy_id')!.dirty ||
-                  editForm.get('admin_hierarchy_id')!.touched ||
-                  formError)
-              "
-             >
-              <small
-                class="p-error"
-                *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
+              editForm.get('admin_hierarchy_id')!.invalid &&
+              (editForm.get('admin_hierarchy_id')!.dirty ||
+                editForm.get('admin_hierarchy_id')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
               >Admin Hierarchy is required.</small
-              >
-            </span>
+            >
+          </span>
         </div>
       </div>
-
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
@@ -157,10 +156,31 @@
       </div>
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
-        <p-fileUpload [showUploadButton]="false" name="url" id="url" url="" [maxFileSize]="10000000"  (onSelect)="onSelect($event)" accept="application/pdf">
+        <p-fileUpload
+          [showUploadButton]="false"
+          name="url"
+          id="url"
+          url=""
+          [maxFileSize]="10000000"
+          (onSelect)="onSelect($event)"
+          accept="application/pdf"
+        >
+          <ng-template pTemplate="content" let-files>
+            <button
+              *ngIf="editForm.get('id')?.value!"
+              pButton
+              type="button"
+              pTooltip="Edit"
+              tooltipPosition="bottom"
+              class="
+                p-button-text p-button-plain p-button-rounded p-button-icon
+              "
+              icon="pi pi-download"
+              (click)="downloadStrategicPlan()"
+            ></button>
+          </ng-template>
         </p-fileUpload>
       </div>
-
 
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

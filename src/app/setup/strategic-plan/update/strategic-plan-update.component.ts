@@ -189,4 +189,13 @@ export class StrategicPlanUpdateComponent implements OnInit {
       });
   }
 
+  downloadStrategicPlan() {
+    this.strategicPlanService
+      .download(this.editForm.get('id')?.value)
+      .subscribe((resp) => {
+        let file = new Blob([resp], { type: 'application/pdf' });
+        let fileURL = URL.createObjectURL(file);
+        window.open(fileURL, '_blank');
+      });
+  }
 }

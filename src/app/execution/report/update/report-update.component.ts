@@ -158,6 +158,7 @@ export class ReportUpdateComponent implements OnInit {
       let file = new Blob([resp], { type: 'application/pdf' });
       let fileURL = URL.createObjectURL(file);
       window.open(fileURL, '_blank');
+      this.dialogRef.close(true);
     });
   }
   //get excel report
@@ -172,6 +173,7 @@ export class ReportUpdateComponent implements OnInit {
       let file = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       let fileURL = URL.createObjectURL(file);
       window.open(fileURL,"_blank")
+      this.dialogRef.close(true);
     });
   }
 //get excel report
@@ -185,7 +187,8 @@ export class ReportUpdateComponent implements OnInit {
     this.reportService.getReport(data).subscribe((resp) => {
       let file = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
       let fileURL = URL.createObjectURL(file);
-      window.open(fileURL,"_blank")
+      window.open(fileURL,"_blank");
+      this.dialogRef.close(true);
     });
   }
 

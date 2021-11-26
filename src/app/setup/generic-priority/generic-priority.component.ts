@@ -7,10 +7,11 @@
  */
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import {combineLatest, Observable} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem, TreeNode} from "primeng/api";
+import { combineLatest } from "rxjs";
+import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 import { Paginator } from "primeng/paginator";
+import { Table } from "primeng/table";
 
 import { CustomResponse } from "../../utils/custom-response";
 import {
@@ -19,32 +20,39 @@ import {
 } from "../../config/pagination.constants";
 import { HelperService } from "src/app/utils/helper.service";
 import { ToastService } from "src/app/shared/toast.service";
-import { PeForm } from "src/app/setup/pe-form/pe-form.model";
-import { PeFormService } from "src/app/setup/pe-form/pe-form.service";
-import { PeSubForm } from "./pe-sub-form.model";
-import { PeSubFormService } from "./pe-sub-form.service";
-import { PeSubFormUpdateComponent } from "./update/pe-sub-form-update.component";
-import {TreeTable} from "primeng/treetable";
-import {NationalReference} from "../national-reference/national-reference.model";
-import {finalize} from "rxjs/operators";
+import { PlanningMatrix } from "src/app/setup/planning-matrix/planning-matrix.model";
+import { PlanningMatrixService } from "src/app/setup/planning-matrix/planning-matrix.service";
+
+import { GenericPriority } from "./generic-priority.model";
+import { GenericPriorityService } from "./generic-priority.service";
+import { GenericPriorityUpdateComponent } from "./update/generic-priority-update.component";
 
 @Component({
-  selector: "app-pe-sub-form",
-  templateUrl: "./pe-sub-form.component.html",
+  selector: "app-generic-priority",
+  templateUrl: "./generic-priority.component.html",
 })
-export class PeSubFormComponent implements OnInit {
+export class GenericPriorityComponent implements OnInit {
   @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: TreeTable;
-  peSubForms?: PeSubForm[] = [];
-  peSubFormsNode?: TreeNode[] = [];
-  peForms?: PeForm[] = [];
+  @ViewChild("table") table!: Table;
+  genericPriorities?: GenericPriority[] = [];
+
+  planningMatrices?: PlanningMatrix[] = [];
 
   cols = [
-
     {
-      field: "name",
-      header: "Name",
+      field: "description",
+      header: "Description",
       sort: true,
+    },
+    {
+      field: "params",
+      header: "Params",
+      sort: true,
+    },
+    {
+      field: "is_active",
+      header: "Is Active",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -58,11 +66,11 @@ export class PeSubFormComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  pe_form_id!: number;
+  planning_matrix_id!: number;
 
   constructor(
-    protected peSubFormService: PeSubFormService,
-    protected peFormService: PeFormService,
+    protected genericPriorityService: GenericPriorityService,
+    protected planningMatrixService: PlanningMatrixService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected confirmationService: ConfirmationService,
@@ -72,15 +80,11 @@ export class PeSubFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.peSubFormService
+    this.planningMatrixService
       .query({ columns: ["id", "name"] })
       .subscribe(
-        (resp: CustomResponse<PeSubForm[]>) => (this.peSubForms = resp.data)
-      );
-    this.peFormService
-      .query({ columns: ["id", "name"] })
-      .subscribe(
-        (resp: CustomResponse<PeForm[]>) => (this.peForms = resp.data)
+        (resp: CustomResponse<PlanningMatrix[]>) =>
+          (this.planningMatrices = resp.data)
       );
     this.handleNavigation();
   }
@@ -88,26 +92,25 @@ export class PeSubFormComponent implements OnInit {
   /**
    * Load data from api
    * @param page = page number
-   * @param dontNavigate = if after successfully update url params with pagination and sort info
+   * @param dontNavigate = if after successfuly update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    // if (!this.pe_form_id) {
-    //   return;
-    // }
+    if (!this.planning_matrix_id) {
+      return;
+    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.peSubFormService
+    this.genericPriorityService
       .query({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
-        // pe_form_id: this.pe_form_id,
-        parent_id: null,
+        planning_matrix_id: this.planning_matrix_id,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
-        (res: CustomResponse<PeSubForm[]>) => {
+        (res: CustomResponse<GenericPriority[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
         },
@@ -138,7 +141,6 @@ export class PeSubFormComponent implements OnInit {
         this.predicate = predicate;
         this.ascending = ascending;
       }
-      this.filterChanged();
     });
   }
 
@@ -213,18 +215,17 @@ export class PeSubFormComponent implements OnInit {
   }
 
   /**
-   * Creating or updating PeSubForm
-   * @param peSubForm ; If undefined initize new model to create else edit existing model
+   * Creating or updating GenericPriority
+   * @param genericPriority ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(peSubForm?: PeSubForm): void {
-    const data: PeSubForm = peSubForm ?? {
-      ...new PeSubForm(),
-      pe_form_id: this.pe_form_id,
+  createOrUpdate(genericPriority?: GenericPriority): void {
+    const data: GenericPriority = genericPriority ?? {
+      ...new GenericPriority(),
+      planning_matrix_id: this.planning_matrix_id,
     };
-    const ref = this.dialogService.open(PeSubFormUpdateComponent, {
+    const ref = this.dialogService.open(GenericPriorityUpdateComponent, {
       data,
-      width:"800px",
-      header: "Create/Update PeSubForm",
+      header: "Create/Update GenericPriority",
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -233,40 +234,20 @@ export class PeSubFormComponent implements OnInit {
     });
   }
 
-  protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<NationalReference>>
-  ): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      (result) => this.onSaveSuccess(result),
-      (error) => this.onSaveError(error)
-    );
-  }
-
   /**
-   * When save successfully close dialog and display info message
-   * @param result
+   * Delete GenericPriority
+   * @param genericPriority
    */
-  protected onSaveSuccess(result: any): void {
-    this.toastService.info(result.message);
-  }
-
-  protected onSaveError(error: any): void {}
-
-  protected onSaveFinalize(): void {
-  }
-
-  /**
-   * Delete PeSubForm
-   * @param peSubForm
-   */
-  delete(peSubForm: PeSubForm): void {
+  delete(genericPriority: GenericPriority): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this PeSubForm?",
+      message: "Are you sure that you want to delete this GenericPriority?",
       accept: () => {
-        this.peSubFormService.delete(peSubForm.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.genericPriorityService
+          .delete(genericPriority.id!)
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }
@@ -278,14 +259,14 @@ export class PeSubFormComponent implements OnInit {
    * @param navigate
    */
   protected onSuccess(
-    resp: CustomResponse<PeSubForm[]> | null,
+    resp: CustomResponse<GenericPriority[]> | null,
     page: number,
     navigate: boolean
   ): void {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/pe-sub-form"], {
+      this.router.navigate(["/generic-priority"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -294,52 +275,15 @@ export class PeSubFormComponent implements OnInit {
         },
       });
     }
-
-    this.peSubFormsNode = (resp?.data ?? []).map((c) => {
-      return {
-        data: c,
-        children: [],
-        leaf: false,
-      };
-    });
+    this.genericPriorities = resp?.data ?? [];
   }
 
   /**
-   * When error on loading data set data to empty and reset page to load
+   * When error on loading data set data to empt and resert page to load
    */
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Pe Sub Form");
+    this.toastService.error("Error loading Generic Priority");
   }
-
-  onNodeExpand(event: any): void {
-    const node = event.node;
-    this.isLoading = true;
-    // Load children by parent_id= node.data.id
-    this.peSubFormService
-      .query({
-        parent_id: node.data.id,
-        sort: ['id:asc'],
-      })
-      .subscribe(
-        (resp) => {
-          this.isLoading = false;
-          // Map response data to @TreeNode type
-             node.children = (resp?.data ?? []).map((c) => {
-            return {
-              data: c,
-              children: [],
-              leaf: false,
-            };
-          });
-          // Update Tree state
-          this.peSubFormsNode = [...this.peSubFormsNode!];
-        },
-        (error) => {
-          this.isLoading = false;
-        }
-      );
-  }
-
 }

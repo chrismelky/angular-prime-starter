@@ -259,8 +259,14 @@ export class ActivityInputUpdateComponent implements OnInit {
   }
 
   addItem(): void {
+    if (this.breakDownForm.invalid) {
+      this.breakDownFormError = true;
+      return;
+    }
     this.addControl(this.breakDownForm.value);
     this.breakDownForm.reset();
+    this.breakDownFormError = false;
+    this.totalToAdd = 0;
   }
 
   addControl(data?: any): void {
@@ -325,6 +331,14 @@ export class ActivityInputUpdateComponent implements OnInit {
   removeControl(index: number): void {
     this.breakDownControls.removeAt(index);
     this.updateBreakdownTotal();
+  }
+
+  updateBreakdownToAddTotal(
+    unit_price?: number,
+    quantity?: number,
+    frequency?: number
+  ): void {
+    this.totalToAdd = (unit_price || 0) * (quantity || 0) * (frequency || 0);
   }
 
   private updateBreakdownTotal(): void {

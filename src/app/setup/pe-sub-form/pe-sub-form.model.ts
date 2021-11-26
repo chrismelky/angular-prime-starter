@@ -8,6 +8,8 @@ export class PeSubForm {
     public is_lowest?: string,
     public sort_order?: number,
     public is_multiple?: string,
-    public is_active?: string
+    public is_active?: string,
+    public is_fund_source_required?: string,
+    public is_sbc_required?: string
   ) {}
 }

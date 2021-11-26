@@ -424,10 +424,14 @@ export class ActivityComponent implements OnInit {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this Activity?',
       accept: () => {
-        this.activityService.delete(activity.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
+        this.activityService
+          .delete(activity.id!, {
+            financial_year_id: this.financialYear?.id,
+          })
+          .subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
       },
     });
   }

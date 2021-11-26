@@ -156,10 +156,12 @@
               <p-badge value="{{assessmentSubCriteriaOption.cas_assessment_state?assessmentSubCriteriaOption.cas_assessment_state:'Not Assessed'}}" severity="{{assessmentSubCriteriaOption.cas_assessment_state?'success':'warning'}}"></p-badge>
             </td>
             <td [colSpan]="2">
-              <button pButton type="button" class="p-button-outlined p-button-icon" label="Scores({{assessmentSubCriteriaOption.value?assessmentSubCriteriaOption.value: 0}})" [disabled]="admin_hierarchy_position !=3"
+              <button pButton type="button" class="p-button-outlined p-button-icon" label="Scores({{assessmentSubCriteriaOption.value?assessmentSubCriteriaOption.value: 0}})"
+                      [disabled]="admin_hierarchy_position !=3 || !reportViewed"
                       style="margin-left: auto" icon="pi pi-check" (click)="setScores(assessmentSubCriteriaOption)"
               ></button>
-              <button pButton type="button" class="p-button-outlined p-button-icon" label="Comments" [disabled]="admin_hierarchy_position !=3"
+              <button pButton type="button" class="p-button-outlined p-button-icon" label="Comments"
+                      [disabled]="admin_hierarchy_position !=3 || !reportViewed"
                       style="margin-left: 16px" icon="pi pi-comment" (click)="setComments(assessmentSubCriteriaOption)"
               ></button>
               <button pButton type="button" class="p-button-outlined p-button-icon" label="Report" [disabled]="admin_hierarchy_position !=3"

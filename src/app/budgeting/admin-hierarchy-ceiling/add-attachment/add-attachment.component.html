@@ -1,0 +1,84 @@
+<div class="ui-dialog-content">
+  <div fxLayout="column" fxLayoutGap="10px">
+    <div *ngIf="is_multiple!" fxLayout="row wrap" fxLayoutGap="10px">
+      <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
+        <div class="p-field" fxFlex>
+          <p-multiSelect [options]="councils" (ngModelChange)="councilSelectionChange($event)" optionValue="id" [(ngModel)]="selectedCouncils" defaultLabel="Select a Council" optionLabel="name" selectedItemsLabel="{0} Council selected"></p-multiSelect>
+        </div>
+      </div>
+    </div>
+  <p-fileUpload [showUploadButton]="false" name="files[]" (onSelect)="onSelect($event)"
+                accept="application/pdf" [maxFileSize]="2000000">
+    <ng-template pTemplate="content">
+      <ul *ngIf="uploadedFiles.length">
+      </ul>
+    </ng-template>
+  </p-fileUpload>
+  <p-table  [value]="councilCeilingDocs" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>File</th>
+        <th>Council</th>
+        <th>action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-files>
+      <tr>
+        <td style="min-width:30%">
+         <span (click)="downloadReferenceDocuments(files.files[0])">Download &nbsp;&nbsp; <i class="pi pi-download" style="color: green"></i></span>
+        </td>
+        <td>
+          <table>
+            <tr *ngFor="let file of files.files">
+              <td>
+                {{file?.admin_hierarchy?.name}}
+              </td>
+              <td>
+                <button
+                  pButton
+                  pTooltip="Delete"
+                  tooltipPosition="bottom"
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
+                  icon="pi pi-trash"
+                  (click)="delete(file,$event)"
+                ></button>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td style="width:20%">
+          <button
+            type="text"
+            pButton
+            pRipple
+            pTooltip="Add Council"
+            tooltipPosition="bottom"
+            iconPos="left"
+            class="p-button-text p-button-plain p-button-primary"
+            (click)="addAttachment(aop,$event,files.files[0])"
+          >
+            <i class="pi pi-plus"></i>&nbsp; Add Council
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<div class="p-dialog-footer">
+  <p-button (click)="onUpload($event)"  [disabled]="!editForm.valid" label="Upload" icon="pi pi-upload"></p-button>
+</div>
+  <p-overlayPanel  appendTo="body" [dismissable]="false" #aop [showCloseIcon]="true" [style]="{width: '450px'}">
+    <ng-template pTemplate>
+      <div  fxLayout="row wrap" fxLayoutGap="10px">
+        <div fxLayout="row" fxLayoutGap="0.75rem" fxFlex fxLayoutAlign="start center">
+          <div class="p-field" fxFlex>
+            <p-multiSelect [options]="councils" optionValue="id" [(ngModel)]="selectedCouncilsToFile" defaultLabel="Select a Council" optionLabel="name" selectedItemsLabel="{0} Council selected"></p-multiSelect>
+          </div>
+          <div class="p-field">
+            <p-button label="Save" (click)="addCouncilsToAttachment()"></p-button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-overlayPanel>
+  <p-confirmPopup></p-confirmPopup>

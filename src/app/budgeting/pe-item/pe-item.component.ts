@@ -111,6 +111,8 @@ export class PeItemComponent implements OnInit {
   yearRange?: string;
   councilHQFacilityCode?: string;
   isTableReady?: boolean = false;
+  showSbc?: boolean = true;
+  showFundSource?: boolean = true;
 
   constructor(
     protected peItemService: PeItemService,
@@ -462,6 +464,10 @@ export class PeItemComponent implements OnInit {
 
   /** on change pe sub form search Pe Form(parent) by id and Get budget class assignee*/
   getPeForm(event: any): void {
+    console.log(event);
+    this.showSbc = event.value?.is_fund_source_required ? event.value?.is_fund_source_required : false;
+    this.showFundSource = event.value?.is_sbc_required ? event.value?.is_sbc_required : false;
+
     if (event.value?.id >= 1) {
       this.budgetClasses! = [];
       this.budget_class_id = 0;

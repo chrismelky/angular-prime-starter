@@ -51,6 +51,7 @@ export class UserGroupComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  currentUser!: User;
 
   //Mandatory filter
 
@@ -68,6 +69,7 @@ export class UserGroupComponent implements OnInit {
     protected toastService: ToastService
   ) {
     this.user = this.dialogConfig.data.user;
+    this.currentUser = this.dialogConfig.data.currentUser;
   }
 
   ngOnInit(): void {

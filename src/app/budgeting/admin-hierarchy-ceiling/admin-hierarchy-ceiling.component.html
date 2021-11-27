@@ -180,7 +180,7 @@
           </p-messages>
         </div>
         <div fxLayout="row" fxLayoutAlign="space-between center" *ngxPermissionsOnly="['INITIATE_CEILING']">
-          <p-messages severity="error" style="width: 100%" *ngIf="ceilingStartPosition === admin_hierarchy_position && !hasAttachment">
+          <p-messages severity="error" style="width: 100%" *ngIf="ceilingStartPosition === admin_hierarchy_position && !hasAttachment && attachmentBudgetType">
             <ng-template pTemplate>
               <div fxLayout="row" style="width: 100%" fxLayoutAlign="space-between center">
                 <span style="width: 100%;">

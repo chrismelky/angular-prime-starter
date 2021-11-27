@@ -403,7 +403,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     data.budgetType = 'CURRENT';
     const ref = this.dialogService.open(ReportUpdateComponent, {
       data,
-      header: '',
+      header: 'Preview Report for '+assessmentSubCriteriaOption.name,
     });
     ref.onClose.subscribe((result) => {
       if (result) {

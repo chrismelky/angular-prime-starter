@@ -89,6 +89,11 @@ export class MainComponent implements OnInit, OnDestroy {
       icon: "pi pi-fw pi-arrow-right",
       routerLink: "expenditure-centre",
     },
+    {
+      label: "Expenditure Centre Items",
+      icon: "pi pi-fw pi-arrow-right",
+      routerLink: "expenditure-centre-item",
+    },
     /**====Planrep setup Menu Generator Hook: Dont Delete====*/
   ];
 

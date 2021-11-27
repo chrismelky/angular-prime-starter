@@ -16,56 +16,19 @@
           fxLayoutAlign="start center"
         >
           <div class="p-field" fxFlex>
-            <app-admin-hierarchy-tree
-              (onSelect)="onAdminHierarchySelection($event)"
-              [returnType]="'object'"
-            >
-            </app-admin-hierarchy-tree>
-          </div>
-          <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
-                id="financial_year_id"
+                id="expenditure_centre_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 [filter]="true"
                 class="p-inputtext-sm"
-                [options]="financialYears!"
-                [(ngModel)]="financial_year_id"
-              ></p-dropdown>
-              <label for="financial_year_id">Financial Year </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="budgetType"
-                optionValue="name"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="budgetTypes!"
-                [(ngModel)]="budgetType"
-              ></p-dropdown>
-              <label for="budgetType">Budget Type </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="cas_plan_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="casPlans!"
+                [options]="expenditureCentres!"
                 (onChange)="filterChanged()"
-                [(ngModel)]="cas_plan_id"
+                [(ngModel)]="expenditure_centre_id"
               ></p-dropdown>
-              <label for="cas_plan_id">Cas Plans </label>
+              <label for="expenditure_centre_id">Expenditure Centre </label>
             </span>
           </div>
         </div>
@@ -114,7 +77,24 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            ></div>
+            >
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="name"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['name']"
+                  />
+                  <label for="name">Name </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['name'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+            </div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"
@@ -139,56 +119,72 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-treeTable
+    <p-table
       #table
       [lazy]="true"
       [resizableColumns]="true"
+      [responsive]="true"
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [scrollable]="true"
-      [value]="casPlanContents!"
+      [value]="expenditureCentreItems!"
       (onLazyLoad)="onSortChange($event)"
-      (onNodeExpand)="onNodeExpand($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Reports</span>
+          <span class="card-header-text">Expenditure Centre Items</span>
+          <button
+            pButton
+            icon="pi pi-plus"
+            class="p-button-raised"
+            [disabled]="!expenditure_centre_id"
+            (click)="createOrUpdate()"
+            label="Add Expenditure Centre Item"
+          ></button>
         </div>
       </ng-template>
-      <ng-template
-        pTemplate="body"
-        let-rowNode
-        let-rowData="rowData"
-        let-columns="columns"
-      >
-        <tr>
-          <td
-            style="height: 36px !important"
-            *ngFor="let col of columns; let i = index"
+      <ng-template pTemplate="header" let-columns>
+        <tr *ngIf="expenditureCentreItems?.length">
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
           >
-            <p-treeTableToggler
-              [rowNode]="rowNode"
-              *ngIf="i == 0"
-            ></p-treeTableToggler>
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td style="height: 36px !important">
+          <td>
             <div fxLayout="row" fxLayoutAlign="end">
-              <div fxLayout="row" fxLayoutGap="2px" *ngIf="rowData.report_id">
+              <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
-                  icon="pi pi-print"
-                  class="p-button-icon p-button-text"
-                  [disabled]="
-                    !this.admin_hierarchy_id ||
-                    !this.financial_year_id ||
-                    !this.budgetType ||
-                    admin_hierarchy_position != 3
+                  pTooltip="Edit"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
                   "
-                  (click)="getReport(rowData)"
-                  label="Preview"
+                  icon="pi pi-pencil
+              "
+                  (click)="createOrUpdate(rowData)"
+                ></button>
+                <button
+                  pButton
+                  pTooltip="Delete"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-trash
+              "
+                  (click)="delete(rowData)"
                 ></button>
               </div>
             </div>
@@ -196,11 +192,11 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-    </p-treeTable>
+    </p-table>
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="parents?.length! > 0"
+        [alwaysShow]="expenditureCentreItems?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -215,6 +211,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Report"
+  header="Confirmation Delete Expenditure Centre Item"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

@@ -89,9 +89,11 @@ export class PeItemComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
-  cellingAmount: any = 0;
-  budgetedAmount: any = 0;
-  balanceAmount: any = 0;
+  cellingAmount: number = 0;
+  budgetedAmount: number = 0;
+  budgetedAmountDisplay: number = 0;
+  balanceAmountDisplay: number = 0;
+  balanceAmount: number = 0;
   defaultValue: any = null;
   selectRow?: string;
   financialYear: any = null;
@@ -102,8 +104,8 @@ export class PeItemComponent implements OnInit {
   financial_year_id!: number;
   is_current_budget_locked!: boolean;
   pe_sub_form_id!: number;
-  budget_class_id!: number;
-  fund_source_id!: number;
+  budget_class_id!: any;
+  fund_source_id!: any;
   section_id!: number;
   pe_form_id!: number;
   currentUser?: User;
@@ -111,7 +113,7 @@ export class PeItemComponent implements OnInit {
   yearRange?: string;
   councilHQFacilityCode?: string;
   isTableReady?: boolean = false;
-  showSbc?: boolean = true;
+  sbcRequired?: boolean = true;
   showFundSource?: boolean = true;
 
   constructor(
@@ -286,8 +288,8 @@ export class PeItemComponent implements OnInit {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
-      this.budget_class_id <= 0 ||
-      this.fund_source_id <= 0 ||
+      ((this.fund_source_id === null || this.fund_source_id <= 0) && this.sbcRequired) ||
+      ((this.budget_class_id === null || this.budget_class_id <= 0) && this.sbcRequired) ||
       !this.pe_form_id ||
       !this.section_id
     ) {
@@ -342,7 +344,7 @@ export class PeItemComponent implements OnInit {
         })
         .subscribe((resp) => {
           this.budgetedAmount = resp.data.budgetedAmount;
-          if (resp.data.rows.length === 1) {
+          if (resp.data.rows.length < 1) {
             /** sync data value */
           } else if (resp.data.rows.length >= 1) {
             /** increase row and add dataValue */
@@ -458,20 +460,21 @@ export class PeItemComponent implements OnInit {
 
   /** check balance, ceiling - budget */
   budgetBalance() {
-    this.balanceAmount =
-      parseFloat(this.cellingAmount) - parseFloat(this.budgetedAmount);
+    this.balanceAmount =  this.cellingAmount - this.budgetedAmount;
+    this.balanceAmountDisplay =
+      this.cellingAmount - this.budgetedAmount;
+    this.budgetedAmountDisplay =  this.budgetedAmount;
   }
 
   /** on change pe sub form search Pe Form(parent) by id and Get budget class assignee*/
   getPeForm(event: any): void {
-    console.log(event);
-    this.showSbc = event.value?.is_fund_source_required ? event.value?.is_fund_source_required : false;
+    this.sbcRequired = event.value?.is_fund_source_required ? event.value?.is_fund_source_required : false;
     this.showFundSource = event.value?.is_sbc_required ? event.value?.is_sbc_required : false;
 
     if (event.value?.id >= 1) {
       this.budgetClasses! = [];
-      this.budget_class_id = 0;
-      this.fund_source_id = 0;
+      this.budget_class_id = null;
+      this.fund_source_id = null;
       this.pe_sub_form_id = event.value?.id;
       this.peFormServices.find(event.value?.pe_form_id).subscribe((resp) => {
         this.budgetClasses = resp.data?.budget_classes;
@@ -693,8 +696,8 @@ export class PeItemComponent implements OnInit {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
-      this.budget_class_id <= 0 ||
-      this.fund_source_id <= 0 ||
+      ((this.fund_source_id === null || this.fund_source_id <= 0) && this.sbcRequired) ||
+      ((this.budget_class_id === null || this.budget_class_id <= 0) && this.sbcRequired) ||
       !this.pe_form_id ||
       !this.section_id
     ) {
@@ -750,9 +753,25 @@ export class PeItemComponent implements OnInit {
       /** For accuracy, Re update function call, to make sure if any skipped value is there
        *But this functions has not importance
        * */
+      this.updateViewAmount(data);
       this.reUpdateValue(data);
     }
   }
+
+   updateViewAmount(data:any){
+   if(data.output_type === 'CURRENCY') {
+     var totalAmount:number = 0;
+     this.peDataValues?.forEach((fValue: any) => {
+       if(fValue.output_type=== 'CURRENCY' && fValue.formula == null ){
+         let values = fValue?.value ? fValue.value:0;
+         totalAmount = parseFloat(totalAmount.toString()) + parseFloat(values);
+       }
+     });
+     /** update data */
+     this.budgetedAmountDisplay =   (parseFloat(this.budgetedAmount.toString()) + (parseFloat(totalAmount.toString()) -parseFloat(this.budgetedAmount.toString())));
+     this.balanceAmountDisplay =  (this.balanceAmount - (parseFloat(totalAmount.toString()) -parseFloat(this.budgetedAmount.toString())));
+   }
+   }
 
   reUpdateValue(data: any) {
     if (data?.value !== undefined) {

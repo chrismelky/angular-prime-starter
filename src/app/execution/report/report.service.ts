@@ -5,17 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { Report } from "./report.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Report } from './report.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ReportService {
-  public resourceUrl = "api/reports";
+  public resourceUrl = 'api/reports';
 
   constructor(protected http: HttpClient) {}
 
@@ -49,11 +49,13 @@ export class ReportService {
     const options = createRequestOption(req);
     return this.http.get<any>(`${this.resourceUrl}/get_report`, {
       params: options,
-      responseType  : 'arraybuffer' as 'json'
+      responseType: 'arraybuffer' as 'json',
     });
   }
 
   getParams(id: number): Observable<CustomResponse<Report[]>> {
-    return this.http.get<CustomResponse<Report[]>>(`${this.resourceUrl}/get_params/${id}`);
+    return this.http.get<CustomResponse<Report[]>>(
+      `${this.resourceUrl}/get_params/${id}`
+    );
   }
 }

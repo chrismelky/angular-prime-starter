@@ -87,20 +87,20 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
-                    id="code"
+                    id="search"
                     type="text"
                     class="p-inputtext-sm"
                     pInputText
-                    [(ngModel)]="search['code']"
+                    [formControl]="searchControl"
                   />
-                  <label for="code">Code </label>
+                  <label for="search">Search</label>
                   <i
                     class="pi pi-times clear"
-                    (click)="search['code'] = undefined; onSearch()"
+                    (click)="searchControl.reset(); onSearch()"
                   ></i>
                 </span>
               </div>
-              <div class="p-field" fxFlex>
+              <!--<div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
                     id="name"
@@ -115,8 +115,8 @@
                     (click)="search['name'] = undefined; onSearch()"
                   ></i>
                 </span>
-              </div>
-              <div class="p-field" fxFlex>
+              </div>-->
+              <!--<div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <p-dropdown
                     id="ownership"
@@ -145,7 +145,7 @@
                   ></p-dropdown>
                   <label for="physical_state">Physical State </label>
                 </span>
-              </div>
+              </div>-->
             </div>
             <div
               fxLayout="row"

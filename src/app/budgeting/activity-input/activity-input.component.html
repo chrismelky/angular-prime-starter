@@ -7,18 +7,23 @@
           icon="pi pi-arrow-left"
           pButton
           (click)="back()"
-          class="p-button-rounded p-button-text p-button-icon-only"
+          class="
+            p-button-rounded p-button-plain p-button-text p-button-icon-only
+          "
         ></button>
+
         <p-divider fxFlex class="title" align="center">
-          <span fxLayout="column" fxLayoutAlign="centre center">
-            <small>Cost centre</small>
-            <strong>{{ adminHierarchyCostCentre?.section?.name }}</strong>
-          </span>
-        </p-divider>
-        <p-divider fxFlex class="title" align="center">
-          <span fxLayout="column" fxLayoutAlign="centre center">
-            <small>Budget Type</small>
-            <strong>{{ budget_type }}</strong>
+          <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+            <span fxLayout="column" fxLayoutAlign="centre center">
+              <small>Budget Type</small>
+              <strong>{{ budget_type }}</strong>
+            </span>
+            <i *ngIf="budgetIsLocked" class="pi pi-lock" style="color: red"></i>
+            <i
+              *ngIf="!budgetIsLocked"
+              class="pi pi-lock-open pi-primary"
+              style="color: green"
+            ></i>
           </span>
         </p-divider>
         <p-divider fxFlex class="title" align="center">
@@ -33,6 +38,13 @@
             <strong>{{
               adminHierarchyCostCentre?.admin_hierarchy?.name
             }}</strong>
+          </span>
+        </p-divider>
+
+        <p-divider fxFlex class="title" align="center">
+          <span fxLayout="column" fxLayoutAlign="centre center">
+            <small>Cost centre</small>
+            <strong>{{ adminHierarchyCostCentre?.section?.name }}</strong>
           </span>
         </p-divider>
 
@@ -67,7 +79,6 @@
             p-button-icon-only
           "
         ></button>
-        <!-- <i class="pi pi-lock"></i> -->
       </div>
     </ng-template>
     <ng-template pTemplate="content">
@@ -231,7 +242,7 @@
               }}</strong>
             </p-fieldset>
             <button
-              *ngIf="budgetStatus?.balanceAmount! > 0"
+              *ngIf="budgetStatus?.balanceAmount! >= 0 && !budgetIsLocked"
               pButton
               icon="pi pi-plus"
               class="p-button-raised"

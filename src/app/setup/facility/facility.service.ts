@@ -66,6 +66,19 @@ export class FacilityService {
     });
   }
 
+  getEntireHierarchyFacilities(parentAdminHierarchyId: number, facilityTypeId: number, perPage = 20, page = 1, search = '_'): Observable<CustomResponse<Facility[]>> {
+    const url = this.resourceUrl + '/getEntireHierarchyFacilities';
+    return this.http.get<CustomResponse<Facility[]>>(url, {
+      params: {
+        parentAdminHierarchyId: `${parentAdminHierarchyId}`,
+        facilityTypeId: `${facilityTypeId}`,
+        per_page: `${perPage}`,
+        page: `${page}`,
+        search: `${search}`,
+      },
+    });
+  }
+
   search(
     facilityTypeId: number,
     parent: string,

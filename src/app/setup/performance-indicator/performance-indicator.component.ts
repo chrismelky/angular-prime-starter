@@ -268,6 +268,7 @@ export class PerformanceIndicatorComponent implements OnInit, OnDestroy {
       ...new PerformanceIndicator(),
       objective_id: this.objective.id,
       section_id: this.section?.id,
+      is_active: true,
     };
     const ref = this.dialogService.open(PerformanceIndicatorUpdateComponent, {
       data: {

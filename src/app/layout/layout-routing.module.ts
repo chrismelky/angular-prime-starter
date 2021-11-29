@@ -1314,6 +1314,20 @@ const routes: Routes = [
             (m) => m.GenericPriorityModule
           ),
       },
+      {
+        path: "expenditure-centre",
+        loadChildren: () =>
+          import("../setup/expenditure-centre/expenditure-centre.module").then(
+            (m) => m.ExpenditureCentreModule
+          ),
+      },
+      {
+        path: "expenditure-centre-item",
+        loadChildren: () =>
+          import(
+            "../setup/expenditure-centre-item/expenditure-centre-item.module"
+          ).then((m) => m.ExpenditureCentreItemModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

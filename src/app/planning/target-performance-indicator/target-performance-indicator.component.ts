@@ -54,7 +54,6 @@ export class TargetPerformanceIndicatorComponent implements OnInit {
           this.targetPerformanceIndicators = (resp.data || []).map((i) => {
             return {
               ...i,
-              year_values: i.year_values ? JSON.parse(i.year_values) : [],
             };
           });
         },

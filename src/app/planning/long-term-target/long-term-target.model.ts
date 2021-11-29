@@ -7,6 +7,7 @@ export class LongTermTarget {
     public id?: number,
     public description?: string,
     public strategic_plan_id?: number,
+    public admin_hierarchy_id?: number,
     public objective_id?: number,
     public generic_target_id?: number,
     public code?: string,

@@ -12,51 +12,66 @@ import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
-import { SectorService } from 'src/app/setup/sector/sector.service';
-import { ReferenceType } from '../reference-type.model';
-import { ReferenceTypeService } from '../reference-type.service';
+import { ExpenditureCentre } from '../expenditure-centre.model';
+import { ExpenditureCentreService } from '../expenditure-centre.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { EnumService, PlanrepEnum } from '../../../shared/enum.service';
+import { Sector } from '../../sector/sector.model';
+import { FundSource } from '../../fund-source/fund-source.model';
+import { FundSourceService } from '../../fund-source/fund-source.service';
+import { SectorService } from '../../sector/sector.service';
 
 @Component({
-  selector: 'app-reference-type-update',
-  templateUrl: './reference-type-update.component.html',
+  selector: 'app-expenditure-centre-update',
+  templateUrl: './expenditure-centre-update.component.html',
 })
-export class ReferenceTypeUpdateComponent implements OnInit {
+export class ExpenditureCentreUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-
-  linkLevels?: PlanrepEnum[] = [];
-
+  sectors?: Sector[] = [];
+  fundSources?: FundSource[] = [];
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
-    code: [null, []],
-    multi_select: [false, [Validators.required]],
-    link_level: [null, [Validators.required]],
+    percentage: [null, [Validators.required]],
+    sectors: [[], [Validators.required]],
+    fund_sources: [[], [Validators.required]],
   });
 
   constructor(
-    protected referenceTypeService: ReferenceTypeService,
-    protected sectorService: SectorService,
+    protected expenditureCentreService: ExpenditureCentreService,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected enumService: EnumService
+    protected fundSourceService: FundSourceService,
+    protected sectorService: SectorService
   ) {}
 
   ngOnInit(): void {
-    this.linkLevels = this.enumService.get('linkLevels');
+    this.sectorService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe((resp) => {
+        this.sectors = resp.data;
+      });
+
+    this.fundSourceService
+      .query({
+        columns: ['id', 'name'],
+      })
+      .subscribe((resp) => {
+        this.fundSources = resp.data;
+      });
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
   /**
-   * When form is valid Create ReferenceType Update if exist else set form has error and return
+   * When form is valid Create ExpenditureCentre or Update Facility type if exist else set form has error and return
    * @returns
    */
   save(): void {
@@ -65,20 +80,20 @@ export class ReferenceTypeUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const referenceType = this.createFromForm();
-    if (referenceType.id !== undefined) {
+    const expenditureCentre = this.createFromForm();
+    if (expenditureCentre.id !== undefined) {
       this.subscribeToSaveResponse(
-        this.referenceTypeService.update(referenceType)
+        this.expenditureCentreService.update(expenditureCentre)
       );
     } else {
       this.subscribeToSaveResponse(
-        this.referenceTypeService.create(referenceType)
+        this.expenditureCentreService.create(expenditureCentre)
       );
     }
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<ReferenceType>>
+    result: Observable<CustomResponse<ExpenditureCentre>>
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (result) => this.onSaveSuccess(result),
@@ -108,25 +123,25 @@ export class ReferenceTypeUpdateComponent implements OnInit {
 
   /**
    * Set/Initialize form values
-   * @param referenceType
+   * @param expenditureCentre
    */
-  protected updateForm(referenceType: ReferenceType): void {
+  protected updateForm(expenditureCentre: ExpenditureCentre): void {
     this.editForm.patchValue({
-      id: referenceType.id,
-      name: referenceType.name,
-      code: referenceType.code,
-      multi_select: referenceType.multi_select,
-      link_level: referenceType.link_level,
+      id: expenditureCentre.id,
+      name: expenditureCentre.name,
+      percentage: expenditureCentre.percentage,
+      fund_sources: expenditureCentre.fund_sources,
+      sectors: expenditureCentre.sectors,
     });
   }
 
   /**
-   * Return form values as object of type ReferenceType
-   * @returns ReferenceType
+   * Return form values as object of type ExpenditureCentre
+   * @returns ExpenditureCentre
    */
-  protected createFromForm(): ReferenceType {
+  protected createFromForm(): ExpenditureCentre {
     return {
-      ...new ReferenceType(),
+      ...new ExpenditureCentre(),
       ...this.editForm.value,
     };
   }

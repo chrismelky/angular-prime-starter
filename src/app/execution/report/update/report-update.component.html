@@ -1,13 +1,8 @@
 <div class="dialog-content">
-  <form
-    name="editForm"
-    role="form"
-    novalidate
-    [formGroup]="editForm"
-  >
+  <form name="editForm" role="form" novalidate [formGroup]="editForm">
     <div fxLayout="column" fxLayoutGap="1rem">
-      <div class="p-field" fxFlex>
-        <span class="p-float-label" *ngIf="periods!.length > 0">
+      <div class="p-field" fxFlex *ngIf="periods!.length > 0">
+        <span class="p-float-label">
           <p-dropdown
             id="period_id"
             optionValue="id"
@@ -36,8 +31,8 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label" *ngIf="fundSources!.length > 0">
+      <div class="p-field" fxFlex *ngIf="fundSources!.length > 0">
+        <span class="p-float-label">
           <p-dropdown
             id="fund_source_id"
             optionValue="id"
@@ -66,8 +61,8 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label" *ngIf="sections!.length > 0">
+      <div class="p-field" fxFlex *ngIf="sections!.length > 0">
+        <span class="p-float-label">
           <p-dropdown
             id="section_id"
             optionValue="id"
@@ -96,8 +91,8 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label" *ngIf="departments!.length > 0">
+      <div class="p-field" fxFlex *ngIf="departments!.length > 0">
+        <span class="p-float-label">
           <p-dropdown
             id="department_id"
             optionValue="id"
@@ -126,8 +121,8 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label" *ngIf="sectors!.length > 0">
+      <div class="p-field" fxFlex *ngIf="sectors!.length > 0">
+        <span class="p-float-label">
           <p-dropdown
             id="sector_id"
             optionValue="id"
@@ -156,8 +151,8 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label" *ngIf="peFundSources!.length > 0">
+      <div class="p-field" fxFlex *ngIf="peFundSources!.length > 0">
+        <span class="p-float-label">
           <p-dropdown
             id="fund_source_pe"
             optionValue="id"
@@ -188,22 +183,26 @@
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
+
         <button
-          class="p-button-icon p-button-outlined"
-          icon="pi pi-file-excel"
-          label="EXCEL"
-          pButton
-          (click)="getExcelReport('xlsx')"
-        ></button>
-        <button
-          class="p-button-icon p-button-outlined"
+          style="color: #ff5722"
+          class="p-button-icon p-button-text"
           icon="pi pi-file-pdf"
           label="PDF"
           pButton
           (click)="getPdfReport('pdf')"
         ></button>
         <button
-          class="p-button-icon p-button-outlined"
+          style="color: #0c7239"
+          class="p-button-icon p-button-text"
+          icon="pi pi-file-excel"
+          label="EXCEL"
+          pButton
+          (click)="getExcelReport('xlsx')"
+        ></button>
+        <button
+          style="color: #1665c0"
+          class="p-button-icon p-button-text"
           icon="pi pi-file-o"
           label="WORD"
           pButton

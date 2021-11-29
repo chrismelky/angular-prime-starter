@@ -5,32 +5,33 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {combineLatest} from "rxjs";
+import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import {Paginator} from "primeng/paginator";
+import {Table} from "primeng/table";
 
-import { CustomResponse } from "../../utils/custom-response";
+import {CustomResponse} from "../../utils/custom-response";
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { AccountType } from "src/app/setup/account-type/account-type.model";
-import { AccountTypeService } from "src/app/setup/account-type/account-type.service";
-import { Category } from "src/app/setup/category/category.model";
-import { CategoryService } from "src/app/setup/category/category.service";
+import {HelperService} from "src/app/utils/helper.service";
+import {ToastService} from "src/app/shared/toast.service";
+import {AccountType} from "src/app/setup/account-type/account-type.model";
+import {AccountTypeService} from "src/app/setup/account-type/account-type.service";
+import {Category} from "src/app/setup/category/category.model";
+import {CategoryService} from "src/app/setup/category/category.service";
 
-import { GfsCode } from "./gfs-code.model";
-import { GfsCodeService } from "./gfs-code.service";
-import { GfsCodeUpdateComponent } from "./update/gfs-code-update.component";
+import {GfsCode} from "./gfs-code.model";
+import {GfsCodeService} from "./gfs-code.service";
+import {GfsCodeUpdateComponent} from "./update/gfs-code-update.component";
 import {UploadComponent} from "./upload/upload.component";
 import {GfsCodeCategory} from "../gfs-code-category/gfs-code-category.model";
 import {GfsCodeCategoryService} from "../gfs-code-category/gfs-code-category.service";
+import {GfsCodeSectionComponent} from "./gfs-code-section/gfs-code-section.component";
 
 @Component({
   selector: "app-gfs-code",
@@ -93,16 +94,17 @@ export class GfsCodeComponent implements OnInit {
     protected dialogService: DialogService,
     protected helper: HelperService,
     protected toastService: ToastService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.accountTypeService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<AccountType[]>) => (this.accountTypes = resp.data)
       );
     this.categoryService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<Category[]>) => (this.categories = resp.data)
       );
@@ -292,6 +294,21 @@ export class GfsCodeComponent implements OnInit {
     const ref = this.dialogService.open(UploadComponent, {
       width: '60%',
       header: 'GFS Codes Upload Form'
+    });
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadPage(this.page);
+      }
+    });
+  }
+
+  planningUnits(rowData: GfsCode) {
+    const ref = this.dialogService.open(GfsCodeSectionComponent, {
+      width: '60%',
+      header: rowData.code + ' - ' + rowData.name,
+      data: {
+        gfsCode: rowData
+      }
     });
     ref.onClose.subscribe((result) => {
       if (result) {

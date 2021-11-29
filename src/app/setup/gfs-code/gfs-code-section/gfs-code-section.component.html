@@ -17,83 +17,35 @@
           fxLayoutAlign="start center"
         >
           <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
-                id="name"
-                type="text"
-                class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['name']"
-              />
-              <label for="name">Name </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['name'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
-                id="code"
-                type="text"
-                class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['code']"
-              />
-              <label for="code">Code </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['code'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
-            <span class="p-float-label p-input-icon-right">
-              <input
-                id="aggregated_code"
-                type="text"
-                class="p-inputtext-sm"
-                pInputText
-                [(ngModel)]="search['aggregated_code']"
-              />
-              <label for="aggregated_code">Aggregated Code </label>
-              <i
-                class="pi pi-times clear"
-                (click)="search['aggregated_code'] = undefined; onSearch()"
-              ></i>
-            </span>
-          </div>
-          <div class="p-field">
             <span class="p-float-label">
               <p-dropdown
-                id="account_type_id"
+                id="gfs_code_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 (onChange)="onSearch()"
                 [showClear]="true"
                 [filter]="true"
-                [options]="accountTypes!"
-                [(ngModel)]="search['account_type_id']"
+                [options]="gfsCodes!"
+                [(ngModel)]="search['gfs_code_id']"
               ></p-dropdown>
-              <label for="account_type_id">Account Type</label>
+              <label for="gfs_code_id">Gfs Code </label>
             </span>
           </div>
           <div class="p-field">
             <span class="p-float-label">
               <p-dropdown
-                id="category_id"
+                id="section_id"
                 optionValue="id"
                 optionLabel="name"
                 [autoDisplayFirst]="false"
                 (onChange)="onSearch()"
                 [showClear]="true"
                 [filter]="true"
-                [options]="categories!"
-                [(ngModel)]="search['category_id']"
+                [options]="sections!"
+                [(ngModel)]="search['section_id']"
               ></p-dropdown>
-              <label for="category_id">Category </label>
+              <label for="section_id">Section </label>
             </span>
           </div>
         </div>
@@ -127,72 +79,35 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="gfsCodes!"
+      [value]="gfsCodeSections!"
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">GFS Codes</span>
-          <span class="card-header-text">
+          <span class="card-header-text">Planning Units</span>
           <button
             pButton
             icon="pi pi-plus"
-            class="p-button-raised p-button-text"
-            (click)="createOrUpdate()"
-            label="Add GFS Code"
-          ></button>
-            &nbsp;
-          <button
-            pButton
-            icon="pi pi-upload"
             class="p-button-raised"
-            (click)="upload()"
-            label="Upload GFS Codes"
+            [disabled]=""
+            (click)="create()"
+            label="Add Gfs Code Section"
           ></button>
-          </span>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="gfsCodes?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
-          </th>
-          <th
-            [pSortableColumn]="'category_id'">
-            Category <p-sortIcon [field]="'category_id'"></p-sortIcon>
-          </th>
-          <th
-            [pSortableColumn]="'account_type_id'">
-            Account Type <p-sortIcon [field]="'account_type_id'"></p-sortIcon>
-          </th>
+        <tr *ngIf="gfsCodeSections?.length">
+          <th>Planning Unit</th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td *ngFor="let col of columns">
-            {{ rowData[col.field] }}
-          </td>
-          <td>{{ rowData.account_type?.name }}</td>
-          <td>{{ rowData.category?.name }}</td>
+          <td>{{ rowData.section?.code }} - {{ rowData.section?.name }}</td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
-                <button
-                  pButton
-                  pTooltip="Planning Units"
-                  label="Planning Units"
-                  tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
-                  icon="pi pi-list
-              "
-                  (click)="planningUnits(rowData)"
-                ></button>
                 <button
                   pButton
                   pTooltip="Edit"
@@ -202,7 +117,7 @@
                   "
                   icon="pi pi-pencil
               "
-                  (click)="createOrUpdate(rowData)"
+                  (click)="update(rowData)"
                 ></button>
                 <button
                   pButton
@@ -225,7 +140,7 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="gfsCodes?.length! > 0"
+        [alwaysShow]="gfsCodeSections?.length! > 0"
         [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
@@ -240,6 +155,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete Gfs Code"
+  header="Confirmation Delete Gfs Code Section"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

@@ -13,9 +13,10 @@ import {SharedModule} from "../../shared/shared.module";
 import {GfsCodeComponent} from "./gfs-code.component";
 import {GfsCodeUpdateComponent} from "./update/gfs-code-update.component";
 import {UploadComponent} from "./upload/upload.component";
+import {GfsCodeSectionModule} from "./gfs-code-section/gfs-code-section.module";
 
 @NgModule({
-  imports: [SharedModule, CommonModule, GfsCodeRoutingModule],
+  imports: [SharedModule, CommonModule, GfsCodeRoutingModule, GfsCodeSectionModule],
   declarations: [GfsCodeComponent, GfsCodeUpdateComponent, UploadComponent],
   entryComponents: [GfsCodeUpdateComponent],
 })

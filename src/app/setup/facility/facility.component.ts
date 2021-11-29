@@ -34,6 +34,7 @@ import {FacilityCustomDetailValueComponent} from './facility-custom-detail-value
 import {TransferComponent} from './transfer/transfer.component';
 import {UploadComponent} from './upload/upload.component';
 import {FacilityBankAccountComponent} from './facility-bank-account/facility-bank-account.component';
+import {FormControl} from "@angular/forms";
 
 @Component({
   selector: 'app-facility',
@@ -75,6 +76,7 @@ export class FacilityComponent implements OnInit {
   predicate!: string; //Sort column
   ascending!: boolean; //Sort direction asc/desc
   search: any = {}; // items search objects
+  searchControl = new FormControl('');
 
   //Mandatory filter
   facility_type_id!: number;
@@ -150,7 +152,7 @@ export class FacilityComponent implements OnInit {
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.facilityService
-      .getEntireHierarchyFacilities(this.admin_hierarchy_id, this.facility_type_id, this.per_page, pageToLoad)
+      .getEntireHierarchyFacilities(this.admin_hierarchy_id, this.facility_type_id, this.per_page, pageToLoad, this.searchControl.value)
       .subscribe(
         (res: CustomResponse<Facility[]>) => {
           this.isLoading = false;

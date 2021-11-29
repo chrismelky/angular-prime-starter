@@ -226,6 +226,7 @@ export class FacilityComponent implements OnInit {
    */
   clearSearch(): void {
     this.search = {};
+    this.searchControl.reset();
     if (this.page !== 1) {
       this.paginator.changePage(0);
     } else {

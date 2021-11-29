@@ -30,6 +30,7 @@ import { FacilityBankAccountComponent } from './facility-bank-account/facility-b
 import {Facility} from "../../setup/facility/facility.model";
 import {FacilityService} from "../../setup/facility/facility.service";
 import {UserService} from "../../setup/user/user.service";
+import {FormControl} from "@angular/forms";
 
 @Component({
   selector: 'app-planning-facility',
@@ -49,7 +50,7 @@ export class FacilityComponent implements OnInit {
   ownerships?: PlanrepEnum[] = [];
   physicalStates?: PlanrepEnum[] = [];
   starRatings?: PlanrepEnum[] = [];
-
+  searchControl = new FormControl('');
   cols = [
     {
       field: 'code',
@@ -109,7 +110,7 @@ export class FacilityComponent implements OnInit {
    * @param page = page number
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
-  loadPage(page?: number, dontNavigate?: boolean): void {
+  /*loadPage(page?: number, dontNavigate?: boolean): void {
     if (!this.facility_type_id || !this.admin_hierarchy_id) {
       return;
     }
@@ -125,6 +126,27 @@ export class FacilityComponent implements OnInit {
         admin_hierarchy_id: this.admin_hierarchy_id,
         ...this.helper.buildFilter(this.search),
       })
+      .subscribe(
+        (res: CustomResponse<Facility[]>) => {
+          this.isLoading = false;
+          this.onSuccess(res, pageToLoad, !dontNavigate);
+        },
+        () => {
+          this.isLoading = false;
+          this.onError();
+        }
+      );
+  }*/
+
+  loadPage(page?: number, dontNavigate?: boolean): void {
+    if (!this.facility_type_id || !this.admin_hierarchy_id) {
+      return;
+    }
+    this.isLoading = true;
+    const pageToLoad: number = page ?? this.page ?? 1;
+    this.per_page = this.per_page ?? ITEMS_PER_PAGE;
+    this.facilityService
+      .getEntireHierarchyFacilities(this.admin_hierarchy_id, this.facility_type_id, this.per_page, pageToLoad, this.searchControl.value)
       .subscribe(
         (res: CustomResponse<Facility[]>) => {
           this.isLoading = false;
@@ -198,6 +220,7 @@ export class FacilityComponent implements OnInit {
    */
   clearSearch(): void {
     this.search = {};
+    this.searchControl.reset();
     if (this.page !== 1) {
       this.paginator.changePage(0);
     } else {

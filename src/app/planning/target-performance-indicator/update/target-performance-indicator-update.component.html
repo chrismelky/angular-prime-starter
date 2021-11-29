@@ -113,40 +113,115 @@
             >
           </span>
         </div>
-        <div
-          formArrayName="year_values"
-          fxLayout="row"
-          fxLayoutGap="10px"
-          fxLayoutAlign="start"
-        >
-          <div *ngFor="let c of yearValues.controls; let i = index">
-            <ng-container [formGroupName]="i">
-              <div class="p-field" fxFlex>
-                <span class="p-float-label">
-                  <input
-                    id="{{ i }}"
-                    type="text"
-                    pInputText
-                    formControlName="value"
-                  />
-                  <label for="{{ i }}">{{ c.get("name")?.value! }}</label>
-                </span>
-                <span
-                  *ngIf="
-                    c.get('value')!.invalid &&
-                    (c.get('value')!.dirty ||
-                      c.get('value')!.touched ||
-                      formError)
-                  "
-                >
-                  <small
-                    class="p-error"
-                    *ngIf="c.get('value')?.errors?.required"
-                    >{{ c.get("name")?.value! }} Value is required.</small
-                  >
-                </span>
-              </div>
-            </ng-container>
+
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <!-- Y0 -->
+          <div class="p-field" fxFlex *ngIf="financialYears.length > 0">
+            <span class="p-float-label">
+              <input id="y0" type="text" pInputText formControlName="y0" />
+              <label for="y0">{{ financialYears[0].name }}</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('y0')!.invalid &&
+                (editForm.get('y0')!.dirty ||
+                  editForm.get('y0')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('y0')?.errors?.required"
+                >{{ financialYears[0].name }} Value is required.</small
+              >
+            </span>
+          </div>
+          <!-- Y1 -->
+          <div class="p-field" fxFlex *ngIf="financialYears.length > 1">
+            <span class="p-float-label">
+              <input id="y1" type="text" pInputText formControlName="y1" />
+              <label for="y1">{{ financialYears[1].name }}</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('y1')!.invalid &&
+                (editForm.get('y1')!.dirty ||
+                  editForm.get('y1')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('y1')?.errors?.required"
+                >{{ financialYears[1].name }} Value is required.</small
+              >
+            </span>
+          </div>
+
+          <!-- Y2 -->
+          <div class="p-field" fxFlex *ngIf="financialYears.length > 2">
+            <span class="p-float-label">
+              <input id="y2" type="text" pInputText formControlName="y2" />
+              <label for="y2">{{ financialYears[2].name }}</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('y2')!.invalid &&
+                (editForm.get('y2')!.dirty ||
+                  editForm.get('y2')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('y2')?.errors?.required"
+                >{{ financialYears[2].name }} Value is required.</small
+              >
+            </span>
+          </div>
+
+          <!-- Y3 -->
+          <div class="p-field" fxFlex *ngIf="financialYears.length > 3">
+            <span class="p-float-label">
+              <input id="y3" type="text" pInputText formControlName="y3" />
+              <label for="y3">{{ financialYears[3].name }}</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('y3')!.invalid &&
+                (editForm.get('y3')!.dirty ||
+                  editForm.get('y3')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('y3')?.errors?.required"
+                >{{ financialYears[3].name }} Value is required.</small
+              >
+            </span>
+          </div>
+
+          <!-- Y4 -->
+          <div class="p-field" fxFlex *ngIf="financialYears.length > 4">
+            <span class="p-float-label">
+              <input id="y4" type="text" pInputText formControlName="y4" />
+              <label for="y4">{{ financialYears[4].name }}</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('y4')!.invalid &&
+                (editForm.get('y4')!.dirty ||
+                  editForm.get('y4')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('y4')?.errors?.required"
+                >{{ financialYears[4].name }} Value is required.</small
+              >
+            </span>
           </div>
         </div>
       </div>

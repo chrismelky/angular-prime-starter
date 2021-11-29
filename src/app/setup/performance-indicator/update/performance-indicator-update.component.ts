@@ -44,6 +44,7 @@ export class PerformanceIndicatorUpdateComponent implements OnInit {
     is_qualitative: [false, []],
     less_is_good: [false, []],
     is_active: [false, []],
+    data_source: [false, []],
   });
 
   constructor(
@@ -128,6 +129,7 @@ export class PerformanceIndicatorUpdateComponent implements OnInit {
       is_qualitative: performanceIndicator.is_qualitative,
       less_is_good: performanceIndicator.less_is_good,
       is_active: performanceIndicator.is_active,
+      data_source: performanceIndicator.data_source,
     });
   }
 
@@ -138,14 +140,7 @@ export class PerformanceIndicatorUpdateComponent implements OnInit {
   protected createFromForm(): PerformanceIndicator {
     return {
       ...new PerformanceIndicator(),
-      id: this.editForm.get(['id'])!.value,
-      description: this.editForm.get(['description'])!.value,
-      number: this.editForm.get(['number'])!.value,
-      objective_id: this.editForm.get(['objective_id'])!.value,
-      section_id: this.editForm.get(['section_id'])!.value,
-      is_qualitative: this.editForm.get(['is_qualitative'])!.value,
-      less_is_good: this.editForm.get(['less_is_good'])!.value,
-      is_active: this.editForm.get(['is_active'])!.value,
+      ...this.editForm.value,
     };
   }
 }

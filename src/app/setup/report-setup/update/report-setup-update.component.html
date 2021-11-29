@@ -12,7 +12,7 @@
           <textarea
             id="name"
             formControlName="name"
-            [rows]="1"
+            [rows]="10"
             [cols]="30"
             pInputTextarea
             [autoResize]="true"
@@ -55,12 +55,17 @@
 
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
-          <input id="query_params" type="text" pInputText formControlName="query_params" />
+          <input
+            id="query_params"
+            type="text"
+            pInputText
+            formControlName="query_params"
+          />
           <label for="query_params">Query Params </label>
         </span>
       </div>
-    <div class="p-field p-col-12 p-md-4" fxFlex>
-      <span class="p-float-label">
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
           <p-dropdown
             id="orientation"
             optionValue="value"
@@ -75,16 +80,16 @@
 
           <label for="orientation">Orientation</label>
         </span>
-      <span
-        *ngIf="
+        <span
+          *ngIf="
             editForm.get('orientation')!.invalid &&
             (editForm.get('orientation')!.dirty ||
               editForm.get('orientation')!.touched ||
               formError)
           "
-      >
+        >
         </span>
-    </div>
+      </div>
       <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <textarea

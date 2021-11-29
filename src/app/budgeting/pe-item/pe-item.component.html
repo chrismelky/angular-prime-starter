@@ -58,7 +58,7 @@
             </div>
 
             <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
-              <div *ngIf="showSbc" class="p-field" fxFlex="0 1 50%">
+              <div *ngIf="sbcRequired" class="p-field" fxFlex="0 1 50%">
                 <span class="p-float-label">
                   <p-dropdown
                     id="budget_class_id"
@@ -74,7 +74,7 @@
                 <label for="budget_class_id">Sub Budget Class </label>
                 </span>
               </div>
-              <div *ngIf="showFundSource" class="p-field" fxFlex="0 1 50%">
+              <div *ngIf="sbcRequired" class="p-field" fxFlex="0 1 50%">
                 <span class="p-float-label">
                   <p-dropdown
                     id="fund_source_id"
@@ -113,26 +113,28 @@
               </span>
             </p-divider>
 
-            <p-divider fxFlex  class="title">
+
+            <p-divider *ngIf="sbcRequired" fxFlex  class="title">
               <span fxLayout="column" fxLayoutAlign="centre center">
                 <small>Balance Amount</small>
-                <strong>{{balanceAmount | currency:' '}}</strong>
+                <strong>{{balanceAmountDisplay | currency:' '}}</strong>
               </span>
             </p-divider>
 
-            <p-divider fxFlex class="title">
+            <p-divider *ngIf="sbcRequired" fxFlex class="title">
               <span fxLayout="column" fxLayoutAlign="centre center">
                 <small>Amount Budgeted</small>
-                <strong>{{budgetedAmount | currency:' '}}</strong>
+                <strong>{{budgetedAmountDisplay | currency:' '}}</strong>
               </span>
             </p-divider>
 
-            <p-divider fxFlex class="title">
+            <p-divider *ngIf="sbcRequired" fxFlex class="title">
               <span fxLayout="column" fxLayoutAlign="centre center">
                 <small>Ceilling Amount</small>
                 <strong>{{cellingAmount | currency: ' '}}</strong>
               </span>
             </p-divider>
+
           </div>
         </span>
       </div>
@@ -174,9 +176,11 @@
                     [size]="14"
                     [disabled]="(!!input.formula)  || (financialYear !== null?false:true)"
                     [(ngModel)]="peValuesArray[i.uid!][input.id].value"
-                    (onBlur)="updateValue(peValuesArray[i.uid!][input.id])"
+                    (ngModelChange)="updateValue(peValuesArray[i.uid!][input.id])"
                     autocomplete="off"
                     inputId="{{ i.uid! }}-{{ input.id! }}"
+                    [min]="0"
+                    [max]="1000000000"
                     [inputStyle]="{'text-align': 'right','max-width':'2px !important'}">
                   </p-inputNumber>
                 </div>
@@ -211,18 +215,18 @@
               </div>
               <div *ngIf="input.select_option !== null">
                 <p-dropdown
-                            [options]="input.select_option"
-                            [showClear]="true"
-                            [filter]="true"
-                            [disabled]="financialYear !== null?false:true"
-                            optionLabel="name"
-                            optionGroupLabel="name"
-                            optionGroupChildren="children"
-                            optionValue="name"
-                            placeholder="{{input.select_option[0]?.name}}"
-                            [group]="true"
-                            [(ngModel)]="peValuesArray[i.uid!][input.id].value"
-                            (onChange)="updateValue(peValuesArray[i.uid!][input.id])"
+                  [options]="input.select_option"
+                  [showClear]="true"
+                  [filter]="true"
+                  [disabled]="financialYear !== null?false:true"
+                  optionLabel="name"
+                  optionGroupLabel="name"
+                  optionGroupChildren="children"
+                  optionValue="name"
+                  placeholder="{{input.select_option[0]?.name}}"
+                  [group]="true"
+                  [(ngModel)]="peValuesArray[i.uid!][input.id].value"
+                  (onChange)="updateValue(peValuesArray[i.uid!][input.id])"
                 >
                   <ng-template let-group pTemplate="group">
                     <div class="p-d-flex p-ai-center">
@@ -233,16 +237,9 @@
               </div>
             </td>
           </tr>
-          <tr *ngIf="round.length > 1">
+          <tr *ngIf="round.length > 1 && sbcRequired">
             <td>TOTAL</td>
             <td *ngFor="let total of peTableFields?.textInputs">
-              <!--input
-                id="{{total.id}}"
-                type="currency"
-                pInputText
-                [disabled]=true
-                [(ngModel)]="verticalTotal[total.id!]"
-              /-->
               <p-inputNumber
                 [size]="14"
                 [(ngModel)]="verticalTotal[total.id!]"

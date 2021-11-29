@@ -12,6 +12,9 @@ import {finalize} from "rxjs/operators";
 import {UserService} from "../../setup/user/user.service";
 import {User} from "../../setup/user/user.model";
 import {CeilingChain} from "../../setup/ceiling-chain/ceiling-chain.model";
+import {FacilityTypeSectionService} from "../../setup/facility-type/facility-type-section/facility-type-section.service";
+import {SectionLevel} from "../../setup/section-level/section-level.model";
+import {SectionLevelService} from "../../setup/section-level/section-level.service";
 
 @Component({
   selector: 'app-projection-allocation',
@@ -35,6 +38,8 @@ export class ProjectionAllocationComponent implements OnInit {
   completeCeiling: any[] = [];
   currentUser!: User;
   totalProjection:any = {};
+  sectionLevels: SectionLevel[]=[];
+
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
     protected financialYearService: FinancialYearService,
@@ -44,6 +49,8 @@ export class ProjectionAllocationComponent implements OnInit {
     private fundSourceBudgetClassService: FundSourceBudgetClassService,
     protected projectionService: ProjectionService,
     protected userService:UserService,
+    protected facilityTypeSectionService: FacilityTypeSectionService,
+    protected sectionLevelService: SectionLevelService
   ) {
     this.fund_source_id=this.dialogConfig.data.fund_source_id;
     this.section_id = this.dialogConfig.data.section_id;
@@ -58,6 +65,12 @@ export class ProjectionAllocationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sectionLevelService
+      .query({column:['id','name','is_cost_center','position']})
+      .subscribe(
+        (resp: CustomResponse<SectionLevel[]>) =>
+          (this.sectionLevels = resp.data??[])
+      );
     this.loadData();
     this.getTotalProjection();
   }
@@ -85,7 +98,7 @@ export class ProjectionAllocationComponent implements OnInit {
               (resp: CustomResponse<any>) => {
                 this.ceiling = resp.data ?? [];
                 this.completeCeiling = this.ceilingChain.section.map((s: any) => ({id:s.id,name:s.name,ceiling_chain_id:this.ceilingChain.id,next:this.ceilingChain.next_id!==null?true:false,ceiling:
-                    budgetClasses.map((bc: { budget_class_id: any; id: any; budget_class: any; }) => {
+                    budgetClasses.map((bc: { budget_class_id: any; id: any; budget_class: any;fund_source_id:any }) => {
                       const ceiling = this.ceiling!.find(c => c.ceiling.budget_class_id === bc.budget_class_id && s.id === c.section_id);
                       let data = {
                         ceiling_id: bc.id,
@@ -96,7 +109,11 @@ export class ProjectionAllocationComponent implements OnInit {
                         facility_id:this.facility_id,
                         financial_year_id:this.financial_year_id,
                         admin_hierarchy_id:this.admin_hierarchy_id,
+                        budget_class_id:bc.budget_class_id,
+                        planning_admin_hierarchy_id:this.admin_hierarchy_id,
+                        fund_source_id :bc.fund_source_id,
                         adminHierarchyPosition:this.adminHierarchyPosition,
+                        is_cost_center:this.sectionLevels.find((sl)=>sl.position === s.position)!.is_cost_centre,
                         section_id:s.id,
                         admin_hierarchy_ceiling_id:ceiling !== undefined?ceiling.id:undefined
                       };
@@ -135,8 +152,8 @@ export class ProjectionAllocationComponent implements OnInit {
   getPercent(percent:number,data:any,section_id:number,ceilingIndex:number,secIndex:number){
     const x = this.completeCeiling.findIndex((s)=>s.id ===section_id);
     const i = this.completeCeiling[x].ceiling.findIndex((item: { ceiling_id: any; }) => item.ceiling_id === data.ceiling_id);
-    this.completeCeiling[secIndex].ceiling[i].percent=percent;
-    this.completeCeiling[secIndex].ceiling[i].amount=(percent * this.projectionAmount)/100;
+    this.completeCeiling[secIndex].ceiling[i].percent=+percent;
+    this.completeCeiling[secIndex].ceiling[i].amount=((+percent) * this.projectionAmount)/100;
     this.totalAllocatedAmount = this.getTotalAllocated(this.completeCeiling);
   }
   amountChange(amount:number,data:any,section_id:number,ceilingIndex:number,secIndex:number){

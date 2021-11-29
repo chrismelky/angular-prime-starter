@@ -31,7 +31,7 @@
               <ng-template let-item pTemplate="item">
                 <div fxLayout="row" fxLayoutAlign="space-between center">
                   <span class=""> {{item.section.name}} </span>
-                  <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked" (click)="allocateCeiling(currentCeilingChain?.section_level_position.position,op,$event,item,currentCeilingChain!)" class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge  *ngIf="currentCeilingChain?.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
+                  <span *ngIf="section_level_position! <= item.section.position!"  class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(currentCeilingChain?.section_level_position.position,op,$event,item,currentCeilingChain!)"  *ngIf="currentCeilingChain?.next && !item?.is_locked" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
                 </div>
               </ng-template>
               <ng-template let-item pTemplate="selectedItem">
@@ -128,11 +128,11 @@
                   <td>{{rowData?.facility}}</td>
                   <td>
                     <div  class="p-field" fxFlex style="text-align: end;">
-                      <span *ngIf="rowData.is_locked">
+                      <span *ngIf="rowData.is_locked || rowData.is_approved">
                         {{rowData!.amount | currency:"TZS":"TSH"}}
                       </span>
                       <p-inputNumber
-                        *ngIf="!rowData.is_locked"
+                        *ngIf="!rowData.is_locked && !rowData.is_approved"
                         mode="decimal"
                         prefix="TSH "
                         [(ngModel)]="rowData!.amount"
@@ -147,11 +147,11 @@
                   </td>
                   <td >
                     <div  class="p-field" fxFlex style="text-align: end;">
-                      <span *ngIf="rowData.is_locked">
+                      <span *ngIf="rowData.is_locked || rowData.is_approved">
                         {{rowData!.percent | number : '1.2-2'}} %
                       </span>
                       <p-inputNumber
-                        *ngIf="!rowData.is_locked"
+                        *ngIf="!rowData.is_locked && !rowData.is_approved"
                         mode="decimal"
                         suffix=" %"
                         [(ngModel)]="rowData.percent"
@@ -175,7 +175,7 @@
   </div>
 </div>
 <div class="p-dialog-footer">
-  <p-button (click)="close()"  label="Save & Close" icon="pi pi-save"></p-button>
+  <p-button (click)="close()"  label="Close" icon="pi pi-times"></p-button>
 </div>
 
 <p-overlayPanel
@@ -234,13 +234,13 @@
             <td>{{rowData?.section?.name}}</td>
             <td  styleClass="col-button">
               <div  class="p-field" fxFlex style="text-align: end;">
-                      <span *ngIf="rowData.is_locked">
+                      <span *ngIf="rowData.is_locked || rowData.is_approved">
                          <div class="p-field" fxFlex style="text-align:end">
                         {{rowData!.amount | currency:"TZS":"TSH"}}
                          </div>
                       </span>
                     <p-inputNumber
-                      *ngIf="!rowData.is_locked"
+                      *ngIf="!rowData.is_locked && !rowData.is_approved"
                       mode="decimal"
                       prefix="TSH "
                       [(ngModel)]="rowData!.amount"
@@ -254,13 +254,13 @@
             </td>
             <td>
               <div  class="p-field" fxFlex style="text-align: end;">
-                <span *ngIf="rowData.is_locked">
+                <span *ngIf="rowData.is_locked || rowData.is_approved">
                    <div class="p-field" fxFlex style="text-align:end">
                   {{rowData!.amount | currency:"TZS":"TSH"}}
                    </div>
                 </span>
                 <p-inputNumber
-                  *ngIf="!rowData.is_locked"
+                  *ngIf="!rowData.is_locked && !rowData.is_approved"
                 mode="decimal"
                 suffix=" %"
                 [(ngModel)]="rowData.percent"

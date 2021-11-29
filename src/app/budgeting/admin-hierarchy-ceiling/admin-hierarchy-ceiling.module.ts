@@ -18,6 +18,7 @@ import {SplitButtonModule} from "primeng/splitbutton";
 import { UploadCeilingComponent } from './update/upload-ceiling.component';
 import { LockCeilingComponent } from './update/lock-ceiling.component';
 import { AdminCeilingDisseminationComponent } from './update/admin-ceiling-dissemination.component';
+import { AddAttachmentComponent } from './add-attachment/add-attachment.component';
 
 @NgModule({
     imports: [SharedModule, CommonModule, AdminHierarchyCeilingRoutingModule, BadgeModule, SplitButtonModule],
@@ -28,6 +29,7 @@ import { AdminCeilingDisseminationComponent } from './update/admin-ceiling-disse
     UploadCeilingComponent,
     LockCeilingComponent,
     AdminCeilingDisseminationComponent,
+    AddAttachmentComponent,
   ],
   entryComponents: [AdminHierarchyCeilingUpdateComponent],
 })

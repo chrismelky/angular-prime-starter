@@ -8,34 +8,38 @@
       [autoLayout]="true"
       [loading]="isLoading"
       [columns]="cols"
-      [value]="userRoles!"
-      (onLazyLoad)="onSortChange($event)"
+      [value]="facilityBankAccounts!"
       [customSort]="true"
     >
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">User Roles</span>
+          <span class="card-header-text">{{facility.name}} Bank Accounts</span>
           <button
             pButton
             icon="pi pi-plus"
             class="p-button-raised"
-            [disabled]="currentUser.id===user!.id"
-            (click)="create()"
-            label="Add User Role"
+            (click)="createOrUpdate()"
+            label="Add Bank Account"
           ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="userRoles?.length">
-          <th>
-            Role
+        <tr *ngIf="facilityBankAccounts?.length">
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header
+            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-          <td>{{ rowData.role?.name }}</td>
+          <td *ngFor="let col of columns">
+            {{ rowData[col.field] }}
+          </td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
@@ -43,18 +47,16 @@
                   pButton
                   pTooltip="Edit"
                   tooltipPosition="bottom"
-                  [disabled]="currentUser.id===user!.id"
                   class="
                     p-button-text p-button-plain p-button-rounded p-button-icon
                   "
                   icon="pi pi-pencil
               "
-                  (click)="edit(rowData)"
+                  (click)="createOrUpdate(rowData)"
                 ></button>
                 <button
                   pButton
                   pTooltip="Delete"
-                  [disabled]="currentUser.id===user!.id"
                   tooltipPosition="bottom"
                   class="
                     p-button-text p-button-plain p-button-rounded p-button-icon
@@ -73,8 +75,8 @@
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
       <p-paginator
         #paginator
-        [alwaysShow]="userRoles?.length! > 0"
-        [rows]="perPage"
+        [alwaysShow]="facilityBankAccounts?.length! > 0"
+        [rows]="per_page"
         dropdownAppendTo="body"
         [showCurrentPageReport]="true"
         [totalRecords]="totalItems"
@@ -88,6 +90,6 @@
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"
-  header="Confirmation Delete User Role"
+  header="Confirmation Delete Facility Bank Account"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

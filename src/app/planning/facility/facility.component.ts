@@ -5,38 +5,34 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest} from 'rxjs';
-import {ConfirmationService, LazyLoadEvent} from 'primeng/api';
-import {DialogService} from 'primeng/dynamicdialog';
-import {Paginator} from 'primeng/paginator';
-import {Table} from 'primeng/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from '../../utils/custom-response';
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import {HelperService} from 'src/app/utils/helper.service';
-import {ToastService} from 'src/app/shared/toast.service';
-import {EnumService, PlanrepEnum} from 'src/app/shared/enum.service';
-import {FacilityType} from 'src/app/setup/facility-type/facility-type.model';
-import {FacilityTypeService} from 'src/app/setup/facility-type/facility-type.service';
-import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-
-import {Facility} from './facility.model';
-import {FacilityService} from './facility.service';
-import {FacilityUpdateComponent} from './update/facility-update.component';
-import {UserService} from '../user/user.service';
-import {FacilityCustomDetailValueComponent} from './facility-custom-detail-value/facility-custom-detail-value.component';
-import {TransferComponent} from './transfer/transfer.component';
-import {UploadComponent} from './upload/upload.component';
-import {FacilityBankAccountComponent} from './facility-bank-account/facility-bank-account.component';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
+import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
+import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
+import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { FacilityCustomDetailValueComponent } from './facility-custom-detail-value/facility-custom-detail-value.component';
+import { FacilityBankAccountComponent } from './facility-bank-account/facility-bank-account.component';
+import {Facility} from "../../setup/facility/facility.model";
+import {FacilityService} from "../../setup/facility/facility.service";
+import {UserService} from "../../setup/user/user.service";
 
 @Component({
-  selector: 'app-facility',
+  selector: 'app-planning-facility',
   templateUrl: './facility.component.html',
 })
 export class FacilityComponent implements OnInit {
@@ -92,12 +88,11 @@ export class FacilityComponent implements OnInit {
     protected toastService: ToastService,
     protected enumService: EnumService,
     protected userService: UserService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.facilityTypeService
-      .query({columns: ['id', 'name', 'code']})
+      .query({ columns: ['id', 'name', 'code'] })
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
@@ -114,7 +109,7 @@ export class FacilityComponent implements OnInit {
    * @param page = page number
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
-  loadPageBK(page?: number, dontNavigate?: boolean): void {
+  loadPage(page?: number, dontNavigate?: boolean): void {
     if (!this.facility_type_id || !this.admin_hierarchy_id) {
       return;
     }
@@ -130,27 +125,6 @@ export class FacilityComponent implements OnInit {
         admin_hierarchy_id: this.admin_hierarchy_id,
         ...this.helper.buildFilter(this.search),
       })
-      .subscribe(
-        (res: CustomResponse<Facility[]>) => {
-          this.isLoading = false;
-          this.onSuccess(res, pageToLoad, !dontNavigate);
-        },
-        () => {
-          this.isLoading = false;
-          this.onError();
-        }
-      );
-  }
-
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.facility_type_id || !this.admin_hierarchy_id) {
-      return;
-    }
-    this.isLoading = true;
-    const pageToLoad: number = page ?? this.page ?? 1;
-    this.per_page = this.per_page ?? ITEMS_PER_PAGE;
-    this.facilityService
-      .getEntireHierarchyFacilities(this.admin_hierarchy_id, this.facility_type_id, this.per_page, pageToLoad)
       .subscribe(
         (res: CustomResponse<Facility[]>) => {
           this.isLoading = false;
@@ -266,54 +240,6 @@ export class FacilityComponent implements OnInit {
   }
 
   /**
-   * Creating or updating Facility
-   * @param facility ; If undefined initize new model to create else edit existing model
-   */
-  createOrUpdate(facility?: Facility): void {
-    const data = {
-      facility: facility ? facility : undefined,
-      facility_type_id: this.facility_type_id,
-      admin_hierarchy_id: this.admin_hierarchy_id,
-      facilityTypes: this.facilityTypes,
-    };
-    const ref = this.dialogService.open(FacilityUpdateComponent, {
-      data,
-      header: 'Create/Update Facility',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
-  }
-
-  /**
-   * Delete Facility
-   * @param facility
-   */
-  delete(facility: Facility): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this Facility?',
-      accept: () => {
-        this.facilityService.delete(facility.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
-      },
-    });
-  }
-
-  updateView(): void {
-    this.isUpdatingView = true;
-    this.facilityService.updateView().subscribe(
-      (resp) => {
-        this.isUpdatingView = false;
-      },
-      (error) => (this.isUpdatingView = false)
-    );
-  }
-
-  /**
    * When successfully data loaded
    * @param resp
    * @param page
@@ -327,7 +253,7 @@ export class FacilityComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/facility'], {
+      this.router.navigate(['/planning/facility'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -359,32 +285,6 @@ export class FacilityComponent implements OnInit {
     });
     ref.onClose.subscribe((result) => {
       this.loadPage(this.page);
-    });
-  }
-
-  transfer(rowData: Facility): void {
-    const data = {
-      facility: rowData,
-    };
-    const ref = this.dialogService.open(TransferComponent, {
-      data,
-      width: '60%',
-      header: 'Facility Transfer Form',
-    });
-    ref.onClose.subscribe((result) => {
-      this.loadPage(this.page);
-    });
-  }
-
-  upload(): void {
-    const ref = this.dialogService.open(UploadComponent, {
-      width: '60%',
-      header: 'Facility Upload Form',
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
     });
   }
 

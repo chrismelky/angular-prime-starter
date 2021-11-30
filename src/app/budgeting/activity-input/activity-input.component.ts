@@ -8,7 +8,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import {
+  ConfirmationService,
+  LazyLoadEvent,
+  MenuItem,
+  TreeNode,
+} from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
@@ -58,6 +63,7 @@ export class ActivityInputComponent implements OnInit {
   budgetClassIsLoading = false;
   fundSourceIsLoading = false;
   budgetStatus?: BudgetStatus;
+  expenditureCentres?: TreeNode[] = [];
 
   activityInputs?: ActivityInput[] = [];
 
@@ -223,6 +229,7 @@ export class ActivityInputComponent implements OnInit {
         admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
         budget_type: this.budget_type,
         section_id: this.adminHierarchyCostCentre.section_id,
+        sector_id: this.adminHierarchyCostCentre.section?.sector_id,
         facility_id: this.facility_id,
         fund_source_id: this.fund_source_id,
         budget_class_id: this.facilityActivity.budget_class_id,
@@ -230,6 +237,21 @@ export class ActivityInputComponent implements OnInit {
       })
       .subscribe((resp) => {
         this.budgetStatus = resp.data;
+        this.expenditureCentres = (resp.data?.expenditureCentres || []).map(
+          (ec) => {
+            return {
+              data: { ...ec, padding_left: 10 },
+              expanded: true,
+              children: ec.items?.map((i) => {
+                return {
+                  data: { ...i, padding_left: 20 },
+                  leaf: true,
+                };
+              }),
+              leaf: false,
+            };
+          }
+        );
       });
   }
 
@@ -397,6 +419,7 @@ export class ActivityInputComponent implements OnInit {
       fund_source_id: this.fund_source_id,
       activity_id: this.facilityActivity.id,
       activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
+      budget_type: this.budget_type,
     };
     const ref = this.dialogService.open(ActivityInputUpdateComponent, {
       data: {

@@ -40,6 +40,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   errors = [];
   budgetIsLocked? = false;
   isProcurement? = false;
+  isProcurementMethod? = false;
   balanceAmount = 0.0;
 
   activities?: Activity[] = [];
@@ -87,6 +88,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     fund_source_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
     admin_hierarchy_id: [null, [Validators.required]],
+    budget_type: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
     facility_id: [null, [Validators.required]],
     period: [null, [Validators.required]], //validator field to sum up into 100
@@ -126,6 +128,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     if (input.id) {
       this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
       this.updateProcurementValidity(input.gfs_code_id!);
+      this.updateProcumentMethodValidity(input.procurement_type_id!);
       this.updateTotalYrOne(
         input.unit_price!,
         input.quantity_yr_one!,
@@ -314,9 +317,6 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.editForm
         .get('procurement_type_id')
         ?.setValidators([Validators.required]);
-      this.editForm
-        .get('procurement_method_id')
-        ?.setValidators([Validators.required]);
     } else {
       this.isProcurement = false;
       this.editForm.get('procurement_type_id')?.clearValidators();
@@ -325,6 +325,24 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.editForm.get('procurement_method_id')?.reset();
     }
     this.editForm.get('procurement_type_id')?.updateValueAndValidity();
+    this.editForm.get('procurement_method_id')?.updateValueAndValidity();
+  }
+
+  /** TODO change to dynamic loading methods by type and set validity if exist */
+  updateProcumentMethodValidity(procurementTypeId: number): void {
+    const procurementType = this.procurementTypes?.find(
+      (type) => type.id === procurementTypeId
+    );
+    if (procurementType && procurementType.name?.includes('Works')) {
+      this.isProcurementMethod = true;
+      this.editForm
+        .get('procurement_method_id')
+        ?.setValidators([Validators.required]);
+    } else {
+      this.editForm.get('procurement_method_id')?.clearValidators();
+      this.editForm.get('procurement_method_id')?.reset();
+      this.isProcurementMethod = false;
+    }
     this.editForm.get('procurement_method_id')?.updateValueAndValidity();
   }
 
@@ -369,6 +387,7 @@ export class ActivityInputUpdateComponent implements OnInit {
       fund_source_id: activityInput.fund_source_id,
       financial_year_id: activityInput.financial_year_id,
       admin_hierarchy_id: activityInput.admin_hierarchy_id,
+      budget_type: activityInput.budget_type,
       facility_id: activityInput.facility_id,
       section_id: activityInput.section_id,
       budget_class_id: activityInput.budget_class_id,

@@ -87,6 +87,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     fund_source_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
     admin_hierarchy_id: [null, [Validators.required]],
+    budget_type: [null, [Validators.required]],
     section_id: [null, [Validators.required]],
     facility_id: [null, [Validators.required]],
     period: [null, [Validators.required]], //validator field to sum up into 100
@@ -369,6 +370,7 @@ export class ActivityInputUpdateComponent implements OnInit {
       fund_source_id: activityInput.fund_source_id,
       financial_year_id: activityInput.financial_year_id,
       admin_hierarchy_id: activityInput.admin_hierarchy_id,
+      budget_type: activityInput.budget_type,
       facility_id: activityInput.facility_id,
       section_id: activityInput.section_id,
       budget_class_id: activityInput.budget_class_id,

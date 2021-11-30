@@ -1,4 +1,5 @@
 import { Comment } from 'src/app/planning/scrutinization/comment/comment.model';
+import { ExpenditureCentre } from 'src/app/setup/expenditure-centre/expenditure-centre.model';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { GfsCode } from 'src/app/setup/gfs-code/gfs-code.model';
 
@@ -27,6 +28,7 @@ export class ActivityInput {
     public fund_source_id?: number,
     public financial_year_id?: number,
     public admin_hierarchy_id?: number,
+    public budget_type?: string,
     public facility_id?: number,
     public section_id?: number,
     public budget_class_id?: number,
@@ -46,4 +48,5 @@ export class BudgetStatus {
   public activityAmount?: number;
   public ceilingAmount?: number;
   public balanceAmount?: number;
+  public expenditureCentres?: ExpenditureCentre[] = [];
 }

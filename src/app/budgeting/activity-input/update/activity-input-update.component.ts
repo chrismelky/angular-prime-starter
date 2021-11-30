@@ -40,6 +40,7 @@ export class ActivityInputUpdateComponent implements OnInit {
   errors = [];
   budgetIsLocked? = false;
   isProcurement? = false;
+  isProcurementMethod? = false;
   balanceAmount = 0.0;
 
   activities?: Activity[] = [];
@@ -127,6 +128,7 @@ export class ActivityInputUpdateComponent implements OnInit {
     if (input.id) {
       this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
       this.updateProcurementValidity(input.gfs_code_id!);
+      this.updateProcumentMethodValidity(input.procurement_type_id!);
       this.updateTotalYrOne(
         input.unit_price!,
         input.quantity_yr_one!,
@@ -315,9 +317,6 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.editForm
         .get('procurement_type_id')
         ?.setValidators([Validators.required]);
-      this.editForm
-        .get('procurement_method_id')
-        ?.setValidators([Validators.required]);
     } else {
       this.isProcurement = false;
       this.editForm.get('procurement_type_id')?.clearValidators();
@@ -326,6 +325,24 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.editForm.get('procurement_method_id')?.reset();
     }
     this.editForm.get('procurement_type_id')?.updateValueAndValidity();
+    this.editForm.get('procurement_method_id')?.updateValueAndValidity();
+  }
+
+  /** TODO change to dynamic loading methods by type and set validity if exist */
+  updateProcumentMethodValidity(procurementTypeId: number): void {
+    const procurementType = this.procurementTypes?.find(
+      (type) => type.id === procurementTypeId
+    );
+    if (procurementType && procurementType.name?.includes('Works')) {
+      this.isProcurementMethod = true;
+      this.editForm
+        .get('procurement_method_id')
+        ?.setValidators([Validators.required]);
+    } else {
+      this.editForm.get('procurement_method_id')?.clearValidators();
+      this.editForm.get('procurement_method_id')?.reset();
+      this.isProcurementMethod = false;
+    }
     this.editForm.get('procurement_method_id')?.updateValueAndValidity();
   }
 

@@ -350,19 +350,58 @@
         </div>
       </div>
 
+      <!-- forward and procurements -->
       <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
         <!-- Procurement methods -->
         <div
           fxLayout="column"
           fxLayoutGap="20px"
           fxFlex="0 1 40%"
+          fxLayouAlign="start"
           *ngIf="isProcurement"
         >
-          <p-divider fxFlex class="title" align="center">
+          <p-divider class="title" align="center">
             <small>Procument Detail</small>
           </p-divider>
-          <!-- Procument method  -->
+
+          <!-- Procument type  -->
           <div class="p-field">
+            <span class="p-float-label">
+              <p-dropdown
+                #procurementType
+                appendTo="body"
+                id="procurement_type_id"
+                optionLabel="name"
+                optionValue="id"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                (onChange)="
+                  updateProcumentMethodValidity(procurementType.value)
+                "
+                class="p-inputtext-sm"
+                [options]="procurementTypes!"
+                formControlName="procurement_type_id"
+              >
+              </p-dropdown>
+              <label for="procurement_type_id">Procurement Type</label>
+            </span>
+            <span
+              *ngIf="
+                editForm.get('procurement_type_id')!.invalid &&
+                (editForm.get('procurement_type_id')!.dirty ||
+                  editForm.get('procurement_type_id')!.touched ||
+                  formError)
+              "
+            >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('procurement_type_id')?.errors?.required"
+                >Procurement Type is required</small
+              >
+            </span>
+          </div>
+          <!-- Procument method  -->
+          <div *ngIf="isProcurementMethod" class="p-field">
             <span class="p-float-label">
               <p-dropdown
                 appendTo="body"
@@ -390,38 +429,6 @@
                 class="p-error"
                 *ngIf="editForm.get('procurement_method_id')?.errors?.required"
                 >Procurement Method is required</small
-              >
-            </span>
-          </div>
-          <!-- Procument type  -->
-          <div class="p-field">
-            <span class="p-float-label">
-              <p-dropdown
-                appendTo="body"
-                id="procurement_type_id"
-                optionLabel="name"
-                optionValue="id"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="procurementTypes!"
-                formControlName="procurement_type_id"
-              >
-              </p-dropdown>
-              <label for="procurement_type_id">Procurement Type</label>
-            </span>
-            <span
-              *ngIf="
-                editForm.get('procurement_type_id')!.invalid &&
-                (editForm.get('procurement_type_id')!.dirty ||
-                  editForm.get('procurement_type_id')!.touched ||
-                  formError)
-              "
-            >
-              <small
-                class="p-error"
-                *ngIf="editForm.get('procurement_type_id')?.errors?.required"
-                >Procurement Type is required</small
               >
             </span>
           </div>

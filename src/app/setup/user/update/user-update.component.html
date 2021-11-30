@@ -36,12 +36,12 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('email')?.errors?.required"
-                >Email is required.</small
+              >Email is required.</small
               >
               <small
                 class="p-error"
                 *ngIf="editForm.get('email')?.errors?.email"
-                >Invalid Email</small
+              >Invalid Email</small
               >
             </span>
           </div>
@@ -67,7 +67,7 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('first_name')?.errors?.required"
-                >First Name is required.</small
+              >First Name is required.</small
               >
             </span>
           </div>
@@ -93,7 +93,7 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('last_name')?.errors?.required"
-                >Last Name is required.</small
+              >Last Name is required.</small
               >
             </span>
           </div>
@@ -130,13 +130,8 @@
           <!-- Check number -->
           <div class="p-field" fxFlex>
             <span class="p-float-label">
-              <input
-                id="cheque_number"
-                type="text"
-                pInputText
-                formControlName="cheque_number"
-              />
-              <label for="cheque_number">Cheque Number </label>
+              <p-inputNumber formControlName="cheque_number" id="cheque_number" mode="decimal" [min]="0" inputId="withoutgrouping" [useGrouping]="false"></p-inputNumber>
+              <label for="cheque_number">Check Number</label>
             </span>
             <span
               *ngIf="
@@ -149,7 +144,7 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('cheque_number')?.errors?.required"
-                >Cheque Number is required.</small
+              >Cheque Number is required.</small
               >
             </span>
           </div>
@@ -243,7 +238,7 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('section_position')?.errors?.required"
-                >Planning Unit Level is required.</small
+              >Planning Unit Level is required.</small
               >
             </span>
           </div>
@@ -276,7 +271,7 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('section_id')?.errors?.required"
-                >Planning Unit is required.</small
+              >Planning Unit is required.</small
               >
             </span>
           </div>
@@ -310,7 +305,7 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('role_id')?.errors?.required"
-                >Role required.</small
+              >Role required.</small
               >
             </span>
           </div>
@@ -382,7 +377,7 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('facilities')?.errors?.required"
-                >Facilities are required</small
+              >Facilities are required</small
               >
             </span>
           </div>
@@ -417,7 +412,7 @@
               <small
                 class="p-error"
                 *ngIf="editForm.get('facility_id')?.errors?.required"
-                >Facility is required</small
+              >Facility is required</small
               >
             </span>
           </div>

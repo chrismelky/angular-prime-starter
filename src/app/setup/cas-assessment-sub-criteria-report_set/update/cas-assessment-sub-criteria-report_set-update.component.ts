@@ -80,6 +80,7 @@ export class CasAssessmentSubCriteriaReportSetUpdateComponent
               this.nodes.push({
                 id: this.casPlanContents![i].id,
                 label: this.casPlanContents![i].name,
+                report_id: this.casPlanContents![i].report_id,
                 children: this.casPlanContents![i].children,
                 leaf: false,
               });

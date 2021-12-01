@@ -179,28 +179,25 @@
             fxLayoutGap="10px"
             fxLayoutAlign="end"
           >
+            <button
+              *ngIf="budgetStatus?.expenditureCentres?.length"
+              type="button"
+              pButton
+              icon="pi pi-chart-bar"
+              class="p-button-outlined p-button-success"
+              label="Allocation Guideline"
+              (click)="expeCentrePanel.toggle($event)"
+            ></button>
+
             <p-fieldset
-              class="total-fieldset ceiling-total"
-              fxFlex="0 1 20%"
-              legend="Ceiling Total"
-            >
-              <strong>{{ budgetStatus?.ceilingAmount | currency: " " }}</strong>
-            </p-fieldset>
-            <p-fieldset
-              class="total-fieldset used-total"
-              fxFlex="0 1 20%"
-              legend="Used Total"
-            >
-              <strong>{{ budgetStatus?.usedAmount | currency: " " }}</strong>
-            </p-fieldset>
-            <p-fieldset
-              class="total-fieldset"
+              (click)="ceilingPanel.toggle($event)"
+              class="total-fieldset cursor-point"
               [ngClass]="{
                 'balance-warn': budgetStatus?.balanceAmount! < 1000,
                 'balance-success': budgetStatus?.balanceAmount! > 0
               }"
               fxFlex="0 1 20%"
-              legend="Balance Total"
+              legend="Ceiling Balance"
             >
               <strong>{{ budgetStatus?.balanceAmount | currency: " " }}</strong>
             </p-fieldset>
@@ -233,7 +230,7 @@
           >
             <p-fieldset
               *ngIf="facilityActivity"
-              class="total-fieldset"
+              class="total-fieldset balance-success"
               fxFlex="0 1 200px"
               legend="Activity Total"
             >
@@ -365,3 +362,64 @@
   header="Confirmation Forward Budget"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>
+
+<p-overlayPanel #expeCentrePanel>
+  <ng-template pTemplate>
+    <div style="width: 400px">
+      <p-treeTable
+        #table
+        [resizableColumns]="true"
+        [autoLayout]="true"
+        [value]="expenditureCentres!"
+      >
+        <ng-template
+          pTemplate="header"
+          let-rowNode
+          let-rowData="rowData"
+          let-columns="columns"
+        >
+          <tr>
+            <th style="padding-left: 10px">Name</th>
+            <th>Required %</th>
+            <th>Actual %</th>
+          </tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-rowNode
+          let-rowData="rowData"
+          let-columns="columns"
+        >
+          <tr>
+            <td [ngStyle]="{ 'padding-left': rowData.padding_left + 'px' }">
+              {{ rowData.name }}
+            </td>
+            <td>{{ rowData.percentage }}</td>
+            <td>{{ rowData.actual_percentage }}</td>
+          </tr>
+        </ng-template>
+      </p-treeTable>
+    </div>
+  </ng-template>
+</p-overlayPanel>
+
+<p-overlayPanel #ceilingPanel>
+  <ng-template pTemplate>
+    <div style="width: 300px" fxLayout="column" fxLayoutGap="20px">
+      <p-fieldset
+        class="total-fieldset ceiling-total"
+        fxFlex="0 1 20%"
+        legend="Ceiling Total"
+      >
+        <strong>{{ budgetStatus?.ceilingAmount | currency: " " }}</strong>
+      </p-fieldset>
+      <p-fieldset
+        class="total-fieldset used-total"
+        fxFlex="0 1 20%"
+        legend="Used Total"
+      >
+        <strong>{{ budgetStatus?.usedAmount | currency: " " }}</strong>
+      </p-fieldset>
+    </div>
+  </ng-template>
+</p-overlayPanel>

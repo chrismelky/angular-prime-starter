@@ -454,6 +454,7 @@ export class DataValueComponent implements OnInit {
     formData.append('period_id', this.period_id!.toString());
     formData.append('facility_id', this.facility_id!.toString());
     formData.append('data_element_id', dataValue.data_element_id!.toString());
+    formData.append('id', dataValue.id!.toString());
     formData.append(
       'category_option_combination_id',
       dataValue.category_option_combination_id!.toString()
@@ -461,7 +462,16 @@ export class DataValueComponent implements OnInit {
     formData.append('file', $event.files[0]);
 
     this.dataValueService.upload(formData).subscribe((resp) => {
-      console.log(resp);
+      this.toastService.info('File uploaded successfully');
+      dataValue.value = resp.data?.value;
+    });
+  }
+
+  download(path: string) {
+    this.dataValueService.download({ path }).subscribe((resp) => {
+      let file = new Blob([resp], { type: 'application/pdf' });
+      let fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
     });
   }
 

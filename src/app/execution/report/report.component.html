@@ -106,7 +106,7 @@
           >
             <p-treeTableToggler
               [rowNode]="rowNode"
-              *ngIf="i == 0"
+              *ngIf="i === 0"
             ></p-treeTableToggler>
             {{ rowData[col.field] }}
           </td>
@@ -121,7 +121,7 @@
                     !this.admin_hierarchy_id ||
                     !this.financial_year_id ||
                     !this.budgetType ||
-                    admin_hierarchy_position != 3
+                    admin_hierarchy_position !== 3
                   "
                   (click)="getReport(rowData)"
                   label="Preview"

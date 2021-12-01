@@ -31,14 +31,15 @@ import {UserUpdateComponent} from './update/user-update.component';
 import {AdminHierarchyLevelService} from '../admin-hierarchy-level/admin-hierarchy-level.service';
 import {AdminHierarchyLevel} from '../admin-hierarchy-level/admin-hierarchy-level.model';
 import {UserRoleComponent} from './user-role/user-role.component';
-import {MatCheckboxChange} from '@angular/material/checkbox';
+
 import {finalize} from 'rxjs/operators';
 import {UserGroupComponent} from './user-group/user-group.component';
 import {PasswordResetComponent} from './password-reset/password-reset.component';
-import {Role} from '../role/role.model';
-import {RoleUpdateComponent} from '../role/update/role-update.component';
+
 import {AuthService} from "../../core/auth.service";
 import {randomString} from "../../shared/helpers";
+import {Facility} from "../facility/facility.model";
+import {TransferComponent} from "./transfer/transfer.component";
 
 @Component({
   selector: 'app-user',
@@ -409,6 +410,20 @@ export class UserComponent implements OnInit {
       if (result) {
         this.loadPage(this.page);
       }
+    });
+  }
+
+  transfer(rowData: User): void {
+    const data = {
+      user: rowData,
+    };
+    const ref = this.dialogService.open(TransferComponent, {
+      data,
+      width: '60%',
+      header: 'User Transfer Form',
+    });
+    ref.onClose.subscribe((result) => {
+      this.loadPage(this.page);
     });
   }
 }

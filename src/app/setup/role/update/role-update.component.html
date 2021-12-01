@@ -57,6 +57,37 @@
           >
         </span>
       </div>
+      <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                #sectionLevel
+                id="position"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                optionValue="position"
+                optionLabel="name"
+                class="p-inputtext-sm"
+                appendTo="body"
+                formControlName="section_position"
+                [options]="sectionLevels!"
+              ></p-dropdown>
+              <label for="position">Planning Unit level</label>
+            </span>
+        <span
+          *ngIf="
+                editForm.get('section_position')!.invalid &&
+                (editForm.get('section_position')!.dirty ||
+                  editForm.get('section_position')!.touched ||
+                  formError)
+              "
+        >
+              <small
+                class="p-error"
+                *ngIf="editForm.get('section_position')?.errors?.required"
+              >Planning Unit Level is required.</small
+              >
+            </span>
+      </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

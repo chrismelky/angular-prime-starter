@@ -17,6 +17,8 @@ import { RoleService } from '../role.service';
 import { ToastService } from 'src/app/shared/toast.service';
 import { AdminHierarchyLevel } from '../../admin-hierarchy-level/admin-hierarchy-level.model';
 import { AdminHierarchyLevelService } from '../../admin-hierarchy-level/admin-hierarchy-level.service';
+import {SectionLevel} from "../../section-level/section-level.model";
+import {SectionLevelService} from "../../section-level/section-level.service";
 
 @Component({
   selector: 'app-role-update',
@@ -27,6 +29,7 @@ export class RoleUpdateComponent implements OnInit {
   formError = false;
   errors = [];
   adminHierarchyLevels?: AdminHierarchyLevel[] = [];
+  sectionLevels?: SectionLevel[] = [];
 
   /**
    * Declare form
@@ -35,6 +38,7 @@ export class RoleUpdateComponent implements OnInit {
     id: [null, []],
     name: [null, [Validators.required]],
     admin_hierarchy_position: [null, [Validators.required]],
+    section_position: [null, [Validators.required]],
   });
 
   constructor(
@@ -43,10 +47,20 @@ export class RoleUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService
+    protected adminHierarchyLevelService: AdminHierarchyLevelService,
+    protected sectionLevelService: SectionLevelService,
   ) {}
 
   ngOnInit(): void {
+    this.sectionLevelService
+      .query({
+        columns: ['id', 'name', 'code', 'position'],
+        sort: ['position:asc'],
+      })
+      .subscribe(
+        (resp: CustomResponse<SectionLevel[]>) =>
+          (this.sectionLevels = resp.data)
+      );
     this.adminHierarchyLevelService
       .query()
       .subscribe(
@@ -112,6 +126,7 @@ export class RoleUpdateComponent implements OnInit {
       id: role.id,
       name: role.name,
       admin_hierarchy_position: role.admin_hierarchy_position,
+      section_position: role.section_position,
     });
   }
 
@@ -124,8 +139,8 @@ export class RoleUpdateComponent implements OnInit {
       ...new Role(),
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
-      admin_hierarchy_position: this.editForm.get(['admin_hierarchy_position'])!
-        .value,
+      admin_hierarchy_position: this.editForm.get(['admin_hierarchy_position'])!.value,
+      section_position: this.editForm.get(['section_position'])!.value,
     };
   }
 }

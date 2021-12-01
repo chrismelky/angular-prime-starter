@@ -234,7 +234,17 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+          <span>No Cost Centre Opened!</span>
+          <p-button
+            cl
+            icon="pi pi-refresh"
+            label="Initilize Cost Centres"
+            (click)="openPlanning()"
+          ></p-button>
+        </div>
+      </ng-template>
     </p-table>
     <div
       fxLayout="row"

@@ -31,7 +31,7 @@
               <ng-template let-item pTemplate="item">
                 <div fxLayout="row" fxLayoutAlign="space-between center">
                   <span class=""> {{item.section.name}} </span>
-                  <span *ngIf="section_level_position! <= item.section.position!"  class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(currentCeilingChain?.section_level_position.position,op,$event,item,currentCeilingChain!)"  *ngIf="currentCeilingChain?.next && !item?.is_locked" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
+                  <span *ngIf="section_level_position! <= item.section.position!"  class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(currentCeilingChain?.section_level_position.position,op,$event,item,currentCeilingChain!)"  *ngIf="currentCeilingChain?.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
                 </div>
               </ng-template>
               <ng-template let-item pTemplate="selectedItem">

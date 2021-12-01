@@ -331,7 +331,7 @@
         let-editing="editing"
         let-ri="rowIndex"
       >
-        <tr [pEditableRow]="rowData">
+        <tr [pEditableRow]="rowData" [className]="rowData?.ceiling?.is_pe?'pe':'other'">
           <td>{{ ri + 1 }}</td>
           <td>
             [{{ rowData?.ceiling?.fund_source?.gfs_code?.code }}]
@@ -399,7 +399,8 @@
                 <button
                   *ngIf="
                     rowData.amount > 0 &&
-                    planingFinancialYear_id === financial_year_id
+                    planingFinancialYear_id === financial_year_id &&
+                    (((!hasPERoles || hasPERoles) && rowData.ceiling.is_pe && userPosition < ceilingStartPosition) || (hasPERoles && rowData.ceiling.is_pe) ||  (!hasPERoles && !rowData.ceiling.is_pe))
                   "
                   pButton
                   pRipple

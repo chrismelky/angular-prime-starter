@@ -6,6 +6,8 @@ export class ExpenditureCentreItem {
     public name?: string,
     public percentage?: string,
     public expenditure_centre_id?: number,
-    public gfs_codes: GfsCode[] = []
+    public gfs_codes: GfsCode[] = [],
+    public actual_budget?: number,
+    public actual_percentage?: number
   ) {}
 }

@@ -243,6 +243,7 @@
             <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th>Planning Unit</th>
+          <th>Location</th>
           <th>Active</th>
           <th></th>
         </tr>
@@ -253,6 +254,7 @@
             {{ rowData[col.field] }}
           </td>
           <td>{{ rowData.section?.name }}</td>
+          <td>{{ rowData.admin_hierarchy?.name }}</td>
           <td>
             <p-inputSwitch
               (onChange)="toggleActive(rowData, $event)"
@@ -262,6 +264,17 @@
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
+                <button
+                  pButton
+                  label="Transfer"
+                  pTooltip="Transfer"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-map"
+                  (click)="transfer(rowData)"
+                ></button>
                 <button
                   pButton
                   label="Roles"

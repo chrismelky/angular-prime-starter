@@ -15,10 +15,11 @@ import {UserUpdateComponent} from "./update/user-update.component";
 import {UserRoleModule} from "./user-role/user-role.module";
 import {UserGroupModule} from "./user-group/user-group.module";
 import {PasswordResetComponent} from './password-reset/password-reset.component';
+import {TransferComponent} from "./transfer/transfer.component";
 
 @NgModule({
   imports: [SharedModule, CommonModule, UserRoleModule, UserGroupModule, UserRoutingModule],
-  declarations: [UserComponent, UserUpdateComponent, PasswordResetComponent],
+  declarations: [UserComponent, UserUpdateComponent, PasswordResetComponent, TransferComponent],
   entryComponents: [UserUpdateComponent],
 })
 export class UserModule {

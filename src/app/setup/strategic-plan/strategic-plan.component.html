@@ -138,7 +138,7 @@
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Strategic Plans</span>
           <button
-            *ngxPermissionsOnly="['WRITE_STRATEGIC_PLAN']"
+            *ngxPermissionsOnly="['WRITE_STRATEGIC_PLAN','DELETE_STRATEGIC_PLAN']"
             pButton
             pRipple
             icon="pi pi-plus"
@@ -156,7 +156,8 @@
             [pSortableColumn]="col.sort ? col.field : null"
           >
             {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+            }}
+            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'start_financial_year_id'">
             Start Financial Year
@@ -212,6 +213,7 @@
                   pButton
                   pRipple
                   pTooltip="Edit"
+                  *ngxPermissionsOnly="['WRITE_STRATEGIC_PLAN','DELETE_STRATEGIC_PLAN']"
                   tooltipPosition="bottom"
                   class="
                     p-button-text p-button-plain p-button-rounded p-button-icon
@@ -222,6 +224,7 @@
                 <button
                   pButton
                   pRipple
+                  *ngxPermissionsOnly="['WRITE_STRATEGIC_PLAN','DELETE_STRATEGIC_PLAN']"
                   pTooltip="Delete"
                   tooltipPosition="bottom"
                   class="
@@ -235,7 +238,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage"> No data found </ng-template>
+      <ng-template pTemplate="emptymessage"> No data found</ng-template>
     </p-table>
     <div fxLayoutAlign="center" fxLayout="row" fxLayoutGap="10px">
       <p-paginator

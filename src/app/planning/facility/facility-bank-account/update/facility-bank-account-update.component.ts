@@ -51,11 +51,6 @@ export class FacilityBankAccountUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.facilityService
-      .query({ columns: ['id', 'name'] })
-      .subscribe(
-        (resp: CustomResponse<Facility[]>) => (this.facilities = resp.data)
-      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 

@@ -11,6 +11,7 @@ export class CasAssessmentSubCriteriaReportSet {
 
 export class MyNode {
   public id?: number;
+  public report_id?: number;
   public label?: string;
   leaf?: boolean;
   children?: MyNode[];

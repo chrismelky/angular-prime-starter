@@ -73,6 +73,7 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
   section_id!: number;
   currentUser?: User;
   financialYears: FinancialYear[] = [];
+  allStrategicFinancialYears: FinancialYear[] = [];
   currentFinancialYear?: FinancialYear;
   indicators?: PerformanceIndicator[] = [];
 
@@ -189,7 +190,8 @@ export class LongTermTargetComponent implements OnInit, OnDestroy {
         this.strategicPlan.end_financial_year_id!
       )
       .subscribe((resp) => {
-        this.financialYears = (resp.data || []).filter(
+        this.allStrategicFinancialYears = resp.data || [];
+        this.financialYears = this.allStrategicFinancialYears.filter(
           (fy) => fy.start_date! < this.currentFinancialYear?.end_date!
         );
       });

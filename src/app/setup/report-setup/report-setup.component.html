@@ -49,36 +49,15 @@
 
   <!-- Table Panel -->
   <p-card>
-    <p-table
-      #table
-      [lazy]="true"
-      [resizableColumns]="true"
-      [responsive]="true"
-      [autoLayout]="true"
-      [loading]="isLoading"
-      [columns]="cols"
-      [value]="reportSetups!"
-      [scrollable]="true"
-      scrollHeight="500px"
-      (onLazyLoad)="onSortChange($event)"
-      [customSort]="true"
-    >
+    <p-table [value]="reportSetups!" responsiveLayout="scroll">
       <ng-template pTemplate="caption">
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Report Setups</span>
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-raised"
-            [disabled]=""
-            (click)="createOrUpdate()"
-            label="Add New Report"
-          ></button>
+        <div class="p-d-flex p-ai-center p-jc-between">
+          Report Setup
         </div>
       </ng-template>
       <ng-template pTemplate="header">
-        <tr *ngIf="reportSetups!.length > 0">
-          <th colspan="2">Name</th>
+        <tr>
+          <th>Name</th>
           <th>Template name</th>
           <th>Query Params</th>
           <th>Orientation</th>
@@ -86,13 +65,13 @@
           <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowData>
+      <ng-template pTemplate="body" let-report>
         <tr>
-          <td colspan="2">{{ rowData.name }}</td>
-          <td>{{ rowData.template_name }}</td>
-          <td>{{ rowData.query_params }}</td>
-          <td>{{ rowData.orientation }}</td>
-          <td>{{ rowData.sql_query }}</td>
+          <td>{{report.name}}</td>
+          <td>{{report.template_name}}</td>
+          <td>{{report.query_params}}</td>
+          <td>{{report.orientation}}</td>
+          <td>{{report.sql_query}}</td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
@@ -105,7 +84,7 @@
                   "
                   icon="pi pi-pencil
               "
-                  (click)="createOrUpdate(rowData)"
+                  (click)="createOrUpdate(report)"
                 ></button>
                 <button
                   pButton
@@ -116,7 +95,7 @@
                   "
                   icon="pi pi-trash
               "
-                  (click)="delete(rowData)"
+                  (click)="delete(report)"
                 ></button>
               </div>
             </div>
@@ -124,22 +103,21 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
-      <ng-template pTemplate="footer">
-        <p-paginator
-          #paginator
-          [alwaysShow]="reportSetups?.length! > 0"
-          [rows]="per_page"
-          dropdownAppendTo="body"
-          [showCurrentPageReport]="true"
-          [totalRecords]="totalItems"
-          [rowsPerPageOptions]="perPageOptions"
-          (onPageChange)="pageChanged($event)"
-        ></p-paginator>
-      </ng-template>
     </p-table>
+    <div fxLayoutAlign="center" fxLayout="row" fxLayoutGap="10px">
+      <p-paginator
+        #paginator
+        [alwaysShow]="reportSetups?.length! > 0"
+        [rows]="per_page"
+        dropdownAppendTo="body"
+        [showCurrentPageReport]="true"
+        [totalRecords]="totalItems"
+        [rowsPerPageOptions]="perPageOptions"
+        (onPageChange)="pageChanged($event)"
+      ></p-paginator>
+    </div>
   </p-card>
 </div>
-
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
   [style]="{ width: '50vw' }"

@@ -95,10 +95,10 @@ export class EnumService {
       { display: "Public Other", value: "PO" },
     ],
     insuranceTypes: [
-      { display: "A. Insured comprehensive", value: "Insured comprehensive" },
-      { display: "B. Insured 3rd party", value: "Insured 3rd party" },
-      { display: "C. Not insured", value: "Not insured" },
-      { display: "D. Not Applicable", value: "Not Applicable" },
+      { display: "A. Insured comprehensive", value: "A. Insured comprehensive" },
+      { display: "B. Insured 3rd party", value: "B. Insured 3rd party" },
+      { display: "C. Not insured", value: "C. Not insured" },
+      { display: "D. Not Applicable", value: "D. Not Applicable" },
     ],
     physicalStates: [
       { display: "Good", value: "A" },

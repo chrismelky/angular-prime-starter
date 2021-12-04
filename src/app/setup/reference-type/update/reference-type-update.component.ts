@@ -16,7 +16,7 @@ import { SectorService } from 'src/app/setup/sector/sector.service';
 import { ReferenceType } from '../reference-type.model';
 import { ReferenceTypeService } from '../reference-type.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import {EnumService, PlanrepEnum} from "../../../shared/enum.service";
+import { EnumService, PlanrepEnum } from '../../../shared/enum.service';
 
 @Component({
   selector: 'app-reference-type-update',
@@ -35,6 +35,7 @@ export class ReferenceTypeUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [null, []],
     name: [null, [Validators.required]],
+    code: [null, []],
     multi_select: [false, [Validators.required]],
     link_level: [null, [Validators.required]],
   });
@@ -50,7 +51,7 @@ export class ReferenceTypeUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.linkLevels = this.enumService.get("linkLevels");
+    this.linkLevels = this.enumService.get('linkLevels');
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -113,6 +114,7 @@ export class ReferenceTypeUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: referenceType.id,
       name: referenceType.name,
+      code: referenceType.code,
       multi_select: referenceType.multi_select,
       link_level: referenceType.link_level,
     });
@@ -125,10 +127,7 @@ export class ReferenceTypeUpdateComponent implements OnInit {
   protected createFromForm(): ReferenceType {
     return {
       ...new ReferenceType(),
-      id: this.editForm.get(['id'])!.value,
-      name: this.editForm.get(['name'])!.value,
-      multi_select: this.editForm.get(['multi_select'])!.value,
-      link_level: this.editForm.get(['link_level'])!.value,
+      ...this.editForm.value,
     };
   }
 }

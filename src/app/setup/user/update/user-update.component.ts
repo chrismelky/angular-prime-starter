@@ -225,6 +225,23 @@ export class UserUpdateComponent implements OnInit {
       );
   }
 
+  private loadRoleByAdminLevelAndSectionPosition(position: number): void {
+    this.roleIsLoading = true;
+    this.roleService
+      .query({
+        columns: ['id', 'name'],
+        admin_hierarchy_position: this.adminHierarchy.admin_hierarchy_position,
+        section_position: position,
+      })
+      .subscribe(
+        (resp: CustomResponse<Role[]>) => {
+          this.roles = resp.data;
+          this.roleIsLoading = false;
+        },
+        (error) => (this.roleIsLoading = false)
+      );
+  }
+
   isFacilityUserChanged(): void {
     // If is facility user
     const isFacilityUser = this.editForm.get('is_facility_user')?.value;
@@ -271,6 +288,11 @@ export class UserUpdateComponent implements OnInit {
    * @param sectionLevelId
    */
   loadSections(position: number): void {
+    this.fetchSections(position);
+    this.loadRoleByAdminLevelAndSectionPosition(position);
+  }
+
+  private fetchSections(position: number) {
     this.sectionIsLoading = true;
     this.sectionService
       .query({

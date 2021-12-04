@@ -183,6 +183,18 @@
               <div fxLayout="row" fxLayoutGap="2px">
                 <button
                   pButton
+                  pTooltip="Cost Centres"
+                  label="Cost Centres"
+                  tooltipPosition="bottom"
+                  class="
+                    p-button-text p-button-plain p-button-rounded p-button-icon
+                  "
+                  icon="pi pi-list
+              "
+                  (click)="planningUnits(rowData)"
+                ></button>
+                <button
+                  pButton
                   pTooltip="Edit"
                   tooltipPosition="bottom"
                   class="

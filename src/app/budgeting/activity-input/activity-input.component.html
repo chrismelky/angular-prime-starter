@@ -7,18 +7,23 @@
           icon="pi pi-arrow-left"
           pButton
           (click)="back()"
-          class="p-button-rounded p-button-text p-button-icon-only"
+          class="
+            p-button-rounded p-button-plain p-button-text p-button-icon-only
+          "
         ></button>
+
         <p-divider fxFlex class="title" align="center">
-          <span fxLayout="column" fxLayoutAlign="centre center">
-            <small>Cost centre</small>
-            <strong>{{ adminHierarchyCostCentre?.section?.name }}</strong>
-          </span>
-        </p-divider>
-        <p-divider fxFlex class="title" align="center">
-          <span fxLayout="column" fxLayoutAlign="centre center">
-            <small>Budget Type</small>
-            <strong>{{ budget_type }}</strong>
+          <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+            <span fxLayout="column" fxLayoutAlign="centre center">
+              <small>Budget Type</small>
+              <strong>{{ budget_type }}</strong>
+            </span>
+            <i *ngIf="budgetIsLocked" class="pi pi-lock" style="color: red"></i>
+            <i
+              *ngIf="!budgetIsLocked"
+              class="pi pi-lock-open pi-primary"
+              style="color: green"
+            ></i>
           </span>
         </p-divider>
         <p-divider fxFlex class="title" align="center">
@@ -33,6 +38,13 @@
             <strong>{{
               adminHierarchyCostCentre?.admin_hierarchy?.name
             }}</strong>
+          </span>
+        </p-divider>
+
+        <p-divider fxFlex class="title" align="center">
+          <span fxLayout="column" fxLayoutAlign="centre center">
+            <small>Cost centre</small>
+            <strong>{{ adminHierarchyCostCentre?.section?.name }}</strong>
           </span>
         </p-divider>
 
@@ -67,7 +79,6 @@
             p-button-icon-only
           "
         ></button>
-        <!-- <i class="pi pi-lock"></i> -->
       </div>
     </ng-template>
     <ng-template pTemplate="content">
@@ -168,28 +179,25 @@
             fxLayoutGap="10px"
             fxLayoutAlign="end"
           >
+            <button
+              *ngIf="budgetStatus?.expenditureCentres?.length"
+              type="button"
+              pButton
+              icon="pi pi-chart-bar"
+              class="p-button-outlined p-button-success"
+              label="Allocation Guideline"
+              (click)="expeCentrePanel.toggle($event)"
+            ></button>
+
             <p-fieldset
-              class="total-fieldset ceiling-total"
-              fxFlex="0 1 20%"
-              legend="Ceiling Total"
-            >
-              <strong>{{ budgetStatus?.ceilingAmount | currency: " " }}</strong>
-            </p-fieldset>
-            <p-fieldset
-              class="total-fieldset used-total"
-              fxFlex="0 1 20%"
-              legend="Used Total"
-            >
-              <strong>{{ budgetStatus?.usedAmount | currency: " " }}</strong>
-            </p-fieldset>
-            <p-fieldset
-              class="total-fieldset"
+              (click)="ceilingPanel.toggle($event)"
+              class="total-fieldset cursor-point"
               [ngClass]="{
                 'balance-warn': budgetStatus?.balanceAmount! < 1000,
                 'balance-success': budgetStatus?.balanceAmount! > 0
               }"
               fxFlex="0 1 20%"
-              legend="Balance Total"
+              legend="Ceiling Balance"
             >
               <strong>{{ budgetStatus?.balanceAmount | currency: " " }}</strong>
             </p-fieldset>
@@ -222,7 +230,7 @@
           >
             <p-fieldset
               *ngIf="facilityActivity"
-              class="total-fieldset"
+              class="total-fieldset balance-success"
               fxFlex="0 1 200px"
               legend="Activity Total"
             >
@@ -231,7 +239,7 @@
               }}</strong>
             </p-fieldset>
             <button
-              *ngIf="budgetStatus?.balanceAmount! > 0"
+              *ngIf="budgetStatus?.balanceAmount! >= 0 && !budgetIsLocked"
               pButton
               icon="pi pi-plus"
               class="p-button-raised"
@@ -354,3 +362,64 @@
   header="Confirmation Forward Budget"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>
+
+<p-overlayPanel #expeCentrePanel>
+  <ng-template pTemplate>
+    <div style="width: 400px">
+      <p-treeTable
+        #table
+        [resizableColumns]="true"
+        [autoLayout]="true"
+        [value]="expenditureCentres!"
+      >
+        <ng-template
+          pTemplate="header"
+          let-rowNode
+          let-rowData="rowData"
+          let-columns="columns"
+        >
+          <tr>
+            <th style="padding-left: 10px">Name</th>
+            <th>Required %</th>
+            <th>Actual %</th>
+          </tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-rowNode
+          let-rowData="rowData"
+          let-columns="columns"
+        >
+          <tr>
+            <td [ngStyle]="{ 'padding-left': rowData.padding_left + 'px' }">
+              {{ rowData.name }}
+            </td>
+            <td>{{ rowData.percentage }}</td>
+            <td>{{ rowData.actual_percentage }}</td>
+          </tr>
+        </ng-template>
+      </p-treeTable>
+    </div>
+  </ng-template>
+</p-overlayPanel>
+
+<p-overlayPanel #ceilingPanel>
+  <ng-template pTemplate>
+    <div style="width: 300px" fxLayout="column" fxLayoutGap="20px">
+      <p-fieldset
+        class="total-fieldset ceiling-total"
+        fxFlex="0 1 20%"
+        legend="Ceiling Total"
+      >
+        <strong>{{ budgetStatus?.ceilingAmount | currency: " " }}</strong>
+      </p-fieldset>
+      <p-fieldset
+        class="total-fieldset used-total"
+        fxFlex="0 1 20%"
+        legend="Used Total"
+      >
+        <strong>{{ budgetStatus?.usedAmount | currency: " " }}</strong>
+      </p-fieldset>
+    </div>
+  </ng-template>
+</p-overlayPanel>

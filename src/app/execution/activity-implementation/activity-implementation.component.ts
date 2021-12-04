@@ -115,7 +115,7 @@ export class ActivityImplementationComponent implements OnInit {
         (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
       );
     this.facilityTypeService
-      .query({ columns: ["id", "name"] })
+      .query({columns: ["id", "name"]})
       .subscribe(
         (resp: CustomResponse<FacilityType[]>) =>
           (this.facilityTypes = resp.data)
@@ -219,10 +219,10 @@ export class ActivityImplementationComponent implements OnInit {
     ) {
       return;
     }
-    this.facilityService.query(
-      {
-        facility_type_id: this.facility_type_id,
-        admin_hierarchy_id: this.admin_hierarchy_id,}
+    this.facilityService.search(
+      this.facility_type_id!,
+      ('p'+this.admin_hierarchy_position),
+      this.admin_hierarchy_id!,
     ).subscribe((res: CustomResponse<Facility[]>)=>(this.facilities = res.data));
  }
  /**

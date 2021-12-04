@@ -1321,6 +1321,20 @@ const routes: Routes = [
             "../planning/transport-facility/transport-facility.module"
           ).then((m) => m.TransportFacilityModule),
       },
+      {
+        path: "expenditure-centre",
+        loadChildren: () =>
+          import("../setup/expenditure-centre/expenditure-centre.module").then(
+            (m) => m.ExpenditureCentreModule
+          ),
+      },
+      {
+        path: "expenditure-centre-item",
+        loadChildren: () =>
+          import(
+            "../setup/expenditure-centre-item/expenditure-centre-item.module"
+          ).then((m) => m.ExpenditureCentreItemModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

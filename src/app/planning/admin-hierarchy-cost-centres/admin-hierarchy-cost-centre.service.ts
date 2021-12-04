@@ -59,4 +59,14 @@ export class AdminHierarchyCostCentreService {
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
+
+  openPlanning(
+    levelPosition: number,
+    adminId: number,
+    fyId: number
+  ): Observable<CustomResponse<any>> {
+    return this.http.get<CustomResponse<any>>(
+      `${this.resourceUrl}/open_planning/${levelPosition}/${adminId}/${fyId}`
+    );
+  }
 }

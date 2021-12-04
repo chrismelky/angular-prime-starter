@@ -90,6 +90,9 @@
           <th [pSortableColumn]="'admin_hierarchy_position'">
             Level <p-sortIcon [field]="'admin_hierarchy_position'"></p-sortIcon>
           </th>
+          <th [pSortableColumn]="'section_position'">
+            Planning Unit Level <p-sortIcon [field]="'section_position'"></p-sortIcon>
+          </th>
 <!--          <th>Rights</th>-->
           <th style="flex: 0 0 2 rem">Action</th>
         </tr>
@@ -101,6 +104,9 @@
           </td>
           <td>
             {{ rowData.level?.name }}
+          </td>
+          <td>
+            {{ rowData.section_level?.name }}
           </td>
 <!--          <td>-->
 

@@ -39,6 +39,12 @@ export class FacilityTypeService {
     );
   }
 
+  queryByPosition(position: number): Observable<CustomResponse<FacilityType[]>> {
+    return this.http.get<CustomResponse<FacilityType[]>>(
+      `${this.resourceUrl}/position/${position}`
+    );
+  }
+
   query(req?: any): Observable<CustomResponse<FacilityType[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<FacilityType[]>>(this.resourceUrl, {

@@ -26,6 +26,13 @@
         </span>
       </div>
 
+      <div class="p-field" fxFlex>
+        <span class="p-float-label">
+          <input id="code" type="text" pInputText formControlName="code" />
+          <label for="code">Code </label>
+        </span>
+      </div>
+
       <div fxLayout="row" fxLayoutGap="2px">
         <p-inputSwitch
           id="multi_select"
@@ -61,7 +68,7 @@
           <small
             class="p-error"
             *ngIf="editForm.get('link_level')?.errors?.required"
-          >Link Level is required.</small
+            >Link Level is required.</small
           >
         </span>
       </div>

@@ -60,6 +60,16 @@ export class ProjectionService {
     });
   }
 
+
+  queryProjections(req?: any,parentName?: string,parentId?: number): Observable<CustomResponse<Projection[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<Projection[]>>(
+      `${this.resourceUrl}/${parentName}/${parentId}`
+      , {
+      params: options,
+    });
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

@@ -1314,6 +1314,13 @@ const routes: Routes = [
             (m) => m.GenericPriorityModule
           ),
       },
+      {
+        path: "transport-facility",
+        loadChildren: () =>
+          import(
+            "../planning/transport-facility/transport-facility.module"
+          ).then((m) => m.TransportFacilityModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

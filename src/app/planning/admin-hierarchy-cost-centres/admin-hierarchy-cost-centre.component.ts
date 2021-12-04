@@ -25,8 +25,6 @@ import { AdminHierarchyCostCentreService } from './admin-hierarchy-cost-centre.s
 import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model';
 import { DecisionLevel } from 'src/app/setup/decision-level/decision-level.model';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { Section } from 'src/app/setup/section/section.model';
 import { UserService } from 'src/app/setup/user/user.service';
 import { User } from 'src/app/setup/user/user.model';
 
@@ -113,6 +111,18 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
       );
   }
 
+  openPlanning(): void {
+    this.adminHierarchyCostCentresService
+      .openPlanning(
+        this.admin_hierarchy_position!,
+        this.admin_hierarchy_id,
+        this.currentFinancialYear?.id!
+      )
+      .subscribe((resp) => {
+        this.loadPage();
+      });
+  }
+
   /**
    * Called initialy/onInit to
    * Restore page, sort option from url query params if exist and load page
@@ -141,7 +151,7 @@ export class AdminHierarchyCostCentreComponent implements OnInit {
   onAdminHierarchySelection(event: any): void {
     console.log(event);
     this.admin_hierarchy_id = event.id;
-    this.admin_hierarchy_position = event.position;
+    this.admin_hierarchy_position = event.admin_hierarchy_position;
     this.loadPage(1);
   }
 

@@ -264,6 +264,7 @@
                         [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                       ></p-inputNumber>
                       <p-fileUpload
+                        [auto]="true"
                         *ngIf="coc.value_type === 'FILE'"
                         name="myfile[]"
                         [customUpload]="true"
@@ -273,7 +274,15 @@
                         "
                       >
                         <ng-template let-file pTemplate="content">
-                          <a>{{ dataValuesArray[de.id!][coc.id!].value }}</a>
+                          <button
+                            *ngIf="dataValuesArray[de.id!][coc.id!]?.value"
+                            (click)="
+                              download(dataValuesArray[de.id!][coc.id!].value)
+                            "
+                            pButton
+                            icon="pi pi-download"
+                            type="button"
+                          ></button>
                         </ng-template>
                       </p-fileUpload>
                     </td>

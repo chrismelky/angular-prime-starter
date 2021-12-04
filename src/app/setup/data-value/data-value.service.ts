@@ -33,6 +33,16 @@ export class DataValueService {
     );
   }
 
+  download(req?: any) {
+    const options = createRequestOption(req);
+
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json',
+      params: options,
+    };
+    return this.http.get<any>(`${this.resourceUrl}/download`, httpOptions);
+  }
+
   update(dataValue: DataValue): Observable<CustomResponse<DataValue>> {
     return this.http.put<CustomResponse<DataValue>>(
       `${this.resourceUrl}/${dataValue.id}`,

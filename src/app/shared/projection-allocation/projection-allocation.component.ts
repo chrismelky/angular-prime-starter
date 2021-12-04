@@ -198,6 +198,7 @@ export class ProjectionAllocationComponent implements OnInit {
         facility_id:this.facility_id,
         financial_year_id:this.financial_year_id,
         admin_hierarchy_id:this.admin_hierarchy_id,
+        parent_name:('p' + this.adminHierarchyPosition)
       })
       .subscribe(
         (resp: CustomResponse<any>) => {

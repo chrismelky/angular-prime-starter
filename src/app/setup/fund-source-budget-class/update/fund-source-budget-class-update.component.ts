@@ -49,6 +49,7 @@ export class FundSourceBudgetClassUpdateComponent implements OnInit {
     fund_type_id: [null, [Validators.required]],
     bank_account_id: [null, [Validators.required]],
     is_active: [null, [Validators.required]],
+    is_pe: [null, [Validators.required]],
   });
 
   constructor(
@@ -152,6 +153,7 @@ export class FundSourceBudgetClassUpdateComponent implements OnInit {
       fund_type_id: fundSourceBudgetClass.fund_type_id,
       bank_account_id: fundSourceBudgetClass.bank_account_id,
       is_active: fundSourceBudgetClass.is_active,
+      is_pe:fundSourceBudgetClass.is_pe,
     });
   }
 
@@ -169,6 +171,7 @@ export class FundSourceBudgetClassUpdateComponent implements OnInit {
       fund_type_id: this.editForm.get(['fund_type_id'])!.value,
       bank_account_id: this.editForm.get(['bank_account_id'])!.value,
       is_active: this.editForm.get(['is_active'])!.value,
+      is_pe: this.editForm.get(['is_pe'])!.value,
     };
   }
 }

@@ -10,6 +10,7 @@ export class FundSourceBudgetClass {
     public bank_account_id?: number,
     public budget_class?: BudgetClass,
     public facility_types?: any,
-    public is_active?: any
+    public is_active?: any,
+    public is_pe?: any
   ) {}
 }

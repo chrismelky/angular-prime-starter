@@ -52,15 +52,14 @@ export class InitiateProjectionComponent implements OnInit {
         (resp: CustomResponse<FundSource[]>) =>{
           let gfsCode = (resp.data??[])[0].gfs_code!.code;
           this.fundSource = (resp.data??[])[0];
-          this.gfsCodeService
-            .query({aggregated_code:gfsCode})
-            .subscribe(
-              (resp: CustomResponse<GfsCode[]>) =>{
-                let gfsCodeIds = this.projections.map(p => (p.gfs_code_id));
-                console.log(gfsCodeIds);
-                this.revenueSources = (resp.data??[]).filter(rs => !this.projections.map(p => (p.gfs_code_id)).includes(rs.id));
-              }
-            );
+    this.gfsCodeService
+      .queryByAggregatedCode(gfsCode!)
+      .subscribe(
+        (resp: CustomResponse<GfsCode[]>) =>{
+          let gfsCodeIds = this.projections.map(p => (p.gfs_code_id));
+          this.revenueSources = (resp.data??[]).filter(rs => !this.projections.map(p => (p.gfs_code_id)).includes(rs.id));
+        }
+      );
         }
       );
   }

@@ -62,6 +62,7 @@ export class ActivityInputComponent implements OnInit {
   activityLoading = false;
   budgetClassIsLoading = false;
   fundSourceIsLoading = false;
+  showReport = false;
   budgetStatus?: BudgetStatus;
   expenditureCentres?: TreeNode[] = [];
 

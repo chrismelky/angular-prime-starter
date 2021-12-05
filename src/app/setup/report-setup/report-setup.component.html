@@ -51,8 +51,16 @@
   <p-card>
     <p-table [value]="reportSetups!" responsiveLayout="scroll">
       <ng-template pTemplate="caption">
-        <div class="p-d-flex p-ai-center p-jc-between">
-          Report Setup
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text">Reports Setup</span>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-plus"
+            class="p-button-raised"
+            (click)="createOrUpdate()"
+            label="Add Report"
+          ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header">

@@ -94,6 +94,12 @@ export class EnumService {
       { display: "Parastatal", value: "PA" },
       { display: "Public Other", value: "PO" },
     ],
+    insuranceTypes: [
+      { display: "A. Insured comprehensive", value: "A. Insured comprehensive" },
+      { display: "B. Insured 3rd party", value: "B. Insured 3rd party" },
+      { display: "C. Not insured", value: "C. Not insured" },
+      { display: "D. Not Applicable", value: "D. Not Applicable" },
+    ],
     physicalStates: [
       { display: "Good", value: "A" },
       { display: "Minor Rehabilitation needed", value: "B" },

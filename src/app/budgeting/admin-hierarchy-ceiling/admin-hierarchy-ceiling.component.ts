@@ -56,6 +56,7 @@ import {AddAttachmentComponent} from "./add-attachment/add-attachment.component"
 @Component({
   selector: 'app-admin-hierarchy-ceiling',
   templateUrl: './admin-hierarchy-ceiling.component.html',
+  styleUrls: ['./admin-hierarchy-ceiling.component.scss']
 })
 export class AdminHierarchyCeilingComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
@@ -99,8 +100,10 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   selectedCeilingAllocationSummary: any[] =[];
   selectedCeiling: AdminHierarchyCeiling = {};
   hasAttachment: boolean = false;
+  hasPERoles : boolean = false;
   active_financial_year!: number;
   reallocationReferenceDocument: any={};
+  userPosition!:number;
 
   constructor(
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
@@ -122,6 +125,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
     protected configurationSettingService: ConfigurationSettingService
   ) {
     this.currentUser = userService.getCurrentUser();
+    this.userPosition = this.currentUser?.admin_hierarchy?.admin_hierarchy_position!;
     this.financial_year_id = this.currentUser?.admin_hierarchy?.current_financial_year_id!;
     this.position = this.currentUser.section?.position!;
     this.selectionLevelChange(this.position);
@@ -136,6 +140,15 @@ export class AdminHierarchyCeilingComponent implements OnInit {
         (resp: CustomResponse<FundSourceBudgetClass[]>) =>
           (this.ceilings = resp.data)
       );
+    this.configurationSettingService
+      .query({key:'ROLES_THAT_DEALING_WITH_PE'})
+      .subscribe(
+        (resp: CustomResponse<any>) => {
+          if((resp.data ?? []).length > 0){
+            this.hasPERoles = (resp.data)[0].value.replace(',','').split(',').includes(this.currentUser.roles![0].name);
+          }
+        }
+      );
     this.financialYearService
       .query({ columns: ['id', 'name'] })
       .subscribe(
@@ -149,6 +162,7 @@ export class AdminHierarchyCeilingComponent implements OnInit {
           this.ceilingStartPosition = +resp.data;
         }
       );
+
     this.adminHierarchyCeilingService
       .ceilingStartSectionPosition()
       .subscribe(

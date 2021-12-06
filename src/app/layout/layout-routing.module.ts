@@ -1315,6 +1315,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: "transport-facility",
+        loadChildren: () =>
+          import(
+            "../planning/transport-facility/transport-facility.module"
+          ).then((m) => m.TransportFacilityModule),
+      },
+      {
         path: "expenditure-centre",
         loadChildren: () =>
           import("../setup/expenditure-centre/expenditure-centre.module").then(

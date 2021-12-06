@@ -160,12 +160,13 @@ export class ProjectionComponent implements OnInit {
     ) {
       return;
     }
+    // this.loadProjections();
     this.isLoading = true;
     this.getTotalProjection();
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.projectionService
-      .query({
+      .queryProjections({
         page: pageToLoad,
         per_page: this.per_page,
         sort: this.sort(),
@@ -174,7 +175,7 @@ export class ProjectionComponent implements OnInit {
         fund_source_id: this.fund_source_id,
         facility_id:this.facility_id,
         ...this.helper.buildFilter(this.search),
-      })
+      },('p'+this.adminHierarchyPosition),this.admin_hierarchy_id)
       .subscribe(
         (res: CustomResponse<any>) => {
           this.isLoading = false;
@@ -312,15 +313,19 @@ export class ProjectionComponent implements OnInit {
    * @param projection
    */
   delete(projection: Projection): void {
-    this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Projection?",
-      accept: () => {
-        this.projectionService.delete(projection.id!).subscribe((resp) => {
-          this.loadPage(this.page);
-          this.toastService.info(resp.message);
-        });
-      },
-    });
+    if((this.totalProjection.amount-projection.amount!) >= this.totalAllocatedAmount){
+      this.confirmationService.confirm({
+        message: "Are you sure that you want to delete this Projection?",
+        accept: () => {
+          this.projectionService.delete(projection.id!).subscribe((resp) => {
+            this.loadPage(this.page);
+            this.toastService.info(resp.message);
+          });
+        },
+      });
+    }else{
+      this.toastService.error('Reduce Allocated Amount To delete');
+    }
   }
 
   /**
@@ -374,7 +379,7 @@ export class ProjectionComponent implements OnInit {
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>{
           this.admin_hierarchy_level_id = (resp.data??[])[0].id!;
           this.facilityTypeService
-            .query({planning_admin_hierarchy_level:this.admin_hierarchy_level_id,per_page:100})
+            .queryByPosition(this.adminHierarchyPosition)
             .subscribe(
               (resp: CustomResponse<FacilityType[]>) =>{
                 this.facilityTypes = resp.data??[];
@@ -467,7 +472,6 @@ export class ProjectionComponent implements OnInit {
   }
 
   onRowEditSave(projection: Projection ,index: number) {
-    console.log(projection);
     if(this.projectionValidity(projection).success){
       const index = this.projections!.findIndex(item => item.id === projection.id);
       let amount = (+projection.q1_amount!) + (+projection.q2_amount!) + (+projection.q3_amount!) + (+projection.q4_amount!);
@@ -676,7 +680,8 @@ export class ProjectionComponent implements OnInit {
         fund_source_id:this.fund_source_id,
         facility_id:this.facility_id,
         financial_year_id:this.financial_year_id,
-        admin_hierarchy_id:this.facilityAdminHierarchyId,
+        admin_hierarchy_id:this.admin_hierarchy_id,
+        parent_name:('p'+this.adminHierarchyPosition)
       })
       .subscribe(
         (resp: CustomResponse<any>) => {

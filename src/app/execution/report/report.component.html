@@ -120,8 +120,7 @@
                   [disabled]="
                     !this.admin_hierarchy_id ||
                     !this.financial_year_id ||
-                    !this.budgetType ||
-                    admin_hierarchy_position !== 3
+                    !this.budgetType
                   "
                   (click)="getReport(rowData)"
                   label="Preview"

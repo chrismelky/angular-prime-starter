@@ -73,7 +73,7 @@ export class GenericTargetUpdateComponent implements OnInit {
     );
     this.indicatorService
       .query({
-        column: ['id', 'name'],
+        column: ['id', 'description'],
       })
       .subscribe(
         (resp) => {

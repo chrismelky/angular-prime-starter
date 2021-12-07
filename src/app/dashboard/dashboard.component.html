@@ -4,6 +4,16 @@
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
         <i class="pi pi-filter"></i>
         <span class="card-header-text">Filter</span>
+
+        <!-- <p-divider fxFlex class="title" align="center">
+          <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+            <span fxLayout="column" fxLayoutAlign="centre center">
+              <small>Budget Type</small>
+              <strong>{{ budgetType }}</strong>
+            </span>
+            <i class="pi pi-chevron-down"></i>
+          </span>
+        </p-divider> -->
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
@@ -30,6 +40,22 @@
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
+                id="budgetType"
+                optionValue="value"
+                optionLabel="display"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                (onChange)="filterChanged()"
+                [options]="budgetTypes!"
+                [(ngModel)]="budgetType"
+              ></p-dropdown>
+              <label for="budgetType">Budget Type </label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
                 id="financial_year_id"
                 optionValue="id"
                 optionLabel="name"
@@ -48,9 +74,35 @@
     </div>
   </p-card>
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-    <p-card fxFlex="0 1 33%"> </p-card>
-    <p-card fxFlex="0 1 33%"> </p-card>
-    <p-card fxFlex="0 1 33%"> </p-card>
-    <p-card fxFlex="0 1 33%"> </p-card>
+    <p-card fxFlex="0 1 100%">
+      <ng-template pTemplate="header">
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
+          <span class="card-header-text"
+            >Fund Sources [ Ceiling Vs Budget ]</span
+          >
+          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end center">
+            <span
+              >Last Update:
+              {{ fundSourceCeilingBudget?.lastUpdate | date: "medium" }}</span
+            >
+            <button
+              pButton
+              class="p-button-success p-button-text"
+              (click)="loadFundSourceCeilingBudget(true)"
+              icon="pi pi-refresh"
+              label="Refresh"
+            ></button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <p-chart
+          type="bar"
+          height="360"
+          [data]="fundSourceCeilingBudget"
+          [options]="options"
+        ></p-chart>
+      </ng-template>
+    </p-card>
   </div>
 </div>

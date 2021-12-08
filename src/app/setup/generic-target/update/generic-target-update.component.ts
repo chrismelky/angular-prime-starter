@@ -65,6 +65,7 @@ export class GenericTargetUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const dialogData = this.dialogConfig.data;
     this.sectionService.departments().subscribe(
       (resp) => {
         this.sections = resp.data;
@@ -73,7 +74,8 @@ export class GenericTargetUpdateComponent implements OnInit {
     );
     this.indicatorService
       .query({
-        column: ['id', 'name'],
+        column: ['id', 'description'],
+        objective_id: dialogData.objective_id,
       })
       .subscribe(
         (resp) => {
@@ -81,7 +83,7 @@ export class GenericTargetUpdateComponent implements OnInit {
         },
         (error) => {}
       );
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.updateForm(dialogData); //Initialize form with data from dialog
   }
 
   /**

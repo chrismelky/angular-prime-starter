@@ -13,11 +13,11 @@ import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
-import { BlockUIModule } from 'primeng/blockui';
-import { RippleModule } from 'primeng/ripple';
 import { PermissionDeniedComponent } from './permission-denied/permission-denied.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import {ChangePasswordModule} from "./change-password/change-password.module";
+import { ChangePasswordModule } from './change-password/change-password.module';
+import { SidebarModule } from 'primeng/sidebar';
+import { AccordionModule } from 'primeng/accordion';
 
 @NgModule({
   declarations: [MainComponent, NotFoundComponent, PermissionDeniedComponent],
@@ -32,10 +32,10 @@ import {ChangePasswordModule} from "./change-password/change-password.module";
     ToastModule,
     ButtonModule,
     MenuModule,
-    BlockUIModule,
-    RippleModule,
     MatProgressBarModule,
-    ChangePasswordModule
+    ChangePasswordModule,
+    SidebarModule,
+    AccordionModule,
   ],
 })
 export class LayoutModule {}

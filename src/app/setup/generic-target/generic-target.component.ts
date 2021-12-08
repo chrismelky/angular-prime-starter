@@ -239,6 +239,7 @@ export class GenericTargetComponent implements OnInit {
     const ref = this.dialogService.open(GenericTargetUpdateComponent, {
       data,
       header: 'Create/Update GenericTarget',
+      width: '900px',
     });
     ref.onClose.subscribe((result) => {
       if (result) {

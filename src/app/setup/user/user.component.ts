@@ -65,15 +65,15 @@ export class UserComponent implements OnInit {
       header: 'Last Name',
       sort: false,
     },
-    /*{
-      field: 'email',
-      header: 'Email',
-      sort: false,
-    },*/
     {
       field: 'cheque_number',
       header: 'Cheque Number',
       sort: false,
+    },
+    {
+      field: 'username',
+      header: 'Username',
+      sort: true,
     },
     {
       field: 'title',

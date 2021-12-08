@@ -411,7 +411,6 @@ export class ReportComponent implements OnInit {
       return;
     }
     this.reportService.downloadReport(rowData.id,this.financial_year_id,this.admin_hierarchy_id).subscribe((resp) => {
-      console.log(resp)
       let file = new Blob([resp], { type: 'application/pdf' });
       let fileURL = URL.createObjectURL(file);
       window.open(fileURL, '_blank');

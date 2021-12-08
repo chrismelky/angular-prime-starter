@@ -24,11 +24,34 @@ export class DashboardComponent implements OnInit {
   adminHierarchy?: AdminHierarchy;
   section?: Section;
   budgetType?: string = 'CURRENT';
+  fundSourceIsLoading: boolean = false;
 
   options = {
     responsive: true,
     maintainAspectRatio: true,
     barThickness: 35,
+  };
+
+  option2 = {
+    responsive: true,
+    maintainAspectRatio: false,
+    barThickness: 35,
+    plugins: {
+      legend: {
+        position: 'right',
+      },
+    },
+  };
+
+  data = {
+    labels: ['A', 'B', 'C'],
+    datasets: [
+      {
+        data: [300, 50, 100],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+      },
+    ],
   };
 
   fundSourceCeilingBudget?: any;
@@ -58,6 +81,7 @@ export class DashboardComponent implements OnInit {
       return;
     }
     const refreshFilter = refresh ? { refresh: true } : {};
+    this.fundSourceIsLoading = true;
     this.dashboardService
       .fundSourceCeilingAndBudget({
         financial_year_id: this.financial_year_id,
@@ -67,34 +91,40 @@ export class DashboardComponent implements OnInit {
         budget_type: this.budgetType,
         ...refreshFilter,
       })
-      .subscribe((resp) => {
-        if (resp.data?.length) {
-          let labels: any = [];
-          const ceiling: any = {
-            label: 'Ceiling',
-            data: [],
-            backgroundColor: '#2196F3',
-          };
-          const budget: any = {
-            label: 'Budget',
-            data: [],
-            backgroundColor: '#689F38',
-          };
-          resp.data.forEach((d: any) => {
-            labels.push(d.fund_source);
-            ceiling.data.push(d.ceiling);
-            budget.data.push(d.budget);
-          });
+      .subscribe(
+        (resp) => {
+          if (resp.data?.length) {
+            let labels: any = [];
+            const ceiling: any = {
+              label: 'Ceiling',
+              data: [],
+              backgroundColor: '#2196F3',
+            };
+            const budget: any = {
+              label: 'Budget',
+              data: [],
+              backgroundColor: '#689F38',
+            };
+            resp.data.forEach((d: any) => {
+              labels.push(d.fund_source);
+              ceiling.data.push(d.ceiling);
+              budget.data.push(d.budget);
+            });
 
-          this.fundSourceCeilingBudget = {
-            lastUpdate: resp.data[0].last_update,
-            labels: [...labels],
-            datasets: [{ ...ceiling }, { ...budget }],
-          };
-        } else {
-          this.fundSourceCeilingBudget = undefined;
+            this.fundSourceCeilingBudget = {
+              lastUpdate: resp.data[0].last_update,
+              labels: [...labels],
+              datasets: [{ ...ceiling }, { ...budget }],
+            };
+          } else {
+            this.fundSourceCeilingBudget = undefined;
+          }
+          this.fundSourceIsLoading = false;
+        },
+        (error) => {
+          this.fundSourceIsLoading = false;
         }
-      });
+      );
   }
 
   filterChanged(): void {

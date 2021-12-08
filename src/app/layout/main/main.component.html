@@ -68,6 +68,14 @@
       <span fxFlex></span>
 
       <div fxLayout="row" fxLayoutGap="8px" style="margin-right: 0.75rem">
+        <!-- <button
+          pButton
+          pRipple
+          (click)="showData = true"
+          class="p-button-icon p-button-rounded p-button-plain p-button-text"
+          icon="pi pi-bookmark"
+        ></button> -->
+
         <button
           pButton
           pRipple
@@ -106,3 +114,14 @@
   position="bottom-center"
   [preventDuplicates]="false"
 ></p-toast>
+
+<p-sidebar [(visible)]="showData" position="right">
+  <div fxLayout="column" fxLayoutGap="10px" style="width: 400px">
+    <span>Data Preview</span>
+    <p-accordion>
+      <p-accordionTab header="Baseline Statistics"> </p-accordionTab>
+      <p-accordionTab header="Data Values"> </p-accordionTab>
+      <p-accordionTab header="Guidelines"> </p-accordionTab>
+    </p-accordion>
+  </div>
+</p-sidebar>

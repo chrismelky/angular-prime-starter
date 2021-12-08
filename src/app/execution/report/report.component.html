@@ -112,6 +112,19 @@
           </td>
           <td style="height: 36px !important">
             <div fxLayout="row" fxLayoutAlign="end">
+              <div fxLayout="row" fxLayoutGap="2px" *ngIf="rowData.is_file">
+                <button
+                  pButton
+                  icon="pi pi-download"
+                  class="p-button-icon p-button-text"
+                  [disabled]="
+                    !this.admin_hierarchy_id ||
+                    !this.financial_year_id ||
+                    !this.budgetType
+                  "
+                  (click)="downloadReport(rowData)"
+                ></button>
+              </div>
               <div fxLayout="row" fxLayoutGap="2px" *ngIf="rowData.report_id">
                 <button
                   pButton

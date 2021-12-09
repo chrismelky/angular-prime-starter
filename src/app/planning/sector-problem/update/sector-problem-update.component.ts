@@ -61,7 +61,7 @@ export class SectorProblemUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.genericSectorProblemService
-      .query({ columns: ['id', 'name'] })
+      .query({ columns: ['id', 'description'] })
       .subscribe(
         (resp: CustomResponse<GenericSectorProblem[]>) =>
           (this.genericSectorProblems = resp.data)

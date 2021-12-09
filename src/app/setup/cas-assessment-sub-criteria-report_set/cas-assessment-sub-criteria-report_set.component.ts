@@ -256,7 +256,8 @@ export class CasAssessmentSubCriteriaReportSetComponent implements OnInit {
       {
         data,
         header: "Create/Update CasAssessmentSubCriteriaReportSet",
-        height:'40%'
+        width: '400px',
+        height: '600px',
       }
     );
     ref.onClose.subscribe((result) => {

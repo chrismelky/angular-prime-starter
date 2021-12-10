@@ -181,7 +181,7 @@ export class CasAssessmentSubCriteriaPossibleScoreComponent implements OnInit {
   fetchSubCriteria(item: any) {
     if (item) {
       this.casAssessmentSubCriteriaOptionService.query({
-        per_page: 20,
+        per_page: this.per_page ?? ITEMS_PER_PAGE,
         page: this.page,
         cas_assessment_criteria_option_id: item.value
       })

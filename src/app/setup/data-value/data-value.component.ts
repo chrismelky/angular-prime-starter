@@ -440,6 +440,7 @@ export class DataValueComponent implements OnInit {
   }
 
   fileUploader($event: any, dataValue: DataValue): void {
+    let x = dataValue.id?dataValue.id : null;
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
@@ -454,7 +455,8 @@ export class DataValueComponent implements OnInit {
     formData.append('period_id', this.period_id!.toString());
     formData.append('facility_id', this.facility_id!.toString());
     formData.append('data_element_id', dataValue.data_element_id!.toString());
-    formData.append('id', dataValue.id!.toString());
+    // @ts-ignore
+    formData.append('id', x);
     formData.append(
       'category_option_combination_id',
       dataValue.category_option_combination_id!.toString()

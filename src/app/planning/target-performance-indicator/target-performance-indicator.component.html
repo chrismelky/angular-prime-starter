@@ -16,6 +16,7 @@
         <th class="fit-center" *ngFor="let y of financialYears">
           {{ y.name }}
         </th>
+        <th class="fit-center">Source</th>
         <th>
           <div fxLayout="row" fxLayoutAlign="end">
             <button
@@ -42,6 +43,9 @@
         </td>
         <td class="fit-center" *ngFor="let y of financialYears; let i = index">
           <span>{{ rowData["y" + i] }}</span>
+        </td>
+        <td class="fit-center">
+          {{ rowData.source_of_data }}
         </td>
         <td class="fit-center">
           <div fxLayout="row" fxLayoutAlign="end">

@@ -5,6 +5,7 @@
     novalidate
     (ngSubmit)="save()"
     [formGroup]="editForm"
+    autocomplete="off"
   >
     <div fxLayout="column" fxLayoutGap="1rem">
       <div class="p-field" fxFlex>
@@ -63,7 +64,7 @@
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-        <div class="p-field p-col-12 p-md-4" fxFlex>
+        <div class="p-field" fxFlex>
           <span class="p-float-label">
             <input
               id="baseline_value"
@@ -71,7 +72,7 @@
               pInputText
               formControlName="baseline_value"
             />
-            <label for="baseline_value">Baseline Value </label>
+            <label for="baseline_value">B/Value</label>
           </span>
           <span
             *ngIf="
@@ -96,7 +97,7 @@
               pInputText
               formControlName="actual_value"
             />
-            <label for="actual_value">Actual Value </label>
+            <label for="actual_value">A/Value</label>
           </span>
           <span
             *ngIf="
@@ -114,7 +115,6 @@
           </span>
         </div>
 
-        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
           <!-- Y0 -->
           <div class="p-field" fxFlex *ngIf="financialYears.length > 0">
             <span class="p-float-label">
@@ -223,7 +223,34 @@
               >
             </span>
           </div>
-        </div>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <input
+              id="source_of_data"
+              type="text"
+              pInputText
+              formControlName="source_of_data"
+            />
+            <label for="source_of_data">Source of data</label>
+          </span>
+        <span
+          *ngIf="
+              editForm.get('source_of_data')!.invalid &&
+              (editForm.get('source_of_data')!.dirty ||
+                editForm.get('source_of_data')!.touched ||
+                formError)
+            "
+        >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('source_of_data')?.errors?.required"
+            >Saouce of data is required.</small
+            >
+          </span>
+      </div>
       </div>
 
       <div fxLayout="row" fxLayoutGap="0.75rem">

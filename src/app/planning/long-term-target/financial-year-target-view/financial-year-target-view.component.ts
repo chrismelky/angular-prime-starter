@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ConfirmationService } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { AdminHierarchyLevel } from 'src/app/setup/admin-hierarchy-level/admin-hierarchy-level.model';
@@ -56,7 +57,8 @@ export class FinancialYearTargetViewComponent implements OnInit {
     protected adminLevelService: AdminHierarchyLevelService,
     protected adminAreaService: AdminHierarchyService,
     protected toastrService: ToastService,
-    protected genericPriorityService: GenericPriorityService
+    protected genericPriorityService: GenericPriorityService,
+    private confirmationService: ConfirmationService
   ) {}
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
@@ -140,6 +142,23 @@ export class FinancialYearTargetViewComponent implements OnInit {
     if (this.genericPriority && this.genericPriority.params) {
       this.params = this.genericPriority.params.split(',');
     }
+  }
+
+  delete(event: Event, id: number): void {
+    this.confirmationService.confirm({
+      target: event?.target!,
+      key: 'deletePriority',
+      message: 'Are you sure that you want to delete this priority',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.financialYearTargetService.delete(id).subscribe((resp) => {
+          this.loadChildrenTarget();
+        });
+      },
+      reject: () => {
+        //reject action
+      },
+    });
   }
 
   /**

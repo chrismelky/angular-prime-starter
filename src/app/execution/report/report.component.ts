@@ -351,11 +351,7 @@ export class ReportComponent implements OnInit {
       data,
       header: report.name,
     });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
+    ref.onClose.subscribe((result) => {});
   }
 
   loadContents() {
@@ -410,10 +406,16 @@ export class ReportComponent implements OnInit {
     ) {
       return;
     }
-    this.reportService.downloadReport(rowData.id,this.financial_year_id,this.admin_hierarchy_id).subscribe((resp) => {
-      let file = new Blob([resp], { type: 'application/pdf' });
-      let fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_blank');
-    });
+    this.reportService
+      .downloadReport(
+        rowData.id,
+        this.financial_year_id,
+        this.admin_hierarchy_id
+      )
+      .subscribe((resp) => {
+        let file = new Blob([resp], { type: 'application/pdf' });
+        let fileURL = URL.createObjectURL(file);
+        window.open(fileURL, '_blank');
+      });
   }
 }

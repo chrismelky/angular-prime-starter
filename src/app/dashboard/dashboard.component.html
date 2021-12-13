@@ -1,29 +1,9 @@
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
   <p-card class="filter filter-no-adv">
     <ng-template pTemplate="header">
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-        <i class="pi pi-filter"></i>
-        <span class="card-header-text">Filter</span>
-
-        <!-- <p-divider fxFlex class="title" align="center">
-          <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-            <span fxLayout="column" fxLayoutAlign="centre center">
-              <small>Budget Type</small>
-              <strong>{{ budgetType }}</strong>
-            </span>
-            <i class="pi pi-chevron-down"></i>
-          </span>
-        </p-divider> -->
-      </div>
-    </ng-template>
-    <div fxLayout="column" fxLayoutGap="4px">
-      <div fxLayout="row wrap" fxLayoutGap="10px">
-        <div
-          fxLayout="row wrap"
-          fxLayoutGap="0.75rem"
-          fxFlex
-          fxLayoutAlign="start center"
-        >
+      <div fxLayout="column" fxLayoutGap="10px">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+          <!-- <i class="pi pi-filter"></i> -->
           <app-admin-hierarchy-tree
             fxFlex
             [stateKey]="'admin_cost_centre'"
@@ -37,6 +17,7 @@
             [returnType]="'object'"
           >
           </app-section-tree>
+
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -53,6 +34,7 @@
               <label for="budgetType">Budget Type </label>
             </span>
           </div>
+
           <div class="p-field" fxFlex>
             <span class="p-float-label">
               <p-dropdown
@@ -70,8 +52,24 @@
             </span>
           </div>
         </div>
+        <!-- <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+          <p-chart
+            type="doughnut"
+            [data]="data"
+            [options]="option2"
+            width="200"
+            heigh="200"
+          ></p-chart>
+          <p-chart
+            type="doughnut"
+            [data]="data"
+            [options]="option2"
+            width="200"
+            heigh="200"
+          ></p-chart>
+        </div> -->
       </div>
-    </div>
+    </ng-template>
   </p-card>
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
     <p-card fxFlex="0 1 100%">
@@ -96,12 +94,15 @@
         </div>
       </ng-template>
       <ng-template pTemplate="content">
-        <p-chart
-          type="bar"
-          height="360"
-          [data]="fundSourceCeilingBudget"
-          [options]="options"
-        ></p-chart>
+        <div class="loader-area">
+          <app-loader [isLoading]="fundSourceIsLoading"></app-loader>
+          <p-chart
+            type="bar"
+            height="320"
+            [data]="fundSourceCeilingBudget"
+            [options]="options"
+          ></p-chart>
+        </div>
       </ng-template>
     </p-card>
   </div>

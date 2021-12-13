@@ -349,6 +349,10 @@ export class AssessmentCriteriaComponent implements OnInit {
   }
 
   loadSubCriteria(id: any, i: number) {
+    if (!this.admin_hierarchy_id){
+      this.toastService.info('Ooops! Please select council to assess first. Asante');
+      return;
+    }
     this.reportViewed = false;
     this.selectedIndex = i;
     this.casAssessmentSubCriteriaService.getSubCriteriaWithScores(

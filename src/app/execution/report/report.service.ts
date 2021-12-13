@@ -58,4 +58,16 @@ export class ReportService {
       `${this.resourceUrl}/get_params/${id}`
     );
   }
+  /**
+   * download report files
+   *
+   */
+  downloadReport(id: number,financial_year_id: number,admin_hierarchy_id: number) {
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+    };
+    return this.http.get<any>(
+      `${this.resourceUrl}/get_file/${id}/${financial_year_id}/${admin_hierarchy_id}`,httpOptions
+    )
+  }
 }

@@ -68,4 +68,20 @@ export class AssessorAssignmentService {
       `${this.adminUrl}/${round_id}/${fy_id}/${version_id}/${user_id}/${admin_position}`
     );
   }
+
+  getAssessmentUsers(req?: any) {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<AssessorAssignment[]>>(
+      `${this.resourceUrl}/get-cas-users`,
+      { params: options }
+    );
+  }
+
+  getHierarchies(req?: any) {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<AssessorAssignment[]>>(
+      `${this.resourceUrl}/get-cas-hierarchies`,
+      { params: options }
+    );
+  }
 }

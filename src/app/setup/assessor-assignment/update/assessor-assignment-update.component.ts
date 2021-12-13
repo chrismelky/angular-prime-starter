@@ -46,6 +46,7 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
   periods?: Period[] = [];
   casAssessmentCategoryVersions?: CasAssessmentCategoryVersion[] = [];
   financialYears?: FinancialYear[] = [];
+  currentUser: User;
 
   /**
    * Declare form
@@ -54,6 +55,7 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
     id: [null, []],
     user_id: [null, []],
     admin_hierarchies: [null, []],
+    admin_hierarchy_position: [null, []],
     cas_assessment_round_id: [null, [Validators.required]],
     period_id: [null, [Validators.required]],
     cas_assessment_category_version_id: [null, [Validators.required]],
@@ -74,27 +76,22 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService
-  ) {}
+  ) {
+    this.currentUser = this.userService.getCurrentUser();
+  }
 
   ngOnInit(): void {
-    this.userService
-      .query({
-        columns: [
-          'id',
-          'first_name',
-          'last_name',
-          'mobile_number',
-          'username',
-          'email',
-        ],
-      })
+    this.assessorAssignmentService
+      .getAssessmentUsers(this.currentUser.admin_hierarchy)
       .subscribe((resp: CustomResponse<User[]>) => (this.users = resp.data));
-    this.adminHierarchyService
-      .query({ admin_hierarchy_position: 2 })
+
+    this.assessorAssignmentService
+      .getHierarchies(this.currentUser.admin_hierarchy)
       .subscribe(
         (resp: CustomResponse<AdminHierarchy[]>) =>
           (this.admin_hierarchies = resp.data)
       );
+
     this.casAssessmentRoundService
       .query({ columns: ['id', 'name'] })
       .subscribe(
@@ -132,6 +129,7 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
     }
     this.isSaving = true;
     const assessorAssignment = this.createFromForm();
+    assessorAssignment.admin_hierarchy_position = this.currentUser.admin_hierarchy?.admin_hierarchy_position;
     if (assessorAssignment.id !== undefined) {
       this.subscribeToSaveResponse(
         this.assessorAssignmentService.update(assessorAssignment)
@@ -186,6 +184,7 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
       admin_hierarchies: adminIds,
       cas_assessment_round_id: assessorAssignment.cas_assessment_round_id,
       period_id: assessorAssignment.period_id,
+      admin_hierarchy_position: assessorAssignment.admin_hierarchy_position,
       cas_assessment_category_version_id:
         assessorAssignment.cas_assessment_category_version_id,
       financial_year_id: assessorAssignment.financial_year_id,
@@ -205,6 +204,7 @@ export class AssessorAssignmentUpdateComponent implements OnInit {
       cas_assessment_round_id: this.editForm.get(['cas_assessment_round_id'])!
         .value,
       period_id: this.editForm.get(['period_id'])!.value,
+      admin_hierarchy_position: this.editForm.get(['admin_hierarchy_position'])!.value,
       cas_assessment_category_version_id: this.editForm.get([
         'cas_assessment_category_version_id',
       ])!.value,

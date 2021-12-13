@@ -139,7 +139,7 @@ loadAssessors (){
   const data = {
     cas_assessment_round_id: this.cas_assessment_round_id,
     period_id: this.period_id,
-    admin_hierarchy_level_id: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+    admin_hierarchy_position: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
     cas_assessment_category_version_id: this.cas_assessment_category_version_id,
     financial_year_id: this.financial_year_id,
   };
@@ -364,7 +364,9 @@ loadAssessors (){
 
   loadRegions(user_id: number) {
     this.assessorAssignmentService
-      .getAssignedRegions(this.cas_assessment_round_id,this.financial_year_id,this.cas_assessment_category_version_id,user_id,this.currentUser.admin_hierarchy?.admin_hierarchy_position)
+      .getAssignedRegions(this.cas_assessment_round_id,this.financial_year_id,
+        this.cas_assessment_category_version_id,user_id,
+        this.currentUser.admin_hierarchy?.admin_hierarchy_position)
       .subscribe((resp)=>(this.assignedRegions = resp.data));
   }
 

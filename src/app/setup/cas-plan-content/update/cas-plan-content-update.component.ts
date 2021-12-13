@@ -42,6 +42,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
     name: [null, [Validators.required, Validators.maxLength(255)]],
     parent_id: [null, []],
     report_id: [null, []],
+    is_file: [null, []],
     cas_plan_id: [null, [Validators.required]],
     sort_order: [null, [Validators.required, Validators.min(1)]],
   });
@@ -91,6 +92,14 @@ export class CasPlanContentUpdateComponent implements OnInit {
       });
   }
 
+  /** */
+
+  toggleActivation(){
+    var updateCasContent = this.createFromForm();
+    this.subscribeToSaveResponse(
+      this.casPlanContentService.update(updateCasContent)
+    );
+  }
   /**
    * When form is valid Create CasPlanContent Update if exist else set form has error and return
    * @returns
@@ -154,6 +163,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
       report_id: casPlanContent.report_id,
       cas_plan_id: casPlanContent.cas_plan_id,
       sort_order: casPlanContent.sort_order,
+      is_file: casPlanContent.is_file,
     });
   }
 
@@ -170,6 +180,7 @@ export class CasPlanContentUpdateComponent implements OnInit {
       report_id: this.editForm.get(['report_id'])!.value,
       cas_plan_id: this.editForm.get(['cas_plan_id'])!.value,
       sort_order: this.editForm.get(['sort_order'])!.value,
+      is_file: this.editForm.get(['is_file'])!.value,
     };
   }
 }

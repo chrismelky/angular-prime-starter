@@ -331,7 +331,13 @@ export class DataValueComponent implements OnInit {
               hasError: false,
               data_element_id: de.id,
               category_option_combination_id: coc.id,
+              is_calculated: coc.is_calculated,
+              formular: coc.formular,
             };
+
+            if (coc.is_calculated && this.dataValues?.length) {
+              this.calculateFormularColumns(0, de, cc, coc);
+            }
           });
         }
 
@@ -349,10 +355,16 @@ export class DataValueComponent implements OnInit {
     let rowTotal = valueChanged || 0;
     let columnTotal = valueChanged || 0;
 
+    this.calculateFormularColumns(valueChanged, changedDE, catComb, changedCoc);
+
     //Calcucate row total
     catComb.category_option_combinations?.forEach((coc) => {
       const value_type = coc.value_type || changedDE.value_type;
-      if (value_type === 'NUMBER' && coc.id != changedCoc.id) {
+      if (
+        value_type === 'NUMBER' &&
+        coc.id != changedCoc.id &&
+        !coc.is_calculated
+      ) {
         rowTotal =
           rowTotal +
           parseFloat(this.dataValuesArray[changedDE.id!][coc.id!].value || 0);
@@ -374,6 +386,35 @@ export class DataValueComponent implements OnInit {
     changedCoc.columnTotal = columnTotal;
 
     this.dataValuesTotalArray[changedDE.id!][catComb.id!] = rowTotal;
+  }
+
+  //Calulcate row sub totals
+  private calculateFormularColumns(
+    valueChanged: number,
+    changedDE: DataElement,
+    catComb: CategoryCombination,
+    changedCoc: CategoryOptionCombination
+  ): void {
+    const subTotalOptionCombos = catComb.category_option_combinations?.filter(
+      (coc) => coc.is_calculated
+    );
+
+    subTotalOptionCombos?.forEach((sub) => {
+      let formular: any = sub.formular || '';
+      catComb.category_option_combinations?.forEach((coc) => {
+        const value =
+          coc.id === changedCoc.id
+            ? valueChanged
+            : this.dataValuesArray[changedDE.id!][coc.id!]?.value || 0;
+        formular = formular.replaceAll(coc.name, value);
+      });
+      formular = formular.replaceAll('[', '');
+      formular = formular.replaceAll(']', '');
+      if (this.dataValuesArray[changedDE.id!][sub.id!]) {
+        this.dataValuesArray[changedDE.id!][sub.id!].value =
+          eval(formular).toFixed(1);
+      }
+    });
   }
 
   saveValue(event: any, dataValue: any): void {
@@ -440,7 +481,7 @@ export class DataValueComponent implements OnInit {
   }
 
   fileUploader($event: any, dataValue: DataValue): void {
-    let x = dataValue.id?dataValue.id : null;
+    let x = dataValue.id ? dataValue.id : null;
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||

@@ -185,106 +185,124 @@
                     <td
                       *ngFor="let coc of catComb.category_option_combinations"
                     >
-                      <input
-                        [style]="{ width: '100%' }"
-                        *ngIf="coc.value_type === 'TEXT' && !coc.option_set_id"
-                        autocomplete="off"
-                        id="{{ de.id! }}-{{ coc.id! }}"
-                        (blur)="
-                          saveValue($event, dataValuesArray[de.id!][coc.id!])
-                        "
-                        type="text"
-                        [style]="
-                          dataValuesArray[de.id!][coc.id!].isSaved
-                            ? { background: '#B3E5FC' }
-                            : { background: '#FFF' }
-                        "
-                        pInputText
-                        [disabled]="!valueLoaded"
-                        [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                      />
-                      <p-dropdown
-                        [style]="{ width: '100%' }"
-                        [showClear]="true"
-                        *ngIf="coc.value_type === 'TEXT' && coc.option_set_id"
-                        id="{{ de.id! }}-{{ coc.id! }}"
-                        [autoDisplayFirst]="false"
-                        [filter]="true"
-                        optionValue="name"
-                        [disabled]="!valueLoaded"
-                        dataKey="name"
-                        optionLabel="name"
-                        (onChange)="
-                          saveValue($event, dataValuesArray[de.id!][coc.id!])
-                        "
-                        class="p-inputtext-sm"
-                        appendTo="body"
-                        [options]="coc.option_set?.options!"
-                        [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                      ></p-dropdown>
-                      <p-inputNumber
-                        [style]="{ width: '100%' }"
-                        mode="decimal"
-                        [inputStyle]="
-                          dataValuesArray[de.id!][coc.id!].isSaved
-                            ? { background: '#B3E5FC' }
-                            : { background: '#FFF' }
-                        "
-                        *ngIf="coc.value_type === 'NUMBER'"
-                        autocomplete="off"
-                        (onInput)="
-                          calculateTotal($event.value, de, catComb, coc)
-                        "
-                        [disabled]="!valueLoaded"
-                        id="{{ de.id! }}-{{ coc.id! }}"
-                        (onBlur)="
-                          saveValue($event, dataValuesArray[de.id!][coc.id!])
-                        "
-                        type="text"
-                        [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                      ></p-inputNumber>
-                      <p-inputNumber
-                        (onInput)="
-                          calculateTotal($event.value, de, catComb, coc)
-                        "
-                        [style]="{ width: '100%' }"
-                        *ngIf="coc.value_type === 'POSITIVE_INTEGER'"
-                        [inputStyle]="
-                          dataValuesArray[de.id!][coc.id!].isSaved
-                            ? { background: '#B3E5FC' }
-                            : { background: '#FFF' }
-                        "
-                        autocomplete="off"
-                        id="{{ de.id! }}-{{ coc.id! }}"
-                        [disabled]="!valueLoaded"
-                        (onBlur)="
-                          saveValue($event, dataValuesArray[de.id!][coc.id!])
-                        "
-                        type="text"
-                        [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
-                      ></p-inputNumber>
-                      <p-fileUpload
-                        [auto]="true"
-                        *ngIf="coc.value_type === 'FILE'"
-                        name="myfile[]"
-                        [customUpload]="true"
-                        [disabled]="!valueLoaded"
-                        (uploadHandler)="
-                          fileUploader($event, dataValuesArray[de.id!][coc.id!])
+                      <ng-container *ngIf="!coc.is_calculated">
+                        <input
+                          [style]="{ width: '100%' }"
+                          *ngIf="
+                            coc.value_type === 'TEXT' && !coc.option_set_id
+                          "
+                          autocomplete="off"
+                          id="{{ de.id! }}-{{ coc.id! }}"
+                          (blur)="
+                            saveValue($event, dataValuesArray[de.id!][coc.id!])
+                          "
+                          type="text"
+                          [style]="
+                            dataValuesArray[de.id!][coc.id!].isSaved
+                              ? { background: '#B3E5FC' }
+                              : { background: '#FFF' }
+                          "
+                          pInputText
+                          [disabled]="!valueLoaded"
+                          [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                        />
+                        <p-dropdown
+                          [style]="{ width: '100%' }"
+                          [showClear]="true"
+                          *ngIf="coc.value_type === 'TEXT' && coc.option_set_id"
+                          id="{{ de.id! }}-{{ coc.id! }}"
+                          [autoDisplayFirst]="false"
+                          [filter]="true"
+                          optionValue="name"
+                          [disabled]="!valueLoaded"
+                          dataKey="name"
+                          optionLabel="name"
+                          (onChange)="
+                            saveValue($event, dataValuesArray[de.id!][coc.id!])
+                          "
+                          class="p-inputtext-sm"
+                          appendTo="body"
+                          [options]="coc.option_set?.options!"
+                          [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                        ></p-dropdown>
+                        <p-inputNumber
+                          [style]="{ width: '100%' }"
+                          mode="decimal"
+                          [inputStyle]="
+                            dataValuesArray[de.id!][coc.id!].isSaved
+                              ? { background: '#B3E5FC' }
+                              : { background: '#FFF' }
+                          "
+                          *ngIf="coc.value_type === 'NUMBER'"
+                          autocomplete="off"
+                          (onInput)="
+                            calculateTotal($event.value, de, catComb, coc)
+                          "
+                          [disabled]="!valueLoaded"
+                          id="{{ de.id! }}-{{ coc.id! }}"
+                          (onBlur)="
+                            saveValue($event, dataValuesArray[de.id!][coc.id!])
+                          "
+                          type="text"
+                          [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                          (onInput)="
+                            calculateTotal($event.value, de, catComb, coc)
+                          "
+                          [style]="{ width: '100%' }"
+                          *ngIf="coc.value_type === 'POSITIVE_INTEGER'"
+                          [inputStyle]="
+                            dataValuesArray[de.id!][coc.id!].isSaved
+                              ? { background: '#B3E5FC' }
+                              : { background: '#FFF' }
+                          "
+                          autocomplete="off"
+                          id="{{ de.id! }}-{{ coc.id! }}"
+                          [disabled]="!valueLoaded"
+                          (onBlur)="
+                            saveValue($event, dataValuesArray[de.id!][coc.id!])
+                          "
+                          type="text"
+                          [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
+                        ></p-inputNumber>
+                        <p-fileUpload
+                          [auto]="true"
+                          *ngIf="coc.value_type === 'FILE'"
+                          name="myfile[]"
+                          [customUpload]="true"
+                          [disabled]="!valueLoaded"
+                          (uploadHandler)="
+                            fileUploader(
+                              $event,
+                              dataValuesArray[de.id!][coc.id!]
+                            )
+                          "
+                        >
+                          <ng-template let-file pTemplate="content">
+                            <button
+                              *ngIf="dataValuesArray[de.id!][coc.id!]?.value"
+                              (click)="
+                                download(dataValuesArray[de.id!][coc.id!].value)
+                              "
+                              pButton
+                              icon="pi pi-download"
+                              type="button"
+                            ></button>
+                          </ng-template>
+                        </p-fileUpload>
+                      </ng-container>
+                      <div
+                        *ngIf="coc.is_calculated"
+                        class="total"
+                        style="
+                          font-weight: bold;
+                          padding: 0.75rem !important;
+                          text-align: center;
                         "
                       >
-                        <ng-template let-file pTemplate="content">
-                          <button
-                            *ngIf="dataValuesArray[de.id!][coc.id!]?.value"
-                            (click)="
-                              download(dataValuesArray[de.id!][coc.id!].value)
-                            "
-                            pButton
-                            icon="pi pi-download"
-                            type="button"
-                          ></button>
-                        </ng-template>
-                      </p-fileUpload>
+                        {{ dataValuesArray[de.id!][coc.id!]?.value }}
+                      </div>
                     </td>
                     <td
                       class="total"
@@ -311,7 +329,9 @@
                     style="font-weight: bold; padding: 0.75rem !important"
                     *ngFor="let coc of catComb.category_option_combinations"
                   >
-                    {{ coc.columnTotal || 0 }}
+                    <span *ngIf="!coc.is_calculated">{{
+                      coc.columnTotal || 0
+                    }}</span>
                   </td>
                   <td class="total" *ngIf="catComb.has_row_total"></td>
                 </tr>

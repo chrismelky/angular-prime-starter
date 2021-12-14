@@ -120,7 +120,11 @@ export class DataSetComponent implements OnInit {
       return;
     }
     this.casPlanContentService
-      .query({ cas_plan_id: this.cas_plan_id, columns: ['id', 'name'] })
+      .query({
+        cas_plan_id: this.cas_plan_id,
+        columns: ['id', 'name'],
+        sort: ['sort_order:asc'],
+      })
       .subscribe(
         (resp: CustomResponse<CasPlanContent[]>) =>
           (this.casPlanContents = resp.data)

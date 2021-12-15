@@ -64,7 +64,44 @@
         </span>
       </div>
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-        <div class="p-field" fxFlex>
+
+     <div fxLayout="column">
+
+       <p-divider align="center">
+         <b>Baseline</b>
+       </p-divider>
+
+       <div fxLayout="row" fxLayoutGap="1rem">
+
+         <div class="p-field" fxFlex>
+           <span class="p-float-label">
+           <p-calendar
+             dataType="string"
+             appendTo="body"
+             dateFormat="yy"
+             yearRange="2020:2040"
+             formControlName="baseline_date"
+             inputId="baseline_date">
+           </p-calendar>
+             <label for="baseline_date">Baseline Date</label>
+          </span>
+           <span
+             *ngIf="
+              editForm.get('baseline_date')!.invalid &&
+              (editForm.get('baseline_date')!.dirty ||
+                editForm.get('baseline_date')!.touched ||
+                formError)
+            "
+           >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('baseline_date')?.errors?.required"
+            >Baseline Value is required.</small
+            >
+          </span>
+         </div>
+
+         <div class="p-field" fxFlex>
           <span class="p-float-label">
             <input
               id="baseline_value"
@@ -72,7 +109,7 @@
               pInputText
               formControlName="baseline_value"
             />
-            <label for="baseline_value">B/Value</label>
+            <label for="baseline_value">B/Indicator Value</label>
           </span>
           <span
             *ngIf="
@@ -85,11 +122,12 @@
             <small
               class="p-error"
               *ngIf="editForm.get('baseline_value')?.errors?.required"
-              >Baseline Value is required.</small
+              >Baseline Indicator Value is required.</small
             >
           </span>
         </div>
-        <div class="p-field" fxFlex>
+
+        <!--div class="p-field" fxFlex>
           <span class="p-float-label">
             <input
               id="actual_value"
@@ -113,8 +151,18 @@
               >Actual Value is required.</small
             >
           </span>
-        </div>
+        </div-->
+       </div>
+     </div>
 
+
+        <div fxLayout="column">
+
+          <p-divider align="center">
+            <b>Indicator Target Value (as per SP)</b>
+          </p-divider>
+
+          <div fxLayout="row" fxLayoutGap="1rem">
           <!-- Y0 -->
           <div class="p-field" fxFlex *ngIf="financialYears.length > 0">
             <span class="p-float-label">
@@ -157,6 +205,7 @@
               >
             </span>
           </div>
+
 
           <!-- Y2 -->
           <div class="p-field" fxFlex *ngIf="financialYears.length > 2">
@@ -223,6 +272,10 @@
               >
             </span>
           </div>
+          </div>
+        </div>
+
+        <!-- hapapapapa -->
       </div>
 
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">

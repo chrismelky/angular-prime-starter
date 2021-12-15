@@ -6,6 +6,7 @@ export class TargetPerformanceIndicator {
     public baseline_value?: string,
     public actual_value?: string,
     public source_of_data?: string,
+    public baseline_date?: string,
     public y0?: number,
     public y1?: number,
     public y2?: number,

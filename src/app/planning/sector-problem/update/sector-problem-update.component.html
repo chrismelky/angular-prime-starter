@@ -1,166 +1,218 @@
 <div class="dialog-content">
-  <form
-    name="editForm"
-    role="form"
-    novalidate
-    (ngSubmit)="save()"
-    [formGroup]="editForm"
-  >
-    <div fxLayout="column" fxLayoutGap="1rem">
+  <div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" fxFlex>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+      <button
+        icon="pi pi-clone"
+        pButton
+        type="button"
+        class="p-button-sm p-button-outlined"
+        label="Generic Sector Problem"
+        (click)="genericSectorProblemPanel.toggle($event)"
+      ></button>
+    </div>
 
+    <form
+      fxFlex
+      name="editForm"
+      role="form"
+      novalidate
+      (ngSubmit)="save()"
+      [formGroup]="editForm"
+    >
+      <div fxLayout="column" fxLayoutGap="1rem" fxFlex>
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <textarea
+              id="description"
+              formControlName="description"
+              [rows]="5"
+              [cols]="30"
+              pInputTextarea
+              [autoResize]="true"
+            ></textarea>
+            <label for="description">Description </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('description')!.invalid &&
+              (editForm.get('description')!.dirty ||
+                editForm.get('description')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('description')?.errors?.required"
+              >Description is required.</small
+            >
+          </span>
+        </div>
+
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <p-inputNumber id="number" formControlName="number"></p-inputNumber>
+            <label for="number">Number </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('number')!.invalid &&
+              (editForm.get('number')!.dirty ||
+                editForm.get('number')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('number')?.errors?.required"
+              >Number is required.</small
+            >
+          </span>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="2px">
+          <p-inputSwitch
+            id="is_active"
+            name="is_active"
+            formControlName="is_active"
+          ></p-inputSwitch>
+          <label for="is_active">Is Active </label>
+        </div>
+
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              #priorityArea
+              id="priority_area_id"
+              optionValue="id"
+              optionLabel="description"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              (onChange)="loadGenericSectorProblems(priorityArea.value)"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="priorityAreas!"
+              formControlName="priority_area_id"
+            ></p-dropdown>
+            <label for="priority_area_id">Priority Area </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('priority_area_id')!.invalid &&
+              (editForm.get('priority_area_id')!.dirty ||
+                editForm.get('priority_area_id')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('priority_area_id')?.errors?.required"
+              >Priority Area is required.</small
+            >
+          </span>
+        </div>
+
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="admin_hierarchy_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="adminHierarchies!"
+              formControlName="admin_hierarchy_id"
+            ></p-dropdown>
+            <label for="admin_hierarchy_id">Admin Hierarchy </label>
+          </span>
+          <span
+            *ngIf="
+              editForm.get('admin_hierarchy_id')!.invalid &&
+              (editForm.get('admin_hierarchy_id')!.dirty ||
+                editForm.get('admin_hierarchy_id')!.touched ||
+                formError)
+            "
+          >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
+              >Admin Hierarchy is required.</small
+            >
+          </span>
+        </div>
+        <div fxLayout="row" fxLayoutGap="0.75rem">
+          <span fxFlex></span>
+          <button
+            class="p-button-raised"
+            icon="pi pi-check"
+            label="Save"
+            pButton
+            type="submit"
+          ></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<p-overlayPanel
+  #genericSectorProblemPanel
+  [dismissable]="false"
+  [showCloseIcon]="true"
+  appendTo="body"
+>
+  <ng-template pTemplate>
+    <div style="width: 840px" fxLayout="column" fxLayoutGap="20px">
+      <!-- Generic Problem -->
       <div class="p-field" fxFlex>
         <span class="p-float-label">
           <p-dropdown
-            id="generic_sector_problem_id"
-            optionValue="id"
+            id="generic_problem"
             optionLabel="description"
             [autoDisplayFirst]="false"
+            (onChange)="prepareParams()"
             [filter]="true"
+            dataKey="id"
             class="p-inputtext-sm"
             appendTo="body"
             [options]="genericSectorProblems!"
-            formControlName="generic_sector_problem_id"
+            [(ngModel)]="genericSectorProblem"
           ></p-dropdown>
-          <label for="generic_sector_problem_id">Generic Sector Problem </label>
+          <label for="generic_problem">Generic Sector Problem</label>
         </span>
-        <span
-          *ngIf="
-            editForm.get('generic_sector_problem_id')!.invalid &&
-            (editForm.get('generic_sector_problem_id')!.dirty ||
-              editForm.get('generic_sector_problem_id')!.touched ||
-              formError)
-          "
-        >
+        <span *ngIf="paramsError && !genericSectorProblem">
+          <small class="p-error">Generic sector problem is required.</small>
         </span>
       </div>
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <textarea
-            id="description"
-            formControlName="description"
-            [rows]="5"
-            [cols]="30"
-            pInputTextarea
-            [autoResize]="true"
-          ></textarea>
-          <label for="description">Description </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('description')!.invalid &&
-            (editForm.get('description')!.dirty ||
-              editForm.get('description')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('description')?.errors?.required"
-            >Description is required.</small
-          >
-        </span>
+      <!-- Params -->
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field" fxFlex *ngFor="let p of params">
+          <span class="p-float-label">
+            <input
+              id="code"
+              type="text"
+              pInputText
+              [(ngModel)]="paramValues[p]"
+            />
+            <label for="code">{{ p }} </label>
+          </span>
+          <span *ngIf="paramsError && !paramValues[p]">
+            <small class="p-error">{{ p }} value is required.</small>
+          </span>
+        </div>
       </div>
-
-      <div class="p-field p-col-12 p-md-4" fxFlex>
-        <span class="p-float-label">
-          <p-inputNumber id="number" formControlName="number"></p-inputNumber>
-          <label for="number">Number </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('number')!.invalid &&
-            (editForm.get('number')!.dirty ||
-              editForm.get('number')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('number')?.errors?.required"
-            >Number is required.</small
-          >
-        </span>
-      </div>
-
-      <div fxLayout="row" fxLayoutGap="2px">
-        <p-inputSwitch
-          id="is_active"
-          name="is_active"
-          formControlName="is_active"
-        ></p-inputSwitch>
-        <label for="is_active">Is Active </label>
-      </div>
-
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="priority_area_id"
-            optionValue="id"
-            optionLabel="description"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="priorityAreas!"
-            formControlName="priority_area_id"
-          ></p-dropdown>
-          <label for="priority_area_id">Priority Area </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('priority_area_id')!.invalid &&
-            (editForm.get('priority_area_id')!.dirty ||
-              editForm.get('priority_area_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('priority_area_id')?.errors?.required"
-            >Priority Area is required.</small
-          >
-        </span>
-      </div>
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="admin_hierarchy_id"
-            optionValue="id"
-            optionLabel="name"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="adminHierarchies!"
-            formControlName="admin_hierarchy_id"
-          ></p-dropdown>
-          <label for="admin_hierarchy_id">Admin Hierarchy </label>
-        </span>
-        <span
-          *ngIf="
-            editForm.get('admin_hierarchy_id')!.invalid &&
-            (editForm.get('admin_hierarchy_id')!.dirty ||
-              editForm.get('admin_hierarchy_id')!.touched ||
-              formError)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="editForm.get('admin_hierarchy_id')?.errors?.required"
-            >Admin Hierarchy is required.</small
-          >
-        </span>
-      </div>
-      <div fxLayout="row" fxLayoutGap="0.75rem">
-        <span fxFlex></span>
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
         <button
           class="p-button-raised"
           icon="pi pi-check"
-          label="Save"
+          label="Apply"
+          (click)="createFromGeneric()"
           pButton
-          type="submit"
+          pRipple
+          type="button"
         ></button>
       </div>
     </div>
-  </form>
-</div>
+  </ng-template>
+</p-overlayPanel>

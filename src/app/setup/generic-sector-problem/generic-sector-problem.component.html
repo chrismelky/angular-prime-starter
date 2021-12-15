@@ -97,16 +97,16 @@
               <div class="p-field" fxFlex>
                 <span class="p-float-label p-input-icon-right">
                   <input
-                    id="code"
+                    id="description"
                     type="text"
                     class="p-inputtext-sm"
                     pInputText
-                    [(ngModel)]="search['code']"
+                    [(ngModel)]="search['description']"
                   />
-                  <label for="code">Code </label>
+                  <label for="description">Description </label>
                   <i
                     class="pi pi-times clear"
-                    (click)="search['code'] = undefined; onSearch()"
+                    (click)="search['description'] = undefined; onSearch()"
                   ></i>
                 </span>
               </div>

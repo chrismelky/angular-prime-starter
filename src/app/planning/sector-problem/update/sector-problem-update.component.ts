@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -21,6 +21,7 @@ import { GenericSectorProblemService } from 'src/app/setup/generic-sector-proble
 import { SectorProblem } from '../sector-problem.model';
 import { SectorProblemService } from '../sector-problem.service';
 import { ToastService } from 'src/app/shared/toast.service';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-sector-problem-update',
@@ -31,9 +32,16 @@ export class SectorProblemUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
+  @ViewChild('genericSectorProblemPanel')
+  genericSectorProblemPanel!: OverlayPanel;
+
   priorityAreas?: PriorityArea[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   genericSectorProblems?: GenericSectorProblem[] = [];
+  genericSectorProblem?: GenericSectorProblem;
+  paramValues: any = {};
+  params: any[] = [];
+  paramsError = false;
 
   /**
    * Declare form
@@ -60,16 +68,25 @@ export class SectorProblemUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const dialogData = this.dialogConfig.data;
+
+    this.adminHierarchies = dialogData.adminHierarchies;
+    this.priorityAreas = dialogData.priorityAreas;
+
+    this.loadGenericSectorProblems(dialogData.sectorProblem.priority_area_id);
+    this.updateForm(dialogData.sectorProblem); //Initialize form with data from dialog
+  }
+
+  loadGenericSectorProblems(priority_area_id: number): void {
     this.genericSectorProblemService
-      .query({ columns: ['id', 'description'] })
+      .query({
+        priority_area_id,
+        columns: ['id', 'description', 'params'],
+      })
       .subscribe(
         (resp: CustomResponse<GenericSectorProblem[]>) =>
           (this.genericSectorProblems = resp.data)
       );
-    const dialogData = this.dialogConfig.data;
-    this.adminHierarchies = dialogData.adminHierarchies;
-    this.priorityAreas = dialogData.priorityAreas;
-    this.updateForm(dialogData.sectorProblem); //Initialize form with data from dialog
   }
 
   /**
@@ -92,6 +109,40 @@ export class SectorProblemUpdateComponent implements OnInit {
         this.sectorProblemService.create(sectorProblem)
       );
     }
+  }
+
+  prepareParams(): void {
+    if (this.genericSectorProblem && this.genericSectorProblem.params) {
+      this.params = this.genericSectorProblem.params.split(',');
+    }
+  }
+
+  createFromGeneric(): void {
+    // Validate params
+    this.paramsError = false;
+    if (!this.genericSectorProblem) {
+      this.paramsError = true;
+    }
+    this.params.forEach((p) => {
+      if (!this.paramValues[p]) {
+        this.paramsError = true;
+      }
+    });
+    if (this.paramsError) {
+      return;
+    }
+
+    let description = this.genericSectorProblem?.description;
+    this.params.forEach((p) => {
+      description = description?.replace(p, this.paramValues[p]);
+    });
+
+    this.editForm.patchValue({
+      description,
+      generic_sector_problem_id: this.genericSectorProblem?.id,
+    });
+
+    this.genericSectorProblemPanel?.hide();
   }
 
   protected subscribeToSaveResponse(

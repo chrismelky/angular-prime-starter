@@ -8,14 +8,14 @@
       </div>
     </ng-template>
     <div fxLayout="column" fxLayoutGap="4px">
-      <div fxLayout="row wrap" fxLayoutGap="10px">
+      <div fxLayout="row" fxLayoutGap="10px">
         <div
-          fxLayout="row wrap"
+          fxLayout="row"
           fxLayoutGap="0.75rem"
           fxFlex
           fxLayoutAlign="start center"
         >
-          <div class="p-field" fxFlex>
+          <div class="p-field" fxFlex="0 1 24%">
             <span class="p-float-label">
               <p-dropdown
                 id="admin_hierarchy_id"
@@ -31,7 +31,7 @@
               <label for="admin_hierarchy_id">Admin Hierarchy </label>
             </span>
           </div>
-          <div class="p-field" fxFlex>
+          <div class="p-field" fxFlex="1 1 76%">
             <span class="p-float-label">
               <p-dropdown
                 id="priority_area_id"
@@ -93,7 +93,24 @@
               fxLayoutGap="0.75rem"
               fxFlex
               fxLayoutAlign="start center"
-            ></div>
+            >
+              <div class="p-field" fxFlex>
+                <span class="p-float-label p-input-icon-right">
+                  <input
+                    id="description"
+                    type="text"
+                    class="p-inputtext-sm"
+                    pInputText
+                    [(ngModel)]="search['description']"
+                  />
+                  <label for="description">Description </label>
+                  <i
+                    class="pi pi-times clear"
+                    (click)="search['description'] = undefined; onSearch()"
+                  ></i>
+                </span>
+              </div>
+            </div>
             <div
               fxLayout="row"
               fxLayoutGap="4px"

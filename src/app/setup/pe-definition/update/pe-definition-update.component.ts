@@ -136,7 +136,10 @@ export class PeDefinitionUpdateComponent implements OnInit {
       return;
     }
     this.isSaving = true;
-    const peDefinition = this.createFromForm();
+    var peDefinition = this.createFromForm();
+    if(peDefinition.type !== 'CURRENCY') {
+      peDefinition.is_input = false;
+    }
     if (peDefinition.id !== undefined && peDefinition.id !== null) {
       this.subscribeToSaveResponse(
         this.peDefinitionService.update(peDefinition)
@@ -246,6 +249,8 @@ export class PeDefinitionUpdateComponent implements OnInit {
    * @param peDefinition
    */
   protected updateForm(peDefinition: PeDefinition): void {
+    const obj ={value:peDefinition.type};
+    this.inputTypeChanged(obj);
     this.editForm.patchValue({
       id: peDefinition.id,
       field_name: peDefinition.field_name,

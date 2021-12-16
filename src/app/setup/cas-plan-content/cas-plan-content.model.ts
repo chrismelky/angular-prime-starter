@@ -1,3 +1,5 @@
+import { DataSet } from '../data-set/data-set.model';
+
 export class CasPlanContent {
   constructor(
     public id?: number,
@@ -7,6 +9,7 @@ export class CasPlanContent {
     public cas_plan_id?: number,
     public is_file?: boolean,
     public children?: CasPlanContent[],
-    public sort_order?: number
+    public sort_order?: number,
+    public data_sets?: DataSet[]
   ) {}
 }

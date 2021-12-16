@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.primengConfig.ripple = false;
     const user = this.$localStorage.retrieve('user');
-    this.permissionsService.loadPermissions(user.permissions);
+    this.permissionsService.loadPermissions(user?.permissions);
   }
 
   ngAfterViewInit() {

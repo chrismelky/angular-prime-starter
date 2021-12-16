@@ -15,16 +15,14 @@ export class Report {
     public intervention_id?: number,
     public exchange_rate?: number,
     public budget_class_id?: number,
+    public data_set_id?: number,
     public is_periodic?: boolean,
-    public budgetType?: string,
+    public budget_type?: string,
     public is_facility_account?: boolean,
     public default_values?: any,
+    public formart?: string
   ) {}
 }
 export class BudgetType {
-  constructor(
-    public id?: number,
-    public name?: string
-  ) {
-  }
+  constructor(public id?: number, public name?: string) {}
 }

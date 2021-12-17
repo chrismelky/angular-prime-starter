@@ -14,6 +14,7 @@ import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { DialogService } from 'primeng/dynamicdialog';
+import {ForceChangePasswordComponent} from "../force-change-password/force-change-password.component";
 
 @Component({
   selector: 'app-main',
@@ -69,6 +70,8 @@ export class MainComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
     document.getElementById('flash-page')?.remove();
+    this.forceChangePassword();
+    console.log(this.user)
   }
 
   userMenus: MenuItem[] = [
@@ -114,4 +117,13 @@ export class MainComponent implements OnInit, OnDestroy {
       header: 'Personal Password Change Form',
     });
   }
+
+  private forceChangePassword() {
+    const ref = this.dialogService.open(ForceChangePasswordComponent, {
+      width:"700px",
+      closable:false,
+      header: "Change Password",
+    });
+  }
+
 }

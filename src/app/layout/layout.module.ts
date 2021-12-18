@@ -16,6 +16,7 @@ import { MenuModule } from 'primeng/menu';
 import { PermissionDeniedComponent } from './permission-denied/permission-denied.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ChangePasswordModule } from './change-password/change-password.module';
+import { ForceChangePasswordModule } from './force-change-password/force-change-password.module';
 import { SidebarModule } from 'primeng/sidebar';
 import { AccordionModule } from 'primeng/accordion';
 
@@ -34,6 +35,7 @@ import { AccordionModule } from 'primeng/accordion';
     MenuModule,
     MatProgressBarModule,
     ChangePasswordModule,
+    ForceChangePasswordModule,
     SidebarModule,
     AccordionModule,
   ],

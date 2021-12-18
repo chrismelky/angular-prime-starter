@@ -70,6 +70,7 @@ export class MainComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
     document.getElementById('flash-page')?.remove();
+    console.log(this.user)
     if(this.user.forceChangePassword){
       this.forceChangePassword();
     }
@@ -104,6 +105,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.authService.logout().subscribe(() => {});
+    this.localStorage.clear();
   }
 
   private loadMenu() {

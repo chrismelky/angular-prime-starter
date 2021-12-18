@@ -22,6 +22,7 @@
             [disabled]="currentUser.id===user!.id"
             (click)="create()"
             label="Add User Group"
+            *ngxPermissionsOnly="['ADD_USER_TO_GROUP']"
           ></button>
         </div>
       </ng-template>
@@ -50,6 +51,7 @@
                   icon="pi pi-pencil
               "
                   (click)="edit(rowData)"
+                  *ngxPermissionsOnly="['ADD_USER_TO_GROUP']"
                 ></button>
                 <button
                   pButton
@@ -62,6 +64,7 @@
                   icon="pi pi-trash
               "
                   (click)="delete(rowData)"
+                  *ngxPermissionsOnly="['ADD_USER_TO_GROUP']"
                 ></button>
               </div>
             </div>

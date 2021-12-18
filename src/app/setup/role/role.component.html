@@ -79,6 +79,7 @@
             [disabled]=""
             (click)="createOrUpdate()"
             label="Add Role"
+            *ngxPermissionsOnly="['CREATE_ROLE']"
           ></button>
         </div>
       </ng-template>
@@ -125,6 +126,7 @@
                   icon="pi pi-table
               "
                   (click)="permissions(rowData)"
+                  *ngxPermissionsOnly="['EDIT_ROLE']"
                 ></button>
                 <button
                   pButton
@@ -136,6 +138,7 @@
                   icon="pi pi-pencil
               "
                   (click)="createOrUpdate(rowData)"
+                  *ngxPermissionsOnly="['EDIT_ROLE']"
                 ></button>
                 <button
                   pButton
@@ -147,6 +150,7 @@
                   icon="pi pi-trash
               "
                   (click)="delete(rowData)"
+                  *ngxPermissionsOnly="['DELETE_ROLE']"
                 ></button>
               </div>
             </div>

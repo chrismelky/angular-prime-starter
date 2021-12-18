@@ -70,8 +70,9 @@ export class MainComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
     document.getElementById('flash-page')?.remove();
-    this.forceChangePassword();
-    console.log(this.user)
+    if(this.user.forceChangePassword){
+      this.forceChangePassword();
+    }
   }
 
   userMenus: MenuItem[] = [
@@ -120,7 +121,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   private forceChangePassword() {
     const ref = this.dialogService.open(ForceChangePasswordComponent, {
-      width:"700px",
+      width:"800px",
       closable:false,
       header: "Change Password",
     });

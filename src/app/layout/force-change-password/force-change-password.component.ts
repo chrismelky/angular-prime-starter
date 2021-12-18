@@ -9,6 +9,7 @@ import {Observable} from "rxjs";
 import {CustomResponse} from "../../utils/custom-response";
 import {finalize} from "rxjs/operators";
 import {LocalStorageService} from "ngx-webstorage";
+import {AuthService} from "../../core/auth.service";
 
 @Component({
   selector: 'app-force-change-password.component',
@@ -36,33 +37,73 @@ export class ForceChangePasswordComponent implements OnInit {
     private formBuilder: FormBuilder,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
+    public authService : AuthService
   ) {
     this.loading = false;
   }
 
   ngOnInit(): void {
-    console.log("HHHh")
-   // this.formGroup = this.initFormGroup();
+    this.formGroup = this.initFormGroup();
   }
+
+  initFormGroup(): FormGroup {
+    return this.formBuilder.group(
+      {
+        password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(40),Validators.pattern(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}:;<>,.?\~_+-=\|]).{6,15}$/)]],
+        passwordConfirmation: ['', Validators.required]
+      },
+      {
+        validators: [Validation.match('password', 'passwordConfirmation')]
+      }
+    );
+  }
+
 
   reset(): void {
     this.loading = true;
     const data = this.createFromForm();
-    console.log("LLLLLLLLLLL")
-    console.log(data)
-    /*
-    const data = this.createFromForm();
-    data.id = this.user?.id;
-    this.subscribeToSaveResponse(this.userService.changePassword(data));
-    *
-     */
+    this.subscribeToSaveResponse(this.userService.forceChangePassword(data));
+  }
+
+  protected subscribeToSaveResponse(result: Observable<CustomResponse<User>>): void {
+    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
+      (result) => this.onSaveSuccess(result),
+      (error) => this.onSaveError(error)
+    );
+  }
+
+  /**
+   * Error handling specific to this component
+   * Note; general error handling is done by ErrorInterceptor
+   * @param error
+   */
+  protected onSaveError(error: any): void {
+  }
+
+  protected onSaveFinalize(): void {
+    this.loading = false;
+  }
+
+  /**
+   * When save successfully close dialog and display info message
+   * @param result
+   */
+  protected onSaveSuccess(result: any): void {
+    this.toast.info(result.message);
+    this.logout();
   }
 
 
-  protected createFromForm() {
+  protected createFromForm() : PasswordReset{
     return {
+      ...new PasswordReset(),
       password: this.formGroup.get(["password"])!.value,
       passwordConfirmation: this.formGroup.get(["passwordConfirmation"])!.value,
     };
+  }
+
+  logout(){
+    this.dialogRef.close(true);
+    this.authService.logout().subscribe(() => {});
   }
 }

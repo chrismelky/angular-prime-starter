@@ -121,8 +121,9 @@ export class MainComponent implements OnInit, OnDestroy {
 
   private forceChangePassword() {
     const ref = this.dialogService.open(ForceChangePasswordComponent, {
-      width:"800px",
+      width:"650px",
       closable:false,
+      modal:true,
       header: "Change Password",
     });
   }

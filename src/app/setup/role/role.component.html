@@ -126,6 +126,7 @@
                   icon="pi pi-table
               "
                   (click)="permissions(rowData)"
+                  *ngxPermissionsOnly="['CREATE_ROLE']"
                 ></button>
                 <button
                   pButton

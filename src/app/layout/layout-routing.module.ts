@@ -574,7 +574,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: "READ_MENU",
+            only: "WRITE_USER",
           },
         },
       },

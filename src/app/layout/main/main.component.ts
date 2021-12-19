@@ -72,7 +72,7 @@ export class MainComponent implements OnInit, OnDestroy {
     document.getElementById('flash-page')?.remove();
     console.log(this.user)
     if(this.user.forceChangePassword){
-      this.forceChangePassword();
+    //  this.forceChangePassword(); to be reviewed
     }
   }
 

@@ -10,7 +10,7 @@ import {
 } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MenuItem } from 'primeng/api';
-import { filter, map } from 'rxjs/operators';
+import {filter, isEmpty, map} from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -70,9 +70,8 @@ export class MainComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
     document.getElementById('flash-page')?.remove();
-    console.log(this.user)
-    if(this.user.forceChangePassword){
-    //  this.forceChangePassword(); to be reviewed
+    if(this.user?.forceChangePassword){
+     this.forceChangePassword();
     }
   }
 

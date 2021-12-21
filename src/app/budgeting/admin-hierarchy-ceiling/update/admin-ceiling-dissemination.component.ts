@@ -116,8 +116,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<CeilingChain[]>) => {
           this.allCeilingChain = (resp.data ?? []);
-          this.ceilingChain = (resp.data ?? []).filter(cc => cc.section_level_position.position > this.ceiling!.section!.section_level?.position!);
-          this.currentCeilingChain = (resp.data ?? []).find(cc=> cc.section_level_position.position == this.ceiling!.section!.section_level?.position!);
+          this.ceilingChain = (resp.data ?? []).filter(cc => cc.section_level_position.position > this.ceiling!.section?.position!);
+          this.currentCeilingChain = (resp.data ?? []).find(cc=> cc.section_level_position.position == this.ceiling!.section?.position!);
           console.log(this.ceiling);
           this.selectedCeiling[this.currentCeilingChain!.section_level_position.position] ={...this.ceiling};
           if(this.currentCeilingChain!.next_id){

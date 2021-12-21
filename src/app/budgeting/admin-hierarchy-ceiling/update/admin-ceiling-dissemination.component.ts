@@ -90,7 +90,6 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     private messageService: MessageService
   ) {
     this.ceiling=this.config.data.ceiling;
-    console.log(this.ceiling);
     this.parentCeiling =[this.config.data.ceiling];
     this.position = this.config.data.position;
     this.ceilingStartPosition = this.config.data.ceilingStartPosition;
@@ -117,10 +116,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<CeilingChain[]>) => {
           this.allCeilingChain = (resp.data ?? []);
-          this.ceilingChain = (resp.data ?? []).filter(cc => cc.section_level_position.position > this.ceiling!.section?.position!);
-          this.currentCeilingChain = (resp.data ?? []).find(cc=> cc.section_level_position.position == this.ceiling!.section?.position!);
-          console.log('chain', this.allCeilingChain);
-          console.log('ceiling',this.ceiling);
+          this.ceilingChain = (resp.data ?? []).filter(cc => cc.section_level_position.position > this.ceiling!.section!.section_level?.position!);
+          this.currentCeilingChain = (resp.data ?? []).find(cc=> cc.section_level_position.position == this.ceiling!.section!.section_level?.position!);
           this.selectedCeiling[this.currentCeilingChain!.section_level_position.position] ={...this.ceiling};
           if(this.currentCeilingChain!.next_id){
             this.getChildCeiling(this.ceiling!,this.currentCeilingChain);

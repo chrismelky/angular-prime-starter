@@ -671,7 +671,6 @@ export class AdminHierarchyCeilingComponent implements OnInit {
   }
 
   allocateCeiling(row: AdminHierarchyCeiling){
-    console.log(row);
     const data: any = {
       ceiling: row,
       position: this.admin_hierarchy_position,

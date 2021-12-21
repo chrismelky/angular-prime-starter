@@ -90,6 +90,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     private messageService: MessageService
   ) {
     this.ceiling=this.config.data.ceiling;
+    console.log(this.ceiling);
     this.parentCeiling =[this.config.data.ceiling];
     this.position = this.config.data.position;
     this.ceilingStartPosition = this.config.data.ceilingStartPosition;

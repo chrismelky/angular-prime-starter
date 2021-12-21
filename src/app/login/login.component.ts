@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
   Component,
-  ElementRef,
+  ElementRef, Inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -10,6 +10,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { StateStorageService } from '../core/state-storage.service';
+import { Location,LocationStrategy,DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginComponent implements OnInit {
   formError = false;
   isLoading = false;
   authenticationError = false;
+  url: string = '';
 
   /**
    * Declare form
@@ -34,11 +36,14 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private stateStorage: StateStorageService,
-    private router: Router
+    private router: Router,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
+    this.url = this.document.location.href;
+    console.log('Injected document.location', this.url)
     document.getElementById('flash-page')?.remove();
   }
 

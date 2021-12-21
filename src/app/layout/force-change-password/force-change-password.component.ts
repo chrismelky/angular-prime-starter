@@ -105,5 +105,6 @@ export class ForceChangePasswordComponent implements OnInit {
   logout(){
     this.dialogRef.close(true);
     this.authService.logout().subscribe(() => {});
+    this.localStorage.clear();
   }
 }

@@ -78,7 +78,7 @@
                 >
               </span>
             </div>
-            <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center">
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
               <!-- Main Budget class -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
@@ -182,7 +182,7 @@
                 </span>
               </div>
             </div>
-            <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
               <!-- Activity type -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
@@ -354,7 +354,7 @@
               >
             </div>
 
-            <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
               <div class="p-field" fxFlex>
                 <span class="p-float-label">
                   <input
@@ -411,11 +411,11 @@
             <div
               *ngIf="projectTypeRequired"
               fxLayout="row"
-              fxLayoutGap="20px"
+              fxLayoutGap="10px"
               fxLayoutAlign="start"
             >
               <!-- Project Type -->
-              <div class="p-field" fxFlex>
+              <div class="p-field" fxFlex="0 1 30%">
                 <span class="p-float-label">
                   <p-dropdown
                     #projectType
@@ -448,7 +448,7 @@
                 </span>
               </div>
               <!-- Expenditure Type -->
-              <div class="p-field" fxFlex>
+              <div class="p-field" fxFlex="0 1 30%">
                 <span class="p-float-label">
                   <p-dropdown
                     #expenditureCategory
@@ -486,7 +486,7 @@
                 </span>
               </div>
               <!-- Project output-->
-              <div class="p-field" fxFlex>
+              <div class="p-field" fxFlex="0 1 30%">
                 <span class="p-float-label">
                   <p-dropdown
                     id="project_output_id"
@@ -520,7 +520,7 @@
               </div>
               <!-- Project output value-->
 
-              <div class="p-field" fxFlex="100px">
+              <div class="p-field" fxFlex="0 1 10%">
                 <span class="p-float-label">
                   <p-inputNumber
                     [minFractionDigits]="2"
@@ -529,7 +529,7 @@
                     formControlName="project_output_value"
                   >
                   </p-inputNumber>
-                  <label for="project_output_value">Output Value </label>
+                  <label for="project_output_value">Value </label>
                 </span>
                 <span
                   *ngIf="
@@ -550,7 +550,7 @@
               </div>
             </div>
 
-            <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
               <!-- Fund source -->
               <div class="p-field" fxFlex>
                 <span class="p-float-label">

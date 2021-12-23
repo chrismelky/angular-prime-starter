@@ -18,6 +18,7 @@ import { ToastService } from 'src/app/shared/toast.service';
 import { OptionSetService } from '../../option-set/option-set.service';
 import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
 import { OptionSet } from '../../option-set/option-set.model';
+import { CategoryCombination } from '../../category-combination/category-combination.model';
 
 @Component({
   selector: 'app-category-option-combination-update',
@@ -29,17 +30,22 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
   errors = [];
   optionSets?: OptionSet[] = [];
   valueTypes?: PlanrepEnum[] = [];
-
+  lastExpression?: string;
+  existingOptionCombos?: CategoryOptionCombination[] = [];
+  categoryCombinations?: CategoryCombination[] = [];
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
-    name: [{ value: null, disabled: true }, [Validators.required]],
+    name: [null, [Validators.required]],
     code: [null, []],
     option_set_id: [null, []],
     sort_order: [null, []],
     value_type: [null, []],
+    is_calculated: [null, []],
+    formular: [null, []],
+    validFormular: [null, []],
   });
 
   constructor(
@@ -58,8 +64,12 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
       .subscribe(
         (resp: CustomResponse<OptionSet[]>) => (this.optionSets = resp.data)
       );
+    const dialogData = this.dialogConfig.data;
+    this.existingOptionCombos = dialogData.existingOptionCombos || [];
+    this.categoryCombinations = dialogData.categoryCombinations || [];
     this.valueTypes = this.enumService.get('valueTypes');
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    this.updateForm(dialogData.categoryOptionCombination); //Initialize form with data from dialog
+    this.updateFormularValidity();
   }
 
   /**
@@ -78,8 +88,12 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
         this.categoryOptionCombinationService.update(categoryOptionCombination)
       );
     } else {
+      const data = {
+        ...categoryOptionCombination,
+        category_combinations: this.categoryCombinations,
+      };
       this.subscribeToSaveResponse(
-        this.categoryOptionCombinationService.create(categoryOptionCombination)
+        this.categoryOptionCombinationService.create(data)
       );
     }
   }
@@ -100,6 +114,56 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
   protected onSaveSuccess(result: any): void {
     this.toastService.info(result.message);
     this.dialogRef.close(true);
+  }
+
+  addFormular(expression: string): void {
+    let existing = this.editForm.get('formular')?.value || '';
+    existing = existing + ' [ ' + expression + ' ]';
+    this.editForm.patchValue({
+      formular: existing,
+    });
+    this.lastExpression = expression;
+    this.checkFormular();
+  }
+
+  clear(): void {
+    let existing = this.editForm.get('formular')?.value || '';
+    const lastIndex = existing.lastIndexOf('[');
+    existing = existing.substring(0, lastIndex);
+
+    this.editForm.patchValue({
+      formular: existing,
+    });
+    this.checkFormular();
+  }
+
+  private checkFormular(): void {
+    let existing = this.editForm.get('formular')?.value || '';
+
+    this.existingOptionCombos?.forEach((coc) => {
+      existing = existing.replaceAll(coc.name, 1);
+    });
+    existing = existing.replaceAll('[', '');
+    existing = existing.replaceAll(']', '');
+
+    try {
+      eval(existing);
+      this.editForm.get('validFormular')?.clearValidators();
+    } catch (error) {
+      this.editForm.get('validFormular')?.setValidators([Validators.required]);
+    }
+    this.editForm.get('validFormular')?.updateValueAndValidity();
+  }
+
+  updateFormularValidity(): void {
+    if (this.editForm.get('is_calculated')?.value === true) {
+      this.editForm.get('formular')?.setValidators([Validators.required]);
+      this.editForm.get('name')?.enable();
+    } else {
+      this.editForm.get('formular')?.clearValidators();
+      this.editForm.get('name')?.disable();
+    }
+    this.editForm.get('formular')?.updateValueAndValidity();
   }
 
   /**
@@ -127,6 +191,8 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
       sort_order: categoryOptionCombination.sort_order,
       value_type: categoryOptionCombination.value_type,
       option_set_id: categoryOptionCombination.option_set_id,
+      is_calculated: categoryOptionCombination.is_calculated,
+      formular: categoryOptionCombination.formular,
     });
   }
 
@@ -137,12 +203,8 @@ export class CategoryOptionCombinationUpdateComponent implements OnInit {
   protected createFromForm(): CategoryOptionCombination {
     return {
       ...new CategoryOptionCombination(),
-      id: this.editForm.get(['id'])!.value,
-      name: this.editForm.get(['name'])!.value,
-      code: this.editForm.get(['code'])!.value,
-      sort_order: this.editForm.get(['sort_order'])!.value,
-      value_type: this.editForm.get(['value_type'])!.value,
-      option_set_id: this.editForm.get(['option_set_id'])!.value,
+      ...this.editForm.value,
+      name: this.editForm.get('name')?.value,
     };
   }
 }

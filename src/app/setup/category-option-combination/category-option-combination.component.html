@@ -53,6 +53,16 @@
       <ng-template pTemplate="caption">
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <span class="card-header-text">Category Option Combinations</span>
+          <button
+            [disabled]="!category_combination_id"
+            pButton
+            pRipple
+            icon="pi pi-plus"
+            class="p-button-raised"
+            [disabled]=""
+            (click)="createOrUpdate(undefined, true)"
+            label="Add Formular Column"
+          ></button>
         </div>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

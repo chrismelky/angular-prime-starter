@@ -176,6 +176,16 @@ export class AdminHierarchyCeilingService {
     );
   }
 
+  uploadFinalCeiling(
+    ceiling: any
+  ): Observable<CustomResponse<any>> {
+    const url = 'api/budget_ceiling_upload';
+    return this.http.post<CustomResponse<any>>(
+      url,
+      ceiling
+    );
+  }
+
   find(id: number): Observable<CustomResponse<AdminHierarchyCeiling>> {
     return this.http.get<CustomResponse<AdminHierarchyCeiling>>(
       `${this.resourceUrl}/${id}`

@@ -23,7 +23,7 @@
               optionValue=""
               optionLabel="section.name"
               [autoDisplayFirst]="true"
-              [(ngModel)]="this.ceiling!.section!.position"
+              [(ngModel)]="ceiling!.section!.position"
               [filter]="true"
               [options]="parentCeiling!"
               styleClass="form-control"
@@ -94,7 +94,14 @@
               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowsPerPageOptions]="[5,10,25,50]"
             >
               <ng-template pTemplate="caption">
-                <span><b>{{finalCeiling?.section?.name}} Allocation</b></span>
+                <div fxLayout="column" fxLayoutGap="10px">
+                  <div fxLayout="row wrap" fxLayoutGap="10px">
+                    <div fxLayout="row" fxLayoutGap="0.75rem" >
+                      <span><b>{{finalCeiling?.section?.name}} Allocation</b></span>
+                      <button *ngIf="finalCeiling?.amount > 0 && facilityCeiling!.length > 0" (click)="upload.toggle($event)"  style="float: right !important;"  icon="pi pi-upload" pButton pRipple type="button" label="Upload Final Ceiling"></button>
+                    </div>
+                  </div>
+                </div>
                 <br>
                 <div fxLayout="column" fxLayoutGap="10px">
                   <div fxLayout="row wrap" fxLayoutGap="10px">
@@ -280,3 +287,30 @@
     </div>
   </div>
 </p-overlayPanel>
+<p-overlayPanel #upload [showCloseIcon]="true" [style]="{width: '600px'}">
+  <ng-template pTemplate>
+    <p-fieldset legend="{{finalCeiling?.ceiling?.fund_source?.name}} || {{finalCeiling?.ceiling?.budget_class?.name}}">
+      <button style="width: 100%" icon="pi pi-download" (click)="downloadFacilityCeiTemplate()" pButton pRipple type="button" label="Download Template"></button>
+    </p-fieldset>
+    <br>
+    <p-fileUpload [customUpload]="true" (onSelect)="onSelect($event)" (uploadHandler)="uploadFacilityCeiling($event,upload)"
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" [maxFileSize]="1000000">
+      <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+          <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </ng-template>
+</p-overlayPanel>
+<p-toast position="bottom-center" key="facility"  [baseZIndex]="5000">
+  <ng-template let-message pTemplate="message">
+    <div class="p-flex p-flex-column" style="flex: 1">
+      <div class="p-text-center">
+        <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+        <h4>{{message.summary}}</h4>
+        <p *ngFor="let ms of message.data">{{ms}}</p>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>

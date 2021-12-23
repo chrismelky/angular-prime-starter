@@ -212,15 +212,25 @@ export class CategoryOptionCombinationComponent implements OnInit {
    * Creating or updating CategoryOptionCombination
    * @param categoryOptionCombination ; If undefined initize new model to create else edit existing model
    */
-  createOrUpdate(categoryOptionCombination?: CategoryOptionCombination): void {
-    const data: CategoryOptionCombination = categoryOptionCombination ?? {
-      ...new CategoryOptionCombination(),
-    };
+  createOrUpdate(
+    categoryOptionCombination?: CategoryOptionCombination,
+    isCalcualted?: boolean
+  ): void {
+    const categoryOptionComboData: CategoryOptionCombination =
+      categoryOptionCombination ?? {
+        ...new CategoryOptionCombination(),
+        is_calculated: isCalcualted,
+      };
     const ref = this.dialogService.open(
       CategoryOptionCombinationUpdateComponent,
       {
-        data,
-        header: 'Create/Update CategoryOptionCombination',
+        data: {
+          categoryOptionCombination: categoryOptionComboData,
+          existingOptionCombos: this.categoryOptionCombinations,
+          categoryCombinations: [{ id: this.category_combination_id }],
+        },
+        header: 'Create/Update Category Option Combination/Formular',
+        width: '900px',
       }
     );
     ref.onClose.subscribe((result) => {

@@ -5,7 +5,7 @@ import {AdminHierarchyCeilingService} from "../admin-hierarchy-ceiling.service";
 import {ToastService} from "../../../shared/toast.service";
 import {BudgetCeilingService} from "../../../shared/budget-ceiling.service";
 import {FacilityService} from "../../../setup/facility/facility.service";
-import {FormBuilder, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {CustomResponse} from "../../../utils/custom-response";
 import {CeilingChain} from "../../../setup/ceiling-chain/ceiling-chain.model";
 import {SectionService} from "../../../setup/section/section.service";
@@ -14,6 +14,9 @@ import {AdminHierarchyCeiling} from "../admin-hierarchy-ceiling.model";
 import {Observable} from "rxjs";
 import {Facility} from "../../../setup/facility/facility.model";
 import {BudgetCeiling} from "../../../shared/budget-ceiling.model";
+import {Papa} from 'ngx-papaparse';
+import * as XLSX from 'xlsx';
+import {MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-admin-ceiling-dissemination',
@@ -40,6 +43,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   currentCeilingChain?: CeilingChain = {};
   parentCeiling?: AdminHierarchyCeiling[]=[];
   allCeilingChain?: CeilingChain[]=[];
+  uploadedFiles: any[] = [];
 
   position?: number;
   section_id?: number;
@@ -58,6 +62,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
   facilities?: Facility[]=[];
   budgetCeiling?: BudgetCeiling[]=[];
   councilCeiling?: AdminHierarchyCeiling[]=[];
+  ceilingUploadFrom! :FormGroup;
+  facilityCeilingToUpload: any[] = [];
+  facilityOverlay!:any;
 
 
   /**
@@ -78,7 +85,9 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     protected adminHierarchyCeilingService: AdminHierarchyCeilingService,
     protected toastService: ToastService,
     protected  budgetCeilingService:BudgetCeilingService,
-    protected  facilityService:FacilityService
+    protected  facilityService:FacilityService,
+    private papa: Papa,
+    private messageService: MessageService
   ) {
     this.ceiling=this.config.data.ceiling;
     this.parentCeiling =[this.config.data.ceiling];
@@ -87,7 +96,15 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     this.section_id = this.config.data.section_id;
     this.section_level_position = this.config.data.section_level_position;
     this.ceilingStartSectionPosition = this.config.data.ceilingStartSectionPosition;
-
+    this.ceilingUploadFrom = this.fb.group({
+      admin_hierarchy_id: null,
+      financial_year_id:null,
+      section_id: null,
+      ceiling_id: null,
+      fund_source_id: null,
+      admin_hierarchy_ceiling_id:null,
+      file:[]
+    })
   }
 
   ngOnInit(): void {
@@ -357,6 +374,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
               fund_source_id:this.ceiling!.ceiling.fund_source_id,
               council:ceiling.admin_hierarchy.name,
               facility: '['+facility.code+'] ' + facility.name,
+              facilityCode:facility.code,
               is_approved:budgetCeiling==undefined?false:budgetCeiling.is_approved,
               amount:budgetCeiling==undefined?0.00:budgetCeiling.amount,
               is_locked:budgetCeiling==undefined?false:budgetCeiling!.is_locked,
@@ -374,4 +392,95 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  uploadFacilityCeiling(event:any,overlay:any) {
+    const ceilings = this.finalCeilingFromForm();
+    if(this.facilityCeilingToUpload.map((a: { amount: any; }) => a.amount).reduce(function(a:any, b:any){return a + b;}) <= this.finalCeiling.amount){
+      this.adminHierarchyCeilingService.uploadFinalCeiling(ceilings).subscribe(
+        (res: CustomResponse<any>) => {
+          if(res.success){
+            this.loadFacilityCeiling(this.finalCeiling);
+            if(res.data.fail.length > 0){
+              this.messageService.clear();
+              this.messageService.add({key: 'facility', sticky: true, severity:'info', summary:'Upload Summary', data:res.data.fail});
+            }else{
+              this.toastService.info(res.message);
+            }
+            overlay.hide();
+          }
+        }
+      );
+    }else{
+      this.toastService.error('Total Ceiling Amount Uploaded Should be Less Or Equal To Total Ceiling')
+    }
+  }
+
+  onSelect(event: any) {
+    let workBook:any = null;
+    let jsonData = null;
+    const reader = new FileReader();
+    const file = event.files[0];
+    reader.onload = (event) => {
+      const data = reader.result;
+      workBook = XLSX.read(data, { type: 'binary' });
+      if(workBook.SheetNames.length > 0){
+        const sheet = workBook.Sheets[workBook.SheetNames[0]];
+        this.facilityCeilingToUpload =  XLSX.utils.sheet_to_json(sheet);
+      }else{
+        this.facilityCeilingToUpload = [];
+      }
+    }
+    reader.readAsBinaryString(file);
+  }
+
+  downloadFacilityCeiTemplate(){
+    const excelObject = this.mapData(this.facilityCeiling!);
+    const excel = this.papa.unparse({ data: excelObject });
+    const csvData = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    let csvURL = null;
+    if (navigator.msSaveBlob) {
+      csvURL = navigator.msSaveBlob(csvData, this.finalCeiling.section.name + '_facility_ceiling.xlsx');
+    } else {
+      csvURL = window.URL.createObjectURL(csvData);
+    }
+    const tempLink = document.createElement('a');
+    // @ts-ignore
+    tempLink.href = csvURL;
+    tempLink.setAttribute('download', this.finalCeiling.section.name +'_facility_ceiling.xlsx');
+    tempLink.click();
+  }
+
+  private mapData(data: any[]) {
+    return data.map((item) => {
+      return {
+        id:item.ceilingId,
+        CeilingUID:item.ceiling_id,
+        AdminHierarchyCeilingUID:this.finalCeiling.id,
+        FacilityUID:item.id,
+        FundSource:this.finalCeiling.ceiling.fund_source.name,
+        BudgetClass:this.finalCeiling.ceiling.budget_class.name,
+        FacilityName:item.facility,
+        FacilityCode:item.facilityCode,
+        amount: item.amount,
+      };
+    });
+  }
+
+  /**
+   * Return form values as object of type StrategicPlan
+   * @returns StrategicPlan
+   */
+  protected finalCeilingFromForm(): any {
+    const fd = {
+      admin_hierarchy_id: this.finalCeiling.admin_hierarchy_id,
+      financial_year_id: this.finalCeiling.financial_year_id,
+      section_id: this.finalCeiling.section_id,
+      admin_hierarchy_ceiling_id: this.finalCeiling.id,
+      ceiling_id: this.finalCeiling.ceiling_id,
+      budget_type: this.finalCeiling.budget_type,
+      budget_class_id:this.finalCeiling?.ceiling?.budget_class_id,
+      fund_source_id:this.finalCeiling?.ceiling?.fund_source_id,
+      file: this.facilityCeilingToUpload
+    };
+    return fd;
+  }
 }

@@ -36,6 +36,9 @@ export class SectionTreeComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
+    if(this.currentUser?.section === undefined){
+      return;
+    }
     const rootSection = this.currentUser.section;
     this.nodes = rootSection
       ? [

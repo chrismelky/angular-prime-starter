@@ -365,6 +365,7 @@ p-card.filter-no-adv {
 }
 
 
+
 .in-table-header {
   margin-bottom: -4px;
   height: 44px;
@@ -720,4 +721,8 @@ p-divider.title .p-divider.p-divider-horizontal {
 }
 .cursor-point {
   cursor: pointer;
+}
+
+.p-datatable.p-datavalue-table .p-datatable-thead > tr > th {
+  padding: 8px !important
 }

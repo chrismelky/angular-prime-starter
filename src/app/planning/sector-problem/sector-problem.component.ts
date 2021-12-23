@@ -257,6 +257,7 @@ export class SectorProblemComponent implements OnInit {
         adminHierarchies: this.adminHierarchies,
         priorityAreas: this.priorityAreas,
       },
+      width: '900px',
       header: 'Create/Update SectorProblem',
     });
     ref.onClose.subscribe((result) => {

@@ -117,14 +117,19 @@ export class ActivityInputUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     const dialogData = this.dialogConfig.data;
+
+    const input: ActivityInput = dialogData.activityInput;
+
     this.facilityActivity = dialogData.facilityActivity;
     this.gfsCodes = dialogData.gfsCodes;
     this.units = this.enumService.get('units');
-    this.balanceAmount = dialogData.balanceAmount;
+    this.balanceAmount = input.id
+      ? dialogData.balanceAmount +
+        input.quantity! * input.frequency! * input.unit_price!
+      : dialogData.balanceAmount;
     this.procurementMethods = dialogData.procurementMethods;
     this.procurementTypes = dialogData.procurementTypes;
 
-    const input: ActivityInput = dialogData.activityInput;
     if (input.id) {
       this.updateTotal(input.unit_price!, input.quantity!, input.frequency!);
       this.updateProcurementValidity(input.gfs_code_id!);
@@ -160,7 +165,7 @@ export class ActivityInputUpdateComponent implements OnInit {
    * When form is valid Create ActivityInput or Update if exist else set form has error and return
    * @returns
    */
-  save(): void {
+  save(addMore?: boolean): void {
     if (this.editForm.invalid) {
       this.formError = true;
       return;
@@ -169,11 +174,13 @@ export class ActivityInputUpdateComponent implements OnInit {
     const activityInput = this.createFromForm();
     if (activityInput.id !== undefined) {
       this.subscribeToSaveResponse(
-        this.activityInputService.update(activityInput)
+        this.activityInputService.update(activityInput),
+        addMore
       );
     } else {
       this.subscribeToSaveResponse(
-        this.activityInputService.create(activityInput)
+        this.activityInputService.create(activityInput),
+        addMore
       );
     }
   }
@@ -229,10 +236,11 @@ export class ActivityInputUpdateComponent implements OnInit {
   }
 
   protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<ActivityInput>>
+    result: Observable<CustomResponse<ActivityInput>>,
+    addMore?: boolean
   ): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      (result) => this.onSaveSuccess(result),
+      (result) => this.onSaveSuccess(result, addMore),
       (error) => this.onSaveError(error)
     );
   }
@@ -241,9 +249,27 @@ export class ActivityInputUpdateComponent implements OnInit {
    * When save successfully close dialog and display info message
    * @param result
    */
-  protected onSaveSuccess(result: any): void {
+  protected onSaveSuccess(
+    result: CustomResponse<ActivityInput>,
+    addMore?: boolean
+  ): void {
     this.toastService.info(result.message);
-    this.dialogRef.close(true);
+    if (addMore) {
+      const previousInput = result.data;
+
+      this.gfsCodes = this.gfsCodes?.filter(
+        (gfs) => gfs.id !== previousInput?.gfs_code_id
+      );
+      this.editForm.reset();
+      this.breakDownForm.reset();
+      this.balanceAmount =
+        this.balanceAmount -
+        previousInput?.quantity! *
+          previousInput?.unit_price! *
+          previousInput?.frequency!;
+    } else {
+      this.dialogRef.close(true);
+    }
   }
 
   /**

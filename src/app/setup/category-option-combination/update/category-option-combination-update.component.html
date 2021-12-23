@@ -61,41 +61,153 @@
         </span>
       </div>
 
-      <!-- Value type -->
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="value_type"
-            optionValue="value"
-            optionLabel="display"
-            [showClear]="true"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="valueTypes!"
-            formControlName="value_type"
-          ></p-dropdown>
-          <label for="value_type">Value Type </label>
-        </span>
+      <div fxLayout="row" fxLayoutGap="10px">
+        <p-inputSwitch
+          (onChange)="updateFormularValidity()"
+          id="is_calculated"
+          name="is_calculated"
+          formControlName="is_calculated"
+        ></p-inputSwitch>
+        <label for="is_calculated">Is Calculated </label>
       </div>
-      <!-- Option Set -->
-      <div class="p-field" fxFlex>
-        <span class="p-float-label">
-          <p-dropdown
-            id="option_set_id"
-            optionValue="id"
-            optionLabel="name"
-            [showClear]="true"
-            [autoDisplayFirst]="false"
-            [filter]="true"
-            class="p-inputtext-sm"
-            appendTo="body"
-            [options]="optionSets!"
-            formControlName="option_set_id"
-          ></p-dropdown>
-          <label for="option_set_id">Option Set </label>
-        </span>
+
+      <ng-container *ngIf="!editForm.get('is_calculated')?.value">
+        <!-- Value type -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="value_type"
+              optionValue="value"
+              optionLabel="display"
+              [showClear]="true"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="valueTypes!"
+              formControlName="value_type"
+            ></p-dropdown>
+            <label for="value_type">Value Type </label>
+          </span>
+        </div>
+        <!-- Option Set -->
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="option_set_id"
+              optionValue="id"
+              optionLabel="name"
+              [showClear]="true"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              appendTo="body"
+              [options]="optionSets!"
+              formControlName="option_set_id"
+            ></p-dropdown>
+            <label for="option_set_id">Option Set </label>
+          </span>
+        </div>
+      </ng-container>
+
+      <div fxLayout="column" fxLayoutGap="10px">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+          <span class="p-float-label">
+            <input
+              id="formular"
+              type="text"
+              pInputText
+              formControlName="formular"
+            />
+            <label for="formular">Formular </label>
+          </span>
+          <span *ngIf="editForm.get('is_calculated')?.value === true">
+            <small
+              class="p-error"
+              *ngIf="editForm.get('formular')?.errors?.required"
+              >Formular is required.</small
+            ><small
+              class="p-error"
+              *ngIf="editForm.get('validFormular')?.errors?.required"
+              >Invalid Formular</small
+            >
+          </span>
+        </div>
+        <div
+          fxLayout="row"
+          fxLayoutGap="10px"
+          fxLayoutAlign="center"
+          *ngIf="editForm.get('is_calculated')?.value === true"
+        >
+          <div fxLayout="column" fxLayoutGap="10px" fxFlex="0 0 70%">
+            <button
+              type="button"
+              class="p-button-outlined"
+              pButton
+              (click)="addFormular(c.name!)"
+              *ngFor="let c of existingOptionCombos"
+              [label]="c.name!"
+            ></button>
+          </div>
+          <div fxLayout="column" fxLayoutGap="10px" fxFlex="0 1 30%">
+            <button
+              type="button"
+              class="p-button-outlined p-button-success"
+              pButton
+              (click)="addFormular('+')"
+              label="+"
+            ></button>
+            <button
+              type="button"
+              class="p-button-outlined p-button-success"
+              pButton
+              (click)="addFormular('-')"
+              label="-"
+            ></button>
+            <button
+              type="button"
+              class="p-button-outlined p-button-success"
+              pButton
+              (click)="addFormular('*')"
+              label="*"
+            ></button>
+            <button
+              type="button"
+              class="p-button-outlined p-button-success"
+              pButton
+              (click)="addFormular('/')"
+              label="/"
+            ></button>
+            <button
+              type="button"
+              class="p-button-outlined p-button-success"
+              pButton
+              (click)="addFormular('(')"
+              label="("
+            ></button>
+            <button
+              type="button"
+              class="p-button-outlined p-button-success"
+              pButton
+              (click)="addFormular(')')"
+              label=")"
+            ></button>
+            <button
+              type="button"
+              class="p-button-outlined p-button-success"
+              pButton
+              (click)="addFormular('100')"
+              label="100"
+            ></button>
+            <button
+              type="button"
+              class="p-button-warning"
+              pButton
+              (click)="clear()"
+              label="Clear"
+            ></button>
+          </div>
+        </div>
       </div>
 
       <div fxLayout="row" fxLayoutGap="0.75rem">

@@ -125,6 +125,7 @@
             [disabled]=""
             (click)="createOrUpdate()"
             label="Add Menu"
+            *ngxPermissionsOnly="['CREATE_MENU']"
           ></button>
         </div>
       </ng-template>
@@ -179,6 +180,7 @@
                   icon="pi pi-table
               "
                   (click)="permissions(rowData)"
+                  *ngxPermissionsOnly="['CREATE_MENU']"
                 ></button>
                 <button
                   pButton
@@ -190,6 +192,7 @@
                   icon="pi pi-pencil
               "
                   (click)="createOrUpdate(rowData)"
+                  *ngxPermissionsOnly="['EDIT_MENU']"
                 ></button>
                 <button
                   pButton
@@ -201,6 +204,7 @@
                   icon="pi pi-trash
               "
                   (click)="delete(rowData)"
+                  *ngxPermissionsOnly="['DELETE_MENU']"
                 ></button>
               </div>
             </div>

@@ -178,7 +178,7 @@ export class PeItemComponent implements OnInit {
 
 
     this.financialYearService
-      .findByStatus(2)
+      .findByStatus(1)
       .subscribe((resp: CustomResponse<FinancialYear>) => {
         if (resp.data) {
           this.financialYear = resp.data.name!;

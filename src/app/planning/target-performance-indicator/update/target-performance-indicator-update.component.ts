@@ -30,6 +30,7 @@ export class TargetPerformanceIndicatorUpdateComponent implements OnInit {
   formError = false;
   errors = [];
 
+
   longTermTargets?: LongTermTarget[] = [];
   performanceIndicators?: PerformanceIndicator[] = [];
   financialYears: FinancialYear[] = [];
@@ -41,7 +42,9 @@ export class TargetPerformanceIndicatorUpdateComponent implements OnInit {
     long_term_target_id: [null, []],
     performance_indicator_id: [null, [Validators.required]],
     baseline_value: [null, [Validators.required]],
-    actual_value: [null, [Validators.required]],
+   // actual_value: [null, [Validators.required]],
+    source_of_data: [null, [Validators.required]],
+    baseline_date: [null, [Validators.required]],
     y0: [],
     y1: [],
     y2: [],
@@ -141,6 +144,8 @@ export class TargetPerformanceIndicatorUpdateComponent implements OnInit {
         targetPerformanceIndicator.performance_indicator_id,
       baseline_value: targetPerformanceIndicator.baseline_value,
       actual_value: targetPerformanceIndicator.actual_value,
+      source_of_data: targetPerformanceIndicator.source_of_data,
+      baseline_date: targetPerformanceIndicator.baseline_date,
       y0: targetPerformanceIndicator.y0,
       y1: targetPerformanceIndicator.y1,
       y2: targetPerformanceIndicator.y2,

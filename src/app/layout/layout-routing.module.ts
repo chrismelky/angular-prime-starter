@@ -1127,7 +1127,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: "WRITE_ROLE",
+            only: "READ_PERMISSION",
           },
         },
       },
@@ -1138,7 +1138,7 @@ const routes: Routes = [
         canLoad: [NgxPermissionsGuard],
         data: {
           permissions: {
-            only: "WRITE_USER",
+            only: "READ_GROUP",
           },
         },
       },

@@ -1,13 +1,11 @@
 <div class="dialog-content">
   <app-loader [isLoading]="isSaving"></app-loader>
-  <form
-    name="editForm"
-    role="form"
-    novalidate
-    (ngSubmit)="save()"
-    [formGroup]="editForm"
-  >
+  <form name="editForm" role="form" novalidate [formGroup]="editForm">
     <div fxLayout="column" fxLayoutGap="20px">
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
+        <span>Fund Source: </span>
+        <span>Ceiling Balance: {{ balanceAmount | currency: " " }}</span>
+      </div>
       <!--Activity  -->
       <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start">
         <div class="p-field" fxFlex>
@@ -831,12 +829,22 @@
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button
+          class="p-button-raised"
+          icon="pi pi-add"
+          label="Save and Add"
+          pButton
+          pRipple
+          (click)="save(true)"
+          type="button"
+        ></button>
+        <button
           [disabled]="budgetIsLocked"
           class="p-button-raised"
           icon="pi pi-check"
           label="Save"
+          (click)="save()"
           pButton
-          type="submit"
+          type="button"
         ></button>
       </div>
     </div>

@@ -77,6 +77,7 @@
             [disabled]=""
             (click)="createOrUpdate()"
             label="Add Group"
+            *ngxPermissionsOnly="['CREATE_GROUP']"
           ></button>
         </div>
       </ng-template>
@@ -110,6 +111,7 @@
                   "
                   icon="pi pi-check"
                   (click)="roles(rowData)"
+                  *ngxPermissionsOnly="['CREATE_GROUP']"
                 ></button>
                 <button
                   pButton
@@ -121,6 +123,7 @@
                   "
                   icon="pi pi-user"
                   (click)="users(rowData)"
+                  *ngxPermissionsOnly="['ADD_USER_TO_GROUP']"
                 ></button>
                 <button
                   pButton
@@ -132,6 +135,7 @@
                   icon="pi pi-pencil
               "
                   (click)="createOrUpdate(rowData)"
+                  *ngxPermissionsOnly="['EDIT_GROUP']"
                 ></button>
                 <button
                   pButton
@@ -143,6 +147,7 @@
                   icon="pi pi-trash
               "
                   (click)="delete(rowData)"
+                  *ngxPermissionsOnly="['DELETE_GROUP']"
                 ></button>
               </div>
             </div>

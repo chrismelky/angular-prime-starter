@@ -6,7 +6,7 @@ export class PeDefinition {
     public gfs_code_id?: number,
     public sort_order?: number,
     public unit?: string,
-    public is_input?: string,
+    public is_input?: boolean,
     public has_breakdown?: string,
     public pe_form_id?: number,
     public is_active?: string,

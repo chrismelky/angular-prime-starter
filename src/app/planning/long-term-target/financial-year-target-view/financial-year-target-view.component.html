@@ -163,6 +163,14 @@
                   icon="pi pi-times"
                   class="p-button-rounded p-button-text p-button-danger"
                 ></button>
+                <button
+                  *ngIf="!editing"
+                  pButton
+                  (click)="delete($event, target.id)"
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-text p-button-danger"
+                ></button>
               </div>
             </td>
           </tr>
@@ -244,3 +252,5 @@
     </div>
   </ng-template>
 </p-overlayPanel>
+
+<p-confirmPopup key="deletePriority"></p-confirmPopup>

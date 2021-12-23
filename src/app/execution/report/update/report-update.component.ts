@@ -30,6 +30,10 @@ import { SectionService } from '../../../setup/section/section.service';
 import { Sector } from '../../../setup/sector/sector.model';
 import { SectorService } from '../../../setup/sector/sector.service';
 import { J } from '@angular/cdk/keycodes';
+import {PriorityAreaService} from "../../../setup/priority-area/priority-area.service";
+import {PriorityArea} from "../../../setup/priority-area/priority-area.model";
+import {Intervention} from "../../../setup/intervention/intervention.model";
+import {InterventionService} from "../../../setup/intervention/intervention.service";
 
 @Component({
   selector: 'app-report-update',
@@ -49,6 +53,9 @@ export class ReportUpdateComponent implements OnInit {
   departments?: Section[] = [];
   fundSources?: FundSource[] = [];
   peFundSources?: FundSource[] = [];
+  priorityAreas2?: PriorityArea[] = [];
+  priorityAreas?: PriorityArea[] = [];
+  interventions?: Intervention[] = [];
   parameters: string[] | undefined;
 
   /**
@@ -67,16 +74,18 @@ export class ReportUpdateComponent implements OnInit {
     budget_class_id: [null, []],
     department_id: [null, []],
     fund_source_id: [null, []],
+    priority_area_id: [null, []],
     admin_hierarchy_id: [null, []],
     financial_year_id: [null, []],
   });
-
   constructor(
     protected reportService: ReportService,
     protected periodService: PeriodService,
     protected sectionService: SectionService,
     protected sectorService: SectorService,
     protected fundSourceService: FundSourceService,
+    protected priorityAreaService: PriorityAreaService,
+    protected interventionService: InterventionService,
     protected casPlanContentService: CasPlanContentService,
     protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
@@ -138,6 +147,22 @@ export class ReportUpdateComponent implements OnInit {
                 .subscribe(
                   (resp: CustomResponse<FundSource[]>) =>
                     (this.peFundSources = resp.data)
+                );
+            }
+            if (this.parameters![i] == 'intervention_id') {
+              this.priorityAreaService
+                .query()
+                .subscribe(
+                  (resp: CustomResponse<PriorityArea[]>) =>
+                    (this.priorityAreas2 = resp.data)
+                );
+            }
+            if (this.parameters![i] == 'priority_area_id') {
+              this.priorityAreaService
+                .query()
+                .subscribe(
+                  (resp: CustomResponse<PriorityArea[]>) =>
+                    (this.priorityAreas = resp.data)
                 );
             }
           }
@@ -251,6 +276,7 @@ export class ReportUpdateComponent implements OnInit {
       sector_id: report.sector_id,
       department_id: report.department_id,
       fund_source_id: report.fund_source_id,
+      priority_area_id: report.priority_area_id,
       fund_source_pe: report.fund_source_pe,
       is_facility_account: report.is_facility_account,
       intervention_id: report.intervention_id,
@@ -275,6 +301,7 @@ export class ReportUpdateComponent implements OnInit {
       fund_source_pe: this.editForm.get(['fund_source_pe'])!.value,
       is_facility_account: this.editForm.get(['is_facility_account'])!.value,
       intervention_id: this.editForm.get(['intervention_id'])!.value,
+      priority_area_id: this.editForm.get(['priority_area_id'])!.value,
       exchange_rate: this.editForm.get(['exchange_rate'])!.value,
       control_code: this.editForm.get(['control_code'])!.value,
       budget_class_id: this.editForm.get(['budget_class_id'])!.value,
@@ -285,4 +312,11 @@ export class ReportUpdateComponent implements OnInit {
       financial_year_id: this.editForm.get(['financial_year_id'])!.value,
     };
   }
+
+  filterChanged( ) {
+    this.interventionService.query({
+      priority_area_id: this.editForm.get('priority_area_id')?.value
+    }).subscribe((resp: CustomResponse<Intervention[]>) =>
+      (this.interventions = resp.data))
+   }
 }

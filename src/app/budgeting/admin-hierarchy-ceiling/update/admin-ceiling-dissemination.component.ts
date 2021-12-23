@@ -16,7 +16,8 @@ import {Facility} from "../../../setup/facility/facility.model";
 import {BudgetCeiling} from "../../../shared/budget-ceiling.model";
 import {Papa} from 'ngx-papaparse';
 import * as XLSX from 'xlsx';
-import {MessageService} from 'primeng/api';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {saveAs} from "file-saver";
 
 @Component({
   selector: 'app-admin-ceiling-dissemination',
@@ -87,7 +88,8 @@ export class AdminCeilingDisseminationComponent implements OnInit {
     protected  budgetCeilingService:BudgetCeilingService,
     protected  facilityService:FacilityService,
     private papa: Papa,
-    private messageService: MessageService
+   private confirmationService: ConfirmationService,
+    private messageService: MessageService,
   ) {
     this.ceiling=this.config.data.ceiling;
     this.parentCeiling =[this.config.data.ceiling];
@@ -482,5 +484,49 @@ export class AdminCeilingDisseminationComponent implements OnInit {
       file: this.facilityCeilingToUpload
     };
     return fd;
+  }
+
+  downloadHsbfAllocation(){
+    let payload = {
+      financial_year_id:this.ceiling!.financial_year_id,
+      admin_hierarchy_id:this.ceiling!.admin_hierarchy_id,
+      budget_type:this.ceiling!.budget_type,
+      section_id:this.ceiling!.section_id,
+      ceiling_id:this.ceiling!.id
+    };
+    this.adminHierarchyCeilingService.downloadHsbfAllocation(payload).subscribe( (response: BlobPart) =>{
+      saveAs(
+        new Blob([response], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }),
+        this.ceiling!.ceiling.fund_source.name +'_allocation.xlsx'
+      );
+    });
+  }
+  confirmHsbfAllocation(event: any){
+    let msg ='Are you sure that you want to Confirm ' + this.ceiling?.ceiling?.fund_source!.name + " allocation?";
+    this.confirmationService.confirm({
+      target: event.target,
+      message: msg,
+      icon: 'pi pi-exclamation-triangle',
+      key: 'uniqueallocationdialog',
+      accept: () => {
+        let payload = {
+          financial_year_id:this.ceiling!.financial_year_id,
+          admin_hierarchy_id:this.ceiling!.admin_hierarchy_id,
+          budget_type:this.ceiling!.budget_type,
+          section_id:this.ceiling!.section_id,
+          ceiling_id:this.ceiling!.ceiling.id,
+          admin_ceiling_id:this.ceiling!.id
+        };
+        this.adminHierarchyCeilingService.saveHsbfAllocation(payload).subscribe( resp =>{
+          this.loadCeilingChain();
+          this.toastService.info(resp.message);
+        });
+      },
+      reject: () => {
+        this.toastService.info(this.ceiling?.ceiling?.fund_source!.name + ' Allocation Canceled');
+      }
+    });
   }
 }

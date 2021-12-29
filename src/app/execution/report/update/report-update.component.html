@@ -121,6 +121,36 @@
           >
         </span>
       </div>
+      <div class="p-field" fxFlex *ngIf="peFundSources!.length > 0">
+        <span class="p-float-label">
+          <p-dropdown
+            id="fund_source_pe"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="peFundSources!"
+            formControlName="fund_source_pe"
+          ></p-dropdown>
+          <label for="fund_source_pe">Fund Source </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('fund_source_pe')!.invalid &&
+            (editForm.get('fund_source_pe')!.dirty ||
+              editForm.get('fund_source_pe')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('fund_source_pe')?.errors?.required"
+            >PE Fund Source is required.</small
+          >
+        </span>
+      </div>
       <div class="p-field" fxFlex *ngIf="sectors!.length > 0">
         <span class="p-float-label">
           <p-dropdown

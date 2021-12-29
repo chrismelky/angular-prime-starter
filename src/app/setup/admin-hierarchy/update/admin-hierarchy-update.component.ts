@@ -19,6 +19,7 @@ import { AdminHierarchyLevel } from '../../admin-hierarchy-level/admin-hierarchy
 import { DecisionLevel } from '../../decision-level/decision-level.model';
 import { AdminHierarchyLevelService } from '../../admin-hierarchy-level/admin-hierarchy-level.service';
 import { DecisionLevelService } from '../../decision-level/decision-level.service';
+import {FundSourceBudgetClass} from "../../fund-source-budget-class/fund-source-budget-class.model";
 
 @Component({
   selector: 'app-admin-hierarchy-update',
@@ -31,6 +32,7 @@ export class AdminHierarchyUpdateComponent implements OnInit {
 
   parents?: AdminHierarchy[] = [];
   adminHierarchyPositions?: AdminHierarchyLevel[] = [];
+  adminHierarchyPosition?:number;
 
   /**
    * Declare form
@@ -70,9 +72,25 @@ export class AdminHierarchyUpdateComponent implements OnInit {
       .query()
       .subscribe(
         (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyPositions = resp.data)
+        {
+          this.adminHierarchyPositions = resp.data;
+        }
       );
     const data: AdminHierarchy = this.dialogConfig.data;
+    this.adminHierarchyPosition = data.admin_hierarchy_position;
+    if(data.admin_hierarchy_position! > 3){
+      if(data.id == undefined){
+        this.adminHierarchyService
+          .getAdminHierarchyCode(data.admin_hierarchy_position!)
+          .subscribe(
+            (resp: CustomResponse<string>) =>
+            {
+              this.editForm.get('code')?.setValue(resp.data);
+            }
+          );
+      }
+      this.editForm.get('code')!.disable();
+    }
     this.parents?.push(data.parent!);
     this.updateForm(data); //Initialize form with data from dialog
   }

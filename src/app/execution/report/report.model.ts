@@ -13,6 +13,7 @@ export class Report {
     public control_code?: string,
     public fund_source_pe?: number,
     public intervention_id?: number,
+    public priority_area_id?: number,
     public exchange_rate?: number,
     public budget_class_id?: number,
     public data_set_id?: number,

@@ -45,6 +45,13 @@ export class AdminHierarchyService {
     );
   }
 
+  getAdminHierarchyCode(position: number): Observable<CustomResponse<string>> {
+    let url = 'api/admin_hierarchy_code';
+    return this.http.get<CustomResponse<string>>(
+      `${url}/${position}`
+    );
+  }
+
   query(req?: any): Observable<CustomResponse<AdminHierarchy[]>> {
     const options = createRequestOption(req);
     return this.http.get<CustomResponse<AdminHierarchy[]>>(this.resourceUrl, {

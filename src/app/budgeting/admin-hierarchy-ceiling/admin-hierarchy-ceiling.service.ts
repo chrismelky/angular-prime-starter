@@ -99,10 +99,27 @@ export class AdminHierarchyCeilingService {
     const httpOptions = {
       responseType: 'arraybuffer' as 'json',
     };
-    let url ='api/admin_hierarchy_ceiling_docs'
+    let url ='api/admin_hierarchy_ceiling_docs';
     return this.http.get<any>(
       `${url}/download/${id}`,
       httpOptions
+    );
+  }
+
+  downloadHsbfAllocation(payload: any) {
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json',
+    };
+    let url ='api/hsbf_allocations';
+    return this.http.get<any>(
+      `${url}/${payload.financial_year_id}/${payload.admin_hierarchy_id}/${payload.section_id}/${payload.budget_type}/${payload.ceiling_id}`,
+      httpOptions
+    );
+  }
+  saveHsbfAllocation(payload: any){
+    let url ='api/hsbf_allocations/allocate';
+    return this.http.get<any>(
+      `${url}/${payload.financial_year_id}/${payload.admin_hierarchy_id}/${payload.section_id}/${payload.budget_type}/${payload.ceiling_id}/${payload.admin_ceiling_id}`
     );
   }
 

@@ -2,7 +2,10 @@
 <div class="ui-dialog-content">
   <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
     <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-      <span class="card-header-text"><b style="font-size:16px">Revenue Source : {{this.ceiling?.ceiling?.fund_source?.gfs_code?.name}}</b></span>
+      <span class="card-header-text"><b style="font-size:16px">Revenue Source : {{ceiling?.ceiling?.fund_source?.gfs_code?.name}}</b>
+        &nbsp;<p-badge style="cursor: pointer" (click)="downloadHsbfAllocation()" *ngIf="ceiling?.ceiling?.fund_source.code === 'Z01'" [value]="'Download Allocation'" styleClass="p-mr-2"><i class="pi pi-times"></i></p-badge>
+        &nbsp;&nbsp;<p-badge severity="success" style="cursor: pointer" (click)="confirmHsbfAllocation($event)" *ngIf="ceiling?.ceiling?.fund_source.code === 'Z01'" [value]="'Confirm Allocation'" styleClass="p-mr-2"><i class="pi pi-times"></i></p-badge>
+      </span>
     </div>
     <div class="overlay-position"><span #overlayTarget></span></div>
     <div fxLayout="column" fxLayoutGap="10px">
@@ -23,7 +26,7 @@
               optionValue=""
               optionLabel="section.name"
               [autoDisplayFirst]="true"
-              [(ngModel)]="this.ceiling!.section!.position"
+              [(ngModel)]="ceiling!.section!.position"
               [filter]="true"
               [options]="parentCeiling!"
               styleClass="form-control"
@@ -31,7 +34,7 @@
               <ng-template let-item pTemplate="item">
                 <div fxLayout="row" fxLayoutAlign="space-between center">
                   <span class=""> {{item.section.name}} </span>
-                  <span *ngIf="section_level_position! <= item.section.position!"  class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(currentCeilingChain?.section_level_position.position,op,$event,item,currentCeilingChain!)"  *ngIf="currentCeilingChain?.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
+                  <span *ngIf="section_level_position! <= item.section.position!"  class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(currentCeilingChain?.section_level_position.position,op,$event,item,currentCeilingChain!)"  *ngIf="currentCeilingChain?.next && ceiling?.ceiling?.fund_source.code !== 'Z01'" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
                 </div>
               </ng-template>
               <ng-template let-item pTemplate="selectedItem">
@@ -63,7 +66,7 @@
               <ng-template let-item pTemplate="item">
                 <div fxLayout="row" fxLayoutAlign="space-between center">
                   <span class=""> {{item.section.name}} </span>
-                  <span *ngIf="section_level_position! <= item.section.position! && !item.is_locked"  class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(chain?.section_level_position.position,op,$event,item,chain!)"  *ngIf="chain?.next" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
+                  <span *ngIf="section_level_position! <= item.section.position!"  class="">&nbsp;&nbsp; <b>{{item.amount | currency:"TZS":"TSH"}}</b> &nbsp;&nbsp; <p-badge (click)="allocateCeiling(chain?.section_level_position.position,op,$event,item,chain!)"  *ngIf="chain?.next && ceiling?.ceiling?.fund_source.code !== 'Z01'" [value]="'Allocate'" styleClass="p-mr-2"></p-badge></span>
                 </div>
               </ng-template>
               <ng-template let-item pTemplate="selectedItem">
@@ -98,7 +101,7 @@
                   <div fxLayout="row wrap" fxLayoutGap="10px">
                     <div fxLayout="row" fxLayoutGap="0.75rem" >
                       <span><b>{{finalCeiling?.section?.name}} Allocation</b></span>
-                      <button *ngIf="finalCeiling?.amount > 0 && facilityCeiling!.length > 0" (click)="upload.toggle($event)"  style="float: right !important;"  icon="pi pi-upload" pButton pRipple type="button" label="Upload Final Ceiling"></button>
+                      <button *ngIf="finalCeiling?.amount > 0 && facilityCeiling!.length > 0 && ceiling?.ceiling?.fund_source.code !== 'Z01'" (click)="upload.toggle($event)"  style="float: right !important;"  icon="pi pi-upload" pButton pRipple type="button" label="Upload Final Ceiling"></button>
                     </div>
                   </div>
                 </div>
@@ -135,11 +138,11 @@
                   <td>{{rowData?.facility}}</td>
                   <td>
                     <div  class="p-field" fxFlex style="text-align: end;">
-                      <span *ngIf="rowData.is_locked || rowData.is_approved">
+                      <span *ngIf="rowData.is_locked || rowData.is_approved || ceiling?.ceiling?.fund_source.code === 'Z01'">
                         {{rowData!.amount | currency:"TZS":"TSH"}}
                       </span>
                       <p-inputNumber
-                        *ngIf="!rowData.is_locked && !rowData.is_approved"
+                        *ngIf="!rowData.is_locked && !rowData.is_approved && ceiling?.ceiling?.fund_source.code !== 'Z01'"
                         mode="decimal"
                         prefix="TSH "
                         [(ngModel)]="rowData!.amount"
@@ -154,11 +157,11 @@
                   </td>
                   <td >
                     <div  class="p-field" fxFlex style="text-align: end;">
-                      <span *ngIf="rowData.is_locked || rowData.is_approved">
+                      <span *ngIf="rowData.is_locked || rowData.is_approved || ceiling?.ceiling?.fund_source.code === 'Z01'">
                         {{rowData!.percent | number : '1.2-2'}} %
                       </span>
                       <p-inputNumber
-                        *ngIf="!rowData.is_locked && !rowData.is_approved"
+                        *ngIf="!rowData.is_locked && !rowData.is_approved && ceiling?.ceiling?.fund_source.code !== 'Z01'"
                         mode="decimal"
                         suffix=" %"
                         [(ngModel)]="rowData.percent"
@@ -314,3 +317,5 @@
     </div>
   </ng-template>
 </p-toast>
+
+<p-confirmPopup key="uniqueallocationdialog"  #allocation></p-confirmPopup>

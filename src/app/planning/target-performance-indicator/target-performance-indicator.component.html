@@ -11,8 +11,9 @@
     <ng-template pTemplate="header" let-columns>
       <tr *ngIf="targetPerformanceIndicators?.length">
         <th>Peformance Indicator</th>
+        <th class="fit-center">Baseline Date</th>
         <th class="fit-center">Baseline</th>
-        <th class="fit-center">Actual</th>
+        <!--th class="fit-center">Actual</th-->
         <th class="fit-center" *ngFor="let y of financialYears">
           {{ y.name }}
         </th>
@@ -36,11 +37,14 @@
           {{ rowData?.performance_indicator?.description }}
         </td>
         <td>
+          {{ rowData?.baseline_date }}
+        </td>
+        <td>
           {{ rowData.baseline_value }}
         </td>
-        <td class="fit-center">
+        <!--td class="fit-center">
           {{ rowData.actual_value }}
-        </td>
+        </td-->
         <td class="fit-center" *ngFor="let y of financialYears; let i = index">
           <span>{{ rowData["y" + i] }}</span>
         </td>

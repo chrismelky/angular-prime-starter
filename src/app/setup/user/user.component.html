@@ -274,6 +274,7 @@
                   "
                   icon="pi pi-map"
                   (click)="transfer(rowData)"
+                  *ngxPermissionsOnly="['TRANSIFER_USER']"
                 ></button>
                 <button
                   pButton
@@ -295,6 +296,7 @@
                   "
                   icon="pi pi-lock"
                   (click)="passwordReset(rowData)"
+                  *ngxPermissionsOnly="['RESET_PASSWORD']"
                 ></button>
                 <button
                   pButton
@@ -320,6 +322,7 @@
                   icon="pi pi-pencil
               "
                   (click)="createOrUpdate(rowData)"
+                  *ngxPermissionsOnly="['EDIT_USER']"
                 ></button>
                 <button
                   pButton
@@ -333,6 +336,7 @@
                   icon="pi pi-trash
               "
                   (click)="delete(rowData)"
+                  *ngxPermissionsOnly="['DELETE_USER']"
                 ></button>
               </div>
             </div>

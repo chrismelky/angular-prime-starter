@@ -52,6 +52,9 @@ export class AdminHierarchyTreeComponent
       });
     }
 
+    if(this.currentUser?.admin_hierarchy === undefined){
+      return;
+    }
     const rootAdminHierarchy = this.currentUser.admin_hierarchy;
     const history = this.localStorageService.retrieve(`${this.stateKey}_state`);
     if (
@@ -80,7 +83,9 @@ export class AdminHierarchyTreeComponent
   }
 
   ngAfterViewInit(): void {
-    this.onSelectionChange();
+    if(this.currentUser?.admin_hierarchy !== undefined){
+      this.onSelectionChange();
+    }
   }
 
   nodeExpand(event: any): any {

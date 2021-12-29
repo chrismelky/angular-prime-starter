@@ -178,6 +178,36 @@
           >
         </span>
       </div>
+      <div class="p-field" fxFlex *ngIf="peFundSources!.length > 0">
+        <span class="p-float-label">
+          <p-dropdown
+            id="fund_source_pe"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="peFundSources!"
+            formControlName="fund_source_pe"
+          ></p-dropdown>
+          <label for="fund_source_pe">Fund Source </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('fund_source_pe')!.invalid &&
+            (editForm.get('fund_source_pe')!.dirty ||
+              editForm.get('fund_source_pe')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('fund_source_pe')?.errors?.required"
+            >PE Fund Source is required.</small
+          >
+        </span>
+      </div>
       <div class="p-field" fxFlex *ngIf="sectors!.length > 0">
         <span class="p-float-label">
           <p-dropdown
@@ -208,35 +238,80 @@
           >
         </span>
       </div>
-      <div class="p-field" fxFlex *ngIf="peFundSources!.length > 0">
+      <div class="p-field" fxFlex *ngIf="priorityAreas!.length > 0">
         <span class="p-float-label">
           <p-dropdown
-            id="fund_source_pe"
             optionValue="id"
-            optionLabel="name"
+            optionLabel="description"
             [autoDisplayFirst]="false"
             [filter]="true"
             class="p-inputtext-sm"
             appendTo="body"
-            [options]="peFundSources!"
-            formControlName="fund_source_pe"
+            [options]="priorityAreas!"
+            formControlName="priority_area_id"
           ></p-dropdown>
-          <label for="fund_source_pe">Fund Source </label>
+          <label for="priority_area_id">Priority Areas </label>
         </span>
         <span
           *ngIf="
-            editForm.get('fund_source_pe')!.invalid &&
-            (editForm.get('fund_source_pe')!.dirty ||
-              editForm.get('fund_source_pe')!.touched ||
+            editForm.get('priority_area_id')!.invalid &&
+            (editForm.get('priority_area_id')!.dirty ||
+              editForm.get('priority_area_id')!.touched ||
               formError)
           "
         >
           <small
             class="p-error"
-            *ngIf="editForm.get('fund_source_pe')?.errors?.required"
-            >Fund Source is required.</small
+            *ngIf="editForm.get('priority_area_id')?.errors?.required"
+            >Priority Areas is required.</small
           >
         </span>
+      </div>
+      <div class="p-field" fxLayout="column" fxLayoutGap="1rem" *ngIf="priorityAreas2!.length > 0">
+        <span class="p-float-label">
+          <p-dropdown
+            id="priority_area_id"
+            optionValue="id"
+            optionLabel="description"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="priorityAreas!"
+            formControlName="priority_area_id"
+            (onChange)="filterChanged()"
+          ></p-dropdown>
+          <label for="priority_area_id">Priority Area</label>
+        </span>
+      <div class="p-field" fxFlex *ngIf="interventions!.length > 0">
+        <span class="p-float-label">
+          <p-multiSelect
+            id="intervention_id"
+            optionValue="id"
+            optionLabel="description"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="interventions!"
+            formControlName="intervention_id"
+          ></p-multiSelect>
+          <label for="intervention_id">Intervention</label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('intervention_id')!.invalid &&
+            (editForm.get('intervention_id')!.dirty ||
+              editForm.get('intervention_id')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('intervention_id')?.errors?.required"
+          >Intervention is required.</small
+          >
+        </span>
+      </div>
       </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>

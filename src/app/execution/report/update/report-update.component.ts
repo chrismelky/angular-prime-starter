@@ -202,25 +202,25 @@ export class ReportUpdateComponent implements OnInit {
   //get pdf report
   getPdfReport(format: string) {
     const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.financial_year_id;
-    data.report_id = this.dialogConfig.data.report_id;
-    data.budgetType = this.dialogConfig.data.budgetType;
+    data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    data.report_id = this.dialogConfig.data.report.id;
+    data.budgetType = this.dialogConfig.data.report.budget_type;
     data.format = format;
     this.reportService.getReport(data).subscribe((resp) => {
       let file = new Blob([resp], { type: 'application/pdf' });
       let fileURL = URL.createObjectURL(file);
       window.open(fileURL, '_blank');
-      this.dialogRef.close(true);
+      // this.dialogRef.close(true);
     });
   }
   //get excel report
   getExcelReport(format: string) {
     const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.financial_year_id;
-    data.report_id = this.dialogConfig.data.report_id;
-    data.budgetType = this.dialogConfig.data.budgetType;
+    data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    data.report_id = this.dialogConfig.data.report.id;
+    data.budgetType = this.dialogConfig.data.report.budget_type;
     data.format = format;
     this.reportService.getReport(data).subscribe((resp) => {
       let file = new Blob([resp], {
@@ -234,10 +234,10 @@ export class ReportUpdateComponent implements OnInit {
   //get excel report
   getWordReport(format: string) {
     const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.financial_year_id;
-    data.report_id = this.dialogConfig.data.report_id;
-    data.budgetType = this.dialogConfig.data.budgetType;
+    data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    data.report_id = this.dialogConfig.data.report.id;
+    data.budgetType = this.dialogConfig.data.report.budget_type;
     data.format = format;
     this.reportService.getReport(data).subscribe((resp) => {
       let file = new Blob([resp], {

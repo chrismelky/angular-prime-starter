@@ -346,8 +346,9 @@ export class ReportComponent implements OnInit {
     const report: Report = {
       ...new Report(),
       admin_hierarchy_id: this.admin_hierarchy_id,
-      financial_year_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
       budget_type: this.budgetType,
+      id: content.report_id,
       formart,
     };
 

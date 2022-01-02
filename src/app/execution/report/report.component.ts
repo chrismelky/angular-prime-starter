@@ -137,11 +137,10 @@ export class ReportComponent implements OnInit {
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.casPlanContentService
       .query({
-        page: pageToLoad,
-        per_page: this.per_page,
         sort: this.sort(),
         cas_plan_id: this.cas_plan_id,
         parent_id: null,
+        with: ['dataSets'],
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -335,7 +334,7 @@ export class ReportComponent implements OnInit {
     this.admin_hierarchy_position = event.admin_hierarchy_position;
   }
 
-  getReport(report: any) {
+  getReport(formart: string, content: CasPlanContent) {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
@@ -343,15 +342,35 @@ export class ReportComponent implements OnInit {
     ) {
       return;
     }
-    const data = report;
-    data.admin_hierarchy_id = this.admin_hierarchy_id;
-    data.financial_year_id = this.financial_year_id;
-    data.budgetType = this.budgetType;
-    const ref = this.dialogService.open(ReportUpdateComponent, {
-      data,
-      header: report.name,
-    });
-    ref.onClose.subscribe((result) => {});
+
+    const report: Report = {
+      ...new Report(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
+      budget_type: this.budgetType,
+      id: content.report_id,
+      formart,
+    };
+
+    this.reportService
+      .getParams(content.report_id!)
+      .subscribe((resp: CustomResponse<Report[]>) => {
+        const params = resp.data;
+        if (params || content.data_sets) {
+          const ref = this.dialogService.open(ReportUpdateComponent, {
+            data: {
+              report,
+              params,
+              dataSets: content.data_sets,
+              admin_hierarchy_position: this.admin_hierarchy_position,
+            },
+            header: 'Params',
+          });
+          ref.onClose.subscribe((result) => {});
+        } else {
+          // Just print report with params
+        }
+      });
   }
 
   loadContents() {
@@ -359,6 +378,8 @@ export class ReportComponent implements OnInit {
       .query({
         cas_plan_id: this.cas_plan_id,
         parent_id: null,
+        sort: ['sort_order:asc'],
+        with: ['dataSets'],
       })
       .subscribe(
         (resp: CustomResponse<CasPlanContent[]>) => (this.parents = resp.data)
@@ -377,6 +398,7 @@ export class ReportComponent implements OnInit {
       .query({
         parent_id: node.data.id,
         sort: ['sort_order:asc'],
+        with: ['dataSets'],
       })
       .subscribe(
         (resp) => {

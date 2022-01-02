@@ -104,13 +104,40 @@
             style="height: 36px !important"
             *ngFor="let col of columns; let i = index"
           >
-            <p-treeTableToggler
-              [rowNode]="rowNode"
-              *ngIf="i === 0"
-            ></p-treeTableToggler>
-            {{ rowData[col.field] }}
+            <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start center">
+              <p-treeTableToggler
+                [rowNode]="rowNode"
+                *ngIf="i === 0"
+              ></p-treeTableToggler>
+
+              <span> {{ rowData[col.field] }}</span>
+              <button
+                *ngIf="rowData.report_id || rowData.data_sets?.length"
+                style="color: #ff5722"
+                class="p-button-icon p-button-text p-icon-only p-button-rounded"
+                icon="pi pi-file-pdf"
+                pButton
+                (click)="getReport('pdf', rowData)"
+              ></button>
+              <!-- <button
+                style="color: #0c7239"
+                class="p-button-icon p-button-text"
+                icon="pi pi-file-excel"
+                label="EXCEL"
+                pButton
+                (click)="getReport('xlsx')"
+              ></button>
+              <button
+                style="color: #1665c0"
+                class="p-button-icon p-button-text"
+                icon="pi pi-file-o"
+                label="WORD"
+                pButton
+                (click)="getReport('rtf')"
+              ></button> -->
+            </div>
           </td>
-          <td style="height: 36px !important">
+          <!-- <td style="height: 36px !important">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px" *ngIf="rowData.is_file">
                 <button
@@ -140,7 +167,7 @@
                 ></button>
               </div>
             </div>
-          </td>
+          </td> -->
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>

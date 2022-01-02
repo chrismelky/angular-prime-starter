@@ -1,6 +1,63 @@
 <div class="dialog-content">
   <form name="editForm" role="form" novalidate [formGroup]="editForm">
     <div fxLayout="column" fxLayoutGap="1rem">
+      <div
+        fxLayout="column"
+        fxLayoutGap="10px"
+        fxLayoutAlign="start"
+        *ngIf="dataSets && dataSets.length"
+      >
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              #dataSet
+              id="data_set_id"
+              optionLabel="name"
+              optionValue="id"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              [options]="dataSets!"
+              formControlName="data_set_id"
+              (onChange)="loadFacilityType(dataSet.value)"
+            ></p-dropdown>
+            <label for="data_set_id">Data Sets</label>
+          </span>
+        </div>
+        <div fxLayout="row" fxLayoutGap="10px">
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                #facilityType
+                id="facility_type_id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="facilityTypes!"
+                (onChange)="loadFacilities(facilityType.value)"
+              ></p-dropdown>
+              <label for="facility_type_id">Facility Type</label>
+            </span>
+          </div>
+          <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="facility_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="facilities!"
+                formControlName="facility_id"
+              ></p-dropdown>
+              <label for="facility_id">Facility </label>
+            </span>
+          </div>
+        </div>
+      </div>
+
       <div class="p-field" fxFlex *ngIf="periods!.length > 0">
         <span class="p-float-label">
           <p-dropdown
@@ -118,6 +175,36 @@
             class="p-error"
             *ngIf="editForm.get('department_id')?.errors?.required"
             >Department is required.</small
+          >
+        </span>
+      </div>
+      <div class="p-field" fxFlex *ngIf="peFundSources!.length > 0">
+        <span class="p-float-label">
+          <p-dropdown
+            id="fund_source_pe"
+            optionValue="id"
+            optionLabel="name"
+            [autoDisplayFirst]="false"
+            [filter]="true"
+            class="p-inputtext-sm"
+            appendTo="body"
+            [options]="peFundSources!"
+            formControlName="fund_source_pe"
+          ></p-dropdown>
+          <label for="fund_source_pe">Fund Source </label>
+        </span>
+        <span
+          *ngIf="
+            editForm.get('fund_source_pe')!.invalid &&
+            (editForm.get('fund_source_pe')!.dirty ||
+              editForm.get('fund_source_pe')!.touched ||
+              formError)
+          "
+        >
+          <small
+            class="p-error"
+            *ngIf="editForm.get('fund_source_pe')?.errors?.required"
+            >PE Fund Source is required.</small
           >
         </span>
       </div>

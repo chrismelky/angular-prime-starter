@@ -443,7 +443,7 @@ export class ActivityInputComponent implements OnInit {
       header: 'Create/Update Activity Input',
     });
 
-    this.onInputSaved.subscribe((saved) => {
+    const subscription = this.onInputSaved.subscribe((saved) => {
       if (saved) {
         this.loadPage(this.page);
         this.loadBudgetingStatus();
@@ -451,7 +451,7 @@ export class ActivityInputComponent implements OnInit {
     });
 
     ref.onClose.subscribe((result) => {
-      this.onInputSaved.unsubscribe();
+      subscription && subscription.unsubscribe();
       if (result) {
         this.loadPage(this.page);
         this.loadBudgetingStatus();

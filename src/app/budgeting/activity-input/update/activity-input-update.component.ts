@@ -266,6 +266,13 @@ export class ActivityInputUpdateComponent implements OnInit {
       this.gfsCodes = this.gfsCodes?.filter(
         (gfs) => gfs.id !== previousInput?.gfs_code_id
       );
+
+      this.balanceAmount =
+        this.balanceAmount -
+        previousInput?.quantity! *
+          previousInput?.unit_price! *
+          previousInput?.frequency!;
+      this.formError = false;
       this.editForm.reset();
       this.editForm.markAsPristine();
       this.editForm.markAsUntouched();
@@ -299,11 +306,6 @@ export class ActivityInputUpdateComponent implements OnInit {
         this.breakDownControls.removeAt(0);
       }
       this.onInputSaved && this.onInputSaved.next(true);
-      this.balanceAmount =
-        this.balanceAmount -
-        previousInput?.quantity! *
-          previousInput?.unit_price! *
-          previousInput?.frequency!;
     } else {
       this.dialogRef.close(true);
     }

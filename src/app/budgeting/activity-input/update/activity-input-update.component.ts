@@ -5,9 +5,9 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, NgForm, Validators } from '@angular/forms';
+import { Observable, Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
@@ -57,6 +57,11 @@ export class ActivityInputUpdateComponent implements OnInit {
   periodSum = 0.0;
   totalToAdd = 0.0;
   totalToBreakDown = 0.0;
+
+  public inputSaved$ = new Subject<boolean>();
+  onInputSaved?: EventEmitter<boolean>;
+
+  @ViewChild('editFormDirective') editFormDirective?: NgForm;
 
   procurementTypes?: ProcurementType[] = [];
   procurementMethods?: ProcurementMethod[] = [];
@@ -117,7 +122,7 @@ export class ActivityInputUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     const dialogData = this.dialogConfig.data;
-
+    this.onInputSaved = dialogData.onInputSaved;
     const input: ActivityInput = dialogData.activityInput;
 
     this.facilityActivity = dialogData.facilityActivity;
@@ -168,11 +173,12 @@ export class ActivityInputUpdateComponent implements OnInit {
   save(addMore?: boolean): void {
     if (this.editForm.invalid) {
       this.formError = true;
+      console.log('invalid form');
       return;
     }
     this.isSaving = true;
     const activityInput = this.createFromForm();
-    if (activityInput.id !== undefined) {
+    if (activityInput.id !== undefined && activityInput.id !== null) {
       this.subscribeToSaveResponse(
         this.activityInputService.update(activityInput),
         addMore
@@ -261,7 +267,38 @@ export class ActivityInputUpdateComponent implements OnInit {
         (gfs) => gfs.id !== previousInput?.gfs_code_id
       );
       this.editForm.reset();
+      this.editForm.markAsPristine();
+      this.editForm.markAsUntouched();
+      Object.keys(this.editForm.controls).forEach((key) => {
+        this.editForm.get(key)?.setErrors(null);
+      });
+      // this.editForm.updateValueAndValidity();
+      this.updateForm({
+        ...new ActivityInput(),
+        financial_year_id: previousInput?.financial_year_id,
+        admin_hierarchy_id: previousInput?.admin_hierarchy_id,
+        section_id: previousInput?.section_id,
+        facility_id: previousInput?.facility_id,
+        budget_class_id: previousInput?.budget_class_id,
+        fund_source_id: previousInput?.fund_source_id,
+        activity_id: previousInput?.activity_id,
+        activity_fund_source_id: previousInput?.activity_fund_source_id,
+        budget_type: previousInput?.budget_type,
+        breakdowns: '[]',
+        has_breakdown: false,
+        is_inkind: false,
+      });
+
+      this.updateTotal();
+      this.updateTotalYrOne();
+      this.updateTotalYrTwo();
+      this.updatePeriods();
+
       this.breakDownForm.reset();
+      while (this.breakDownControls.length !== 0) {
+        this.breakDownControls.removeAt(0);
+      }
+      this.onInputSaved && this.onInputSaved.next(true);
       this.balanceAmount =
         this.balanceAmount -
         previousInput?.quantity! *
@@ -430,7 +467,11 @@ export class ActivityInputUpdateComponent implements OnInit {
     const breakdowns = activityInput.breakdowns
       ? JSON.parse(activityInput.breakdowns)
       : [];
+
     breakdowns.forEach((b: any) => this.addControl(b));
+    this.updatePeriods();
+  }
+  private updatePeriods(): void {
     if (!this.facilityActivity?.period_one) {
       this.editForm.get('period_one')?.disable();
       this.editForm.patchValue({

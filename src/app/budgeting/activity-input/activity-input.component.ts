@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import {
@@ -65,6 +65,8 @@ export class ActivityInputComponent implements OnInit {
   showReport = false;
   budgetStatus?: BudgetStatus;
   expenditureCentres?: TreeNode[] = [];
+
+  onInputSaved: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   activityInputs?: ActivityInput[] = [];
 
@@ -435,11 +437,21 @@ export class ActivityInputComponent implements OnInit {
         procurementTypes: this.procurementTypes,
         procurementMethods: this.procurementMethods,
         balanceAmount: this.budgetStatus?.balanceAmount,
+        onInputSaved: this.onInputSaved,
       },
       width: '900px',
       header: 'Create/Update Activity Input',
     });
+
+    this.onInputSaved.subscribe((saved) => {
+      if (saved) {
+        this.loadPage(this.page);
+        this.loadBudgetingStatus();
+      }
+    });
+
     ref.onClose.subscribe((result) => {
+      this.onInputSaved.unsubscribe();
       if (result) {
         this.loadPage(this.page);
         this.loadBudgetingStatus();

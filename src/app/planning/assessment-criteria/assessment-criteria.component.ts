@@ -39,6 +39,7 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {UserService} from "../../setup/user/user.service";
 import {User} from "../../setup/user/user.model";
 import {ReportUpdateComponent} from "../../execution/report/update/report-update.component";
+import {DecisionLevelService} from "../../setup/decision-level/decision-level.service";
 
 
 
@@ -101,6 +102,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
+    protected decisionLevelService: DecisionLevelService,
     protected router: Router,
     protected fb: FormBuilder,
     protected casAssessmentResultsService: AssessmentCriteriaService,
@@ -128,7 +130,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 1){
       this.position1 = true;
     }
-    this.assessmentCriteriaService.find(this.cas_assessment_category_version_id)
+     this.assessmentCriteriaService.find(this.cas_assessment_category_version_id)
       .subscribe((resp:CustomResponse<AssessmentCriteria[]>) => {
         this.assessmentCriteriaData = resp.data;
       });
@@ -467,13 +469,28 @@ export class AssessmentCriteriaComponent implements OnInit {
       header: 'Confirm Finish and Quit',
       message: 'All your work will be saved. Continue?',
       accept: () => {
-        //Actual logic to perform a confirmation
+        //TODO: Actual logic to perform a confirmation
         this.router.navigate(["/assessment-home"])
       }
     });
   }
 
   forwardPlan() {
+  let data = {
+    forward_from: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+    forward_to:this.currentUser.admin_hierarchy?.admin_hierarchy_position! - 1,
+    admin_hierarchy_id: this.admin_hierarchy_id,
+    cas_assessment_category_version_id:this.cas_assessment_category_version_id,
+    cas_assessment_round_id: this.cas_assessment_round_id,
+    financial_year_id: this.financial_year_id,
+    admin_hierarchy_level_id: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+    remarks : this.commentForm.value.remarks,
+  }
+  this.updatePlan(data);
+    this.saveOrUpdateComment(data);
+  }
+
+  returnPlan() {
   let data = {
     forward_from: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
     forward_to:this.currentUser.admin_hierarchy?.admin_hierarchy_position! - 1,

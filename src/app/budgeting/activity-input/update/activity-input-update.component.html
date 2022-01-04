@@ -1,6 +1,12 @@
 <div class="dialog-content">
   <app-loader [isLoading]="isSaving"></app-loader>
-  <form name="editForm" role="form" novalidate [formGroup]="editForm">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    [formGroup]="editForm"
+    #editFormDirective
+  >
     <div fxLayout="column" fxLayoutGap="20px">
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
         <span>Fund Source: </span>

@@ -91,7 +91,7 @@ export class ActivityInputComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  facilityActivity!: FacilityActivity;
+  facilityActivity?: FacilityActivity;
   admin_hierarchy_id!: number;
   facility_id!: number;
   section_id!: number;
@@ -235,8 +235,8 @@ export class ActivityInputComponent implements OnInit {
         sector_id: this.adminHierarchyCostCentre.section?.sector_id,
         facility_id: this.facility_id,
         fund_source_id: this.fund_source_id,
-        budget_class_id: this.facilityActivity.budget_class_id,
-        activity_id: this.facilityActivity.id,
+        budget_class_id: this.facilityActivity?.budget_class_id,
+        activity_id: this.facilityActivity?.id,
       })
       .subscribe((resp) => {
         this.budgetStatus = resp.data;
@@ -259,6 +259,11 @@ export class ActivityInputComponent implements OnInit {
   }
 
   loadFundSource(facilityId: number): void {
+    this.fundSources = [];
+    this.fund_source_id = undefined;
+    this.facilityActivities = [];
+    this.facilityActivity = undefined;
+    this.budgetStatus = undefined;
     this.fundSourceService
       .getByYearAndFacility(this.financialYear.id!, facilityId)
       .subscribe((resp) => {
@@ -418,10 +423,10 @@ export class ActivityInputComponent implements OnInit {
       admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
       section_id: this.adminHierarchyCostCentre.section_id,
       facility_id: this.facility_id,
-      budget_class_id: this.facilityActivity.budget_class_id,
+      budget_class_id: this.facilityActivity?.budget_class_id,
       fund_source_id: this.fund_source_id,
-      activity_id: this.facilityActivity.id,
-      activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
+      activity_id: this.facilityActivity?.id,
+      activity_fund_source_id: this.facilityActivity?.activity_fund_source_id,
       budget_type: this.budget_type,
     };
     const ref = this.dialogService.open(ActivityInputUpdateComponent, {

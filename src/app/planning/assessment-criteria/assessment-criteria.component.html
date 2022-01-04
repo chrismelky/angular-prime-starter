@@ -210,18 +210,28 @@
         </form>
       </div>
       <div fxFlex="30%">
-        <button pButton type="button" class="p-button-text p-button-raised" label="Forward" *ngIf="position3 || position2"
-                style="margin-left: 16px" icon="pi pi-forward" (click)="forwardPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3"
+<!--        <button pButton type="button" class="p-button-text p-button-raised" label="Forward" *ngIf="position3 || position2"-->
+<!--                style="margin-left: 16px" icon="pi pi-forward" (click)="forwardPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3"-->
+<!--        ></button>-->
+
+        <button
+          (click)="forwardPlan()"
+          pButton
+          icon="pi pi-chevron-left"
+          class="p-button-raised p-button-warning"
+          [disabled]="admin_hierarchy_position != 3"
+          label="Forward"
+          style="margin-left: 16px"
         ></button>
 
-        <button pButton type="button" class="p-button-text p-button-raised" label="Return" *ngIf="position1 || position2"
+        <button pButton class="p-button-raised p-button-warning" label="Return" *ngIf="position1 || position2"
                 style="margin-left: 16px" icon="pi pi-reply" (click)="returnPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3"
         ></button>
 
-        <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" *ngIf="position1"
+        <button pButton class="p-button-raised p-button-success" label="Confirm" *ngIf="position1"
                 style="margin-left: 16px" icon="pi pi-check" (click)="confirmPlan()" fxFlex="25%" [disabled]="admin_hierarchy_position != 3"
         ></button>
-        <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit"
+        <button pButton class="p-button-raised  p-button-info" label="Finish and Quit"
                 style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="35%" [disabled]="admin_hierarchy_position != 3"
         ></button>
       </div>

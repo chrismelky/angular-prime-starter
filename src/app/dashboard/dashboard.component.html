@@ -52,22 +52,7 @@
             </span>
           </div>
         </div>
-        <!-- <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-          <p-chart
-            type="doughnut"
-            [data]="data"
-            [options]="option2"
-            width="200"
-            heigh="200"
-          ></p-chart>
-          <p-chart
-            type="doughnut"
-            [data]="data"
-            [options]="option2"
-            width="200"
-            heigh="200"
-          ></p-chart>
-        </div> -->
+        <!-- <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start"></div> -->
       </div>
     </ng-template>
   </p-card>
@@ -75,7 +60,7 @@
     <p-card fxFlex="0 1 100%">
       <ng-template pTemplate="header">
         <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
-          <span class="card-header-text"
+          <span class="card-header-text" style="font-size: 14px !important"
             >Fund Sources [ Ceiling Vs Budget ]</span
           >
           <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end center">
@@ -98,7 +83,7 @@
           <app-loader [isLoading]="fundSourceIsLoading"></app-loader>
           <p-chart
             type="bar"
-            height="320"
+            height="50vh"
             [data]="fundSourceCeilingBudget"
             [options]="options"
           ></p-chart>

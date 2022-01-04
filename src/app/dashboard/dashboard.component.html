@@ -1,60 +1,118 @@
 <div class="content" fxLayout="column" fxLayoutGap="0.75rem">
-  <p-card class="filter filter-no-adv">
-    <ng-template pTemplate="header">
-      <div fxLayout="column" fxLayoutGap="10px">
-        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-          <!-- <i class="pi pi-filter"></i> -->
-          <app-admin-hierarchy-tree
-            fxFlex
-            [stateKey]="'admin_cost_centre'"
-            [returnType]="'object'"
-            (onSelect)="onAdminHierarchySelection($event)"
-          ></app-admin-hierarchy-tree>
+  <p-card>
+    <div fxLayout="column" fxLayoutGap="10px" style="margin-top: 0.5rem">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+        <!-- <i class="pi pi-filter"></i> -->
+        <app-admin-hierarchy-tree
+          fxFlex
+          [stateKey]="'admin_cost_centre'"
+          [returnType]="'object'"
+          (onSelect)="onAdminHierarchySelection($event)"
+        ></app-admin-hierarchy-tree>
 
-          <app-section-tree
-            (onSelect)="onSectionSelection($event)"
-            fxFlex
-            [returnType]="'object'"
-          >
-          </app-section-tree>
+        <app-section-tree
+          (onSelect)="onSectionSelection($event)"
+          fxFlex
+          [returnType]="'object'"
+        >
+        </app-section-tree>
 
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="budgetType"
-                optionValue="value"
-                optionLabel="display"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                (onChange)="filterChanged()"
-                [options]="budgetTypes!"
-                [(ngModel)]="budgetType"
-              ></p-dropdown>
-              <label for="budgetType">Budget Type </label>
-            </span>
-          </div>
-
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="financial_year_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="financialYears!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="financial_year_id"
-              ></p-dropdown>
-              <label for="financial_year_id">Financial Year </label>
-            </span>
-          </div>
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="budgetType"
+              optionValue="value"
+              optionLabel="display"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              (onChange)="filterChanged()"
+              [options]="budgetTypes!"
+              [(ngModel)]="budgetType"
+            ></p-dropdown>
+            <label for="budgetType">Budget Type </label>
+          </span>
         </div>
-        <!-- <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start"></div> -->
+
+        <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="financial_year_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              [options]="financialYears!"
+              (onChange)="filterChanged()"
+              [(ngModel)]="financial_year_id"
+            ></p-dropdown>
+            <label for="financial_year_id">Financial Year </label>
+          </span>
+        </div>
       </div>
-    </ng-template>
+    </div>
+  </p-card>
+  <p-card>
+    <div
+      fxLayout="row"
+      fxLayoutGap="10px"
+      fxLayoutAlign="start"
+      class="loader-area"
+    >
+      <app-loader [isLoading]="cbreIsLoading"></app-loader>
+      <div
+        fxLayout="column"
+        fxFlex="0 1 25%"
+        fxLayoutGap="10px"
+        fxLayoutAlign="start center"
+      >
+        <span>Total Ceiling</span>
+        <p-divider class="title"></p-divider>
+        <span class="dash-amount">{{
+          ceilingBudgetRevenueExpenditure?.ceiling || 0 | currency: " "
+        }}</span>
+      </div>
+      <p-divider class="title" layout="vertical"></p-divider>
+      <div
+        fxLayout="column"
+        fxFlex="0 1 25%"
+        fxLayoutGap="10px"
+        fxLayoutAlign="start center"
+      >
+        <span>Total Budget</span>
+        <p-divider class="title"></p-divider>
+        <span class="dash-amount">{{
+          ceilingBudgetRevenueExpenditure?.budget || 0 | currency: " "
+        }}</span>
+      </div>
+      <p-divider class="title" layout="vertical"></p-divider>
+      <div
+        fxLayout="column"
+        fxFlex="0 1 25%"
+        fxLayoutGap="10px"
+        fxLayoutAlign="start center"
+      >
+        <span>Total Revenue</span>
+        <p-divider class="title"></p-divider>
+        <span class="dash-amount">{{
+          ceilingBudgetRevenueExpenditure?.revenue || 0 | currency: " "
+        }}</span>
+      </div>
+      <p-divider class="title" layout="vertical"></p-divider>
+      <div
+        fxLayout="column"
+        fxFlex="0 1 25%"
+        fxLayoutGap="10px"
+        fxLayoutAlign="start center"
+      >
+        <span>Total Expenditure</span>
+        <p-divider class="title"></p-divider>
+        <span class="dash-amount">{{
+          ceilingBudgetRevenueExpenditure?.expenditure || 0 | currency: " "
+        }}</span>
+      </div>
+    </div>
   </p-card>
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
     <p-card fxFlex="0 1 100%">
@@ -71,7 +129,7 @@
             <button
               pButton
               class="p-button-success p-button-text"
-              (click)="loadFundSourceCeilingBudget(true)"
+              (click)="refresh()"
               icon="pi pi-refresh"
               label="Refresh"
             ></button>

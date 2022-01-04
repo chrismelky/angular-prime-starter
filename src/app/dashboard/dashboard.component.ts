@@ -4,6 +4,7 @@ import { FinancialYear } from '../setup/financial-year/financial-year.model';
 import { FinancialYearService } from '../setup/financial-year/financial-year.service';
 import { Section } from '../setup/section/section.model';
 import { EnumService } from '../shared/enum.service';
+import { CeilingBudgetRevenueExpenditure } from './dashboard.model';
 import { DashboardService } from './dashboard.service';
 
 @Component({
@@ -25,9 +26,14 @@ export class DashboardComponent implements OnInit {
   section?: Section;
   budgetType?: string = 'CURRENT';
   fundSourceIsLoading: boolean = false;
+  cbreIsLoading: boolean = false;
+  ceilingBudgetRevenueExpenditure?: CeilingBudgetRevenueExpenditure;
 
   options = {
     plugins: {
+      title: {
+        text: 'Fund Sources [ Ceiling Vs Budget ]',
+      },
       legend: {
         labels: {
           font: {
@@ -137,6 +143,37 @@ export class DashboardComponent implements OnInit {
     this.budgetTypes = this.enumService.get('budgetTypes');
   }
 
+  loadCeilingBudgetRevenueExpenditure(refresh: boolean): void {
+    if (
+      !this.adminHierarchy ||
+      !this.section ||
+      !this.budgetType ||
+      !this.financial_year_id
+    ) {
+      return;
+    }
+    const refreshFilter = refresh ? { refresh: true } : {};
+    this.cbreIsLoading = true;
+    this.dashboardService
+      .ceilingBudgetRevenueExpenditure({
+        financial_year_id: this.financial_year_id,
+        admin_hierarchy_id: this.adminHierarchy?.id,
+        parent_section_id: this.section?.id,
+        parent_section_name: `p${this.section?.position}`,
+        budget_type: this.budgetType,
+        ...refreshFilter,
+      })
+      .subscribe(
+        (resp) => {
+          this.cbreIsLoading = false;
+          this.ceilingBudgetRevenueExpenditure = resp.data;
+        },
+        (error) => {
+          this.cbreIsLoading = false;
+        }
+      );
+  }
+
   loadFundSourceCeilingBudget(refresh: boolean): void {
     if (
       !this.adminHierarchy ||
@@ -207,6 +244,12 @@ export class DashboardComponent implements OnInit {
 
   filterChanged(): void {
     this.loadFundSourceCeilingBudget(false);
+    this.loadCeilingBudgetRevenueExpenditure(false);
+  }
+
+  refresh(): void {
+    this.loadFundSourceCeilingBudget(true);
+    this.loadCeilingBudgetRevenueExpenditure(true);
   }
 
   onAdminHierarchySelection(admin: AdminHierarchy): void {

@@ -102,7 +102,6 @@ export class AssessmentCriteriaComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
-    protected decisionLevelService: DecisionLevelService,
     protected router: Router,
     protected fb: FormBuilder,
     protected casAssessmentResultsService: AssessmentCriteriaService,

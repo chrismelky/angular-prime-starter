@@ -66,6 +66,12 @@ export class ConfigurationSettingService {
     );
   }
 
+  /** get fund sources that used for PE and Contributions */
+  fundSourcePeContribution(): Observable<CustomResponse<ConfigurationSetting[]>> {
+    const url = "api/fundSource_pe_contribution";
+    return this.http.get<CustomResponse<ConfigurationSetting[]>>(url);
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

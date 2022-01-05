@@ -120,6 +120,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    console.log(this.currentUser.decision_level);
     if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 3){
       this.position3 = true;
     }

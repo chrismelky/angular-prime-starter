@@ -4,6 +4,7 @@ import { FinancialYear } from '../setup/financial-year/financial-year.model';
 import { FinancialYearService } from '../setup/financial-year/financial-year.service';
 import { Section } from '../setup/section/section.model';
 import { EnumService } from '../shared/enum.service';
+import { CeilingBudgetRevenueExpenditure } from './dashboard.model';
 import { DashboardService } from './dashboard.service';
 
 @Component({
@@ -25,20 +26,91 @@ export class DashboardComponent implements OnInit {
   section?: Section;
   budgetType?: string = 'CURRENT';
   fundSourceIsLoading: boolean = false;
+  cbreIsLoading: boolean = false;
+  ceilingBudgetRevenueExpenditure?: CeilingBudgetRevenueExpenditure;
 
   options = {
+    plugins: {
+      title: {
+        text: 'Fund Sources [ Ceiling Vs Budget ]',
+      },
+      legend: {
+        labels: {
+          font: {
+            size: 10,
+          },
+        },
+      },
+    },
     responsive: true,
     maintainAspectRatio: true,
-    barThickness: 35,
+    scales: {
+      y: {
+        position: 'left',
+        grid: {
+          borderDash: [4, 4],
+        },
+        title: {
+          display: true,
+          text: 'Amount (TZS)',
+          font: {
+            size: 9,
+          },
+        },
+        ticks: {
+          font: {
+            size: 9,
+          },
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          font: {
+            size: 9,
+          },
+        },
+      },
+      complGrid: {
+        id: 'B',
+        type: 'linear',
+        position: 'right',
+        title: {
+          display: true,
+          text: 'Completion %',
+          font: {
+            size: 9,
+          },
+        },
+        ticks: {
+          font: {
+            size: 9,
+          },
+          max: 100,
+          min: 0,
+        },
+        grid: {
+          display: false,
+        },
+      },
+    },
+    // barThickness: 35,
   };
 
   option2 = {
     responsive: true,
     maintainAspectRatio: false,
-    barThickness: 35,
+    // barThickness: 35,
     plugins: {
       legend: {
         position: 'right',
+        labels: {
+          font: {
+            size: 10,
+          },
+        },
       },
     },
   };
@@ -69,6 +141,37 @@ export class DashboardComponent implements OnInit {
         this.filterChanged();
       });
     this.budgetTypes = this.enumService.get('budgetTypes');
+  }
+
+  loadCeilingBudgetRevenueExpenditure(refresh: boolean): void {
+    if (
+      !this.adminHierarchy ||
+      !this.section ||
+      !this.budgetType ||
+      !this.financial_year_id
+    ) {
+      return;
+    }
+    const refreshFilter = refresh ? { refresh: true } : {};
+    this.cbreIsLoading = true;
+    this.dashboardService
+      .ceilingBudgetRevenueExpenditure({
+        financial_year_id: this.financial_year_id,
+        admin_hierarchy_id: this.adminHierarchy?.id,
+        parent_section_id: this.section?.id,
+        parent_section_name: `p${this.section?.position}`,
+        budget_type: this.budgetType,
+        ...refreshFilter,
+      })
+      .subscribe(
+        (resp) => {
+          this.cbreIsLoading = false;
+          this.ceilingBudgetRevenueExpenditure = resp.data;
+        },
+        (error) => {
+          this.cbreIsLoading = false;
+        }
+      );
   }
 
   loadFundSourceCeilingBudget(refresh: boolean): void {
@@ -103,18 +206,30 @@ export class DashboardComponent implements OnInit {
             const budget: any = {
               label: 'Budget',
               data: [],
-              backgroundColor: '#689F38',
+              backgroundColor: '#ffcb2b',
+            };
+            const completion: any = {
+              label: 'Completion',
+              data: [],
+              backgroundColor: '#689f38',
+              borderColor: '#689f38',
+              borderWidth: 1,
+              type: 'line',
+              yAxisID: 'complGrid',
             };
             resp.data.forEach((d: any) => {
               labels.push(d.fund_source);
               ceiling.data.push(d.ceiling);
               budget.data.push(d.budget);
+              const percCompletion =
+                d.ceiling && d.ceiling > 0 ? (d.budget / d.ceiling) * 100 : 0;
+              completion.data.push(percCompletion);
             });
 
             this.fundSourceCeilingBudget = {
               lastUpdate: resp.data[0].last_update,
               labels: [...labels],
-              datasets: [{ ...ceiling }, { ...budget }],
+              datasets: [{ ...ceiling }, { ...budget }, { ...completion }],
             };
           } else {
             this.fundSourceCeilingBudget = undefined;
@@ -129,6 +244,12 @@ export class DashboardComponent implements OnInit {
 
   filterChanged(): void {
     this.loadFundSourceCeilingBudget(false);
+    this.loadCeilingBudgetRevenueExpenditure(false);
+  }
+
+  refresh(): void {
+    this.loadFundSourceCeilingBudget(true);
+    this.loadCeilingBudgetRevenueExpenditure(true);
   }
 
   onAdminHierarchySelection(admin: AdminHierarchy): void {

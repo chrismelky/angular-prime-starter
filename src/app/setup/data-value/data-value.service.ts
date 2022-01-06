@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 
 import { createRequestOption } from '../../utils/request-util';
 import { CustomResponse } from '../../utils/custom-response';
-import { DataValue } from './data-value.model';
+import { DataValue, ImportStatus } from './data-value.model';
 
 @Injectable({ providedIn: 'root' })
 export class DataValueService {
@@ -29,6 +29,13 @@ export class DataValueService {
   upload(formData: FormData): Observable<CustomResponse<DataValue>> {
     return this.http.post<CustomResponse<DataValue>>(
       `${this.resourceUrl}/upload`,
+      formData
+    );
+  }
+
+  import(formData: FormData): Observable<CustomResponse<ImportStatus>> {
+    return this.http.post<CustomResponse<ImportStatus>>(
+      `${this.resourceUrl}/import_values`,
       formData
     );
   }

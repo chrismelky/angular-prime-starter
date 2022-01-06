@@ -73,6 +73,7 @@ export class ScrutinizationComponent implements OnInit {
   submittedCostCentres?: Scrutinization[] = [];
   selectedCostCentre?: Scrutinization;
   userDecionLevel?: DecisionLevel;
+  section?: Section;
   returnDecionLevel?: DecisionLevel;
 
   constructor(
@@ -92,6 +93,7 @@ export class ScrutinizationComponent implements OnInit {
   ngOnInit(): void {
     this.userAdminHierarchy = this.currentUser.admin_hierarchy;
     this.userDecionLevel = this.currentUser.decision_level;
+    this.section = this.currentUser.section;
     this.financialYearService.findByStatus(1).subscribe((resp) => {
       this.financialYearId = resp.data?.id;
       this.createRootAdminHierarchy();
@@ -138,6 +140,7 @@ export class ScrutinizationComponent implements OnInit {
     this.costCentreIsLoading = true;
     this.scrutinizationService
       .getSubmittedCostCentres(
+        this.section?.id!,
         this.userDecionLevel?.id!,
         this.financialYearId!,
         adminHierarchyId

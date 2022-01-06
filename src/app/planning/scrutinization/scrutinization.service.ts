@@ -92,12 +92,13 @@ export class ScrutinizationService {
   }
 
   getSubmittedCostCentres(
+    sectionId: number,
     decisionLevelId: number,
     financialYearId: number,
     adminHierarchyId: number
   ): Observable<CustomResponse<Scrutinization[]>> {
     return this.http.get<CustomResponse<Scrutinization[]>>(
-      `${this.scrutinizationUrl}/submitted_cost_centres/${decisionLevelId}/${financialYearId}/${adminHierarchyId}`
+      `${this.scrutinizationUrl}/submitted_cost_centres/${sectionId}/${decisionLevelId}/${financialYearId}/${adminHierarchyId}`
     );
   }
 }

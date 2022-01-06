@@ -6,7 +6,7 @@ import { Section } from '../setup/section/section.model';
 import { EnumService } from '../shared/enum.service';
 import { CeilingBudgetRevenueExpenditure } from './dashboard.model';
 import { DashboardService } from './dashboard.service';
-
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -259,5 +259,19 @@ export class DashboardComponent implements OnInit {
   onSectionSelection(section: Section): void {
     this.section = section;
     this.filterChanged();
+  }
+
+  downloadMismatch() {
+  this.dashboardService.
+  downloadMismatch(this.financial_year_id!,this.adminHierarchy?.id!)
+
+    .subscribe((resp: BlobPart) => {
+      saveAs(
+        new Blob([resp], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }),
+        this.adminHierarchy?.name + '_mismatch.xlsx'
+      );
+    });
   }
 }

@@ -34,4 +34,16 @@ export class DashboardService {
       }
     );
   }
+
+  downloadMismatch(
+    financial_year_id: number,
+    admin_hierarchy_id: number,
+  ) {
+    const httpOptions = {
+      'responseType'  : 'arraybuffer' as 'json'
+    };
+    return this.http.get<any>(
+      `${this.resourceUrl}/download_mismatch/${financial_year_id}/${admin_hierarchy_id}`,httpOptions
+    )
+  }
 }

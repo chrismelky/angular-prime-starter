@@ -8,6 +8,7 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NgxPermissionsGuard } from 'ngx-permissions';
 import { DataValueComponent } from './data-value.component';
 import { ImportComponent } from './import/import.component';
 
@@ -22,6 +23,13 @@ const routes: Routes = [
   {
     path: 'import',
     component: ImportComponent,
+    canActivate: [NgxPermissionsGuard],
+    data: {
+      permissions: {
+        only: 'IMPORT_DATA_VALUES',
+        redirectTo: '/dashboard',
+      },
+    },
   },
 ];
 

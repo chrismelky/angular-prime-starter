@@ -163,7 +163,11 @@
                     [options]="projects!"
                     (onChange)="updateProjectTypeValidation(project.value)"
                     formControlName="project_id"
-                  ></p-dropdown>
+                  >
+                    <ng-template let-project pTemplate="item">
+                      <span>[ {{ project.code }} ] {{ project.name }}</span>
+                    </ng-template>
+                  </p-dropdown>
                   <label for="project_id">Project </label>
                 </span>
                 <span

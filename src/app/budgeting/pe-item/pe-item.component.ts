@@ -60,7 +60,7 @@ export class PeItemComponent implements OnInit {
   @ViewChild('table') table!: Table;
   peItems?: PeItem[] = [];
 
-  adminHierarchies?: AdminHierarchy[] = [];
+ // adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
   peSubForms?: any[] = [];
   budgetClasses?: BudgetClass[] = [];
@@ -142,6 +142,7 @@ export class PeItemComponent implements OnInit {
     protected activityInputService: ActivityInputService,
     protected configurationSettingService: ConfigurationSettingService
   ) {
+    /*
     this.currentUser = userService.getCurrentUser();
     if (this.currentUser.admin_hierarchy) {
       this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
@@ -151,7 +152,7 @@ export class PeItemComponent implements OnInit {
         this.is_current_budget_locked =
         this.currentUser.admin_hierarchy?.is_current_budget_locked!;
       this.admin_hierarchy_code = this.currentUser.admin_hierarchy?.code!;
-    }
+    } */
   }
 
   ngOnInit(): void {
@@ -173,20 +174,6 @@ export class PeItemComponent implements OnInit {
         this.sections = resp.data;
       });
 
-    if (this.admin_hierarchy_id) {
-      this.councilHQFacilityCode = '0000' + this.admin_hierarchy_code;
-      this.facilityService
-        .query({
-          columns: ['id', 'name', 'code'],
-          admin_hierarchy_id: this.admin_hierarchy_id,
-          code: this.councilHQFacilityCode,
-        })
-        .subscribe((resp: CustomResponse<Facility[]>) => {
-          this.facilities = resp.data;
-        });
-    }
-
-
     this.financialYearService
       .findByStatus(1)
       .subscribe((resp: CustomResponse<FinancialYear>) => {
@@ -200,6 +187,28 @@ export class PeItemComponent implements OnInit {
     this.splitButtons();
     this.handleNavigation();
     this.calenderYearRange();
+  }
+
+  onAdminHierarchySelection(admin: AdminHierarchy): void {
+    this.admin_hierarchy_id = admin?.id!;
+    this.financial_year_id = admin?.current_financial_year_id!;
+    this.is_current_budget_locked = admin?.is_current_budget_locked!;
+    this.admin_hierarchy_code = admin?.code!;
+
+    if (this.admin_hierarchy_id) {
+      this.councilHQFacilityCode = '0000' + this.admin_hierarchy_code;
+      this.facilityService
+        .query({
+          columns: ['id', 'name', 'code'],
+          admin_hierarchy_id: this.admin_hierarchy_id,
+          code: this.councilHQFacilityCode,
+        })
+        .subscribe((resp: CustomResponse<Facility[]>) => {
+          this.facilities = resp.data;
+          this.filterChanged();
+        });
+    }
+    this.filterChanged();
   }
 
   splitButtons() {

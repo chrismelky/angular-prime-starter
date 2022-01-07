@@ -32,6 +32,7 @@ import {UploadComponent} from "./upload/upload.component";
 import {GfsCodeCategory} from "../gfs-code-category/gfs-code-category.model";
 import {GfsCodeCategoryService} from "../gfs-code-category/gfs-code-category.service";
 import {GfsCodeSectionComponent} from "./gfs-code-section/gfs-code-section.component";
+import {saveAs} from "file-saver";
 
 @Component({
   selector: "app-gfs-code",
@@ -315,5 +316,18 @@ export class GfsCodeComponent implements OnInit {
         this.loadPage(this.page);
       }
     });
+  }
+
+  download() {
+    this.gfsCodeService
+      .download()
+      .subscribe((response: BlobPart) => {
+        saveAs(
+          new Blob([response], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          }),
+          'gfs-codes.xlsx'
+        );
+      });
   }
 }

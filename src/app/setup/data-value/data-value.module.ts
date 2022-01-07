@@ -12,10 +12,11 @@ import { DataValueRoutingModule } from "./data-value-routing.module";
 import { SharedModule } from "../../shared/shared.module";
 import { DataValueComponent } from "./data-value.component";
 import { DataValueUpdateComponent } from "./update/data-value-update.component";
+import { ImportComponent } from './import/import.component';
 
 @NgModule({
   imports: [SharedModule, CommonModule, DataValueRoutingModule],
-  declarations: [DataValueComponent, DataValueUpdateComponent],
+  declarations: [DataValueComponent, DataValueUpdateComponent, ImportComponent],
   entryComponents: [DataValueUpdateComponent],
 })
 export class DataValueModule {}

@@ -8,7 +8,9 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NgxPermissionsGuard } from 'ngx-permissions';
 import { DataValueComponent } from './data-value.component';
+import { ImportComponent } from './import/import.component';
 
 const routes: Routes = [
   {
@@ -17,18 +19,17 @@ const routes: Routes = [
     data: {
       defaultSort: 'id:asc',
     },
-    children: [
-      {
-        path: ':id',
-        component: DataValueComponent,
-        // outlet: 'dataValue',
-        data: {
-          defaultSort: 'id:asc',
-        },
-        //canActivate: [UserRouteAccessService],
+  },
+  {
+    path: 'import',
+    component: ImportComponent,
+    canActivate: [NgxPermissionsGuard],
+    data: {
+      permissions: {
+        only: 'IMPORT_DATA_VALUES',
+        redirectTo: '/dashboard',
       },
-    ],
-    //canActivate: [UserRouteAccessService],
+    },
   },
 ];
 

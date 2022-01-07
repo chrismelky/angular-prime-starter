@@ -1,0 +1,115 @@
+<div class="content" fxLayout="column" fxLayoutGap="10px">
+  <!-- Filter Panel -->
+  <p-card class="filter filter-no-adv">
+    <ng-template pTemplate="header">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+        <i class="pi pi-filter"></i>
+        <span class="card-header-text">Filter</span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <div class="loader-area">
+        <app-loader
+          [isLoading]="
+            casContentIsLoading || financialYearIsLoading || dataSetIsLoading
+          "
+        ></app-loader>
+        <div fxLayout="column" fxLayoutGap="10px">
+          <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
+            <!-- Plan -->
+            <div class="p-field" fxFlex="0 1 30%">
+              <span class="p-float-label">
+                <p-dropdown
+                  id="cas_plan_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="casPlans!"
+                  (onChange)="loadDataSets()"
+                  [(ngModel)]="cas_plan_id"
+                ></p-dropdown>
+                <label for="cas_plan_id">Comprehensive Plan </label>
+              </span>
+            </div>
+            <div class="p-field" fxFlex="0 0 70%">
+              <span class="p-float-label">
+                <p-dropdown
+                  id="data_set"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="dataSets!"
+                  (onChange)="onDataSetChange()"
+                  [(ngModel)]="dataSet"
+                ></p-dropdown>
+                <label for="data_set">Data Set </label>
+              </span>
+            </div>
+          </div>
+          <div fxLayout="row" fxLayoutGap="10px" fxFlex fxLayoutAlign="start">
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="financial_year_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="financialYears!"
+                  [(ngModel)]="financial_year_id"
+                ></p-dropdown>
+                <label for="financial_year_id">Financial Year </label>
+              </span>
+            </div>
+
+            <div class="p-field" fxFlex>
+              <span class="p-float-label">
+                <p-dropdown
+                  id="period_id"
+                  optionValue="id"
+                  optionLabel="name"
+                  [autoDisplayFirst]="false"
+                  [filter]="true"
+                  class="p-inputtext-sm"
+                  [options]="periods!"
+                  [(ngModel)]="period_id"
+                ></p-dropdown>
+                <label for="period_id">Period</label>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-card>
+
+  <p-card>
+    <div class="loader-area">
+      <app-loader [isLoading]="isImporting"></app-loader>
+      <p-fileUpload
+        [auto]="false"
+        name="myfile[]"
+        [customUpload]="true"
+        [disabled]="!financial_year_id || !period_id"
+        (uploadHandler)="import($event)"
+      >
+        <ng-template let-file pTemplate="content">
+          <div fxLayout="column" fxLayoutGap="4px" *ngIf="importStatus">
+            <span>Total Items: {{ importStatus?.all }}</span>
+            <span>Imported: {{ importStatus?.imported }}</span>
+            <span>Errors</span>
+            <ul>
+              <li *ngFor="let e of importStatus?.errors">
+                Line {{ e.line }}: {{ e.error }}
+              </li>
+            </ul>
+          </div>
+        </ng-template>
+      </p-fileUpload>
+    </div>
+  </p-card>
+</div>

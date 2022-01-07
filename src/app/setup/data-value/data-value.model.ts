@@ -9,3 +9,11 @@ export class DataValue {
     public value?: string
   ) {}
 }
+
+export class ImportStatus {
+  constructor(
+    public imported?: number,
+    public all?: number,
+    public errors?: any[]
+  ) {}
+}

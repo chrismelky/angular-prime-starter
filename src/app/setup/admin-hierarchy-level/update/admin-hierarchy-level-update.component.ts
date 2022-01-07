@@ -203,6 +203,6 @@ export class AdminHierarchyLevelUpdateComponent implements OnInit {
       default_decision_level_id: this.editForm.get([
         'default_decision_level_id',
       ])!.value,
-    };
+    }; 
   }
 }

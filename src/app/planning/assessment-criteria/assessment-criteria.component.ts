@@ -40,6 +40,9 @@ import {UserService} from "../../setup/user/user.service";
 import {User} from "../../setup/user/user.model";
 import {ReportUpdateComponent} from "../../execution/report/update/report-update.component";
 import {DecisionLevelService} from "../../setup/decision-level/decision-level.service";
+import {Report} from "../../execution/report/report.model";
+import {ReportService} from "../../execution/report/report.service";
+import {CasPlanContentService} from "../../setup/cas-plan-content/cas-plan-content.service";
 
 
 
@@ -97,6 +100,8 @@ export class AssessmentCriteriaComponent implements OnInit {
   reportViewed: boolean = false;
 
   constructor(
+    protected casPlanContentService: CasPlanContentService,
+    protected reportService: ReportService,
     protected assessmentCriteriaService: AssessmentCriteriaService,
     protected casAssessmentSubCriteriaService: CasAssessmentSubCriteriaOptionService,
     protected adminHierarchyService: AdminHierarchyService,
@@ -120,6 +125,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    console.log(this.currentUser.decision_level);
     if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 3){
       this.position3 = true;
     }
@@ -402,19 +408,33 @@ export class AssessmentCriteriaComponent implements OnInit {
   }
 
   getReport(assessmentSubCriteriaOption: any) {
-    const data = assessmentSubCriteriaOption;
-    data.admin_hierarchy_id = this.admin_hierarchy_id;
-    data.financial_year_id = this.financial_year_id;
-    data.budgetType = 'CURRENT';
-    const ref = this.dialogService.open(ReportUpdateComponent, {
-      data,
-      header: 'Preview Report for '+assessmentSubCriteriaOption.name,
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.reportViewed = result;
-      }
-    });
+    const formart = 'pdf';
+    const report: Report = {
+      ...new Report(),
+      admin_hierarchy_id: this.admin_hierarchy_id,
+      financial_year_id: this.financial_year_id,
+      budget_type : 'CURRENT',
+      id: assessmentSubCriteriaOption.report_id,
+      formart,
+    };
+    this.reportService
+      .getParams(assessmentSubCriteriaOption.report_id!)
+      .subscribe((resp: CustomResponse<Report[]>) => {
+        const params = resp.data;
+        if (params) {
+          const ref = this.dialogService.open(ReportUpdateComponent, {
+            data: {
+              report,
+              params,
+              admin_hierarchy_position: this.admin_hierarchy_position,
+            },
+            header: 'Params',
+          });
+          ref.onClose.subscribe((result) => {});
+        } else {
+          // Just print report with params
+        }
+      });
   }
 
   getAssessmentReport() {

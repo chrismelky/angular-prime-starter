@@ -4,13 +4,22 @@
     <ng-template pTemplate="header">
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
 
-        <p-divider class="title">
+        <!--p-divider class="title">
           <span>{{ currentUser?.admin_hierarchy?.name }}</span>
-        </p-divider>
+        </p-divider-->
       </div>
     </ng-template>
           <div fxLayout="column" fxLayoutGap="15px">
             <div fxLayout="row" fxFlex fxLayoutGap="10px" fxLayoutAlign="start">
+              <div class="p-field" fxFlex="0 1 50%">
+                <app-admin-hierarchy-tree
+                  fxFlex
+                  [stateKey]="'admin_cost_centre'"
+                  [returnType]="'object'"
+                  (onSelect)="onAdminHierarchySelection($event)"
+                ></app-admin-hierarchy-tree>
+              </div>
+
               <div class="p-field" fxFlex="0 1 50%">
                 <span class="p-float-label">
                   <p-dropdown
@@ -34,6 +43,7 @@
                   <label for="pe_sub_form_id">Personal Emolument Sub Form </label>
                 </span>
               </div>
+
               <div class="p-field" fxFlex="0 1 50%">
                 <span class="p-float-label">
                   <p-dropdown

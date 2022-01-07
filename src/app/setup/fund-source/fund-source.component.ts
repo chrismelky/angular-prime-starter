@@ -79,6 +79,26 @@ export class FundSourceComponent implements OnInit {
       header: "Code",
       sort: true,
     },
+    {
+      field: "is_conditional",
+      header: "Conditional",
+      sort: false,
+    },
+    {
+      field: "is_foreign",
+      header: "Foreign",
+      sort: false,
+    },
+    {
+      field: "is_treasurer",
+      header: "Treasury",
+      sort: false,
+    },
+    {
+      field: "can_project",
+      header: "Can Project",
+      sort: false,
+    },
   ]; //Table display columns
 
   isLoading = false;

@@ -239,7 +239,7 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
-          <td>{{ rowData.admin_hierarchy?.name }}</td>
+          <td>{{ rowData.admin_hierarchy?.parent?.parent?.name }}</td>
           <td>{{ rowData.facility_type?.name }}</td>
           <td>{{ rowData.ownership }}</td>
           <td>

@@ -149,10 +149,7 @@
             <!-- </p-divider> -->
             <table
               cellspacing="0"
-              class="
-                table-styled
-                p-datatable p-datavalue-table p-datatable-gridlines
-              "
+              class="table-styled p-datatable p-datavalue-table p-datatable-gridlines"
               style="width: 100%"
             >
               <thead class="p-datatable-thead">
@@ -203,7 +200,7 @@
                               : { background: '#FFF' }
                           "
                           pInputText
-                          [disabled]="!valueLoaded"
+                          [disabled]="!valueLoaded || dataSet?.is_locked!"
                           [(ngModel)]="dataValuesArray[de.id!][coc.id!].value"
                         />
                         <p-dropdown
@@ -214,7 +211,7 @@
                           [autoDisplayFirst]="false"
                           [filter]="true"
                           optionValue="name"
-                          [disabled]="!valueLoaded"
+                          [disabled]="!valueLoaded || dataSet?.is_locked!"
                           optionLabel="name"
                           (onChange)="
                             saveValue($event, dataValuesArray[de.id!][coc.id!])
@@ -237,7 +234,7 @@
                           (onInput)="
                             calculateTotal($event.value, de, catComb, coc)
                           "
-                          [disabled]="!valueLoaded"
+                          [disabled]="!valueLoaded || dataSet?.is_locked!"
                           id="{{ de.id! }}-{{ coc.id! }}"
                           (onBlur)="
                             saveValue($event, dataValuesArray[de.id!][coc.id!])
@@ -258,7 +255,7 @@
                           "
                           autocomplete="off"
                           id="{{ de.id! }}-{{ coc.id! }}"
-                          [disabled]="!valueLoaded"
+                          [disabled]="!valueLoaded || dataSet?.is_locked!"
                           (onBlur)="
                             saveValue($event, dataValuesArray[de.id!][coc.id!])
                           "
@@ -270,7 +267,7 @@
                           *ngIf="coc.value_type === 'FILE'"
                           name="myfile[]"
                           [customUpload]="true"
-                          [disabled]="!valueLoaded"
+                          [disabled]="!valueLoaded || dataSet?.is_locked!"
                           (uploadHandler)="
                             fileUploader(
                               $event,

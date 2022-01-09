@@ -352,10 +352,12 @@ export class ReportComponent implements OnInit {
       formart,
     };
 
+    // Get report params
     this.reportService
       .getParams(content.report_id!)
       .subscribe((resp: CustomResponse<Report[]>) => {
         const params = resp.data;
+        // if content has parameter or has data set open dialog to select params
         if (params || content.data_sets) {
           const ref = this.dialogService.open(ReportUpdateComponent, {
             data: {
@@ -369,6 +371,7 @@ export class ReportComponent implements OnInit {
           ref.onClose.subscribe((result) => {});
         } else {
           // Just print report with params
+          // open redirect to new window to download report
         }
       });
   }

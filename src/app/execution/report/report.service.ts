@@ -45,12 +45,19 @@ export class ReportService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  getReport(req?: any) {
-    const options = createRequestOption(req);
-    return this.http.get<any>(`${this.resourceUrl}/get_report`, {
-      params: options,
-      responseType: 'arraybuffer' as 'json',
-    });
+  getReport(params?: any): void {
+    // const options = createRequestOption(req);
+    // return this.http.get<any>(`${this.resourceUrl}/get_report`, {
+    //   params: options,
+    //   responseType: 'arraybuffer' as 'json',
+    // });
+
+    const qs = Object.keys(params)
+      .filter((key) => params[key] !== undefined && params[key] !== null)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&');
+
+    window.open(`${this.resourceUrl}/get_report?${qs}`, '_blanck');
   }
 
   getParams(id: number): Observable<CustomResponse<Report[]>> {
@@ -62,12 +69,17 @@ export class ReportService {
    * download report files
    *
    */
-  downloadReport(id: number,financial_year_id: number,admin_hierarchy_id: number) {
+  downloadReport(
+    id: number,
+    financial_year_id: number,
+    admin_hierarchy_id: number
+  ) {
     const httpOptions = {
-      'responseType'  : 'arraybuffer' as 'json'
+      responseType: 'arraybuffer' as 'json',
     };
     return this.http.get<any>(
-      `${this.resourceUrl}/get_file/${id}/${financial_year_id}/${admin_hierarchy_id}`,httpOptions
-    )
+      `${this.resourceUrl}/get_file/${id}/${financial_year_id}/${admin_hierarchy_id}`,
+      httpOptions
+    );
   }
 }

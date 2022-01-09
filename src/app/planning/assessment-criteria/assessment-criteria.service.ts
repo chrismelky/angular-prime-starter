@@ -23,6 +23,7 @@ export class AssessmentCriteriaService {
   public reportUrl = "api/assessment_criteria";
   public update_plan = "api/update_plan";
   public confirm_round = "api/confirm_round";
+  public managePlan = "api/cas_category_version_levels";
 
   constructor(protected http: HttpClient) {}
 
@@ -113,5 +114,41 @@ createComment(
     return this.http.get<CustomResponse<AssessmentCriteria[]>>(
       `${this.resourceUrl}/${admin_id}/${round_id}/${version_id}`
     )
+  }
+
+  /**
+   * check if  cas assessment  is
+   * initialized
+   * */
+  checkAssessmentStatus(admin_id: number, f_year_id: number,round_id: number) {
+    return this.http.get<any>(
+      `${this.managePlan}/check_status/${admin_id}/${f_year_id}/${round_id}`
+    );
+  }
+  /**
+   * check if  cas assessment is
+   * forwarded to your level
+   * */
+  checkForwardStatus(admin_id: number, f_year_id: number,round_id: number,decision_level_id: number,version_id: number) {
+     return this.http.get<CustomResponse<any>>(
+      `${this.managePlan}/check_if_forwarded/${admin_id}/${f_year_id}/${round_id}/${decision_level_id}/${version_id}`
+    );
+  }
+  /**
+   * initialize cas assessment
+   * by round
+   * */
+  initializeAssessment(req: any){
+    return this.http.post<CustomResponse<any>>(
+      this.managePlan,
+      req
+    );
+  }
+
+  forwardPlan(req: any) {
+    return this.http.post<CustomResponse<any>>(
+      this.managePlan,
+      req
+    );
   }
 }

@@ -5,21 +5,22 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
-import { createRequestOption } from '../../utils/request-util';
-import { CustomResponse } from '../../utils/custom-response';
-import { FundSource } from './fund-source.model';
-import { FundSourceCategory } from '../fund-source-category/fund-source-category.model';
-import { ActivityFundSource } from 'src/app/planning/activity/activity.model';
+import {createRequestOption} from '../../utils/request-util';
+import {CustomResponse} from '../../utils/custom-response';
+import {FundSource} from './fund-source.model';
+import {FundSourceCategory} from '../fund-source-category/fund-source-category.model';
+import {ActivityFundSource} from 'src/app/planning/activity/activity.model';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class FundSourceService {
   public resourceUrl = 'api/fund_sources';
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient) {
+  }
 
   create(fundSource: FundSource): Observable<CustomResponse<FundSource>> {
     return this.http.post<CustomResponse<FundSource>>(
@@ -104,5 +105,13 @@ export class FundSourceService {
     return this.http.get<CustomResponse<FundSource[]>>(
       `api/activity_fund_sources/by_year_and_facility/${finacialYearId}/${facilityId}`
     );
+  }
+
+  download() {
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json',
+    };
+    let url = `${this.resourceUrl}/download`
+    return this.http.get<any>(url, httpOptions);
   }
 }

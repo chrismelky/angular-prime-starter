@@ -661,6 +661,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
         );
       });
   }
+
   confirmHsbfAllocation(event: any) {
     let msg =
       'Are you sure that you want to Confirm ' +

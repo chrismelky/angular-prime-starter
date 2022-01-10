@@ -142,17 +142,6 @@ export class PeItemComponent implements OnInit {
     protected activityInputService: ActivityInputService,
     protected configurationSettingService: ConfigurationSettingService
   ) {
-    /*
-    this.currentUser = userService.getCurrentUser();
-    if (this.currentUser.admin_hierarchy) {
-      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
-      this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
-      this.financial_year_id =
-        this.currentUser.admin_hierarchy?.current_financial_year_id!;
-        this.is_current_budget_locked =
-        this.currentUser.admin_hierarchy?.is_current_budget_locked!;
-      this.admin_hierarchy_code = this.currentUser.admin_hierarchy?.code!;
-    } */
   }
 
   ngOnInit(): void {
@@ -745,6 +734,7 @@ export class PeItemComponent implements OnInit {
       if (response.success) {
         //this.fetchBudgetAmount();
         this.toastService.info(response.message);
+        this.ngOnInit();
       } else {
         this.toastService.error(response.message);
       }

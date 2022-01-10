@@ -219,12 +219,17 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="facilities?.length">
-          <th
-            *ngFor="let col of columns"
-            [pSortableColumn]="col.sort ? col.field : null"
-          >
-            {{ col.header
-            }}<p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
+            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'admin_hierarchy_id'">
+            Location <p-sortIcon [field]="'admin_hierarchy_id'"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'facility_type_id'">
+            Type <p-sortIcon [field]="'facility_type_id'"></p-sortIcon>
+          </th>
+          <th [pSortableColumn]="'ownership'">
+            Ownership <p-sortIcon [field]="'ownership'"></p-sortIcon>
           </th>
           <th></th>
         </tr>
@@ -234,6 +239,9 @@
           <td *ngFor="let col of columns">
             {{ rowData[col.field] }}
           </td>
+          <td>{{ rowData.admin_hierarchy?.parent?.parent?.name }}</td>
+          <td>{{ rowData.facility_type?.name }}</td>
+          <td>{{ rowData.ownership }}</td>
           <td>
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">

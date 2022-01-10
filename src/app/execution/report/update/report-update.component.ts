@@ -70,6 +70,7 @@ export class ReportUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
+    budget_type: [null, [Validators.required]],
     period_id: [null, []],
     section_id: [null, []],
     sector_id: [null, []],
@@ -84,6 +85,8 @@ export class ReportUpdateComponent implements OnInit {
     admin_hierarchy_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
     data_set_id: [null, []],
+    facility_type_id: [null, []],
+    facility_id: [null, []],
     format: ['pdf', []],
     priority_area_id: [null, []],
   });
@@ -116,6 +119,8 @@ export class ReportUpdateComponent implements OnInit {
 
     this.dataSets = dialogData.dataSets || [];
 
+    // If content has data sets and is one data set
+    // Load facility types
     if (this.dataSets?.length === 1) {
       report.data_set_id = this.dataSets[0].id;
       this.loadFacilityType(this.dataSets[0]);
@@ -201,52 +206,55 @@ export class ReportUpdateComponent implements OnInit {
 
   //get pdf report
   getPdfReport(format: string) {
-    const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
-    data.report_id = this.dialogConfig.data.report.id;
-    data.budgetType = this.dialogConfig.data.report.budget_type;
-    data.format = format;
-    this.reportService.getReport(data).subscribe((resp) => {
-      let file = new Blob([resp], { type: 'application/pdf' });
-      let fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_blank');
-      // this.dialogRef.close(true);
-    });
+    const data = this.editForm.value;
+    this.reportService.getReport(data);
+
+    // data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    // data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    // data.report_id = this.dialogConfig.data.report.id;
+    // data.budgetType = this.dialogConfig.data.report.budget_type;
+    // data.format = format;
+    // this.reportService.getReport(data).subscribe((resp) => {
+    //   let file = new Blob([resp], { type: 'application/pdf' });
+    //   let fileURL = URL.createObjectURL(file);
+    //   window.open(fileURL, '_blank');
+    //   // this.dialogRef.close(true);
+    // });
   }
+
   //get excel report
   getExcelReport(format: string) {
-    const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
-    data.report_id = this.dialogConfig.data.report.id;
-    data.budgetType = this.dialogConfig.data.report.budget_type;
-    data.format = format;
-    this.reportService.getReport(data).subscribe((resp) => {
-      let file = new Blob([resp], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-      let fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_blank');
-      this.dialogRef.close(true);
-    });
+    // const data = JSON.parse(JSON.stringify(this.editForm.value));
+    // data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    // data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    // data.report_id = this.dialogConfig.data.report.id;
+    // data.budgetType = this.dialogConfig.data.report.budget_type;
+    // data.format = format;
+    // this.reportService.getReport(data).subscribe((resp) => {
+    //   let file = new Blob([resp], {
+    //     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    //   });
+    //   let fileURL = URL.createObjectURL(file);
+    //   window.open(fileURL, '_blank');
+    //   this.dialogRef.close(true);
+    // });
   }
   //get excel report
   getWordReport(format: string) {
-    const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
-    data.report_id = this.dialogConfig.data.report.id;
-    data.budgetType = this.dialogConfig.data.report.budget_type;
-    data.format = format;
-    this.reportService.getReport(data).subscribe((resp) => {
-      let file = new Blob([resp], {
-        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      });
-      let fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_blank');
-      this.dialogRef.close(true);
-    });
+    // const data = JSON.parse(JSON.stringify(this.editForm.value));
+    // data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    // data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    // data.report_id = this.dialogConfig.data.report.id;
+    // data.budgetType = this.dialogConfig.data.report.budget_type;
+    // data.format = format;
+    // this.reportService.getReport(data).subscribe((resp) => {
+    //   let file = new Blob([resp], {
+    //     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    //   });
+    //   let fileURL = URL.createObjectURL(file);
+    //   window.open(fileURL, '_blank');
+    //   this.dialogRef.close(true);
+    // });
   }
 
   /**
@@ -270,6 +278,7 @@ export class ReportUpdateComponent implements OnInit {
       budget_class_id: report.budget_class_id,
       admin_hierarchy_id: report.admin_hierarchy_id,
       financial_year_id: report.financial_year_id,
+      budget_type: report.budget_type,
     });
   }
 

@@ -88,4 +88,12 @@ export class GfsCodeService {
       responseType: 'arraybuffer',
     });
   }
+
+  download() {
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json',
+    };
+    let url = `${this.resourceUrl}/download`
+    return this.http.get<any>(url, httpOptions);
+  }
 }

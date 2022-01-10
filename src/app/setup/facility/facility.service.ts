@@ -94,6 +94,18 @@ export class FacilityService {
     );
   }
 
+  bulkSearch(query = '_', page = 1, per_page = 15): Observable<CustomResponse<Facility[]>> {
+    return this.http.get<CustomResponse<Facility[]>>(
+      `${this.resourceUrl}/bulkSearch`, {
+        params: {
+          query: `${query}`,
+          page: `${page}`,
+          per_page: `${per_page}`
+        },
+      }
+    );
+  }
+
   delete(id: number): Observable<CustomResponse<null>> {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }

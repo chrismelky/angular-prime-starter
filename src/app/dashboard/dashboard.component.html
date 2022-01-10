@@ -53,12 +53,18 @@
       </div>
     </div>
 
-    <div class="row" fxLayoutAlign="end">
-      <button pButton type="button" class="p-button-text p-button-success" label="Download mismatch here" [disabled]="adminHierarchy?.admin_hierarchy_position !=3"
-              style="margin-left: 16px; margin-top: 16px;" icon="pi pi-file-excel" (click)="downloadMismatch()"
+    <!-- <div class="row" fxLayoutAlign="end">
+      <button
+        pButton
+        type="button"
+        class="p-button-text p-button-success"
+        label="Download mismatch here"
+        [disabled]="adminHierarchy?.admin_hierarchy_position != 3"
+        style="margin-left: 16px; margin-top: 16px"
+        icon="pi pi-file-excel"
+        (click)="downloadMismatch()"
       ></button>
-    </div>
-
+    </div> -->
   </p-card>
   <p-card>
     <div
@@ -125,20 +131,35 @@
     <p-card fxFlex="0 1 100%">
       <ng-template pTemplate="header">
         <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
-          <span class="card-header-text" style="font-size: 14px !important"
-            >Fund Sources [ Ceiling Vs Budget ]</span
-          >
-          <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end center">
+          <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
+            <span class="card-header-text" style="font-size: 14px !important"
+              >Fund Sources [ Ceiling Vs Budget ]</span
+            >
+          </div>
+
+          <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="end center">
             <span
               >Last Update:
               {{ fundSourceCeilingBudget?.lastUpdate | date: "medium" }}</span
             >
+
             <button
               pButton
               class="p-button-success p-button-text"
               (click)="refresh()"
               icon="pi pi-refresh"
               label="Refresh"
+            ></button>
+
+            <button
+              pButton
+              type="button"
+              class="p-button-text p-button-success"
+              label="Download Mismatch"
+              [disabled]="adminHierarchy?.admin_hierarchy_position !== 3"
+              style="margin-left: 16px; margin-top: 16px"
+              icon="pi pi-download"
+              (click)="downloadMismatch()"
             ></button>
           </div>
         </div>

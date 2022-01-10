@@ -151,4 +151,10 @@ createComment(
       req
     );
   }
+
+  receivedAssessments(admin_id: number, f_year_id: number,round_id: number,decision_level_id: number,version_id: number) {
+    return this.http.get<CustomResponse<any>>(
+      `${this.managePlan}/received_assessments/${admin_id}/${f_year_id}/${round_id}/${decision_level_id}/${version_id}`
+    );
+  }
 }

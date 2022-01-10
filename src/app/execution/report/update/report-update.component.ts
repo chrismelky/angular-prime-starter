@@ -89,6 +89,7 @@ export class ReportUpdateComponent implements OnInit {
     facility_id: [null, []],
     format: ['pdf', []],
     priority_area_id: [null, []],
+    parent: [null, []],
   });
   constructor(
     protected reportService: ReportService,
@@ -206,6 +207,7 @@ export class ReportUpdateComponent implements OnInit {
 
   //get pdf report
   getPdfReport(format: string) {
+    this.editForm.get('parent')?.setValue('p'+this.admin_hierarchy_position);
     const data = this.editForm.value;
     this.reportService.getReport(data);
 

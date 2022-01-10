@@ -150,6 +150,17 @@
       </div>
 
       <div *ngIf="dataReady" class="p-toolbar-group-right">
+        <span>Last Update:
+          {{ '2022-01-10' | date: "medium" }}</span>
+        <button
+          pButton
+          class="p-button-success p-button-text"
+          (click)="refresh()"
+          icon="pi pi-refresh"
+          label="Refresh"
+        ></button>
+      </div>
+      <div *ngIf="dataReady" class="p-toolbar-group-right">
         <p-button icon="pi pi-print" styleClass="p-button-success" (onClick)="printPeFormStatus()"></p-button>
       </div>
     </p-toolbar>

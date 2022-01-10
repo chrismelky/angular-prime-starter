@@ -734,7 +734,7 @@ export class PeItemComponent implements OnInit {
       if (response.success) {
         //this.fetchBudgetAmount();
         this.toastService.info(response.message);
-        this.ngOnInit();
+        this.filterChanged();
       } else {
         this.toastService.error(response.message);
       }
@@ -1027,5 +1027,22 @@ export class PeItemComponent implements OnInit {
   calenderYearRange() {
     const year = new Date().getFullYear();
     this.yearRange = `${year}:${year + 6}`;
+  }
+
+  refresh() {
+    if(this.admin_hierarchy_id && this.financial_year_id) {
+      const object = {
+        "admin_hierarchy_id":this.admin_hierarchy_id,
+        "financial_year_id": this.financial_year_id
+      }
+      this.peItemService.refresh(object).subscribe((resp) => {
+        if (resp.success) {
+          this.toastService.info(resp.message);
+          this.filterChanged();
+        } else {
+          this.toastService.error(resp.message);
+        }
+      })
+    }
   }
 }

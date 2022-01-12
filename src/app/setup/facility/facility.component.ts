@@ -300,7 +300,7 @@ export class FacilityComponent implements OnInit {
     const data = {
       facility: facility ? facility : undefined,
       facility_type_id: this.facility_type_id,
-      admin_hierarchy_id: this.admin_hierarchy_id,
+      admin_hierarchy_id: facility ? facility.admin_hierarchy_id : this.admin_hierarchy_id,
       facilityTypes: this.facilityTypes,
     };
     const ref = this.dialogService.open(FacilityUpdateComponent, {

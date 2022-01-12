@@ -41,11 +41,8 @@ export class FacilityUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    code: [
-      null,
-      [Validators.required, Validators.minLength(8), Validators.maxLength(8)],
-    ],
-    name: [null, [Validators.required]],
+    code: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
+    name: ['', [Validators.required]],
     facility_type_id: [null, [Validators.required]],
     ownership: [null, [Validators.required]],
   });
@@ -68,8 +65,7 @@ export class FacilityUpdateComponent implements OnInit {
       this.facility = facility;
     } else {
       this.facility.facility_type_id = this.dialogConfig.data.facility_type_id;
-      this.facility.admin_hierarchy_id =
-        this.dialogConfig.data.admin_hierarchy_id;
+      this.facility.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
       this.adminHierarchyId = this.dialogConfig.data.admin_hierarchy_id;
     }
     this.facilityTypes = this.dialogConfig.data.facilityTypes;

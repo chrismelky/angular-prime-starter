@@ -121,7 +121,7 @@
       </p-accordion>
       <div class="row" fxLayoutAlign="end">
         <button pButton type="button" class="p-button-primary" label="Initiate Assessment" [disabled]="isPlanInitialized"
-                style="margin-left: 16px" icon="pi pi-file-pdf" (click)="initiateCasAssessment()"
+                style="margin-left: 16px" icon="pi pi-file-pdf" *ngxPermissionsOnly="['INITIATE_ASSESSMENT']" (click)="initiateCasAssessment()"
         ></button>
         <button pButton type="button" class="p-button-primary" label="Report" [disabled]="admin_hierarchy_position !=3 || !showCriteria"
                 style="margin-left: 16px" icon="pi pi-file-pdf" (click)="getAssessmentReport()"

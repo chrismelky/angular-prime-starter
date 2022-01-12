@@ -93,9 +93,13 @@ export class ReceivedAssessmentComponent implements OnInit {
     this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;  }
 
   ngOnInit(): void {
-
-    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id,
-      this.financial_year_id,this.cas_assessment_category_version_id,this.currentUser.id,this.currentUser.admin_hierarchy?.admin_hierarchy_position)
+      this.getSubmittedAssessments();
+      this.assessmentCriteriaService.getDataByUser(
+        this.cas_assessment_round_id,
+        this.financial_year_id,
+        this.cas_assessment_category_version_id,
+        this.currentUser.id,
+        this.currentUser.admin_hierarchy?.admin_hierarchy_position)
       .subscribe((resp) => {
         this.adminHierarchies = resp.data.adminHierarchies;
         this.financialYears = resp.data.financialYears;
@@ -104,6 +108,20 @@ export class ReceivedAssessmentComponent implements OnInit {
     this.handleNavigation();
   }
 
+  /**
+   * Load submitted
+   * */
+  getSubmittedAssessments(){
+    this.assessmentCriteriaService.receivedAssessments(
+      this.currentUser.admin_hierarchy?.id!,
+      this.actRoute.snapshot.params.fy_id,
+      this.actRoute.snapshot.params.round_id,
+      this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1,
+      this.actRoute.snapshot.params.id
+    ).subscribe(resp => {
+      console.log(resp.data);
+    });
+  }
   /**
    * Load data from api
    * @param page = page number

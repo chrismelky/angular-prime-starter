@@ -3,5 +3,10 @@
     "target": "http://localhost:8000",
     "secure": false,
     "loglevel": "debug"
+  },
+  "/jasperserver": {
+    "target": "http://localhost:8181",
+    "secure": false,
+    "loglevel": "debug"
   }
 }

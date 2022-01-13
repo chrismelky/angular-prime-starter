@@ -153,7 +153,14 @@ export class DataValueComponent implements OnInit {
     this.dataSetService
       .query({
         cas_plan_id: this.cas_plan_id,
-        columns: ['id', 'name', 'facility_types', 'periods'],
+        columns: [
+          'id',
+          'name',
+          'facility_types',
+          'periods',
+          'is_locked',
+          'is_submitted',
+        ],
       })
       .subscribe(
         (resp: CustomResponse<DataSet[]>) => {

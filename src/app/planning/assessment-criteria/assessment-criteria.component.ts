@@ -98,6 +98,8 @@ export class AssessmentCriteriaComponent implements OnInit {
   position1 = false;
   selectedIndex = 0;
   reportViewed: boolean = false;
+  isPlanInitialized: boolean = false;
+  showCriteria: boolean = false;
 
   constructor(
     protected casPlanContentService: CasPlanContentService,
@@ -125,7 +127,18 @@ export class AssessmentCriteriaComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    console.log(this.currentUser.decision_level);
+    this.assessmentCriteriaService.checkAssessmentStatus(
+      this.currentUser.admin_hierarchy?.id!,
+      this.actRoute.snapshot.params.fy_id,
+      this.actRoute.snapshot.params.round_id
+    ).subscribe(resp => {
+      if(parseInt(resp) > 0){
+        this.isPlanInitialized = true;
+      }
+    });
+    if (this.admin_hierarchy_position == 3){
+      this.checkForwardStatus();
+    }
     if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 3){
       this.position3 = true;
     }
@@ -149,6 +162,19 @@ export class AssessmentCriteriaComponent implements OnInit {
     this.handleNavigation();
   }
 
+  checkForwardStatus(){
+  this.assessmentCriteriaService.checkForwardStatus(
+    this.admin_hierarchy_id,
+  this.actRoute.snapshot.params.fy_id,
+  this.actRoute.snapshot.params.round_id,
+  this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1,
+  this.actRoute.snapshot.params.id
+).subscribe(resp => {
+  if (resp.data.length > 0){
+  this.showCriteria = true;
+}
+});
+}
   /**
    * Load data from api
    * @param page = page number
@@ -421,6 +447,7 @@ export class AssessmentCriteriaComponent implements OnInit {
       .getParams(assessmentSubCriteriaOption.report_id!)
       .subscribe((resp: CustomResponse<Report[]>) => {
         const params = resp.data;
+        //TODO: add data set payload, filter from contents
         if (params) {
           const ref = this.dialogService.open(ReportUpdateComponent, {
             data: {
@@ -449,9 +476,9 @@ export class AssessmentCriteriaComponent implements OnInit {
    * @param event adminhierarchyId or Ids
    */
   onAdminHierarchySelection(event: any): void {
-
     this.admin_hierarchy_id = event.id;
     this.admin_hierarchy_position =event.admin_hierarchy_position;
+    this.checkForwardStatus();
   }
 
   /**
@@ -496,32 +523,38 @@ export class AssessmentCriteriaComponent implements OnInit {
 
   forwardPlan() {
   let data = {
-    forward_from: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
-    forward_to:this.currentUser.admin_hierarchy?.admin_hierarchy_position! - 1,
-    admin_hierarchy_id: this.admin_hierarchy_id,
-    cas_assessment_category_version_id:this.cas_assessment_category_version_id,
-    cas_assessment_round_id: this.cas_assessment_round_id,
-    financial_year_id: this.financial_year_id,
-    admin_hierarchy_level_id: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
-    remarks : this.commentForm.value.remarks,
+    admin_hierarchy_id:this.admin_hierarchy_id,
+    financial_year_id:this.actRoute.snapshot.params.fy_id,
+    cas_assessment_round_id:this.actRoute.snapshot.params.round_id,
+    from_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position,
+    to_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position! -1,
+    version_id: this.actRoute.snapshot.params.id,
+    general_remarks : this.commentForm.value.remarks
   }
-  this.updatePlan(data);
-    this.saveOrUpdateComment(data);
+  this.assessmentCriteriaService.forwardPlan(data).subscribe(
+    resp => {
+      this.toastService.info('Plan hase been forwarded successfully');
+    }
+  );
   }
 
   returnPlan() {
-  let data = {
-    forward_from: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
-    forward_to:this.currentUser.admin_hierarchy?.admin_hierarchy_position! - 1,
-    admin_hierarchy_id: this.admin_hierarchy_id,
-    cas_assessment_category_version_id:this.cas_assessment_category_version_id,
-    cas_assessment_round_id: this.cas_assessment_round_id,
-    financial_year_id: this.financial_year_id,
-    admin_hierarchy_level_id: this.currentUser.admin_hierarchy?.admin_hierarchy_position,
-    remarks : this.commentForm.value.remarks,
-  }
-  this.updatePlan(data);
-    this.saveOrUpdateComment(data);
+    let data = {
+      admin_hierarchy_id:this.admin_hierarchy_id,
+      financial_year_id:this.actRoute.snapshot.params.fy_id,
+      cas_assessment_round_id:this.actRoute.snapshot.params.round_id,
+      from_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position ?
+        this.currentUser.decision_level?.admin_hierarchy_level_position:1,
+      to_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position! ?
+        this.currentUser.decision_level?.admin_hierarchy_level_position +1: 2,
+      version_id: this.actRoute.snapshot.params.id,
+      general_remarks : this.commentForm.value.remarks
+    }
+    this.assessmentCriteriaService.forwardPlan(data).subscribe(
+      resp => {
+        this.toastService.info('Plan hase been returned successfully');
+      }
+    );
   }
 
   saveOrUpdateComment(data: any){
@@ -543,4 +576,30 @@ export class AssessmentCriteriaComponent implements OnInit {
       this.router.navigate(["/assessment-home"])
     });
   }
+/** initialize cas assessment
+ * for this planning year
+ * the role is assigned to
+ * DMO for afya and DPLO for cdr and cfr
+ * */
+initiateCasAssessment(){
+  if (
+    !this.admin_hierarchy_id ||
+    !this.financial_year_id ||
+    !this.cas_assessment_round_id
+  ) {
+    return;
+  }
+  this.assessmentCriteriaService.initializeAssessment({
+    admin_hierarchy_id: this.admin_hierarchy_id,
+    financial_year_id: this.financial_year_id,
+    cas_assessment_round_id: this.cas_assessment_round_id,
+    version_id: this.cas_assessment_category_version_id,
+    from_decision_level_id: this.currentUser.decision_level?.id,
+    to_decision_level_id: this.currentUser.decision_level?.id
+  }).subscribe((resp: CustomResponse<any>)=> {
+    this.toastService.info(resp.message)
+    window.location.reload();
+  });
+
+}
 }

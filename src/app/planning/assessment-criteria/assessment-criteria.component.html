@@ -120,14 +120,17 @@
         </p-accordionTab>
       </p-accordion>
       <div class="row" fxLayoutAlign="end">
-        <button pButton type="button" class="p-button-primary p-button-raised" label="Report" [disabled]="admin_hierarchy_position !=3"
+        <button pButton type="button" class="p-button-primary" label="Initiate Assessment" [disabled]="isPlanInitialized"
+                style="margin-left: 16px" icon="pi pi-file-pdf" *ngxPermissionsOnly="['INITIATE_ASSESSMENT']" (click)="initiateCasAssessment()"
+        ></button>
+        <button pButton type="button" class="p-button-primary" label="Report" [disabled]="admin_hierarchy_position !=3 || !showCriteria"
                 style="margin-left: 16px" icon="pi pi-file-pdf" (click)="getAssessmentReport()"
         ></button>
     </div>
     </div>
   </p-card>
   <!-- Table Panel -->
-  <p-accordion>
+  <p-accordion *ngIf="showCriteria">
     <p-accordionTab  *ngFor="let tab of assessmentCriteriaData!; let i = index"  (click)="loadSubCriteria(tab.id, i)" [ngClass]="{'highlight': selectedIndex === i}">
       <ng-template pTemplate="header" >
         <div>{{i + 1+'.'}}   {{tab.name }}</div>
@@ -174,21 +177,20 @@
       </ng-template>
     </p-accordionTab>
   </p-accordion>
-  <p-card>
+  <p-card  *ngIf="showCriteria">
     <div class="row">
       <div fxFlex="80%">
         <form
           name="commentForm"
           role="form"
           novalidate
-          (ngSubmit)="finishAndQuit()"
           [formGroup]="commentForm">
           <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <textarea
             id="remarks"
             formControlName="remarks"
-            [rows]="2"
+            [rows]="1"
             [cols]="20"
             pInputTextarea
             [autoResize]="true"
@@ -210,16 +212,12 @@
         </form>
       </div>
       <div fxFlex="30%">
-<!--        <button pButton type="button" class="p-button-text p-button-raised" label="Forward" *ngIf="position3 || position2"-->
-<!--                style="margin-left: 16px" icon="pi pi-forward" (click)="forwardPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3"-->
-<!--        ></button>-->
-
         <button
           (click)="forwardPlan()"
           pButton
-          icon="pi pi-chevron-left"
-          class="p-button-raised p-button-warning"
-          [disabled]="admin_hierarchy_position != 3"
+          icon="pi pi-chevron-right"
+          class="p-button-raised p-button-success"
+          *ngIf="admin_hierarchy_level_id! > 1"
           label="Forward"
           style="margin-left: 16px"
         ></button>
@@ -238,6 +236,9 @@
 
     </div>
   </p-card>
+<p-card   *ngIf="!showCriteria">
+  <div> No Plans have been submitted to this decision level.</div>
+</p-card>
 </div>
 <p-confirmDialog
   [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"

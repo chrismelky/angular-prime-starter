@@ -5,21 +5,24 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {Component, Inject, OnInit} from '@angular/core';
+import {FormBuilder, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {finalize} from 'rxjs/operators';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
-import { CustomResponse } from '../../../utils/custom-response';
-import { EnumService, PlanrepEnum } from 'src/app/shared/enum.service';
-import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
-import { FacilityTypeService } from 'src/app/setup/facility-type/facility-type.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import { AdminHierarchyService } from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
-import { Facility } from '../facility.model';
-import { FacilityService } from '../facility.service';
-import { ToastService } from 'src/app/shared/toast.service';
+import {CustomResponse} from '../../../utils/custom-response';
+import {EnumService, PlanrepEnum} from 'src/app/shared/enum.service';
+import {FacilityType} from 'src/app/setup/facility-type/facility-type.model';
+import {FacilityTypeService} from 'src/app/setup/facility-type/facility-type.service';
+import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
+import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import {Facility} from '../facility.model';
+import {FacilityService} from '../facility.service';
+import {ToastService} from 'src/app/shared/toast.service';
+import {FinancialYearService} from "../../financial-year/financial-year.service";
+import {GfsCode} from "../../gfs-code/gfs-code.model";
+import {FinancialYear} from "../../financial-year/financial-year.model";
 
 @Component({
   selector: 'app-facility-update',
@@ -33,6 +36,7 @@ export class FacilityUpdateComponent implements OnInit {
   ownerships?: PlanrepEnum[] = [];
   physicalStates?: PlanrepEnum[] = [];
   facilityTypes?: FacilityType[] = [];
+  financialYears?: FacilityType[];
   facility: Facility = {};
   adminHierarchyId!: number;
 
@@ -41,12 +45,10 @@ export class FacilityUpdateComponent implements OnInit {
    */
   editForm = this.fb.group({
     id: [null, []],
-    code: [
-      null,
-      [Validators.required, Validators.minLength(8), Validators.maxLength(8)],
-    ],
-    name: [null, [Validators.required]],
+    code: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
+    name: ['', [Validators.required]],
     facility_type_id: [null, [Validators.required]],
+    budget_start_financial_year_id: [null],
     ownership: [null, [Validators.required]],
   });
 
@@ -58,6 +60,7 @@ export class FacilityUpdateComponent implements OnInit {
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
     private toastService: ToastService,
+    private financialYearService: FinancialYearService,
     protected enumService: EnumService
   ) {
     if (this.dialogConfig.data.facility !== undefined) {
@@ -68,8 +71,7 @@ export class FacilityUpdateComponent implements OnInit {
       this.facility = facility;
     } else {
       this.facility.facility_type_id = this.dialogConfig.data.facility_type_id;
-      this.facility.admin_hierarchy_id =
-        this.dialogConfig.data.admin_hierarchy_id;
+      this.facility.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
       this.adminHierarchyId = this.dialogConfig.data.admin_hierarchy_id;
     }
     this.facilityTypes = this.dialogConfig.data.facilityTypes;
@@ -79,6 +81,15 @@ export class FacilityUpdateComponent implements OnInit {
     this.ownerships = this.enumService.get('ownerships');
     this.physicalStates = this.enumService.get('physicalStates');
     this.updateForm(this.facility);
+    this.loadFinancialYears();
+  }
+
+  loadFinancialYears(): void {
+    this.financialYearService
+      .query({columns: ['id', 'name', 'start_date', 'end_date']})
+      .subscribe(
+        (resp: CustomResponse<FinancialYear[]>) => (this.financialYears = resp.data)
+      );
   }
 
   /**
@@ -123,7 +134,8 @@ export class FacilityUpdateComponent implements OnInit {
    * Note; general error handling is done by ErrorInterceptor
    * @param error
    */
-  protected onSaveError(error: any): void {}
+  protected onSaveError(error: any): void {
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -140,6 +152,7 @@ export class FacilityUpdateComponent implements OnInit {
       name: facility.name,
       facility_type_id: facility.facility_type_id,
       ownership: facility.ownership,
+      budget_start_financial_year_id: facility.budget_start_financial_year_id,
     });
   }
 
@@ -155,6 +168,7 @@ export class FacilityUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       facility_type_id: this.editForm.get(['facility_type_id'])!.value,
       ownership: this.editForm.get(['ownership'])!.value,
+      budget_start_financial_year_id: this.editForm.get(['budget_start_financial_year_id'])!.value,
     };
   }
 }

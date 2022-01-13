@@ -103,6 +103,21 @@
           >
         </span>
       </div>
+      <div class="p-field" fxFlex>
+          <span class="p-float-label">
+            <p-dropdown
+              id="budget_start_financial_year_id"
+              optionValue="id"
+              optionLabel="name"
+              [autoDisplayFirst]="false"
+              [filter]="true"
+              class="p-inputtext-sm"
+              [options]="financialYears!"
+              formControlName="budget_start_financial_year_id"
+            ></p-dropdown>
+            <label for="budget_start_financial_year_id">Budget Start Financial Year</label>
+          </span>
+      </div>
       <div fxLayout="row" fxLayoutGap="0.75rem">
         <span fxFlex></span>
         <button

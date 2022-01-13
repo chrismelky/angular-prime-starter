@@ -22,15 +22,23 @@ export class AuthInterceptor implements HttpInterceptor {
     if (!request.url || request.url.startsWith('http')) {
       return next.handle(request);
     }
-    request = request.clone({
-      setHeaders: {
-        Accept: 'application/json',
-      },
-    });
+    if (request.url.includes('api')) {
+      request = request.clone({
+        setHeaders: {
+          Accept: 'application/json',
+        },
+      });
+    } else {
+      request = request.clone({
+        setHeaders: {
+          Accept: 'text/html',
+        },
+      });
+    }
     const token: string | null =
       this.localStorage.retrieve('authenticationToken') ??
       this.sessionStorage.retrieve('authenticationToken');
-    if (token) {
+    if (token && request.url.includes('api')) {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,

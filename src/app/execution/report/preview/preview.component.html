@@ -1,0 +1,89 @@
+<div fxLayout="column" fxLayoutGap="0px">
+  <div
+    fxLayout="row"
+    fxLayoutGap="10px"
+    fxLayoutAlign="space-between"
+    class="report-name"
+  >
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+      <i class="pi pi-file"></i>
+      <span class="report-title"
+        >FORM 3A: MTEF SHEET FOR OBJECTIVES, TARGETS AND ACTIVITY COSTING
+      </span>
+    </div>
+  </div>
+  <!-- <div
+    class="report-controls"
+    fxLayout="row"
+    fxLayoutGap="10px"
+    fxLayoutAlign="space-between"
+  >
+    <span></span>
+    <p-paginator
+      fxFlex="1 0 25%"
+      styleClass="report-preview"
+      [showJumpToPageDropdown]="true"
+      [showPageLinks]="false"
+      #paginator
+      [alwaysShow]="true"
+      [rows]="1"
+      dropdownAppendTo="body"
+      [totalRecords]="10"
+    ></p-paginator>
+    <span></span>
+  </div> -->
+
+  <p-splitter [panelSizes]="[18, 82]" layout="horizontal">
+    <ng-template pTemplate>
+      <div
+        fxLayout="column"
+        fxLayoutGap="8px"
+        fxFlex
+        style="min-height: 400px; overflow-y: scroll"
+      >
+        <div
+          class="report-controls"
+          fxLayout="row"
+          fxLayoutGap="8px"
+          fxLayoutAlign="start center"
+        >
+          <i class="pi pi-filter"></i>
+          <span> Filters </span>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate>
+      <div
+        fxLayout="column"
+        fxLayoutGap="8px"
+        fxFlex
+        style="min-height: 400px; overflow-y: scroll"
+      >
+        <div
+          class="report-controls"
+          fxLayout="row"
+          fxLayoutGap="10px"
+          fxLayoutAlign="space-between center"
+        >
+          <span></span>
+          <p-paginator
+            fxFlex="1 0 25%"
+            styleClass="report-preview"
+            [showJumpToPageDropdown]="true"
+            [showPageLinks]="false"
+            [alwaysShow]="true"
+            [rows]="1"
+            dropdownAppendTo="body"
+            [totalRecords]="10"
+          ></p-paginator>
+          <span fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px">
+            <i style="color: rgb(139, 3, 3)" class="pi pi-file-pdf"></i>
+            <i style="color: rgb(6, 158, 6)" class="pi pi-file-excel"></i>
+            <i style="color: rgb(5, 133, 238)" class="pi pi-file"></i>
+          </span>
+        </div>
+        <div #reportBody></div>
+      </div>
+    </ng-template>
+  </p-splitter>
+</div>

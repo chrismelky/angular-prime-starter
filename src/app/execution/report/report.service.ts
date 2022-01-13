@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { createRequestOption } from '../../utils/request-util';
@@ -16,6 +16,8 @@ import { Report } from './report.model';
 @Injectable({ providedIn: 'root' })
 export class ReportService {
   public resourceUrl = 'api/reports';
+
+  public jasperResourceUrl = 'jasperserver/rest_v2/reports/';
 
   constructor(protected http: HttpClient) {}
 
@@ -46,18 +48,23 @@ export class ReportService {
   }
 
   getReport(params?: any): void {
-    // const options = createRequestOption(req);
-    // return this.http.get<any>(`${this.resourceUrl}/get_report`, {
-    //   params: options,
-    //   responseType: 'arraybuffer' as 'json',
-    // });
-
     const qs = Object.keys(params)
       .filter((key) => params[key] !== undefined && params[key] !== null)
       .map((key) => `${key}=${params[key]}`)
       .join('&');
 
     window.open(`${this.resourceUrl}/get_report?${qs}`, '_blanck');
+  }
+
+  getJasperReport(path: string, params?: any): Observable<any> {
+    const qs = Object.keys(params)
+      .filter((key) => params[key] !== undefined && params[key] !== null)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&');
+
+    return this.http.get(`${this.jasperResourceUrl}/${path}.html?${qs}`, {
+      responseType: 'text',
+    });
   }
 
   getParams(id: number): Observable<CustomResponse<Report[]>> {

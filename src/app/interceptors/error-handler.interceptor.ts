@@ -21,7 +21,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       tap({
         error: (error: HttpErrorResponse) => {
-          if (error.status !== 401) {
+          if (error.status !== 401 && error.status !== 200) {
             const summary = `[${error.status}] ${error.statusText}`;
             const detail = error.error.errors || error.error.message;
             this.toastService.error(summary, detail);

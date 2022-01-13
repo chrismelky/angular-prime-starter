@@ -193,3 +193,12 @@
   header="Confirmation Delete Report"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>
+
+<p-sidebar
+  [(visible)]="showPreview"
+  [fullScreen]="true"
+  appendTo="body"
+  styleClass="report-sidebar"
+>
+  <app-report-preview></app-report-preview>
+</p-sidebar>

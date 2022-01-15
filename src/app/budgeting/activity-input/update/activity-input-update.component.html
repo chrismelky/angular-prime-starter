@@ -131,6 +131,11 @@
               *ngIf="editForm.get('unit_price')?.errors?.required"
               >Required!</small
             >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('unit_price')?.errors?.min"
+              >Unit price minimum value is 0</small
+            >
           </span>
         </div>
 
@@ -163,6 +168,9 @@
               *ngIf="editForm.get('quantity')?.errors?.required"
               >Required!</small
             >
+            <small class="p-error" *ngIf="editForm.get('quantity')?.errors?.min"
+              >Min value 0</small
+            >
           </span>
         </div>
 
@@ -194,6 +202,11 @@
               class="p-error"
               *ngIf="editForm.get('frequency')?.errors?.required"
               >Required!</small
+            >
+            <small
+              class="p-error"
+              *ngIf="editForm.get('frequency')?.errors?.min"
+              >Min value 0</small
             >
           </span>
         </div>
@@ -480,6 +493,11 @@
                   *ngIf="editForm.get('quantity_yr_one')?.errors?.required"
                   >Required!</small
                 >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('quantity_yr_one')?.errors?.min"
+                  >Min value 0</small
+                >
               </span>
             </div>
             <!-- frequnecy+1 -->
@@ -514,6 +532,11 @@
                   class="p-error"
                   *ngIf="editForm.get('frequency_yr_one')?.errors?.required"
                   >Required</small
+                >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('frequency_yr_one')?.errors?.min"
+                  >Min value 0</small
                 >
               </span>
             </div>
@@ -564,6 +587,11 @@
                   *ngIf="editForm.get('quantity_yr_two')?.errors?.required"
                   >Required!</small
                 >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('quantity_yr_two')?.errors?.min"
+                  >Min value 0</small
+                >
               </span>
             </div>
             <!-- frequnecy+1 -->
@@ -598,6 +626,11 @@
                   class="p-error"
                   *ngIf="editForm.get('frequency_yr_two')?.errors?.required"
                   >Required!</small
+                >
+                <small
+                  class="p-error"
+                  *ngIf="editForm.get('frequency_yr_two')?.errors?.min"
+                  >Min value 0</small
                 >
               </span>
             </div>
@@ -812,9 +845,7 @@
                     type="button"
                     pSaveEditableRow
                     icon="pi pi-check"
-                    class="
-                      p-button-rounded p-button-text p-button-success p-mr-2
-                    "
+                    class="p-button-rounded p-button-text p-button-success p-mr-2"
                   ></button>
                   <button
                     *ngIf="editing"

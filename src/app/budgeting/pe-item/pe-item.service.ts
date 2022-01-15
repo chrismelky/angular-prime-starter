@@ -60,6 +60,16 @@ export class PeItemService {
     return this.http.post<CustomResponse<null>>(`${url}/delete-pe-line-values`, req);
   }
 
+  refresh(req?: any): Observable<CustomResponse<null>> {
+    const url ='api/pe_line_values';
+    const options = createRequestOption(req);
+    return this.http.get<any>(
+      `${url}/refresh`,
+      { params: options}
+    );
+   // return this.http.get<CustomResponse<null>>(`${url}/refresh`, req);
+  }
+
   printPeFormStatus(object?:any) {
     const url ='api/pe_line_values';
     const options = createRequestOption(object);

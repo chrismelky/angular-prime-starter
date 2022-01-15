@@ -89,10 +89,9 @@ export class AssessmentCriteriaComponent implements OnInit {
   financial_year_id!: number;
   cas_assessment_round_id!: number;
   cas_assessment_category_version_id: number;
-  admin_hierarchy_level_id!: number | undefined;
   currentUser: User;
   formError = false;
-  admin_hierarchy_position!: number;
+  admin_hierarchy_position!: number | undefined;
   position3 = false;
   position2 = false;
   position1 = false;
@@ -123,7 +122,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     this.cas_assessment_round_id = this.actRoute.snapshot.params.round_id;
     this.financial_year_id = this.actRoute.snapshot.params.fy_id;
     this.currentUser = userService.getCurrentUser();
-    this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;
+    this.admin_hierarchy_position = this.currentUser.admin_hierarchy?.admin_hierarchy_position;
     }
 
   ngOnInit(): void {
@@ -164,7 +163,7 @@ export class AssessmentCriteriaComponent implements OnInit {
 
   checkForwardStatus(){
   this.assessmentCriteriaService.checkForwardStatus(
-    this.admin_hierarchy_id,
+    this.currentUser.admin_hierarchy?.id!,
   this.actRoute.snapshot.params.fy_id,
   this.actRoute.snapshot.params.round_id,
   this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1,
@@ -390,7 +389,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     this.selectedIndex = i;
     this.casAssessmentSubCriteriaService.getSubCriteriaWithScores(
       id,this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id,
-      this.admin_hierarchy_level_id,this.cas_assessment_category_version_id
+      this.admin_hierarchy_position,this.cas_assessment_category_version_id
     ).subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) => ( this.assessmentSubCriteriaOptions = resp.data));
 
   }
@@ -465,7 +464,11 @@ export class AssessmentCriteriaComponent implements OnInit {
   }
 
   getAssessmentReport() {
-    this.assessmentCriteriaService.getAssessmentReport(this.admin_hierarchy_id,this.admin_hierarchy_level_id!,this.financial_year_id,this.cas_assessment_round_id,this.cas_assessment_category_version_id).subscribe(resp =>{
+    this.assessmentCriteriaService.getAssessmentReport(this.admin_hierarchy_id,
+      this.admin_hierarchy_position!,
+      this.financial_year_id,
+      this.cas_assessment_round_id,
+      this.cas_assessment_category_version_id).subscribe(resp =>{
       let file = new Blob([resp], { type: 'application/pdf'});
       let fileURL = URL.createObjectURL(file);
       window.open(fileURL,"_blank");
@@ -493,7 +496,7 @@ export class AssessmentCriteriaComponent implements OnInit {
         let data = {
           cas_assessment_round_id: this.cas_assessment_round_id,
           financial_year_id: this.financial_year_id,
-          admin_hierarchy_level_id: this.admin_hierarchy_level_id,
+          admin_hierarchy_level_id: this.admin_hierarchy_position,
           admin_hierarchy_id: this.admin_hierarchy_id,
           cas_assessment_category_version_id:this.cas_assessment_category_version_id,
           remarks : this.commentForm.value.remarks,

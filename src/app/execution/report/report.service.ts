@@ -57,7 +57,7 @@ export class ReportService {
       .map((key) => `${key}=${params[key]}`)
       .join('&');
 
-    window.open(`${this.resourceUrl}/get_report?${qs}`, '_blanck');
+    window.open(`${this.resourceUrl}/get_report?${qs}`, '_blank');
   }
 
   getParams(id: number): Observable<CustomResponse<Report[]>> {

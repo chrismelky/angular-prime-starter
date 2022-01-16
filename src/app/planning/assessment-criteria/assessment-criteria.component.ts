@@ -387,9 +387,10 @@ export class AssessmentCriteriaComponent implements OnInit {
     }
     this.reportViewed = false;
     this.selectedIndex = i;
+
     this.casAssessmentSubCriteriaService.getSubCriteriaWithScores(
       id,this.admin_hierarchy_id,this.financial_year_id,this.cas_assessment_round_id,
-      this.admin_hierarchy_position,this.cas_assessment_category_version_id
+      this.currentUser.admin_hierarchy?.admin_hierarchy_position,this.cas_assessment_category_version_id
     ).subscribe((resp: CustomResponse<CasAssessmentSubCriteriaOption[]>) => ( this.assessmentSubCriteriaOptions = resp.data));
 
   }
@@ -582,7 +583,7 @@ export class AssessmentCriteriaComponent implements OnInit {
 /** initialize cas assessment
  * for this planning year
  * the role is assigned to
- * DMO for afya and DPLO for cdr and cfr
+ * DMO for health and District PLO for cdr and cfr
  * */
 initiateCasAssessment(){
   if (

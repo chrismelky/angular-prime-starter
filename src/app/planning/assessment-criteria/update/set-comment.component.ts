@@ -29,7 +29,8 @@ export class SetCommentComponent implements OnInit {
     protected fb: FormBuilder,
     protected casAssessmentResultsService: AssessmentCriteriaService,
     private toastService: ToastService
-  ) {this.currentUser = userService.getCurrentUser();
+  ) {
+    this.currentUser = userService.getCurrentUser();
   }
 
   ngOnInit(): void {
@@ -51,11 +52,13 @@ export class SetCommentComponent implements OnInit {
     }
     if(this.dialogConfig.data.data.cas_assessment_result_comment_id){
       this.isSaving = true;
-      this.casAssessmentResultsService.updateComment(data).subscribe(resp => {
+      this.casAssessmentResultsService.updateComment(data)
+        .subscribe(resp => {
         this.toastService.info(resp.message);
         this.dialogRef.close(true);
         this.isSaving = false;
-      });
+      })
+      ;
     } else {
       this.isSaving = true;
       this.casAssessmentResultsService.createComment(data).subscribe(resp => {

@@ -354,28 +354,39 @@ export class ReportComponent implements OnInit {
       formart,
     };
 
-    // Get report params
-    this.reportService
-      .getParams(content.report_id!)
-      .subscribe((resp: CustomResponse<Report[]>) => {
-        const params = resp.data;
-        // if content has parameter or has data set open dialog to select params
-        if (params || content.data_sets) {
-          const ref = this.dialogService.open(ReportUpdateComponent, {
-            data: {
-              report,
-              params,
-              dataSets: content.data_sets,
-              admin_hierarchy_position: this.admin_hierarchy_position,
-            },
-            header: 'Params',
+    if (content.report_id || content.data_sets?.length) {
+      if (content.data_sets?.length) {
+        const ref = this.dialogService.open(ReportUpdateComponent, {
+          data: {
+            report,
+            dataSets: content.data_sets,
+            admin_hierarchy_position: this.admin_hierarchy_position,
+          },
+          header: 'Params',
+        });
+        ref.onClose.subscribe((result) => {});
+      } else {
+        this.reportService
+          .getParams(content.report_id!)
+          .subscribe((resp: CustomResponse<Report[]>) => {
+            const params = resp.data;
+            // if content has parameter or has data set open dialog to select params
+            const ref = this.dialogService.open(ReportUpdateComponent, {
+              data: {
+                report,
+                params,
+                admin_hierarchy_position: this.admin_hierarchy_position,
+              },
+              header: 'Params',
+            });
+            ref.onClose.subscribe((result) => {});
           });
-          ref.onClose.subscribe((result) => {});
-        } else {
-          // Just print report with params
-          // open redirect to new window to download report
-        }
-      });
+      }
+    } else {
+      // Just print report with params
+      // open redirect to new window to download report
+    }
+    // Get report params
   }
 
   loadContents() {

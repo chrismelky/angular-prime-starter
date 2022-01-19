@@ -112,13 +112,35 @@
 
               <span> {{ rowData[col.field] }}</span>
               <button
-                *ngIf="rowData.report_id || rowData.data_sets?.length"
+                *ngIf="
+                  !rowData.is_file &&
+                  (rowData.report_id || rowData.data_sets?.length)
+                "
                 style="color: #ff5722"
                 class="p-button-icon p-button-text p-icon-only p-button-rounded"
                 icon="pi pi-file-pdf"
                 pButton
+                [disabled]="
+                  !this.admin_hierarchy_id ||
+                  !this.financial_year_id ||
+                  !this.budgetType
+                "
                 (click)="getReport('pdf', rowData)"
               ></button>
+
+              <button
+                *ngIf="rowData.is_file"
+                pButton
+                icon="pi pi-download"
+                class="p-button-icon p-button-text"
+                [disabled]="
+                  !this.admin_hierarchy_id ||
+                  !this.financial_year_id ||
+                  !this.budgetType
+                "
+                (click)="downloadReport(rowData)"
+              ></button>
+
               <!-- <button
                 style="color: #0c7239"
                 class="p-button-icon p-button-text"

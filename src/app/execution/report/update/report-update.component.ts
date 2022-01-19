@@ -84,9 +84,9 @@ export class ReportUpdateComponent implements OnInit {
     fund_source_id: [null, []],
     admin_hierarchy_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
-    data_set_id: [null, []],
-    facility_type_id: [null, []],
-    facility_id: [null, []],
+    data_set_id: [null],
+    facility_type_id: [null],
+    facility_id: [null],
     format: ['pdf', []],
     priority_area_id: [null, []],
     parent: [null, []],
@@ -124,7 +124,7 @@ export class ReportUpdateComponent implements OnInit {
     // Load facility types
     if (this.dataSets?.length === 1) {
       report.data_set_id = this.dataSets[0].id;
-      this.loadFacilityType(this.dataSets[0]);
+      this.loadFacilityType(this.dataSets[0].id!);
     }
 
     /** Load params if report has params */
@@ -179,11 +179,12 @@ export class ReportUpdateComponent implements OnInit {
     this.updateForm(dialogData.report); //Initialize form with data from dialog
   }
 
-  loadFacilityType(dataSet: DataSet): void {
-    this.editForm.patchValue({
-      data_set_id: dataSet.id,
-    });
-    this.facilityTypes = JSON.parse(dataSet.facility_types || '[]');
+  loadFacilityType(dataSetId: number): void {
+    // this.editForm.patchValue({
+    //   data_set_id: dataSet.id,
+    // });
+    const dataSet = this.dataSets?.find((d) => d.id === dataSetId);
+    this.facilityTypes = JSON.parse(dataSet?.facility_types || '[]');
   }
 
   loadFacilities(facilityType: FacilityType): void {
@@ -207,7 +208,7 @@ export class ReportUpdateComponent implements OnInit {
 
   //get pdf report
   getPdfReport(format: string) {
-    this.editForm.get('parent')?.setValue('p'+this.admin_hierarchy_position);
+    this.editForm.get('parent')?.setValue('p' + this.admin_hierarchy_position);
     const data = this.editForm.value;
     this.reportService.getReport(data);
 

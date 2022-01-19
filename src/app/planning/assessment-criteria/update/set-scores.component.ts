@@ -64,14 +64,11 @@ export class SetScoresComponent implements OnInit {
       id: this.dialogConfig.data.data.cas_assessment_result_id!,
       admin_hierarchy_id: this.dialogConfig.data.admin_hierarchy_id,
       financial_year_id: this.dialogConfig.data.financial_year[0].id,
-      is_returned:false,
       cas_assessment_sub_criteria_option_id:this.dialogConfig.data.data.id,
       cas_assessment_sub_criteria_possible_score_id:this.scoreForm.value.cas_assessment_sub_criteria_possible_score_id,
       cas_assessment_state:'Assessed',
       cas_assessment_round_id:this.dialogConfig.data.cas_assessment_round[0].id,
-      is_confirmed:false,
-      is_selected:false,
-      admin_hierarchy_level_id:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+      admin_hierarchy_position:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
       user_id:this.currentUser.id,
       cas_assessment_category_version_id:this.dialogConfig.data.cas_assessment_category_version_id
     };

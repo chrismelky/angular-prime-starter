@@ -52,19 +52,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="row" fxLayoutAlign="end">
-      <button
-        pButton
-        type="button"
-        class="p-button-text p-button-success"
-        label="Download mismatch here"
-        [disabled]="adminHierarchy?.admin_hierarchy_position != 3"
-        style="margin-left: 16px; margin-top: 16px"
-        icon="pi pi-file-excel"
-        (click)="downloadMismatch()"
-      ></button>
-    </div> -->
   </p-card>
   <p-card>
     <div
@@ -127,26 +114,20 @@
       </div>
     </div>
   </p-card>
-  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
-    <p-card fxFlex="0 1 100%">
-      <ng-template pTemplate="header">
-        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
-          <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
-            <span class="card-header-text" style="font-size: 14px !important"
-              >Fund Sources [ Ceiling Vs Budget ]</span
-            >
-          </div>
 
+  <p-tabView (onChange)="onTabChange($event)">
+    <p-tabPanel header="Fund Sources [Ceiling vs Budget]">
+      <ng-template pTemplate="content">
+        <div fxLayout="column" fxLayoutGap="4px">
           <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="end center">
             <span
               >Last Update:
               {{ fundSourceCeilingBudget?.lastUpdate | date: "medium" }}</span
             >
-
             <button
               pButton
               class="p-button-success p-button-text"
-              (click)="refresh()"
+              (click)="refresh(false)"
               icon="pi pi-refresh"
               label="Refresh"
             ></button>
@@ -162,19 +143,45 @@
               (click)="downloadMismatch()"
             ></button>
           </div>
+          <div class="loader-area">
+            <app-loader [isLoading]="fundSourceIsLoading"></app-loader>
+            <p-chart
+              type="bar"
+              height="50vh"
+              [data]="fundSourceCeilingBudget"
+              [options]="options"
+            ></p-chart>
+          </div>
         </div>
       </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="Personal Emolment [Ceiling vs Budget]">
       <ng-template pTemplate="content">
-        <div class="loader-area">
-          <app-loader [isLoading]="fundSourceIsLoading"></app-loader>
-          <p-chart
-            type="bar"
-            height="50vh"
-            [data]="fundSourceCeilingBudget"
-            [options]="options"
-          ></p-chart>
+        <div fxLayout="column" fxLayoutGap="4px">
+          <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="end center">
+            <span
+              >Last Update:
+              {{ fundSourceCeilingBudget?.lastUpdate | date: "medium" }}</span
+            >
+            <button
+              pButton
+              class="p-button-success p-button-text"
+              (click)="refresh(true)"
+              icon="pi pi-refresh"
+              label="Refresh"
+            ></button>
+          </div>
+          <div class="loader-area">
+            <app-loader [isLoading]="fundSourceIsLoading"></app-loader>
+            <p-chart
+              type="bar"
+              height="50vh"
+              [data]="fundSourceCeilingBudget"
+              [options]="options"
+            ></p-chart>
+          </div>
         </div>
       </ng-template>
-    </p-card>
-  </div>
+    </p-tabPanel>
+  </p-tabView>
 </div>

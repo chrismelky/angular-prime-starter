@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit {
   fundSourceIsLoading: boolean = false;
   cbreIsLoading: boolean = false;
   ceilingBudgetRevenueExpenditure?: CeilingBudgetRevenueExpenditure;
+  isPE?: boolean = false;
 
   options = {
     plugins: {
@@ -174,6 +175,18 @@ export class DashboardComponent implements OnInit {
       );
   }
 
+  onTabChange($event: any): void {
+    switch ($event.index) {
+      case 0:
+        this.isPE = false;
+        this.loadFundSourceCeilingBudget(false);
+        break;
+      case 1:
+        this.isPE = true;
+        this.loadFundSourceCeilingBudget(false);
+    }
+  }
+
   loadFundSourceCeilingBudget(refresh: boolean): void {
     if (
       !this.adminHierarchy ||
@@ -184,6 +197,8 @@ export class DashboardComponent implements OnInit {
       return;
     }
     const refreshFilter = refresh ? { refresh: true } : {};
+    const peFilter = this.isPE ? { isPE: true } : {};
+
     this.fundSourceIsLoading = true;
     this.dashboardService
       .fundSourceCeilingAndBudget({
@@ -193,6 +208,7 @@ export class DashboardComponent implements OnInit {
         parent_section_name: `p${this.section?.position}`,
         budget_type: this.budgetType,
         ...refreshFilter,
+        ...peFilter,
       })
       .subscribe(
         (resp) => {
@@ -247,7 +263,8 @@ export class DashboardComponent implements OnInit {
     this.loadCeilingBudgetRevenueExpenditure(false);
   }
 
-  refresh(): void {
+  refresh(isPE?: boolean): void {
+    this.isPE = isPE;
     this.loadFundSourceCeilingBudget(true);
     this.loadCeilingBudgetRevenueExpenditure(true);
   }
@@ -262,16 +279,16 @@ export class DashboardComponent implements OnInit {
   }
 
   downloadMismatch() {
-  this.dashboardService.
-  downloadMismatch(this.financial_year_id!,this.adminHierarchy?.id!)
+    this.dashboardService
+      .downloadMismatch(this.financial_year_id!, this.adminHierarchy?.id!)
 
-    .subscribe((resp: BlobPart) => {
-      saveAs(
-        new Blob([resp], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        }),
-        this.adminHierarchy?.name + '_mismatch.xlsx'
-      );
-    });
+      .subscribe((resp: BlobPart) => {
+        saveAs(
+          new Blob([resp], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          }),
+          this.adminHierarchy?.name + '_mismatch.xlsx'
+        );
+      });
   }
 }

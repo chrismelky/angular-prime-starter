@@ -42,6 +42,7 @@ import { TreeTable } from 'primeng/treetable';
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
+  styleUrls: ['./report.component.scss'],
 })
 export class ReportComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
@@ -53,6 +54,7 @@ export class ReportComponent implements OnInit {
   casPlans?: CasPlan[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
+  showPreview = false;
 
   cols = [
     {

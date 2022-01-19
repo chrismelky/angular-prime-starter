@@ -91,6 +91,7 @@ export class AssessmentCriteriaComponent implements OnInit {
   cas_assessment_category_version_id: number;
   currentUser: User;
   formError = false;
+  forwardedLevels!: string;
   admin_hierarchy_position!: number | undefined;
   position3 = false;
   position2 = false;
@@ -159,6 +160,7 @@ export class AssessmentCriteriaComponent implements OnInit {
         this.casAssessmentRounds = resp.data.casRounds;
       });
     this.handleNavigation();
+    // this.forwardedToLevel();
   }
 
   checkForwardStatus(){
@@ -173,6 +175,19 @@ export class AssessmentCriteriaComponent implements OnInit {
   this.showCriteria = true;
 }
 });
+}
+
+forwardedToLevel(){
+    // console.log(this.admin_hierarchy_id);
+    this.assessmentCriteriaService.forwardedToLevel(
+      this.admin_hierarchy_id,
+      this.actRoute.snapshot.params.fy_id,
+      this.actRoute.snapshot.params.round_id,
+      this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1,
+      this.actRoute.snapshot.params.id
+    ).subscribe(resp => {
+      this.forwardedLevels = resp.data;
+    });
 }
   /**
    * Load data from api

@@ -120,7 +120,8 @@
         </p-accordionTab>
       </p-accordion>
       <div fxLayout="row" fxLayoutAlign="space-between center">
-        <div *ngIf="!showCriteria">Plans have been submitted to this decision level.</div>
+        <i *ngIf="!showCriteria" class="pi pi-lock" style="color: red">  Plan is locked</i>
+        <i *ngIf="showCriteria" class="pi pi-lock-open pi-primary"  style="color: green"  >  Plan is Open</i>
         <div class="row" fxLayoutAlign="end">
           <button pButton type="button" class="p-button-primary" label="Initiate Assessment" [disabled]="isPlanInitialized"
                   style="margin-left: 16px" icon="pi pi-file-pdf" *ngxPermissionsOnly="['INITIATE_ASSESSMENT']" (click)="initiateCasAssessment()"

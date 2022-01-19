@@ -20,6 +20,7 @@ export class Facility {
     public p4?: number,
     public p5?: number,
     public planning_hierarchy_position?: number,
+    public active?: boolean,
   ) {
   }
 }

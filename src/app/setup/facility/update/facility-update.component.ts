@@ -36,7 +36,7 @@ export class FacilityUpdateComponent implements OnInit {
   ownerships?: PlanrepEnum[] = [];
   physicalStates?: PlanrepEnum[] = [];
   facilityTypes?: FacilityType[] = [];
-  financialYears?: FacilityType[];
+  financialYears?: FinancialYear[];
   facility: Facility = {};
   adminHierarchyId!: number;
 
@@ -47,6 +47,7 @@ export class FacilityUpdateComponent implements OnInit {
     id: [null, []],
     code: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
     name: ['', [Validators.required]],
+    active: [true, [Validators.required]],
     facility_type_id: [null, [Validators.required]],
     budget_start_financial_year_id: [null],
     ownership: [null, [Validators.required]],
@@ -150,6 +151,7 @@ export class FacilityUpdateComponent implements OnInit {
       id: facility.id,
       code: facility.code,
       name: facility.name,
+      active: facility.active,
       facility_type_id: facility.facility_type_id,
       ownership: facility.ownership,
       budget_start_financial_year_id: facility.budget_start_financial_year_id,
@@ -165,6 +167,7 @@ export class FacilityUpdateComponent implements OnInit {
       ...new Facility(),
       id: this.editForm.get(['id'])!.value,
       code: this.editForm.get(['code'])!.value,
+      active: this.editForm.get(['active'])!.value,
       name: this.editForm.get(['name'])!.value,
       facility_type_id: this.editForm.get(['facility_type_id'])!.value,
       ownership: this.editForm.get(['ownership'])!.value,

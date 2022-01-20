@@ -12,7 +12,11 @@ import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
-import {OrientationList, QueryParamsList, ReportSetup} from '../report-setup.model';
+import {
+  OrientationList,
+  QueryParamsList,
+  ReportSetup,
+} from '../report-setup.model';
 import { ReportSetupService } from '../report-setup.service';
 import { ToastService } from 'src/app/shared/toast.service';
 
@@ -35,6 +39,7 @@ export class ReportSetupUpdateComponent implements OnInit {
     orientation: [null, []],
     query_params: [null, []],
     sql_query: [null, []],
+    jasper_server_id: [null, []],
   });
   orientations?: OrientationList[] = [];
   paramList?: QueryParamsList[] = [];
@@ -66,10 +71,12 @@ export class ReportSetupUpdateComponent implements OnInit {
       {
         name: 'Section',
         value: 'section_id',
-      },{
+      },
+      {
         name: 'Sector',
         value: 'sector_id',
-      },{
+      },
+      {
         name: 'Department',
         value: 'department_id',
       },
@@ -80,13 +87,16 @@ export class ReportSetupUpdateComponent implements OnInit {
       {
         name: 'Fund Source(PE)',
         value: 'fund_source_pe',
-      },{
+      },
+      {
         name: 'Is facility account',
         value: 'is_facility_account',
-      },{
+      },
+      {
         name: 'Intervention',
         value: 'intervention_id',
-      },{
+      },
+      {
         name: 'Priority Area',
         value: 'priority_area_id',
       },
@@ -168,6 +178,7 @@ export class ReportSetupUpdateComponent implements OnInit {
       orientation: reportSetup.orientation,
       query_params: reportSetup.query_params,
       sql_query: reportSetup.sql_query,
+      jasper_server_id: reportSetup.jasper_server_id,
     });
   }
 
@@ -184,6 +195,7 @@ export class ReportSetupUpdateComponent implements OnInit {
       orientation: this.editForm.get(['orientation'])!.value,
       query_params: this.editForm.get(['query_params'])!.value,
       sql_query: this.editForm.get(['sql_query'])!.value,
+      jasper_server_id: this.editForm.get(['jasper_server_id'])!.value,
     };
   }
 }

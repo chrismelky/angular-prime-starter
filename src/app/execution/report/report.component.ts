@@ -16,7 +16,6 @@ import {
 } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
 
 import { CustomResponse } from '../../utils/custom-response';
 import {

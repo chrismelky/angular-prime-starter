@@ -183,5 +183,48 @@
         </div>
       </ng-template>
     </p-tabPanel>
+
+    <p-tabPanel header="Lowe Level [Ceiling vs Budget]">
+      <ng-template pTemplate="content">
+        <div fxLayout="column" fxLayoutGap="4px">
+          <div
+            fxLayout="row"
+            fxLayoutGap="8px"
+            fxLayoutAlign="space-between center"
+          >
+            <p-selectButton
+              dataKey="id"
+              (onChange)="loadLowerLevelCeilingBudget()"
+              [options]="adminLevels!"
+              [(ngModel)]="lowerAdminLevel"
+              optionLabel="name"
+            ></p-selectButton>
+
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end center">
+              <span
+                >Last Update:
+                {{ aggregateCeilingBudget?.lastUpdate | date: "medium" }}</span
+              >
+              <button
+                pButton
+                class="p-button-success p-button-text"
+                (click)="refresh(true)"
+                icon="pi pi-refresh"
+                label="Refresh"
+              ></button>
+            </div>
+          </div>
+          <div class="loader-area">
+            <app-loader [isLoading]="aggregateIsLoading"></app-loader>
+            <p-chart
+              type="bar"
+              height="50vh"
+              [data]="aggregateCeilingBudget"
+              [options]="options"
+            ></p-chart>
+          </div>
+        </div>
+      </ng-template>
+    </p-tabPanel>
   </p-tabView>
 </div>

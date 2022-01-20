@@ -458,26 +458,42 @@ forwardedToLevel(){
       id: assessmentSubCriteriaOption.report_id,
       formart,
     };
-    this.reportService
-      .getParams(assessmentSubCriteriaOption.report_id!)
-      .subscribe((resp: CustomResponse<Report[]>) => {
-        const params = resp.data;
-        //TODO: add data set payload, filter from contents
-        if (params) {
-          const ref = this.dialogService.open(ReportUpdateComponent, {
-            data: {
-              report,
-              params,
-              admin_hierarchy_position: this.admin_hierarchy_position,
-            },
-            header: 'Params',
-          });
-          ref.onClose.subscribe((result) => {});
-        } else {
-          // Just print report with params
-        }
-      });
-  }
+    if (assessmentSubCriteriaOption.report_id){
+      this.reportService
+        .getParams(assessmentSubCriteriaOption.report_id!)
+        .subscribe((resp: CustomResponse<Report[]>) => {
+          const params = resp.data;
+          if (params) {
+            const ref = this.dialogService.open(ReportUpdateComponent, {
+              data: {
+                report,
+                params,
+                admin_hierarchy_position: this.admin_hierarchy_position,
+              },
+              header: 'Params',
+            });
+            ref.onClose.subscribe((result) => {});
+          } else {
+            // Just print report with params
+          }
+        });
+    }else {
+      this.casAssessmentSubCriteriaService.getContentById(assessmentSubCriteriaOption.cas_plan_content_id)
+        .subscribe(resp =>{
+          if (resp.data?.data_sets?.length) {
+            const ref = this.dialogService.open(ReportUpdateComponent, {
+              data: {
+                report,
+                dataSets: resp.data?.data_sets,
+                admin_hierarchy_position: this.admin_hierarchy_position,
+              },
+              header: 'Params',
+            });
+            ref.onClose.subscribe((result) => {});
+          }
+        });
+     }
+   }
 
   getAssessmentReport() {
     this.assessmentCriteriaService.getAssessmentReport(this.admin_hierarchy_id,

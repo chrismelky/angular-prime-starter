@@ -13,6 +13,7 @@ import { createRequestOption } from "../../utils/request-util";
 import { CustomResponse } from "../../utils/custom-response";
 import { CasAssessmentSubCriteriaOption } from "./cas-assessment-sub-criteria-option.model";
 import {AssessmentCriteria} from "../../planning/assessment-criteria/assessment-criteria.model";
+import {CasPlanContent} from "../cas-plan-content/cas-plan-content.model";
 
 @Injectable({ providedIn: "root" })
 export class CasAssessmentSubCriteriaOptionService {
@@ -40,7 +41,11 @@ export class CasAssessmentSubCriteriaOptionService {
       casAssessmentSubCriteriaOption
     );
   }
-
+ getContentById(id: number): Observable<CustomResponse<CasPlanContent>> {
+    return this.http.get<CustomResponse<CasPlanContent>>(
+      `${this.resourceUrl}/get_content_by_id/${id}`
+    )
+ }
   find(id: number): Observable<CustomResponse<CasAssessmentSubCriteriaOption>> {
     return this.http.get<CustomResponse<CasAssessmentSubCriteriaOption>>(
       `${this.resourceUrl}/${id}`

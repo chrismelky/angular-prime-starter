@@ -181,8 +181,6 @@ export class PreviewComponent implements OnInit, AfterViewInit {
       this.reportService.getJasperReport(
         `${this.report.jasper_server_id}`,
         {
-          j_username: 'jasperadmin',
-          j_password: 'jasperadmin',
           admin_hierarchy_id: this.adminHierarchy.id,
           financial_year_id: this.financialYear.id,
           budget_type: this.budgetType,
@@ -206,8 +204,6 @@ export class PreviewComponent implements OnInit, AfterViewInit {
     if (this.report.jasper_server_id) {
       this.reportService
         .getJasperReportHtml(`${this.report.jasper_server_id}`, {
-          j_username: 'jasperadmin',
-          j_password: 'jasperadmin',
           ...this.paramForm.value,
           page: page,
         })

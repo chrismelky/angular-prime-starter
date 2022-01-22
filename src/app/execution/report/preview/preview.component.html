@@ -39,7 +39,6 @@
           </div>
 
           <div
-            *ngIf="params"
             class="report-filter"
             fxLayout="column"
             fxLayoutGap="10px"
@@ -348,6 +347,7 @@
             [alwaysShow]="true"
             [rows]="1"
             dropdownAppendTo="body"
+            (onPageChange)="pageChanged($event)"
             [totalRecords]="totalPages"
           ></p-paginator>
           <span fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px">

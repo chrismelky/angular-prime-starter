@@ -164,8 +164,17 @@ export class PreviewComponent implements OnInit, AfterViewInit {
       );
 
     if (!this.params) {
-      this.loadReport(1);
+      setTimeout(() => this.loadReport(1), 100);
     }
+  }
+
+  /**
+   * When page changed
+   * @param event page event
+   */
+  pageChanged(event: any): void {
+    console.log(event);
+    this.loadReport(event.page + 1);
   }
 
   getReport(): void {
@@ -253,10 +262,13 @@ export class PreviewComponent implements OnInit, AfterViewInit {
     }
     setTimeout(() => {
       const holder = document.getElementsByClassName('totalPages');
-      this.totalPages =
+      const parsedTotal =
         holder !== undefined && holder.length
-          ? parseInt(holder[0].innerHTML)
+          ? parseInt(holder[0]?.children[0]?.childNodes[0]?.textContent!)
           : 0;
-    }, 500);
+      if (parsedTotal >= this.totalPages) {
+        this.totalPages = parsedTotal;
+      }
+    }, 200);
   }
 }

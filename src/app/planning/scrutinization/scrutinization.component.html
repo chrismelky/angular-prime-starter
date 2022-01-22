@@ -144,6 +144,20 @@
         let-columns="columns"
         let-expanded="true"
       >
+        <tr style="white-space: normal">
+          <td [attr.colspan]="2" style="white-space: normal">
+            [ Target ] {{ rowData.long_term_target?.code }} -
+            {{ rowData.long_term_target?.description }}
+          </td>
+          <td style="width: 80px; padding: 0px"></td>
+        </tr>
+        <tr style="white-space: normal" [ngClass]="{ 'tr-expanded': expanded }">
+          <td [attr.colspan]="2">
+            [ Facility ] {{ rowData.facility?.code }} -
+            {{ rowData.facility.name }}
+          </td>
+          <td></td>
+        </tr>
         <tr
           style="white-space: normal"
           [ngClass]="{
@@ -151,8 +165,8 @@
             'has-comment': rowData.hasComment
           }"
         >
-          <td [attr.colspan]="2">
-            [ {{ rowData.code }} ] {{ rowData.description }}
+          <td [attr.colspan]="2" style="white-space: normal">
+            [ Activity ] {{ rowData.code }} - {{ rowData.description }}
           </td>
           <td style="width: 80px; padding: 0px">
             <button
@@ -163,9 +177,12 @@
             ></button>
           </td>
         </tr>
+
         <tr style="white-space: normal" [ngClass]="{ 'tr-expanded': expanded }">
-          <td>Facility: {{ rowData.facility.name }}</td>
-          <td>Budget Class: {{ rowData.budget_class.name }}</td>
+          <td [attr.colspan]="2">
+            [ Budget Class ] {{ rowData.budget_class.code }} -
+            {{ rowData.budget_class.name }}
+          </td>
           <td></td>
         </tr>
       </ng-template>
@@ -193,11 +210,11 @@
                   *ngFor="let i of rowData.inputs"
                   [ngClass]="{ 'has-comment': i.hasComment }"
                 >
-                  <td>
+                  <td style="white-space: normal">
                     {{ i.fund_source?.name }}
                   </td>
-                  <td>
-                    {{ i.gfs_code?.name }}
+                  <td style="white-space: normal">
+                    {{ i.gfs_code?.code }} - {{ i.gfs_code?.name }}
                   </td>
                   <td>
                     {{ i.unit }}

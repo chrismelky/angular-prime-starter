@@ -6,6 +6,7 @@ import { DashboardComponent } from './dashboard.component';
 import { SharedModule } from '../shared/shared.module';
 import { ChartModule } from 'primeng/chart';
 import { TabViewModule } from 'primeng/tabview';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @NgModule({
   declarations: [DashboardComponent],
@@ -15,6 +16,7 @@ import { TabViewModule } from 'primeng/tabview';
     SharedModule,
     ChartModule,
     TabViewModule,
+    SelectButtonModule,
   ],
 })
 export class DashboardModule {}

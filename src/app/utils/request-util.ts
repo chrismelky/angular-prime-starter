@@ -19,3 +19,25 @@ export const createRequestOption = (req?: any): HttpParams => {
 
   return options;
 };
+
+export const createNonNullRequestOption = (req?: any): HttpParams => {
+  let options: HttpParams = new HttpParams();
+
+  if (req) {
+    Object.keys(req)
+      .filter((key) => req[key] !== undefined && req[key] !== null)
+      .forEach((key) => {
+        if (key !== 'sort') {
+          options = options.set(key, req[key]);
+        }
+      });
+
+    if (req.sort) {
+      req.sort.forEach((val: string) => {
+        options = options.append('sort', val);
+      });
+    }
+  }
+
+  return options;
+};

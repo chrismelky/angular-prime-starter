@@ -9,7 +9,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { createRequestOption } from '../../utils/request-util';
+import {
+  createNonNullRequestOption,
+  createRequestOption,
+} from '../../utils/request-util';
 import { CustomResponse } from '../../utils/custom-response';
 import { Report } from './report.model';
 
@@ -17,7 +20,7 @@ import { Report } from './report.model';
 export class ReportService {
   public resourceUrl = 'api/reports';
 
-  public jasperResourceUrl = 'jasperserver/rest_v2/reports/';
+  public jasperResourceUrl = 'jasperserver/rest_v2/reports';
 
   constructor(protected http: HttpClient) {}
 
@@ -56,7 +59,15 @@ export class ReportService {
     window.open(`${this.resourceUrl}/get_report?${qs}`, '_blank');
   }
 
-  getJasperReport(path: string, params?: any): Observable<any> {
+  getReportHtml(params?: any): Observable<any> {
+    const options = createNonNullRequestOption(params);
+    return this.http.get(`${this.resourceUrl}/get_report`, {
+      params: options,
+      responseType: 'text',
+    });
+  }
+
+  getJasperReportHtml(path: string, params?: any): Observable<any> {
     const qs = Object.keys(params)
       .filter((key) => params[key] !== undefined && params[key] !== null)
       .map((key) => `${key}=${params[key]}`)
@@ -65,6 +76,15 @@ export class ReportService {
     return this.http.get(`${this.jasperResourceUrl}/${path}.html?${qs}`, {
       responseType: 'text',
     });
+  }
+
+  getJasperReport(path: string, params?: any, format?: string): void {
+    const qs = Object.keys(params)
+      .filter((key) => params[key] !== undefined && params[key] !== null)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&');
+
+    window.open(`${this.jasperResourceUrl}/${path}.${format}?${qs}`, '_blank');
   }
 
   getParams(id: number): Observable<CustomResponse<Report[]>> {

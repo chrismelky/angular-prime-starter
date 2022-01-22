@@ -480,7 +480,19 @@ forwardedToLevel(){
     }else {
       this.casAssessmentSubCriteriaService.getContentById(assessmentSubCriteriaOption.cas_plan_content_id)
         .subscribe(resp =>{
-          if (resp.data?.data_sets?.length) {
+          if (resp.data?.is_file){
+            this.reportService
+              .downloadReport(
+                resp.data.id!,
+                this.financial_year_id,
+                this.admin_hierarchy_id
+              )
+              .subscribe((resp) => {
+                let file = new Blob([resp], { type: 'application/pdf' });
+                let fileURL = URL.createObjectURL(file);
+                window.open(fileURL, '_blank');
+              });
+          }else {
             const ref = this.dialogService.open(ReportUpdateComponent, {
               data: {
                 report,

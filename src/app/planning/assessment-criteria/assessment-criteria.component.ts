@@ -617,23 +617,26 @@ forwardedToLevel(){
  * DMO for health and District PLO for cdr and cfr
  * */
 initiateCasAssessment(){
-  if (
-    !this.admin_hierarchy_id ||
-    !this.financial_year_id ||
-    !this.cas_assessment_round_id
-  ) {
-    return;
-  }
+  // if (
+  //   !this.admin_hierarchy_id ||
+  //   !this.financial_year_id ||
+  //   !this.cas_assessment_round_id
+  // ) {
+  //   return;
+  // }
   this.assessmentCriteriaService.initializeAssessment({
-    admin_hierarchy_id: this.admin_hierarchy_id,
+    admin_hierarchy_id: this.admin_hierarchy_id?? this.currentUser.admin_hierarchy?.id,
     financial_year_id: this.financial_year_id,
     cas_assessment_round_id: this.cas_assessment_round_id,
     version_id: this.cas_assessment_category_version_id,
     from_decision_level_id: this.currentUser.decision_level?.id,
-    to_decision_level_id: this.currentUser.decision_level?.id
+    to_decision_level_id: this.currentUser.decision_level?.id,
+    general_remarks:'Initialized'
   }).subscribe((resp: CustomResponse<any>)=> {
     this.toastService.info(resp.message)
-    window.location.reload();
+    // window.location.reload();
+    this.isPlanInitialized = true;
+    this.showCriteria = true;
   });
 
 }

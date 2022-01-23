@@ -141,6 +141,7 @@ export class ScrutinizationComponent implements OnInit {
     this.scrutinizationService
       .getSubmittedCostCentres(
         this.section?.id!,
+        `p${this.section?.position}`,
         this.userDecionLevel?.id!,
         this.financialYearId!,
         adminHierarchyId
@@ -291,6 +292,59 @@ export class ScrutinizationComponent implements OnInit {
             } successfully`
           );
         });
+      },
+    });
+  }
+
+  forwardAllCostCentre(): void {
+    this.confirmForwardOrReturnAll(
+      1,
+      this.userDecionLevel?.next_decision_level!
+    );
+  }
+
+  returnAllCostCentre(): void {
+    this.decisionLevelService
+      .getReturnDecisionLevel(
+        this.userDecionLevel?.id!,
+        this.selectedAdminHierarchy.data?.admin_hierarchy_position!
+      )
+      .subscribe((resp) => {
+        if (resp.data) {
+          this.confirmForwardOrReturnAll(-1, resp.data);
+        } else {
+          this.toastService.warn('No return decision level found');
+        }
+      });
+  }
+
+  private confirmForwardOrReturnAll(
+    direction: number,
+    nextlevel: DecisionLevel
+  ): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to ${
+        direction === -1 ? 'Return' : 'Forward'
+      } all cost centres ${nextlevel?.name}`,
+      accept: () => {
+        this.scrutinizationService
+          .forwardOrReturnAll({
+            financial_year_id: this.financialYearId,
+            admin_hierarchy_id: this.selectedAdminHierarchy.data.id,
+            admin_hierarchy_position:
+              this.selectedAdminHierarchy.data.admin_hierarchy_position,
+            from_decision_level_id: this.userDecionLevel?.id,
+            to_decision_level_id: nextlevel.id,
+            direction,
+          })
+          .subscribe((resp) => {
+            this.reloadSubmission();
+            this.toastService.info(
+              `Cost centre has been ${
+                direction === -1 ? 'Returned' : 'Forwarded'
+              } successfully`
+            );
+          });
       },
     });
   }

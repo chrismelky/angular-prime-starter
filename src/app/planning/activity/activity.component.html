@@ -7,13 +7,7 @@
           icon="pi pi-arrow-left"
           pButton
           (click)="back()"
-          class="
-            p-button-rounded
-            p-button-plain
-            p-button-text
-            p-button-outline
-            p-button-icon-only
-          "
+          class="p-button-rounded p-button-plain p-button-text p-button-outline p-button-icon-only"
         ></button>
         <p-divider fxFlex class="title" align="center">
           <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
@@ -77,9 +71,7 @@
             budget_type!,
             adminHierarchyCostCentre?.id
           ]"
-          class="
-            p-button-rounded p-button-text p-button-outline p-button-icon-only
-          "
+          class="p-button-rounded p-button-text p-button-outline p-button-icon-only"
         ></button>
       </div>
     </ng-template>
@@ -129,7 +121,22 @@
                     [options]="facilityGroupByType!"
                     (onChange)="filterChanged()"
                     [(ngModel)]="facility_id"
-                  ></p-dropdown>
+                  >
+                    <ng-template let-facility pTemplate="item">
+                      <div
+                        fxLayout="row"
+                        fxLayoutAlign="start"
+                        fxLayoutGap="8px"
+                        style="padding-left: 8px"
+                      >
+                        <i
+                          style="color: rgba(0, 0, 0, 0.38)"
+                          class="pi pi-home"
+                        ></i>
+                        <span>{{ facility.name }}</span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
                   <label for="facility_id">Facility</label>
                 </span>
               </div>
@@ -211,20 +218,13 @@
                     (click)="addressComments(rowData)"
                     icon="pi pi-comment"
                     pButton
-                    class="
-                      p-icon-only p-button-text p-button-plain p-button-rounded
-                    "
+                    class="p-icon-only p-button-text p-button-plain p-button-rounded"
                   ></button>
                   <button
                     pButton
                     pTooltip="Edit"
                     tooltipPosition="bottom"
-                    class="
-                      p-button-text
-                      p-button-plain
-                      p-button-rounded
-                      p-button-icon
-                    "
+                    class="p-button-text p-button-plain p-button-rounded p-button-icon"
                     icon="pi pi-pencil
                 "
                     (click)="createOrUpdate(rowData)"
@@ -234,12 +234,7 @@
                     pButton
                     pTooltip="Delete"
                     tooltipPosition="bottom"
-                    class="
-                      p-button-text
-                      p-button-plain
-                      p-button-rounded
-                      p-button-icon
-                    "
+                    class="p-button-text p-button-plain p-button-rounded p-button-icon"
                     icon="pi pi-trash
                 "
                     (click)="delete(rowData)"

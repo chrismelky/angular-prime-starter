@@ -115,17 +115,14 @@
                       <div
                         fxLayout="row"
                         fxLayoutAlign="start"
-                        fxLayoutAlign="space-between"
+                        fxLayoutGap="8px"
+                        style="padding-left: 8px"
                       >
-                        <span style="padding-left: 8px">{{
-                          facility.name
-                        }}</span>
-                        <!-- <p-tag
-                          [severity]="
-                            facility.status === 'done' ? 'success' : 'warning'
-                          "
-                          [value]="facility.completion + '%'"
-                        ></p-tag> -->
+                        <i
+                          style="color: rgba(0, 0, 0, 0.38)"
+                          class="pi pi-home"
+                        ></i>
+                        <span>{{ facility.name }}</span>
                       </div>
                     </ng-template>
                   </p-dropdown>

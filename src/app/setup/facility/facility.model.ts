@@ -34,6 +34,7 @@ export class FacilityView {
     public ownership?: string,
     public budget?: number,
     public ceiling?: number,
-    public completion?: number
+    public completion?: number,
+    public status?: string
   ) {}
 }

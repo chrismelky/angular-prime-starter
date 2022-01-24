@@ -397,6 +397,11 @@ export class ScrutinizationComponent implements OnInit {
       ...new Comment(),
       scrutinization_id: this.selectedCostCentre?.id,
       financial_year_id: this.financialYearId,
+      admin_hierarchy_cost_centre_id:
+        this.selectedCostCentre?.admin_hierarchy_cost_centre_id,
+      admin_hierarchy_id:
+        this.selectedCostCentre?.admin_hierarchy_cost_centre_id,
+      section_id: this.selectedCostCentre?.section_id,
       commentable_id: commentable.id,
       commentable_type: commentableType,
     };

@@ -1,4 +1,3 @@
-import { FundSource } from './../../../setup/fund-source/fund-source.model';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CeilingChainService } from '../../../setup/ceiling-chain/ceiling-chain.service';
@@ -498,7 +497,7 @@ export class AdminCeilingDisseminationComponent implements OnInit {
                     budgetCeiling == undefined ? 0.0 : budgetCeiling.amount,
                   is_locked:
                     budgetCeiling == undefined
-                      ? (this.ceiling?.ceiling.fund_source?.code === 'Z01'?true:false)
+                      ? false
                       : budgetCeiling!.is_locked,
                   percent:
                     budgetCeiling == undefined

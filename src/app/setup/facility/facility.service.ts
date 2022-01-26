@@ -117,6 +117,10 @@ export class FacilityService {
     );
   }
 
+  transfer(facility: Facility): Observable<CustomResponse<Facility>> {
+    return this.http.post<CustomResponse<Facility>>(`${this.resourceUrl}/transfer/${facility.id}`, facility);
+  }
+
   downloadTemplate(): any {
     return this.http.get(this.resourceUrl + '/downloadUploadTemplate', {
       responseType: 'arraybuffer',

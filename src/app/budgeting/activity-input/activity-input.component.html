@@ -7,9 +7,7 @@
           icon="pi pi-arrow-left"
           pButton
           (click)="back()"
-          class="
-            p-button-rounded p-button-plain p-button-text p-button-icon-only
-          "
+          class="p-button-rounded p-button-plain p-button-text p-button-icon-only"
         ></button>
 
         <p-divider fxFlex class="title" align="center">
@@ -29,7 +27,7 @@
         <p-divider fxFlex class="title" align="center">
           <span fxLayout="column" fxLayoutAlign="centre center">
             <small>Financial year</small>
-            <strong>2021/22</strong>
+            <strong>{{ financialYear?.name }}</strong>
           </span>
         </p-divider>
         <p-divider fxFlex class="title" align="center">
@@ -72,12 +70,7 @@
           *ngIf="!budgetIsLocked"
           icon="pi pi-arrow-right"
           pButton
-          class="
-            p-button-rounded
-            p-button-primary
-            p-button-outline
-            p-button-icon-only
-          "
+          class="p-button-rounded p-button-primary p-button-outline p-button-icon-only"
         ></button>
       </div>
     </ng-template>
@@ -112,11 +105,27 @@
                     [autoDisplayFirst]="false"
                     [group]="true"
                     [filter]="true"
+                    filterBy="name,status,completion"
                     class="p-inputtext-sm"
                     [options]="facilityGroupByType!"
                     (onChange)="loadFundSource(facility.value)"
                     [(ngModel)]="facility_id"
-                  ></p-dropdown>
+                  >
+                    <ng-template let-facility pTemplate="item">
+                      <div
+                        fxLayout="row"
+                        fxLayoutAlign="start"
+                        fxLayoutGap="8px"
+                        style="padding-left: 8px"
+                      >
+                        <i
+                          style="color: rgba(0, 0, 0, 0.38)"
+                          class="pi pi-home"
+                        ></i>
+                        <span>{{ facility.name }}</span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
                   <label for="facility_id">Facility </label>
                 </span>
               </div>
@@ -158,8 +167,8 @@
                 >
                   <ng-template pTemplate="selectedItem">
                     <span
-                      >[ {{ facilityActivity.code }} ]
-                      {{ facilityActivity.description }}</span
+                      >[ {{ facilityActivity?.code }} ]
+                      {{ facilityActivity?.description }}</span
                     >
                   </ng-template>
                   <ng-template let-activity pTemplate="item">
@@ -299,17 +308,13 @@
                   (click)="addressComments(rowData)"
                   icon="pi pi-comment"
                   pButton
-                  class="
-                    p-icon-only p-button-text p-button-plain p-button-rounded
-                  "
+                  class="p-icon-only p-button-text p-button-plain p-button-rounded"
                 ></button>
                 <button
                   pButton
                   pTooltip="Edit"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
                   icon="pi pi-pencil
               "
                   (click)="createOrUpdate(rowData)"
@@ -319,9 +324,7 @@
                   pButton
                   pTooltip="Delete"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
                   icon="pi pi-trash
               "
                   (click)="delete(rowData)"

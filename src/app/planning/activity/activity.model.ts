@@ -3,6 +3,7 @@ import { BudgetClass } from 'src/app/setup/budget-class/budget-class.model';
 import { Facility } from 'src/app/setup/facility/facility.model';
 import { FundSource } from 'src/app/setup/fund-source/fund-source.model';
 import { NationalReference } from 'src/app/setup/national-reference/national-reference.model';
+import { LongTermTarget } from '../long-term-target/long-term-target.model';
 import { Comment } from '../scrutinization/comment/comment.model';
 
 export class Activity {
@@ -75,6 +76,7 @@ export class ScrutinyActivity {
   public description?: string;
   public facility?: Facility;
   public budget_class?: BudgetClass;
+  public long_term_target?: LongTermTarget;
   public inputs?: ActivityInput[] = [];
   public comments?: Comment[] = [];
   public budget_class_id?: number;

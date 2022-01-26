@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import {
@@ -49,6 +49,7 @@ import { ProcurementTypeService } from 'src/app/setup/procurement-type/procureme
 import { ProcurementMethodService } from 'src/app/setup/procurement-method/procurement-method.service';
 import { ProcurementType } from 'src/app/setup/procurement-type/procurement-type.model';
 import { ProcurementMethod } from 'src/app/execution/activity-implementation/activity-implementation.model';
+import { F } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-activity-input',
@@ -65,6 +66,8 @@ export class ActivityInputComponent implements OnInit {
   showReport = false;
   budgetStatus?: BudgetStatus;
   expenditureCentres?: TreeNode[] = [];
+
+  onInputSaved: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   activityInputs?: ActivityInput[] = [];
 
@@ -89,7 +92,7 @@ export class ActivityInputComponent implements OnInit {
   search: any = {}; // items search objects
 
   //Mandatory filter
-  facilityActivity!: FacilityActivity;
+  facilityActivity?: FacilityActivity;
   admin_hierarchy_id!: number;
   facility_id!: number;
   section_id!: number;
@@ -183,13 +186,32 @@ export class ActivityInputComponent implements OnInit {
     const parentId = this.adminHierarchyCostCentre?.admin_hierarchy_id;
     const sectionId = this.adminHierarchyCostCentre?.section_id;
     this.facilityIsLoading = true;
-    this.facilityService.planning(parentName, parentId!, sectionId!).subscribe(
-      (resp: CustomResponse<FacilityView[]>) => {
-        this.facilityIsLoading = false;
-        this.facilityGroupByType = this.helper.groupBy(resp.data!, 'type');
-      },
-      (error) => (this.facilityIsLoading = false)
-    );
+    this.facilityService
+      .planning(parentName, parentId!, sectionId!, {
+        financial_year_id: this.financialYear.id,
+      })
+      .subscribe(
+        (resp: CustomResponse<FacilityView[]>) => {
+          this.facilityIsLoading = false;
+          this.facilityGroupByType = this.helper.groupBy(
+            resp.data!.map((fa) => {
+              const completion = (
+                fa.ceiling && fa.ceiling > 0
+                  ? ((fa.budget || 0) / fa.ceiling) * 100
+                  : 0
+              ).toFixed(0);
+
+              return {
+                ...fa,
+                completion,
+                status: completion == '100' ? 'done' : 'incomplete',
+              };
+            }),
+            'type'
+          );
+        },
+        (error) => (this.facilityIsLoading = false)
+      );
   }
 
   /**
@@ -233,8 +255,8 @@ export class ActivityInputComponent implements OnInit {
         sector_id: this.adminHierarchyCostCentre.section?.sector_id,
         facility_id: this.facility_id,
         fund_source_id: this.fund_source_id,
-        budget_class_id: this.facilityActivity.budget_class_id,
-        activity_id: this.facilityActivity.id,
+        budget_class_id: this.facilityActivity?.budget_class_id,
+        activity_id: this.facilityActivity?.id,
       })
       .subscribe((resp) => {
         this.budgetStatus = resp.data;
@@ -257,6 +279,11 @@ export class ActivityInputComponent implements OnInit {
   }
 
   loadFundSource(facilityId: number): void {
+    this.fundSources = [];
+    this.fund_source_id = undefined;
+    this.facilityActivities = [];
+    this.facilityActivity = undefined;
+    this.budgetStatus = undefined;
     this.fundSourceService
       .getByYearAndFacility(this.financialYear.id!, facilityId)
       .subscribe((resp) => {
@@ -416,10 +443,10 @@ export class ActivityInputComponent implements OnInit {
       admin_hierarchy_id: this.adminHierarchyCostCentre.admin_hierarchy_id,
       section_id: this.adminHierarchyCostCentre.section_id,
       facility_id: this.facility_id,
-      budget_class_id: this.facilityActivity.budget_class_id,
+      budget_class_id: this.facilityActivity?.budget_class_id,
       fund_source_id: this.fund_source_id,
-      activity_id: this.facilityActivity.id,
-      activity_fund_source_id: this.facilityActivity.activity_fund_source_id,
+      activity_id: this.facilityActivity?.id,
+      activity_fund_source_id: this.facilityActivity?.activity_fund_source_id,
       budget_type: this.budget_type,
     };
     const ref = this.dialogService.open(ActivityInputUpdateComponent, {
@@ -435,11 +462,21 @@ export class ActivityInputComponent implements OnInit {
         procurementTypes: this.procurementTypes,
         procurementMethods: this.procurementMethods,
         balanceAmount: this.budgetStatus?.balanceAmount,
+        onInputSaved: this.onInputSaved,
       },
       width: '900px',
       header: 'Create/Update Activity Input',
     });
+
+    const subscription = this.onInputSaved.subscribe((saved) => {
+      if (saved) {
+        this.loadPage(this.page);
+        this.loadBudgetingStatus();
+      }
+    });
+
     ref.onClose.subscribe((result) => {
+      subscription && subscription.unsubscribe();
       if (result) {
         this.loadPage(this.page);
         this.loadBudgetingStatus();

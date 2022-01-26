@@ -16,6 +16,23 @@
           fxLayoutAlign="start center"
         >
           <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="cas_plan_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casPlans!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="cas_plan_id"
+              ></p-dropdown>
+              <label for="cas_plan_id">Cas Plans </label>
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex>
             <app-admin-hierarchy-tree
               (onSelect)="onAdminHierarchySelection($event)"
               [returnType]="'object'"
@@ -50,22 +67,6 @@
                 [(ngModel)]="budgetType"
               ></p-dropdown>
               <label for="budgetType">Budget Type </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="cas_plan_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="casPlans!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="cas_plan_id"
-              ></p-dropdown>
-              <label for="cas_plan_id">Cas Plans </label>
             </span>
           </div>
         </div>
@@ -104,13 +105,62 @@
             style="height: 36px !important"
             *ngFor="let col of columns; let i = index"
           >
-            <p-treeTableToggler
-              [rowNode]="rowNode"
-              *ngIf="i === 0"
-            ></p-treeTableToggler>
-            {{ rowData[col.field] }}
+            <div fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start center">
+              <p-treeTableToggler
+                [rowNode]="rowNode"
+                *ngIf="i === 0"
+              ></p-treeTableToggler>
+
+              <span> {{ rowData[col.field] }}</span>
+              <button
+                *ngIf="
+                  !rowData.is_file &&
+                  (rowData.report_id || rowData.data_sets?.length)
+                "
+                style="color: #ff5722"
+                class="p-button-icon p-button-text p-icon-only p-button-rounded"
+                icon="pi pi-file-pdf"
+                pButton
+                [disabled]="
+                  !this.admin_hierarchy_id ||
+                  !this.financial_year_id ||
+                  !this.budgetType
+                "
+                (click)="getReport('pdf', rowData)"
+              ></button>
+
+              <button
+                *ngIf="rowData.is_file"
+                pButton
+                icon="pi pi-download"
+                class="p-button-icon p-button-text"
+                [disabled]="
+                  !this.admin_hierarchy_id ||
+                  !this.financial_year_id ||
+                  !this.budgetType
+                "
+                (click)="downloadReport(rowData)"
+              ></button>
+
+              <!-- <button
+                style="color: #0c7239"
+                class="p-button-icon p-button-text"
+                icon="pi pi-file-excel"
+                label="EXCEL"
+                pButton
+                (click)="getReport('xlsx')"
+              ></button>
+              <button
+                style="color: #1665c0"
+                class="p-button-icon p-button-text"
+                icon="pi pi-file-o"
+                label="WORD"
+                pButton
+                (click)="getReport('rtf')"
+              ></button> -->
+            </div>
           </td>
-          <td style="height: 36px !important">
+          <!-- <td style="height: 36px !important">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px" *ngIf="rowData.is_file">
                 <button
@@ -140,7 +190,7 @@
                 ></button>
               </div>
             </div>
-          </td>
+          </td> -->
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage"> No data found </ng-template>
@@ -166,3 +216,20 @@
   header="Confirmation Delete Report"
   icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>
+
+<p-sidebar
+  [(visible)]="showPreview"
+  [fullScreen]="true"
+  appendTo="body"
+  styleClass="report-sidebar"
+>
+  <ng-template pTemplate="content">
+    <app-report-preview
+      [report]="report!"
+      [params]="report?.query_params"
+      [financialYear]="financialYear!"
+      [budgetType]="budgetType!"
+      [adminHierarchy]="adminHierarchy!"
+    ></app-report-preview>
+  </ng-template>
+</p-sidebar>

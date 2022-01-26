@@ -29,7 +29,8 @@ export class SetCommentComponent implements OnInit {
     protected fb: FormBuilder,
     protected casAssessmentResultsService: AssessmentCriteriaService,
     private toastService: ToastService
-  ) {this.currentUser = userService.getCurrentUser();
+  ) {
+    this.currentUser = userService.getCurrentUser();
   }
 
   ngOnInit(): void {
@@ -39,23 +40,25 @@ export class SetCommentComponent implements OnInit {
     let data = {
       id: this.dialogConfig.data.data.cas_assessment_result_comment_id!,
       admin_hierarchy_id: this.dialogConfig.data.admin_hierarchy_id,
-      admin_hierarchy_level_id:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
+      admin_hierarchy_position:this.currentUser.admin_hierarchy?.admin_hierarchy_position,
       cas_assessment_sub_criteria_option_id:this.dialogConfig.data.data.id,
       financial_year_id:this.dialogConfig.data.financial_year[0].id,
       remarks:this.commentForm.value.remarks,
       cas_assessment_round_id:this.dialogConfig.data.cas_assessment_round[0].id
     }
-    if (this.commentForm.invalid) {
+     if (this.commentForm.invalid) {
       this.formError = true;
       return;
     }
     if(this.dialogConfig.data.data.cas_assessment_result_comment_id){
       this.isSaving = true;
-      this.casAssessmentResultsService.updateComment(data).subscribe(resp => {
+      this.casAssessmentResultsService.updateComment(data)
+        .subscribe(resp => {
         this.toastService.info(resp.message);
         this.dialogRef.close(true);
         this.isSaving = false;
-      });
+      })
+      ;
     } else {
       this.isSaving = true;
       this.casAssessmentResultsService.createComment(data).subscribe(resp => {

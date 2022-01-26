@@ -726,3 +726,44 @@ p-divider.title .p-divider.p-divider-horizontal {
 .p-datatable.p-datavalue-table .p-datatable-thead > tr > th {
   padding: 8px !important
 }
+
+.report-sidebar {
+  .p-sidebar-header {
+    background-color: #051e34 !important;
+    color: #fff;
+    justify-content: space-between;
+    padding: 0.25rem 0.75rem 0.25rem 1rem;
+    .p-sidebar-close-icon {
+      color: #fff;
+    }
+    .title {
+      font-size: 18px;
+      font-weight: 500;
+    }
+  }
+ .p-sidebar-content {
+   padding: 0px !important;
+
+   .p-paginator {
+    padding: 0px !important;
+    background-color: transparent !important;
+    .p-dropdown {
+      height: 30px;
+      .p-dropdown-label {
+        line-height: 6px;
+        font-size: 11px;
+      }
+    }
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+      height: auto;
+    }
+  }
+ }
+}
+
+.report-filter .p-dropdown {
+  border-radius: 0px !important;
+}

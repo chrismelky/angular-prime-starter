@@ -16,7 +16,6 @@ import {
 } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
 
 import { CustomResponse } from '../../utils/custom-response';
 import {
@@ -38,10 +37,12 @@ import { ReportUpdateComponent } from './update/report-update.component';
 import { CasPlan } from '../../setup/cas-plan/cas-plan.model';
 import { CasPlanService } from '../../setup/cas-plan/cas-plan.service';
 import { TreeTable } from 'primeng/treetable';
+import { ReportSetup } from 'src/app/setup/report-setup/report-setup.model';
 
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
+  styleUrls: ['./report.component.scss'],
 })
 export class ReportComponent implements OnInit {
   @ViewChild('paginator') paginator!: Paginator;
@@ -53,6 +54,7 @@ export class ReportComponent implements OnInit {
   casPlans?: CasPlan[] = [];
   adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
+  showPreview = false;
 
   cols = [
     {
@@ -81,6 +83,9 @@ export class ReportComponent implements OnInit {
   budgetTypes?: BudgetType[] = [];
   budgetType!: string;
   admin_hierarchy_position!: number;
+  report?: ReportSetup;
+  adminHierarchy?: AdminHierarchy;
+  financialYear?: FinancialYear;
 
   constructor(
     protected reportService: ReportService,
@@ -137,11 +142,10 @@ export class ReportComponent implements OnInit {
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
     this.casPlanContentService
       .query({
-        page: pageToLoad,
-        per_page: this.per_page,
         sort: this.sort(),
         cas_plan_id: this.cas_plan_id,
         parent_id: null,
+        with: ['dataSets', 'report'],
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -332,10 +336,16 @@ export class ReportComponent implements OnInit {
    */
   onAdminHierarchySelection(event: any): void {
     this.admin_hierarchy_id = event.id;
+    this.adminHierarchy = event;
     this.admin_hierarchy_position = event.admin_hierarchy_position;
   }
 
-  getReport(report: any) {
+  onPreviewClosed(): void {
+    this.showPreview = false;
+    this.report = undefined;
+  }
+
+  getReport(formart: string, content: CasPlanContent) {
     if (
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
@@ -343,15 +353,65 @@ export class ReportComponent implements OnInit {
     ) {
       return;
     }
-    const data = report;
-    data.admin_hierarchy_id = this.admin_hierarchy_id;
-    data.financial_year_id = this.financial_year_id;
-    data.budgetType = this.budgetType;
-    const ref = this.dialogService.open(ReportUpdateComponent, {
-      data,
-      header: report.name,
-    });
-    ref.onClose.subscribe((result) => {});
+
+    if (content.report && !content.data_sets?.length) {
+      this.report = { ...content.report };
+      this.financialYear = this.financialYears?.find(
+        (fy) => fy.id === this.financial_year_id!
+      );
+
+      if (
+        this.report &&
+        this.financialYear &&
+        this.adminHierarchy &&
+        this.budgetType
+      ) {
+        this.showPreview = true;
+      }
+    } else {
+      const report: Report = {
+        ...new Report(),
+        admin_hierarchy_id: this.admin_hierarchy_id,
+        financial_year_id: this.financial_year_id,
+        budget_type: this.budgetType,
+        id: content.report_id,
+        formart,
+      };
+
+      if (content.report_id || content.data_sets?.length) {
+        if (content.data_sets?.length) {
+          const ref = this.dialogService.open(ReportUpdateComponent, {
+            data: {
+              report,
+              dataSets: content.data_sets,
+              admin_hierarchy_position: this.admin_hierarchy_position,
+            },
+            header: 'Params',
+          });
+          ref.onClose.subscribe((result) => {});
+        } else {
+          this.reportService
+            .getParams(content.report_id!)
+            .subscribe((resp: CustomResponse<Report[]>) => {
+              const params = resp.data;
+              // if content has parameter or has data set open dialog to select params
+              const ref = this.dialogService.open(ReportUpdateComponent, {
+                data: {
+                  report,
+                  params,
+                  admin_hierarchy_position: this.admin_hierarchy_position,
+                },
+                header: 'Params',
+              });
+              ref.onClose.subscribe((result) => {});
+            });
+        }
+      } else {
+        // Just print report with params
+        // open redirect to new window to download report
+      }
+    }
+    // Get report params
   }
 
   loadContents() {
@@ -359,6 +419,8 @@ export class ReportComponent implements OnInit {
       .query({
         cas_plan_id: this.cas_plan_id,
         parent_id: null,
+        sort: ['sort_order:asc'],
+        with: ['dataSets', 'report'],
       })
       .subscribe(
         (resp: CustomResponse<CasPlanContent[]>) => (this.parents = resp.data)
@@ -377,6 +439,7 @@ export class ReportComponent implements OnInit {
       .query({
         parent_id: node.data.id,
         sort: ['sort_order:asc'],
+        with: ['dataSets', 'report'],
       })
       .subscribe(
         (resp) => {

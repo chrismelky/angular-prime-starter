@@ -93,9 +93,13 @@ export class ReceivedAssessmentComponent implements OnInit {
     this.admin_hierarchy_level_id = this.currentUser.admin_hierarchy?.admin_hierarchy_position;  }
 
   ngOnInit(): void {
-
-    this.assessmentCriteriaService.getDataByUser(this.cas_assessment_round_id,
-      this.financial_year_id,this.cas_assessment_category_version_id,this.currentUser.id,this.currentUser.admin_hierarchy?.admin_hierarchy_position)
+      this.getSubmittedAssessments();
+      this.assessmentCriteriaService.getDataByUser(
+        this.cas_assessment_round_id,
+        this.financial_year_id,
+        this.cas_assessment_category_version_id,
+        this.currentUser.id,
+        this.currentUser.admin_hierarchy?.admin_hierarchy_position)
       .subscribe((resp) => {
         this.adminHierarchies = resp.data.adminHierarchies;
         this.financialYears = resp.data.financialYears;
@@ -104,6 +108,19 @@ export class ReceivedAssessmentComponent implements OnInit {
     this.handleNavigation();
   }
 
+  /**
+   * Load submitted
+   * */
+  getSubmittedAssessments(){
+    this.assessmentCriteriaService.receivedAssessments(
+      this.currentUser.admin_hierarchy?.id!,
+      this.actRoute.snapshot.params.fy_id,
+      this.actRoute.snapshot.params.round_id,
+      this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1,
+      this.actRoute.snapshot.params.id
+    ).subscribe(resp => {
+     });
+  }
   /**
    * Load data from api
    * @param page = page number
@@ -313,7 +330,13 @@ export class ReceivedAssessmentComponent implements OnInit {
   }
 
   getReport(rowData: any) {
-    this.assessmentCriteriaService.getAssessmentReport(rowData.admin_id,this.admin_hierarchy_level_id!,rowData.financial_year_id,rowData.round_id,rowData.version_id)
+
+    this.assessmentCriteriaService.getAssessmentReport(
+      rowData.admin_id,
+      rowData.position,
+      rowData.financial_year_id,
+      rowData.round_id,
+      rowData.version_id)
       .subscribe(resp =>{
         let file = new Blob([resp], { type: 'application/pdf'});
         let fileURL = URL.createObjectURL(file);

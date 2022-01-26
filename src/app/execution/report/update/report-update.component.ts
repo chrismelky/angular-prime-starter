@@ -5,10 +5,8 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { CustomResponse } from '../../../utils/custom-response';
@@ -20,7 +18,6 @@ import { FinancialYear } from 'src/app/setup/financial-year/financial-year.model
 import { FinancialYearService } from 'src/app/setup/financial-year/financial-year.service';
 import { Report } from '../report.model';
 import { ReportService } from '../report.service';
-import { ToastService } from 'src/app/shared/toast.service';
 import { PeriodService } from '../../../setup/period/period.service';
 import { Period } from '../../../setup/period/period.model';
 import { FundSource } from '../../../setup/fund-source/fund-source.model';
@@ -29,11 +26,15 @@ import { Section } from '../../../setup/section/section.model';
 import { SectionService } from '../../../setup/section/section.service';
 import { Sector } from '../../../setup/sector/sector.model';
 import { SectorService } from '../../../setup/sector/sector.service';
+import { DataSet } from 'src/app/setup/data-set/data-set.model';
+import { Facility } from 'src/app/setup/facility/facility.model';
+import { FacilityType } from 'src/app/setup/facility-type/facility-type.model';
+import { FacilityService } from 'src/app/setup/facility/facility.service';
 import { J } from '@angular/cdk/keycodes';
-import {PriorityAreaService} from "../../../setup/priority-area/priority-area.service";
-import {PriorityArea} from "../../../setup/priority-area/priority-area.model";
-import {Intervention} from "../../../setup/intervention/intervention.model";
-import {InterventionService} from "../../../setup/intervention/intervention.service";
+import { PriorityAreaService } from '../../../setup/priority-area/priority-area.service';
+import { PriorityArea } from '../../../setup/priority-area/priority-area.model';
+import { Intervention } from '../../../setup/intervention/intervention.model';
+import { InterventionService } from '../../../setup/intervention/intervention.service';
 
 @Component({
   selector: 'app-report-update',
@@ -53,16 +54,23 @@ export class ReportUpdateComponent implements OnInit {
   departments?: Section[] = [];
   fundSources?: FundSource[] = [];
   peFundSources?: FundSource[] = [];
+  dataSets?: DataSet[] = [];
+  facilities?: Facility[] = [];
+  facilityTypes?: FacilityType[] = [];
   priorityAreas2?: PriorityArea[] = [];
   priorityAreas?: PriorityArea[] = [];
   interventions?: Intervention[] = [];
   parameters: string[] | undefined;
+  facilityIsLoading = false;
+  admin_hierarchy_position?: number;
+  admin_hierarchy_id?: number;
 
   /**
    * Declare form
    */
   editForm = this.fb.group({
     id: [null, []],
+    budget_type: [null, [Validators.required]],
     period_id: [null, []],
     section_id: [null, []],
     sector_id: [null, []],
@@ -74,9 +82,14 @@ export class ReportUpdateComponent implements OnInit {
     budget_class_id: [null, []],
     department_id: [null, []],
     fund_source_id: [null, []],
+    admin_hierarchy_id: [null, [Validators.required]],
+    financial_year_id: [null, [Validators.required]],
+    data_set_id: [null],
+    facility_type_id: [null],
+    facility_id: [null],
+    format: ['pdf', []],
     priority_area_id: [null, []],
-    admin_hierarchy_id: [null, []],
-    financial_year_id: [null, []],
+    parent: [null, []],
   });
   constructor(
     protected reportService: ReportService,
@@ -92,176 +105,159 @@ export class ReportUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService
+    protected facilityService: FacilityService
   ) {}
 
   ngOnInit(): void {
-    this.reportService
-      .getParams(this.dialogConfig.data.report_id)
-      .subscribe((resp: CustomResponse<Report[]>) => {
-        const params = resp.data;
-        if (params) {
-          this.parameters = params[0].query_params?.split(',');
-          for (let i = 0; i < this.parameters?.length!; i++) {
-            if (this.parameters![i] == 'period_id') {
-              this.periodService
-                .query({ columns: ['id', 'name'] })
-                .subscribe(
-                  (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
-                );
-            }
-            if (this.parameters![i] == 'fund_source_id') {
-              this.fundSourceService
-                .query({ columns: ['id', 'name'] })
-                .subscribe(
-                  (resp: CustomResponse<FundSource[]>) =>
-                    (this.fundSources = resp.data)
-                );
-            }
-            if (this.parameters![i] == 'section_id') {
-              this.sectionService
-                .query({ position: 4 })
-                .subscribe(
-                  (resp: CustomResponse<Section[]>) =>
-                    (this.sections = resp.data)
-                );
-            }
-            if (this.parameters![i] == 'department_id') {
-              this.sectionService
-                .query({ position: 3 })
-                .subscribe(
-                  (resp: CustomResponse<Section[]>) =>
-                    (this.departments = resp.data)
-                );
-            }
-            if (this.parameters![i] == 'sector_id') {
-              this.sectorService
-                .query({ columns: ['id', 'name'] })
-                .subscribe(
-                  (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
-                );
-            }
-            if (this.parameters![i] == 'fund_source_pe') {
-              this.fundSourceService
-                .getPeFundSource()
-                .subscribe(
-                  (resp: CustomResponse<FundSource[]>) =>
-                    (this.peFundSources = resp.data)
-                );
-            }
-            if (this.parameters![i] == 'intervention_id') {
-              this.priorityAreaService
-                .query()
-                .subscribe(
-                  (resp: CustomResponse<PriorityArea[]>) =>
-                    (this.priorityAreas2 = resp.data)
-                );
-            }
-            if (this.parameters![i] == 'priority_area_id') {
-              this.priorityAreaService
-                .query()
-                .subscribe(
-                  (resp: CustomResponse<PriorityArea[]>) =>
-                    (this.priorityAreas = resp.data)
-                );
-            }
-          }
-        }
-      });
-    this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
+    const dialogData = this.dialogConfig.data;
+
+    const params = dialogData.params;
+
+    const report: Report = dialogData.report;
+
+    this.admin_hierarchy_position = dialogData.admin_hierarchy_position;
+    this.admin_hierarchy_id = report.admin_hierarchy_id;
+
+    this.dataSets = dialogData.dataSets || [];
+
+    // If content has data sets and is one data set
+    // Load facility types
+    if (this.dataSets?.length === 1) {
+      report.data_set_id = this.dataSets[0].id;
+      this.loadFacilityType(this.dataSets[0].id!);
+    }
+
+    /** Load params if report has params */
+    if (params) {
+      this.parameters = params[0].query_params?.split(',');
+      if (this.parameters?.includes('period_id')) {
+        this.periodService
+          .query({ columns: ['id', 'name'] })
+          .subscribe(
+            (resp: CustomResponse<Period[]>) => (this.periods = resp.data)
+          );
+      }
+      if (this.parameters?.includes('fund_source_id')) {
+        this.fundSourceService
+          .query({ columns: ['id', 'name'] })
+          .subscribe(
+            (resp: CustomResponse<FundSource[]>) =>
+              (this.fundSources = resp.data)
+          );
+      }
+      if (this.parameters?.includes('section_id')) {
+        this.sectionService
+          .query({ position: 4 })
+          .subscribe(
+            (resp: CustomResponse<Section[]>) => (this.sections = resp.data)
+          );
+      }
+      if (this.parameters?.includes('department_id')) {
+        this.sectionService
+          .query({ position: 3 })
+          .subscribe(
+            (resp: CustomResponse<Section[]>) => (this.departments = resp.data)
+          );
+      }
+      if (this.parameters?.includes('sector_id')) {
+        this.sectorService
+          .query({ columns: ['id', 'name'] })
+          .subscribe(
+            (resp: CustomResponse<Sector[]>) => (this.sectors = resp.data)
+          );
+      }
+      if (this.parameters?.includes('fund_source_pe')) {
+        this.fundSourceService
+          .getPeFundSource()
+          .subscribe(
+            (resp: CustomResponse<FundSource[]>) =>
+              (this.peFundSources = resp.data)
+          );
+      }
+    }
+
+    this.updateForm(dialogData.report); //Initialize form with data from dialog
   }
 
-//get pdf report
-  getPdfReport(format: string) {
-    const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.financial_year_id;
-    data.report_id = this.dialogConfig.data.report_id;
-    data.budgetType = this.dialogConfig.data.budgetType;
-    data.format = format;
-    this.reportService.getReport(data).subscribe((resp) => {
-      let file = new Blob([resp], { type: 'application/pdf' });
-      let fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_blank');
-      this.dialogRef.close(true);
-    });
+  loadFacilityType(dataSetId: number): void {
+    // this.editForm.patchValue({
+    //   data_set_id: dataSet.id,
+    // });
+    const dataSet = this.dataSets?.find((d) => d.id === dataSetId);
+    this.facilityTypes = JSON.parse(dataSet?.facility_types || '[]');
   }
+
+  loadFacilities(facilityType: FacilityType): void {
+    this.facilityIsLoading = true;
+    this.facilityService
+      .search(
+        facilityType.id!,
+        `p${this.admin_hierarchy_position}`,
+        this.admin_hierarchy_id!
+      )
+      .subscribe(
+        (resp: CustomResponse<Facility[]>) => {
+          this.facilities = resp.data;
+          this.facilityIsLoading = false;
+        },
+        (error) => {
+          this.facilityIsLoading = false;
+        }
+      );
+  }
+
+  //get pdf report
+  getPdfReport(format: string) {
+    this.editForm.get('parent')?.setValue('p' + this.admin_hierarchy_position);
+    const data = this.editForm.value;
+    this.reportService.getReport(data);
+
+    // data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    // data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    // data.report_id = this.dialogConfig.data.report.id;
+    // data.budgetType = this.dialogConfig.data.report.budget_type;
+    // data.format = format;
+    // this.reportService.getReport(data).subscribe((resp) => {
+    //   let file = new Blob([resp], { type: 'application/pdf' });
+    //   let fileURL = URL.createObjectURL(file);
+    //   window.open(fileURL, '_blank');
+    //   // this.dialogRef.close(true);
+    // });
+  }
+
   //get excel report
   getExcelReport(format: string) {
-    const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.financial_year_id;
-    data.report_id = this.dialogConfig.data.report_id;
-    data.budgetType = this.dialogConfig.data.budgetType;
-    data.format = format;
-    this.reportService.getReport(data).subscribe((resp) => {
-      let file = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      let fileURL = URL.createObjectURL(file);
-      window.open(fileURL,"_blank")
-      this.dialogRef.close(true);
-    });
+    // const data = JSON.parse(JSON.stringify(this.editForm.value));
+    // data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    // data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    // data.report_id = this.dialogConfig.data.report.id;
+    // data.budgetType = this.dialogConfig.data.report.budget_type;
+    // data.format = format;
+    // this.reportService.getReport(data).subscribe((resp) => {
+    //   let file = new Blob([resp], {
+    //     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    //   });
+    //   let fileURL = URL.createObjectURL(file);
+    //   window.open(fileURL, '_blank');
+    //   this.dialogRef.close(true);
+    // });
   }
-//get excel report
+  //get excel report
   getWordReport(format: string) {
-    const data = JSON.parse(JSON.stringify(this.editForm.value));
-    data.admin_hierarchy_id = this.dialogConfig.data.admin_hierarchy_id;
-    data.financial_year_id = this.dialogConfig.data.financial_year_id;
-    data.report_id = this.dialogConfig.data.report_id;
-    data.budgetType = this.dialogConfig.data.budgetType;
-    data.format = format;
-    this.reportService.getReport(data).subscribe((resp) => {
-      let file = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-      let fileURL = URL.createObjectURL(file);
-      window.open(fileURL,"_blank");
-      this.dialogRef.close(true);
-    });
-  }
-
-  /**
-   * When form is valid Create Report or Update if exist else set form has error and return
-   * @returns
-   */
-  save(): void {
-    if (this.editForm.invalid) {
-      this.formError = true;
-      return;
-    }
-    this.isSaving = true;
-    const report = this.createFromForm();
-    if (report.id !== undefined) {
-      this.subscribeToSaveResponse(this.reportService.update(report));
-    } else {
-      this.subscribeToSaveResponse(this.reportService.create(report));
-    }
-  }
-
-  protected subscribeToSaveResponse(
-    result: Observable<CustomResponse<Report>>
-  ): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      (result) => this.onSaveSuccess(result),
-      (error) => this.onSaveError(error)
-    );
-  }
-
-  /**
-   * When save successfully close dialog and display info message
-   * @param result
-   */
-  protected onSaveSuccess(result: any): void {
-    this.toastService.info(result.message);
-    this.dialogRef.close(true);
-  }
-
-  /**
-   * Error handling specific to this component
-   * Note; general error handling is done by ErrorInterceptor
-   * @param error
-   */
-  protected onSaveError(error: any): void {}
-
-  protected onSaveFinalize(): void {
-    this.isSaving = false;
+    // const data = JSON.parse(JSON.stringify(this.editForm.value));
+    // data.admin_hierarchy_id = this.dialogConfig.data.report.admin_hierarchy_id;
+    // data.financial_year_id = this.dialogConfig.data.report.financial_year_id;
+    // data.report_id = this.dialogConfig.data.report.id;
+    // data.budgetType = this.dialogConfig.data.report.budget_type;
+    // data.format = format;
+    // this.reportService.getReport(data).subscribe((resp) => {
+    //   let file = new Blob([resp], {
+    //     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    //   });
+    //   let fileURL = URL.createObjectURL(file);
+    //   window.open(fileURL, '_blank');
+    //   this.dialogRef.close(true);
+    // });
   }
 
   /**
@@ -285,6 +281,7 @@ export class ReportUpdateComponent implements OnInit {
       budget_class_id: report.budget_class_id,
       admin_hierarchy_id: report.admin_hierarchy_id,
       financial_year_id: report.financial_year_id,
+      budget_type: report.budget_type,
     });
   }
 
@@ -313,10 +310,14 @@ export class ReportUpdateComponent implements OnInit {
     };
   }
 
-  filterChanged( ) {
-    this.interventionService.query({
-      priority_area_id: this.editForm.get('priority_area_id')?.value
-    }).subscribe((resp: CustomResponse<Intervention[]>) =>
-      (this.interventions = resp.data))
-   }
+  filterChanged() {
+    this.interventionService
+      .query({
+        priority_area_id: this.editForm.get('priority_area_id')?.value,
+      })
+      .subscribe(
+        (resp: CustomResponse<Intervention[]>) =>
+          (this.interventions = resp.data)
+      );
+  }
 }

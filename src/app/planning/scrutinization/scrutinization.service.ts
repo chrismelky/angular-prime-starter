@@ -45,6 +45,17 @@ export class ScrutinizationService {
     );
   }
 
+  forwardOrReturnAll(params?: any): Observable<CustomResponse<any>> {
+    const options = createRequestOption(params);
+
+    return this.http.get<CustomResponse<any>>(
+      `${this.scrutinizationUrl}/forward_or_return_by_admin_area`,
+      {
+        params: options,
+      }
+    );
+  }
+
   updateComment(comment: Comment): Observable<CustomResponse<Comment>> {
     return this.http.put<CustomResponse<Comment>>(
       `${this.commentsUrl}/${comment.id}`,
@@ -92,12 +103,14 @@ export class ScrutinizationService {
   }
 
   getSubmittedCostCentres(
+    sectionId: number,
+    parentSectionName: string,
     decisionLevelId: number,
     financialYearId: number,
     adminHierarchyId: number
   ): Observable<CustomResponse<Scrutinization[]>> {
     return this.http.get<CustomResponse<Scrutinization[]>>(
-      `${this.scrutinizationUrl}/submitted_cost_centres/${decisionLevelId}/${financialYearId}/${adminHierarchyId}`
+      `${this.scrutinizationUrl}/submitted_cost_centres/${sectionId}/${parentSectionName}/${decisionLevelId}/${financialYearId}/${adminHierarchyId}`
     );
   }
 }

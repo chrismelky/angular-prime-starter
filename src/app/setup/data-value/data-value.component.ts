@@ -153,7 +153,14 @@ export class DataValueComponent implements OnInit {
     this.dataSetService
       .query({
         cas_plan_id: this.cas_plan_id,
-        columns: ['id', 'name', 'facility_types', 'periods'],
+        columns: [
+          'id',
+          'name',
+          'facility_types',
+          'periods',
+          'is_locked',
+          'is_submitted',
+        ],
       })
       .subscribe(
         (resp: CustomResponse<DataSet[]>) => {
@@ -269,7 +276,8 @@ export class DataValueComponent implements OnInit {
       !this.admin_hierarchy_id ||
       !this.financial_year_id ||
       !this.period_id ||
-      !this.facility_id
+      !this.facility_id ||
+      !this.dataSet
     ) {
       return;
     }
@@ -279,6 +287,7 @@ export class DataValueComponent implements OnInit {
         financial_year_id: this.financial_year_id,
         facility_id: this.facility_id,
         period_id: this.period_id,
+        data_set_id: this.dataSet.id,
       })
       .subscribe(
         (resp) => {

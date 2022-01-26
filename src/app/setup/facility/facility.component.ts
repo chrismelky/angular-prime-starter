@@ -30,11 +30,14 @@ import {Facility} from './facility.model';
 import {FacilityService} from './facility.service';
 import {FacilityUpdateComponent} from './update/facility-update.component';
 import {UserService} from '../user/user.service';
-import {FacilityCustomDetailValueComponent} from './facility-custom-detail-value/facility-custom-detail-value.component';
+import {
+  FacilityCustomDetailValueComponent
+} from './facility-custom-detail-value/facility-custom-detail-value.component';
 import {TransferComponent} from './transfer/transfer.component';
 import {UploadComponent} from './upload/upload.component';
 import {FacilityBankAccountComponent} from './facility-bank-account/facility-bank-account.component';
 import {FormControl} from "@angular/forms";
+import {debounceTime, finalize, switchMap, tap} from "rxjs/operators";
 
 @Component({
   selector: 'app-facility',
@@ -98,6 +101,7 @@ export class FacilityComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.searchFacilities();
     this.facilityTypeService
       .query({columns: ['id', 'name', 'code']})
       .subscribe(
@@ -157,6 +161,26 @@ export class FacilityComponent implements OnInit {
         (res: CustomResponse<Facility[]>) => {
           this.isLoading = false;
           this.onSuccess(res, pageToLoad, !dontNavigate);
+        },
+        () => {
+          this.isLoading = false;
+          this.onError();
+        }
+      );
+  }
+
+  searchFacilities(): void {
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.isLoading = true)),
+        switchMap(value => this.facilityService.bulkSearch(value, this.page, this.per_page)
+          .pipe(finalize(() => (this.isLoading = false))))
+      )
+      .subscribe(
+        (res: CustomResponse<Facility[]>) => {
+          this.isLoading = false;
+          this.onSuccess(res, this.page ? this.page : 1, true);
         },
         () => {
           this.isLoading = false;
@@ -276,7 +300,7 @@ export class FacilityComponent implements OnInit {
     const data = {
       facility: facility ? facility : undefined,
       facility_type_id: this.facility_type_id,
-      admin_hierarchy_id: this.admin_hierarchy_id,
+      admin_hierarchy_id: facility ? facility.admin_hierarchy_id : this.admin_hierarchy_id,
       facilityTypes: this.facilityTypes,
     };
     const ref = this.dialogService.open(FacilityUpdateComponent, {

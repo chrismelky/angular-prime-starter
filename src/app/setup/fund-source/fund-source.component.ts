@@ -35,6 +35,7 @@ import {BudgetClassService} from "../budget-class/budget-class.service";
 import {FundSourceBudgetClassService} from "../fund-source-budget-class/fund-source-budget-class.service";
 import {SectorService} from "../sector/sector.service";
 import {finalize} from "rxjs/operators";
+import {saveAs} from "file-saver";
 
 @Component({
   selector: "app-fund-source",
@@ -78,6 +79,26 @@ export class FundSourceComponent implements OnInit {
       field: "code",
       header: "Code",
       sort: true,
+    },
+    {
+      field: "is_conditional",
+      header: "Conditional",
+      sort: false,
+    },
+    {
+      field: "is_foreign",
+      header: "Foreign",
+      sort: false,
+    },
+    {
+      field: "is_treasurer",
+      header: "Treasury",
+      sort: false,
+    },
+    {
+      field: "can_project",
+      header: "Can Project",
+      sort: false,
     },
   ]; //Table display columns
 
@@ -414,6 +435,19 @@ export class FundSourceComponent implements OnInit {
   protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
+  }
+
+  download() {
+    this.fundSourceService
+      .download()
+      .subscribe((response: BlobPart) => {
+        saveAs(
+          new Blob([response], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          }),
+          'fund-sources.xlsx'
+        );
+      });
   }
 }
 

@@ -47,6 +47,8 @@ import { FacilityService } from '../../setup/facility/facility.service';
 import { Facility } from '../../setup/facility/facility.model';
 import { BudgetCeilingService } from '../../shared/budget-ceiling.service';
 import { ActivityInputService } from '../activity-input/activity-input.service';
+import {ConfigurationSettingService} from "../../setup/configuration-setting/configuration-setting.service";
+import {ConfigurationSetting} from "../../setup/configuration-setting/configuration-setting.model";
 
 @Component({
   selector: 'app-pe-item',
@@ -58,7 +60,7 @@ export class PeItemComponent implements OnInit {
   @ViewChild('table') table!: Table;
   peItems?: PeItem[] = [];
 
-  adminHierarchies?: AdminHierarchy[] = [];
+ // adminHierarchies?: AdminHierarchy[] = [];
   financialYears?: FinancialYear[] = [];
   peSubForms?: any[] = [];
   budgetClasses?: BudgetClass[] = [];
@@ -115,6 +117,7 @@ export class PeItemComponent implements OnInit {
   isTableReady?: boolean = false;
   sbcRequired?: boolean = true;
   showFundSource?: boolean = true;
+  fundSourcesForPeAndContribution?: ConfigurationSetting[] = [];
 
   constructor(
     protected peItemService: PeItemService,
@@ -136,18 +139,9 @@ export class PeItemComponent implements OnInit {
     protected peDefinitionService: PeDefinitionService,
     protected facilityService: FacilityService,
     protected budgetCeilingService: BudgetCeilingService,
-    protected activityInputService: ActivityInputService
+    protected activityInputService: ActivityInputService,
+    protected configurationSettingService: ConfigurationSettingService
   ) {
-    this.currentUser = userService.getCurrentUser();
-    if (this.currentUser.admin_hierarchy) {
-      this.adminHierarchies?.push(this.currentUser.admin_hierarchy);
-      this.admin_hierarchy_id = this.currentUser.admin_hierarchy?.id!;
-      this.financial_year_id =
-        this.currentUser.admin_hierarchy?.current_financial_year_id!;
-      this.is_current_budget_locked =
-        this.currentUser.admin_hierarchy?.is_current_budget_locked!;
-      this.admin_hierarchy_code = this.currentUser.admin_hierarchy?.code!;
-    }
   }
 
   ngOnInit(): void {
@@ -157,25 +151,17 @@ export class PeItemComponent implements OnInit {
         (resp: CustomResponse<PeSubForm[]>) => (this.peSubForms = resp.data)
       );
 
+    this.configurationSettingService
+      .fundSourcePeContribution()
+      .subscribe(
+        (resp: CustomResponse<ConfigurationSetting[]>) => (this.fundSourcesForPeAndContribution = resp.data)
+      )
+
     this.sectionService
       .peCostCenters()
       .subscribe((resp: CustomResponse<Section[]>) => {
         this.sections = resp.data;
       });
-
-    if (this.admin_hierarchy_id) {
-      this.councilHQFacilityCode = '0000' + this.admin_hierarchy_code;
-      this.facilityService
-        .query({
-          columns: ['id', 'name', 'code'],
-          admin_hierarchy_id: this.admin_hierarchy_id,
-          code: this.councilHQFacilityCode,
-        })
-        .subscribe((resp: CustomResponse<Facility[]>) => {
-          this.facilities = resp.data;
-        });
-    }
-
 
     this.financialYearService
       .findByStatus(1)
@@ -190,6 +176,28 @@ export class PeItemComponent implements OnInit {
     this.splitButtons();
     this.handleNavigation();
     this.calenderYearRange();
+  }
+
+  onAdminHierarchySelection(admin: AdminHierarchy): void {
+    this.admin_hierarchy_id = admin?.id!;
+    this.financial_year_id = admin?.current_financial_year_id!;
+    this.is_current_budget_locked = admin?.is_current_budget_locked!;
+    this.admin_hierarchy_code = admin?.code!;
+
+    if (this.admin_hierarchy_id) {
+      this.councilHQFacilityCode = '0000' + this.admin_hierarchy_code;
+      this.facilityService
+        .query({
+          columns: ['id', 'name', 'code'],
+          admin_hierarchy_id: this.admin_hierarchy_id,
+          code: this.councilHQFacilityCode,
+        })
+        .subscribe((resp: CustomResponse<Facility[]>) => {
+          this.facilities = resp.data;
+          this.filterChanged();
+        });
+    }
+    this.filterChanged();
   }
 
   splitButtons() {
@@ -726,6 +734,7 @@ export class PeItemComponent implements OnInit {
       if (response.success) {
         //this.fetchBudgetAmount();
         this.toastService.info(response.message);
+        this.filterChanged();
       } else {
         this.toastService.error(response.message);
       }
@@ -760,18 +769,31 @@ export class PeItemComponent implements OnInit {
 
    updateViewAmount(data:any){
    if(data.output_type === 'CURRENCY') {
+
+     let result = this.fundSourcesForPeAndContribution?.find(fs => fs.id === this.fund_source_id);
+     /** PE + Contributions */
      var totalAmount:number = 0;
-     this.peDataValues?.forEach((fValue: any) => {
-       if(fValue.output_type=== 'CURRENCY' && fValue.formula == null ){
-         let values = fValue?.value ? fValue.value:0;
-         totalAmount = parseFloat(totalAmount.toString()) + parseFloat(values);
-       }
-     });
+     if(result !== undefined) {
+       this.peDataValues?.forEach((fValue: any) => {
+         if(fValue.output_type=== 'CURRENCY' && fValue.formula === null ){
+           let values = fValue?.value ? fValue.value:0;
+           totalAmount = parseFloat(totalAmount.toString()) + parseFloat(values);
+         }
+       });
+     } else {
+       /** PE Only */
+       this.peDataValues?.forEach((fValue: any) => {
+         if(fValue.output_type=== 'CURRENCY' && (fValue.formula === null || fValue.formula === '') && fValue.is_input === true){
+           let values = fValue?.value ? fValue.value:0;
+           totalAmount = parseFloat(totalAmount.toString()) + parseFloat(values);
+         }
+       });
+     }
      /** update data */
      this.budgetedAmountDisplay =   (parseFloat(this.budgetedAmount.toString()) + (parseFloat(totalAmount.toString()) -parseFloat(this.budgetedAmount.toString())));
      this.balanceAmountDisplay =  (this.balanceAmount - (parseFloat(totalAmount.toString()) -parseFloat(this.budgetedAmount.toString())));
    }
-   }
+  }
 
   reUpdateValue(data: any) {
     if (data?.value !== undefined) {
@@ -1005,5 +1027,22 @@ export class PeItemComponent implements OnInit {
   calenderYearRange() {
     const year = new Date().getFullYear();
     this.yearRange = `${year}:${year + 6}`;
+  }
+
+  refresh() {
+    if(this.admin_hierarchy_id && this.financial_year_id) {
+      const object = {
+        "admin_hierarchy_id":this.admin_hierarchy_id,
+        "financial_year_id": this.financial_year_id
+      }
+      this.peItemService.refresh(object).subscribe((resp) => {
+        if (resp.success) {
+          this.toastService.info(resp.message);
+          this.filterChanged();
+        } else {
+          this.toastService.error(resp.message);
+        }
+      })
+    }
   }
 }

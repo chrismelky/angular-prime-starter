@@ -73,6 +73,7 @@ export class ScrutinizationComponent implements OnInit {
   submittedCostCentres?: Scrutinization[] = [];
   selectedCostCentre?: Scrutinization;
   userDecionLevel?: DecisionLevel;
+  section?: Section;
   returnDecionLevel?: DecisionLevel;
 
   constructor(
@@ -92,6 +93,7 @@ export class ScrutinizationComponent implements OnInit {
   ngOnInit(): void {
     this.userAdminHierarchy = this.currentUser.admin_hierarchy;
     this.userDecionLevel = this.currentUser.decision_level;
+    this.section = this.currentUser.section;
     this.financialYearService.findByStatus(1).subscribe((resp) => {
       this.financialYearId = resp.data?.id;
       this.createRootAdminHierarchy();
@@ -138,6 +140,8 @@ export class ScrutinizationComponent implements OnInit {
     this.costCentreIsLoading = true;
     this.scrutinizationService
       .getSubmittedCostCentres(
+        this.section?.id!,
+        `p${this.section?.position}`,
         this.userDecionLevel?.id!,
         this.financialYearId!,
         adminHierarchyId
@@ -292,6 +296,59 @@ export class ScrutinizationComponent implements OnInit {
     });
   }
 
+  forwardAllCostCentre(): void {
+    this.confirmForwardOrReturnAll(
+      1,
+      this.userDecionLevel?.next_decision_level!
+    );
+  }
+
+  returnAllCostCentre(): void {
+    this.decisionLevelService
+      .getReturnDecisionLevel(
+        this.userDecionLevel?.id!,
+        this.selectedAdminHierarchy.data?.admin_hierarchy_position!
+      )
+      .subscribe((resp) => {
+        if (resp.data) {
+          this.confirmForwardOrReturnAll(-1, resp.data);
+        } else {
+          this.toastService.warn('No return decision level found');
+        }
+      });
+  }
+
+  private confirmForwardOrReturnAll(
+    direction: number,
+    nextlevel: DecisionLevel
+  ): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to ${
+        direction === -1 ? 'Return' : 'Forward'
+      } all cost centres ${nextlevel?.name}`,
+      accept: () => {
+        this.scrutinizationService
+          .forwardOrReturnAll({
+            financial_year_id: this.financialYearId,
+            admin_hierarchy_id: this.selectedAdminHierarchy.data.id,
+            admin_hierarchy_position:
+              this.selectedAdminHierarchy.data.admin_hierarchy_position,
+            from_decision_level_id: this.userDecionLevel?.id,
+            to_decision_level_id: nextlevel.id,
+            direction,
+          })
+          .subscribe((resp) => {
+            this.reloadSubmission();
+            this.toastService.info(
+              `Cost centre has been ${
+                direction === -1 ? 'Returned' : 'Forwarded'
+              } successfully`
+            );
+          });
+      },
+    });
+  }
+
   private reloadSubmission(): void {
     this.selectedCostCentre = undefined;
     this.selectedAdminHierarchy = undefined;
@@ -340,6 +397,11 @@ export class ScrutinizationComponent implements OnInit {
       ...new Comment(),
       scrutinization_id: this.selectedCostCentre?.id,
       financial_year_id: this.financialYearId,
+      admin_hierarchy_cost_centre_id:
+        this.selectedCostCentre?.admin_hierarchy_cost_centre_id,
+      admin_hierarchy_id:
+        this.selectedCostCentre?.admin_hierarchy_cost_centre_id,
+      section_id: this.selectedCostCentre?.section_id,
       commentable_id: commentable.id,
       commentable_type: commentableType,
     };

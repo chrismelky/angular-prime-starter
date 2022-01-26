@@ -119,11 +119,18 @@
           </div>
         </p-accordionTab>
       </p-accordion>
-      <div class="row" fxLayoutAlign="end">
-        <button pButton type="button" class="p-button-primary p-button-raised" label="Report" [disabled]="admin_hierarchy_position !=3"
-                style="margin-left: 16px" icon="pi pi-file-pdf" (click)="getAssessmentReport()"
-        ></button>
-    </div>
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <i *ngIf="!showCriteria" class="pi pi-lock" style="color: red">  Plan is locked</i>
+        <i *ngIf="showCriteria" class="pi pi-lock-open pi-primary"  style="color: green"  >  Plan is Open</i>
+        <div class="row" fxLayoutAlign="end">
+          <button pButton type="button" class="p-button-primary" label="Initiate Assessment" [disabled]="isPlanInitialized"
+                  style="margin-left: 16px" icon="pi pi-file-key" *ngxPermissionsOnly="['INITIATE_ASSESSMENT']" (click)="initiateCasAssessment()"
+          ></button>
+          <button pButton type="button" class="p-button-primary" label="Report" [disabled]="admin_hierarchy_position !=3"
+                  style="margin-left: 16px" icon="pi pi-file-pdf" (click)="getAssessmentReport()"
+          ></button>
+        </div>
+      </div>
     </div>
   </p-card>
   <!-- Table Panel -->
@@ -131,40 +138,39 @@
     <p-accordionTab  *ngFor="let tab of assessmentCriteriaData!; let i = index"  (click)="loadSubCriteria(tab.id, i)" [ngClass]="{'highlight': selectedIndex === i}">
       <ng-template pTemplate="header" >
         <div>{{i + 1+'.'}}   {{tab.name }}</div>
-        <div>[{{tab.number}}]</div>
       </ng-template>
       <ng-template pTemplate="content">
         <p-table [value]="assessmentSubCriteriaOptions!">
           <ng-template pTemplate="header">
             <tr>
               <th style="width:3rem">#</th>
-              <th  [colSpan]="3">Sub Criteria Name</th>
+              <th  [colSpan]="2">Sub Criteria Name</th>
               <th [colSpan]="2">How to Assess</th>
               <th>Status</th>
-              <th [colSpan]="2">Action</th>
+              <th [colSpan]="3">Action</th>
             </tr>
           </ng-template>
 
           <ng-template pTemplate="body" let-assessmentSubCriteriaOption let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
           <tr>
             <td>{{rowIndex+1}}</td>
-            <td [colSpan]="3">{{assessmentSubCriteriaOption.name}}
+            <td [colSpan]="2">{{assessmentSubCriteriaOption.name}}
             </td>
             <td [colSpan]="2">{{assessmentSubCriteriaOption.how_to_assess}}
             </td>
             <td>
               <p-badge value="{{assessmentSubCriteriaOption.cas_assessment_state?assessmentSubCriteriaOption.cas_assessment_state:'Not Assessed'}}" severity="{{assessmentSubCriteriaOption.cas_assessment_state?'success':'warning'}}"></p-badge>
             </td>
-            <td [colSpan]="2">
+            <td [colSpan]="3">
               <button pButton type="button" class="p-button-outlined p-button-icon" label="Scores({{assessmentSubCriteriaOption.value?assessmentSubCriteriaOption.value: 0}})"
-                      [disabled]="admin_hierarchy_position !=3 || !reportViewed"
+                      [disabled]="admin_hierarchy_position !=3 || !showCriteria"
                       style="margin-left: auto" icon="pi pi-check" (click)="setScores(assessmentSubCriteriaOption)"
               ></button>
               <button pButton type="button" class="p-button-outlined p-button-icon" label="Comments"
-                      [disabled]="admin_hierarchy_position !=3 || !reportViewed"
+                      [disabled]="admin_hierarchy_position !=3 || !showCriteria"
                       style="margin-left: 16px" icon="pi pi-comment" (click)="setComments(assessmentSubCriteriaOption)"
               ></button>
-              <button pButton type="button" class="p-button-outlined p-button-icon" label="Report" [disabled]="admin_hierarchy_position !=3"
+              <button pButton type="button" class="p-button-outlined p-button-icon" label="Report" [disabled]="admin_hierarchy_position !=3 || !showCriteria"
                       style="margin-left: 16px" icon="pi pi-list" (click)="getReport(assessmentSubCriteriaOption)"
               ></button>
             </td>
@@ -181,14 +187,13 @@
           name="commentForm"
           role="form"
           novalidate
-          (ngSubmit)="finishAndQuit()"
           [formGroup]="commentForm">
           <div class="p-field p-col-12 p-md-4" fxFlex>
         <span class="p-float-label">
           <textarea
             id="remarks"
             formControlName="remarks"
-            [rows]="2"
+            [rows]="1"
             [cols]="20"
             pInputTextarea
             [autoResize]="true"
@@ -209,18 +214,26 @@
           </div>
         </form>
       </div>
-      <div fxFlex="30%">
-        <button pButton type="button" class="p-button-text p-button-raised" label="Forward" *ngIf="position3 || position2"
-                style="margin-left: 16px" icon="pi pi-forward" (click)="forwardPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3"
+      <div fxFlex="30%" >
+        <button
+          (click)="forwardPlan()"
+          pButton
+          icon="pi pi-chevron-right"
+          class="p-button-raised p-button-success"
+          *ngIf="admin_hierarchy_position! > 1"
+          label="Forward"
+          style="margin-left: 16px"
         ></button>
-<!--        <button pButton type="button" class="p-button-text p-button-raised" label="Return" *ngIf="position1 || position2"-->
-<!--                style="margin-left: 16px" icon="pi pi-reply" (click)="returnPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3"-->
-<!--        ></button>-->
-        <button pButton type="button" class="p-button-text p-button-raised" label="Confirm" *ngIf="position1"
-                style="margin-left: 16px" icon="pi pi-check" (click)="confirmPlan()" fxFlex="25%" [disabled]="admin_hierarchy_position != 3"
+
+        <button pButton class="p-button-raised p-button-warning" label="Return" *ngIf="position1 || position2"
+                style="margin-left: 16px" icon="pi pi-reply" (click)="returnPlan()" fxFlex="20%" [disabled]="admin_hierarchy_position != 3 || !showCriteria"
         ></button>
-        <button pButton type="button" class="p-button-text p-button-raised" label="Finish and Quit"
-                style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="35%" [disabled]="admin_hierarchy_position != 3"
+
+        <button pButton class="p-button-raised p-button-success" label="Confirm" *ngIf="position1"
+                style="margin-left: 16px" icon="pi pi-check" (click)="confirmPlan()" fxFlex="25%" [disabled]="admin_hierarchy_position != 3 || !showCriteria"
+        ></button>
+        <button pButton class="p-button-raised  p-button-info" label="Finish and Quit"
+                style="margin-left: 16px" icon="pi pi-power-off" (click)="finishAndQuit()" fxFlex="35%" [disabled]="admin_hierarchy_position != 3 || !showCriteria"
         ></button>
       </div>
 

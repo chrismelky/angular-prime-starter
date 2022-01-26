@@ -6,16 +6,21 @@
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { createRequestOption } from '../../utils/request-util';
+import {
+  createNonNullRequestOption,
+  createRequestOption,
+} from '../../utils/request-util';
 import { CustomResponse } from '../../utils/custom-response';
 import { Report } from './report.model';
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
   public resourceUrl = 'api/reports';
+
+  public jasperResourceUrl = 'jasperserver/rest_v2/reports';
 
   constructor(protected http: HttpClient) {}
 
@@ -45,12 +50,41 @@ export class ReportService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  getReport(req?: any) {
-    const options = createRequestOption(req);
-    return this.http.get<any>(`${this.resourceUrl}/get_report`, {
+  getReport(params?: any): void {
+    const qs = Object.keys(params)
+      .filter((key) => params[key] !== undefined && params[key] !== null)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&');
+
+    window.open(`${this.resourceUrl}/get_report?${qs}`, '_blank');
+  }
+
+  getReportHtml(params?: any): Observable<any> {
+    const options = createNonNullRequestOption(params);
+    return this.http.get(`${this.resourceUrl}/get_report`, {
       params: options,
-      responseType: 'arraybuffer' as 'json',
+      responseType: 'text',
     });
+  }
+
+  getJasperReportHtml(path: string, params?: any): Observable<any> {
+    const qs = Object.keys(params)
+      .filter((key) => params[key] !== undefined && params[key] !== null)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&');
+
+    return this.http.get(`${this.jasperResourceUrl}/${path}.html?${qs}`, {
+      responseType: 'text',
+    });
+  }
+
+  getJasperReport(path: string, params?: any, format?: string): void {
+    const qs = Object.keys(params)
+      .filter((key) => params[key] !== undefined && params[key] !== null)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&');
+
+    window.open(`${this.jasperResourceUrl}/${path}.${format}?${qs}`, '_blank');
   }
 
   getParams(id: number): Observable<CustomResponse<Report[]>> {
@@ -62,12 +96,17 @@ export class ReportService {
    * download report files
    *
    */
-  downloadReport(id: number,financial_year_id: number,admin_hierarchy_id: number) {
+  downloadReport(
+    id: number,
+    financial_year_id: number,
+    admin_hierarchy_id: number
+  ) {
     const httpOptions = {
-      'responseType'  : 'arraybuffer' as 'json'
+      responseType: 'arraybuffer' as 'json',
     };
     return this.http.get<any>(
-      `${this.resourceUrl}/get_file/${id}/${financial_year_id}/${admin_hierarchy_id}`,httpOptions
-    )
+      `${this.resourceUrl}/get_file/${id}/${financial_year_id}/${admin_hierarchy_id}`,
+      httpOptions
+    );
   }
 }

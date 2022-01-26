@@ -142,7 +142,7 @@
                         {{rowData!.amount | currency:"TZS":"TSH"}}
                       </span>
                       <p-inputNumber
-                        *ngIf="!rowData.is_locked && !rowData.is_approved && ceiling?.ceiling?.fund_source.code !== 'Z01'"
+                        *ngIf="!rowData.is_locked && !rowData.is_approved"
                         mode="decimal"
                         prefix="TSH "
                         [(ngModel)]="rowData!.amount"
@@ -161,7 +161,7 @@
                         {{rowData!.percent | number : '1.2-2'}} %
                       </span>
                       <p-inputNumber
-                        *ngIf="!rowData.is_locked && !rowData.is_approved && ceiling?.ceiling?.fund_source.code !== 'Z01'"
+                        *ngIf="!rowData.is_locked && !rowData.is_approved"
                         mode="decimal"
                         suffix=" %"
                         [(ngModel)]="rowData.percent"

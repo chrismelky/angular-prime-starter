@@ -86,36 +86,75 @@
   <!-- Table Panel -->
   <p-card>
     <ng-template pTemplate="content">
-      <div
-        fxLayout="row"
-        fxLayoutAlign="space-between center"
-        *ngIf="selectedAdminHierarchy"
-      >
-        <span class="card-header-text"
-          >{{ selectedAdminHierarchy?.label }} /
-          {{ selectedCostCentre?.section?.name }}</span
-        >
-        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-          <button
-            (click)="returnCostCentre()"
-            pButton
-            icon="pi pi-chevron-left"
-            class="p-button-raised p-button-warning"
-            [disabled]="!selectedCostCentre"
-            label="Return"
-          ></button>
-
-          <button
-            *ngIf="userDecionLevel?.next_decision_level"
-            (click)="forwardCostCentre()"
-            pButton
-            icon="pi pi-chevron-right"
-            class="p-button-raised p-button-success"
-            [disabled]="!selectedCostCentre"
-            label="Forward"
-          ></button>
-        </div>
-      </div>
+      <p-table [value]="[1]" styleClass="p-datatable-gridlines">
+        <!-- <ng-template pTemplate="header">
+          <tr>
+            <th></th>
+            <th class="fit">From</th>
+            <th class="fit">Return</th>
+            <th class="fit">Forward</th>
+          </tr>
+        </ng-template> -->
+        <ng-template pTemplate="body">
+          <tr style="white-space: normal" *ngIf="selectedAdminHierarchy">
+            <td [attr.colspan]="2" style="white-space: normal">
+              {{ selectedAdminHierarchy?.label }}
+            </td>
+            <td></td>
+            <td>
+              <button
+                (click)="returnAllCostCentre()"
+                pButton
+                icon="pi pi-chevron-down"
+                class="p-button-text p-button-warning"
+                label="Return {{ selectedAdminHierarchy?.label }}"
+              ></button>
+            </td>
+            <td>
+              <button
+                *ngIf="userDecionLevel?.next_decision_level"
+                (click)="forwardAllCostCentre()"
+                pButton
+                icon="pi pi-chevron-up"
+                class="p-button-text p-button-success"
+                label="Forward {{ selectedAdminHierarchy?.label }}"
+              ></button>
+            </td>
+          </tr>
+          <tr style="white-space: normal" *ngIf="selectedCostCentre">
+            <td [attr.colspan]="2" style="white-space: normal">
+              {{ selectedCostCentre?.section?.name }}
+            </td>
+            <td>
+              {{
+                selectedCostCentre.is_returned ? "Returned by" : "Forwarded by"
+              }}
+              {{ selectedCostCentre.from_decision_level?.name }}
+            </td>
+            <td>
+              <button
+                (click)="returnCostCentre()"
+                pButton
+                icon="pi pi-chevron-down"
+                class="p-button-text p-button-warning"
+                [disabled]="!selectedCostCentre"
+                label="Return {{ selectedCostCentre?.section?.name }}"
+              ></button>
+            </td>
+            <td>
+              <button
+                *ngIf="userDecionLevel?.next_decision_level"
+                (click)="forwardCostCentre()"
+                pButton
+                icon="pi pi-chevron-up"
+                class="p-button-text p-button-success"
+                [disabled]="!selectedCostCentre"
+                label="Forward {{ selectedCostCentre?.section?.name }}"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </ng-template>
   </p-card>
 
@@ -144,6 +183,20 @@
         let-columns="columns"
         let-expanded="true"
       >
+        <tr style="white-space: normal">
+          <td [attr.colspan]="2" style="white-space: normal">
+            [ Target ] {{ rowData.long_term_target?.code }} -
+            {{ rowData.long_term_target?.description }}
+          </td>
+          <td style="width: 80px; padding: 0px"></td>
+        </tr>
+        <tr style="white-space: normal" [ngClass]="{ 'tr-expanded': expanded }">
+          <td [attr.colspan]="2">
+            [ Facility ] {{ rowData.facility?.code }} -
+            {{ rowData.facility.name }}
+          </td>
+          <td></td>
+        </tr>
         <tr
           style="white-space: normal"
           [ngClass]="{
@@ -151,8 +204,8 @@
             'has-comment': rowData.hasComment
           }"
         >
-          <td [attr.colspan]="2">
-            [ {{ rowData.code }} ] {{ rowData.description }}
+          <td [attr.colspan]="2" style="white-space: normal">
+            [ Activity ] {{ rowData.code }} - {{ rowData.description }}
           </td>
           <td style="width: 80px; padding: 0px">
             <button
@@ -163,9 +216,12 @@
             ></button>
           </td>
         </tr>
+
         <tr style="white-space: normal" [ngClass]="{ 'tr-expanded': expanded }">
-          <td>Facility: {{ rowData.facility.name }}</td>
-          <td>Budget Class: {{ rowData.budget_class.name }}</td>
+          <td [attr.colspan]="2">
+            [ Budget Class ] {{ rowData.budget_class.code }} -
+            {{ rowData.budget_class.name }}
+          </td>
           <td></td>
         </tr>
       </ng-template>
@@ -193,11 +249,11 @@
                   *ngFor="let i of rowData.inputs"
                   [ngClass]="{ 'has-comment': i.hasComment }"
                 >
-                  <td>
+                  <td style="white-space: normal">
                     {{ i.fund_source?.name }}
                   </td>
-                  <td>
-                    {{ i.gfs_code?.name }}
+                  <td style="white-space: normal">
+                    {{ i.gfs_code?.code }} - {{ i.gfs_code?.name }}
                   </td>
                   <td>
                     {{ i.unit }}

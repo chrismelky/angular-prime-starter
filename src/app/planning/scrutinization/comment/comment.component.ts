@@ -19,6 +19,9 @@ export class CommentComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     scrutinization_id: [null, [Validators.required]],
+    admin_hierarchy_cost_centre_id: [null, [Validators.required]],
+    admin_hierarchy_id: [null, [Validators.required]],
+    section_id: [null, [Validators.required]],
     financial_year_id: [null, [Validators.required]],
     commentable_id: [null, [Validators.required]],
     commentable_type: [null, [Validators.required]],
@@ -37,7 +40,6 @@ export class CommentComponent implements OnInit {
 
   ngOnInit(): void {
     const dialogData = this.dialogConfig.data;
-    console.log(dialogData);
     this.otherComments = dialogData.otherComments;
     this.updateForm(dialogData.currentComment); //Initialize form with data from dialog
   }
@@ -98,6 +100,9 @@ export class CommentComponent implements OnInit {
     this.editForm.patchValue({
       id: comment.id,
       scrutinization_id: comment.scrutinization_id,
+      admin_hierarchy_cost_centre_id: comment.admin_hierarchy_cost_centre_id,
+      admin_hierarchy_id: comment.admin_hierarchy_id,
+      section_id: comment.section_id,
       financial_year_id: comment.financial_year_id,
       commentable_id: comment.commentable_id,
       commentable_type: comment.commentable_type,

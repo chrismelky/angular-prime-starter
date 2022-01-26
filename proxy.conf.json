@@ -3,6 +3,12 @@
     "target": "http://localhost:8000",
     "secure": false,
     "loglevel": "debug"
+  },
+  "/jasperserver": {
+    "target": "http://196.192.73.24:8085",
+    "secure": false,
+     "headers": {"Authorization": "Basic cHJldmlld2VyOnByQHYhQHdAcg=="},
+    "loglevel": "debug"
   }
 
 }

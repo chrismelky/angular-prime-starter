@@ -105,16 +105,12 @@
       (onLazyLoad)="onSortChange($event)"
       [customSort]="true"
     >
-      <!-- <ng-template pTemplate="caption">
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-          <span class="card-header-text">Cost Centres</span>
-        </div>
-      </ng-template> -->
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="adminHierarchyCostCentres?.length">
           <th>Cost Centre</th>
           <th>Decision Level</th>
           <th style="text-align: center">Status</th>
+          <th style="text-align: center">Comments</th>
           <th></th>
           <th></th>
         </tr>
@@ -128,10 +124,6 @@
                 severity="success"
               ></p-tag>
               <strong>{{ rowData.section?.name! }}</strong>
-              <!-- <p-tag
-                [value]="rowData.section?.name!"
-                severity="success"
-              ></p-tag> -->
             </div>
           </td>
           <td>
@@ -213,6 +205,14 @@
                 ></i>
               </span>
             </span>
+          </td>
+          <td style="text-align: center">
+            <p-badge
+              [value]="rowData.addressable_comments?.length!"
+              [severity]="
+                rowData.addressable_comments?.length > 0 ? 'warning' : 'info'
+              "
+            ></p-badge>
           </td>
           <td class="fit">
             <button

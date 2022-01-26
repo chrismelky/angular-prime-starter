@@ -16,6 +16,23 @@
           fxLayoutAlign="start center"
         >
           <div class="p-field" fxFlex>
+            <span class="p-float-label">
+              <p-dropdown
+                id="cas_plan_id"
+                optionValue="id"
+                optionLabel="name"
+                [autoDisplayFirst]="false"
+                [filter]="true"
+                class="p-inputtext-sm"
+                [options]="casPlans!"
+                (onChange)="filterChanged()"
+                [(ngModel)]="cas_plan_id"
+              ></p-dropdown>
+              <label for="cas_plan_id">Cas Plans </label>
+            </span>
+          </div>
+
+          <div class="p-field" fxFlex>
             <app-admin-hierarchy-tree
               (onSelect)="onAdminHierarchySelection($event)"
               [returnType]="'object'"
@@ -50,22 +67,6 @@
                 [(ngModel)]="budgetType"
               ></p-dropdown>
               <label for="budgetType">Budget Type </label>
-            </span>
-          </div>
-          <div class="p-field" fxFlex>
-            <span class="p-float-label">
-              <p-dropdown
-                id="cas_plan_id"
-                optionValue="id"
-                optionLabel="name"
-                [autoDisplayFirst]="false"
-                [filter]="true"
-                class="p-inputtext-sm"
-                [options]="casPlans!"
-                (onChange)="filterChanged()"
-                [(ngModel)]="cas_plan_id"
-              ></p-dropdown>
-              <label for="cas_plan_id">Cas Plans </label>
             </span>
           </div>
         </div>
@@ -222,5 +223,13 @@
   appendTo="body"
   styleClass="report-sidebar"
 >
-  <app-report-preview></app-report-preview>
+  <ng-template pTemplate="content">
+    <app-report-preview
+      [report]="report!"
+      [params]="report?.query_params"
+      [financialYear]="financialYear!"
+      [budgetType]="budgetType!"
+      [adminHierarchy]="adminHierarchy!"
+    ></app-report-preview>
+  </ng-template>
 </p-sidebar>

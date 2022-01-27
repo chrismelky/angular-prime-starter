@@ -44,6 +44,9 @@
             ],
             "scripts": [
               "./node_modules/chart.js/dist/chart.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "xlsx"
             ]
           },
           "configurations": {

@@ -1,0 +1,135 @@
+<div class="dialog-content">
+  <form
+    name="editForm"
+    role="form"
+    novalidate
+    (ngSubmit)="save()"
+    [formGroup]="questionForm"
+    autocomplete="off"
+  >
+    <div fxLayout="column" fxLayoutGap="1rem">
+
+      <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="name" type="text" pInputText [disabled]="disabled" [value]="questionValue" />
+          <label for="name">Question Description </label>
+        </span>
+        <span
+          *ngIf="
+            questionForm.get('name')!.invalid &&
+            (questionForm.get('name')!.dirty ||
+              questionForm.get('name')!.touched ||
+              formError)">
+          <small class="p-error" *ngIf="questionForm.get('name')?.errors?.required"
+          >Name is required.</small
+          >
+        </span>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start">
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="label" type="text" pInputText formControlName="label" />
+          <label for="label">Label </label>
+        </span>
+          <span
+            *ngIf="
+            questionForm.get('label')!.invalid &&
+            (questionForm.get('label')!.dirty ||
+              questionForm.get('label')!.touched ||
+              formError)">
+          <small class="p-error" *ngIf="questionForm.get('label')?.errors?.required"
+          >Label is required.</small
+          >
+        </span>
+        </div>
+
+        <div class="p-field p-col-12 p-md-4" fxFlex>
+        <span class="p-float-label">
+          <input id="option_value" type="text" pInputText formControlName="option_value" />
+          <label for="option_value">Option value </label>
+        </span>
+          <span
+            *ngIf="
+            questionForm.get('option_value')!.invalid &&
+            (questionForm.get('option_value')!.dirty ||
+              questionForm.get('option_value')!.touched ||
+              formError)">
+          <small class="p-error" *ngIf="questionForm.get('option_value')?.errors?.required"
+          >Option value is required.</small
+          >
+        </span>
+        </div>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="0.75rem">
+        <span fxFlex></span>
+        <button
+          class="p-button-raised"
+          icon="pi pi-check"
+          label="Save"
+          pButton
+          type="submit"
+        ></button>
+      </div>
+    </div>
+  </form>
+  <p-card>
+    <p-table [value]="options!" dataKey="id" editMode="row" responsiveLayout="scroll">
+      <ng-template pTemplate="caption">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <span class="card-header-text"> Options [ {{dialogConfig.data?.input_type ==='check'?'Check Box': 'Radio Button'}} ]</span>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Label</th>
+          <th>Options</th>
+          <th>Is active</th>
+          <th style="width:8rem"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-option let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]="option">
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="option.label">
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{option.label}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="option.option_value">
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{option.option_value}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="option.is_active">
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{option.is_active}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td style="text-align:center">
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(option)" class="p-button-rounded p-button-text"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(option)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(option, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+</div>

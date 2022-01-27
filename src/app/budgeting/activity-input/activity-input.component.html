@@ -105,11 +105,27 @@
                     [autoDisplayFirst]="false"
                     [group]="true"
                     [filter]="true"
+                    filterBy="name,status,completion"
                     class="p-inputtext-sm"
                     [options]="facilityGroupByType!"
                     (onChange)="loadFundSource(facility.value)"
                     [(ngModel)]="facility_id"
-                  ></p-dropdown>
+                  >
+                    <ng-template let-facility pTemplate="item">
+                      <div
+                        fxLayout="row"
+                        fxLayoutAlign="start"
+                        fxLayoutGap="8px"
+                        style="padding-left: 8px"
+                      >
+                        <i
+                          style="color: rgba(0, 0, 0, 0.38)"
+                          class="pi pi-home"
+                        ></i>
+                        <span>{{ facility.name }}</span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
                   <label for="facility_id">Facility </label>
                 </span>
               </div>

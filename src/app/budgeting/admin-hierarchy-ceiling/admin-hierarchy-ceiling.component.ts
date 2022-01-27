@@ -728,7 +728,8 @@ export class AdminHierarchyCeilingComponent implements OnInit {
       position:row.section?.position,
       admin_hierarchy_position: this.admin_hierarchy_position,
       financial_year_id:row.financial_year_id,
-      admin_hierarchy_id:row.admin_hierarchy_id
+      admin_hierarchy_id:row.admin_hierarchy_id,
+      parent_section_id:row.section_id
     }
     this.selectedCeiling = row;
     this.adminHierarchyCeilingService

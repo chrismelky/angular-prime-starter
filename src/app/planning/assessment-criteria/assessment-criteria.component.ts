@@ -100,6 +100,7 @@ export class AssessmentCriteriaComponent implements OnInit {
   reportViewed: boolean = false;
   isPlanInitialized: boolean = false;
   showCriteria: boolean = false;
+  location: any;
 
   constructor(
     protected casPlanContentService: CasPlanContentService,
@@ -109,7 +110,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     protected adminHierarchyService: AdminHierarchyService,
     protected financialYearService: FinancialYearService,
     protected activatedRoute: ActivatedRoute,
-    protected router: Router,
+    protected _router: Router,
     protected fb: FormBuilder,
     protected casAssessmentResultsService: AssessmentCriteriaService,
     protected confirmationService: ConfirmationService,
@@ -117,6 +118,7 @@ export class AssessmentCriteriaComponent implements OnInit {
     protected helper: HelperService,
     protected actRoute: ActivatedRoute,
     protected userService: UserService,
+    protected decisionLevelService: DecisionLevelService,
     protected toastService: ToastService
   ) {
     this.cas_assessment_category_version_id = this.actRoute.snapshot.params.id;
@@ -130,15 +132,13 @@ export class AssessmentCriteriaComponent implements OnInit {
     this.assessmentCriteriaService.checkAssessmentStatus(
       this.currentUser.admin_hierarchy?.id!,
       this.actRoute.snapshot.params.fy_id,
-      this.actRoute.snapshot.params.round_id
+      this.actRoute.snapshot.params.round_id,
+      this.cas_assessment_category_version_id
     ).subscribe(resp => {
       if(parseInt(resp) > 0){
         this.isPlanInitialized = true;
       }
     });
-    if (this.admin_hierarchy_position == 3){
-      this.checkForwardStatus();
-    }
     if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 3){
       this.position3 = true;
     }
@@ -160,7 +160,6 @@ export class AssessmentCriteriaComponent implements OnInit {
         this.casAssessmentRounds = resp.data.casRounds;
       });
     this.handleNavigation();
-    // this.forwardedToLevel();
   }
 
   checkForwardStatus(){
@@ -168,26 +167,13 @@ export class AssessmentCriteriaComponent implements OnInit {
     this.currentUser.admin_hierarchy?.id!,
   this.actRoute.snapshot.params.fy_id,
   this.actRoute.snapshot.params.round_id,
-  this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1,
+  this.currentUser.decision_level?.admin_hierarchy_level_position ?? 1,
   this.actRoute.snapshot.params.id
 ).subscribe(resp => {
   if (resp.data.length > 0){
   this.showCriteria = true;
 }
 });
-}
-
-forwardedToLevel(){
-    // console.log(this.admin_hierarchy_id);
-    this.assessmentCriteriaService.forwardedToLevel(
-      this.admin_hierarchy_id,
-      this.actRoute.snapshot.params.fy_id,
-      this.actRoute.snapshot.params.round_id,
-      this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1,
-      this.actRoute.snapshot.params.id
-    ).subscribe(resp => {
-      this.forwardedLevels = resp.data;
-    });
 }
   /**
    * Load data from api
@@ -374,7 +360,7 @@ forwardedToLevel(){
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/assessment-criteria"], {
+      this._router.navigate(["/assessment-criteria"], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
@@ -480,7 +466,19 @@ forwardedToLevel(){
     }else {
       this.casAssessmentSubCriteriaService.getContentById(assessmentSubCriteriaOption.cas_plan_content_id)
         .subscribe(resp =>{
-          if (resp.data?.data_sets?.length) {
+          if (resp.data?.is_file){
+            this.reportService
+              .downloadReport(
+                resp.data.id!,
+                this.financial_year_id,
+                this.admin_hierarchy_id
+              )
+              .subscribe((resp) => {
+                let file = new Blob([resp], { type: 'application/pdf' });
+                let fileURL = URL.createObjectURL(file);
+                window.open(fileURL, '_blank');
+              });
+          }else {
             const ref = this.dialogService.open(ReportUpdateComponent, {
               data: {
                 report,
@@ -514,8 +512,31 @@ forwardedToLevel(){
     this.admin_hierarchy_id = event.id;
     this.admin_hierarchy_position =event.admin_hierarchy_position;
     this.checkForwardStatus();
+    this.forwardedToLevel();
   }
 
+
+
+  forwardedToLevel(){
+    this.assessmentCriteriaService.forwardedToLevel(
+      this.admin_hierarchy_id,
+      this.actRoute.snapshot.params.fy_id,
+      this.actRoute.snapshot.params.round_id,
+      this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1,
+      this.actRoute.snapshot.params.id
+    ).subscribe(resp => {
+      if (resp.data[0]){
+        if (resp.data[0].to_decision_level_id === (this.currentUser.decision_level?.admin_hierarchy_level_position! ?? 1)){
+          this.showCriteria = true;
+          this.forwardedLevels = resp.data[0]?.name;
+        }else {
+          this.showCriteria = false;
+          this.forwardedLevels = resp.data[0].name;
+        }
+      }
+      this.forwardedLevels = resp.data[0].name;
+    });
+  }
   /**
    *
    * @param event adminhierarchyId & cas assessment criteria Ids
@@ -551,24 +572,32 @@ forwardedToLevel(){
       message: 'All your work will be saved. Continue?',
       accept: () => {
         //TODO: Actual logic to perform a confirmation
-        this.router.navigate(["/assessment-home"])
+        this._router.navigate(["/assessment-home"])
       }
     });
   }
 
   forwardPlan() {
+    if (this.currentUser.admin_hierarchy?.admin_hierarchy_position == 1){
+      this.toastService.info('Cant forward plan at this level');
+
+      return;
+    }
   let data = {
     admin_hierarchy_id:this.admin_hierarchy_id,
     financial_year_id:this.actRoute.snapshot.params.fy_id,
     cas_assessment_round_id:this.actRoute.snapshot.params.round_id,
     from_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position,
-    to_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position! -1,
+    to_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position!-1,
     version_id: this.actRoute.snapshot.params.id,
     general_remarks : this.commentForm.value.remarks
   }
   this.assessmentCriteriaService.forwardPlan(data).subscribe(
     resp => {
       this.toastService.info('Plan hase been forwarded successfully');
+      this.checkForwardStatus();
+      this.reloadCurrentRoute();
+      // window.location.reload();
     }
   );
   }
@@ -578,18 +607,30 @@ forwardedToLevel(){
       admin_hierarchy_id:this.admin_hierarchy_id,
       financial_year_id:this.actRoute.snapshot.params.fy_id,
       cas_assessment_round_id:this.actRoute.snapshot.params.round_id,
-      from_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position ?
-        this.currentUser.decision_level?.admin_hierarchy_level_position:1,
-      to_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position! ?
-        this.currentUser.decision_level?.admin_hierarchy_level_position +1: 2,
+      from_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position?? 1,
+      to_decision_level_id :this.currentUser.decision_level?.admin_hierarchy_level_position!?
+        this.currentUser.decision_level?.admin_hierarchy_level_position!+1:2,
       version_id: this.actRoute.snapshot.params.id,
       general_remarks : this.commentForm.value.remarks
     }
+
     this.assessmentCriteriaService.forwardPlan(data).subscribe(
       resp => {
         this.toastService.info('Plan hase been returned successfully');
+        this.checkForwardStatus();
+        this.reloadCurrentRoute();
+        // window.location.reload();
       }
     );
+  }
+  /**
+   * refresh current component
+   * */
+  reloadCurrentRoute() {
+    let currentUrl = this._router.url;
+    this._router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+      this._router.navigate([currentUrl]);
+    });
   }
 
   saveOrUpdateComment(data: any){
@@ -601,14 +642,14 @@ forwardedToLevel(){
   updatePlan(data : any) {
     this.casAssessmentResultsService.updatePlan(data).subscribe(resp => {
       this.toastService.info(resp.message);
-      this.router.navigate(["/assessment-home"])
+      this._router.navigate(["/assessment-home"])
     });
   }
 
  confirmRound(data: {}) {
     this.casAssessmentResultsService.confirmRound(data).subscribe(resp => {
       this.toastService.info(resp.message);
-      this.router.navigate(["/assessment-home"])
+      this._router.navigate(["/assessment-home"])
     });
   }
 /** initialize cas assessment
@@ -617,13 +658,6 @@ forwardedToLevel(){
  * DMO for health and District PLO for cdr and cfr
  * */
 initiateCasAssessment(){
-  // if (
-  //   !this.admin_hierarchy_id ||
-  //   !this.financial_year_id ||
-  //   !this.cas_assessment_round_id
-  // ) {
-  //   return;
-  // }
   this.assessmentCriteriaService.initializeAssessment({
     admin_hierarchy_id: this.admin_hierarchy_id?? this.currentUser.admin_hierarchy?.id,
     financial_year_id: this.financial_year_id,
@@ -634,7 +668,7 @@ initiateCasAssessment(){
     general_remarks:'Initialized'
   }).subscribe((resp: CustomResponse<any>)=> {
     this.toastService.info(resp.message)
-    // window.location.reload();
+    location.reload();
     this.isPlanInitialized = true;
     this.showCriteria = true;
   });

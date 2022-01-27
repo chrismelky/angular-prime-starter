@@ -1,6 +1,6 @@
-import {FacilityType} from '../facility-type/facility-type.model';
-import {AdminHierarchy} from '../admin-hierarchy/admin-hierarchy.model';
-import {FinancialYear} from "../financial-year/financial-year.model";
+import { FacilityType } from '../facility-type/facility-type.model';
+import { AdminHierarchy } from '../admin-hierarchy/admin-hierarchy.model';
+import { FinancialYear } from '../financial-year/financial-year.model';
 
 export class Facility {
   constructor(
@@ -20,9 +20,8 @@ export class Facility {
     public p4?: number,
     public p5?: number,
     public planning_hierarchy_position?: number,
-    public active?: boolean,
-  ) {
-  }
+    public active?: boolean
+  ) {}
 }
 
 export class FacilityView {
@@ -32,7 +31,10 @@ export class FacilityView {
     public name?: string,
     public type_id?: number,
     public type?: string,
-    public ownership?: string
-  ) {
-  }
+    public ownership?: string,
+    public budget?: number,
+    public ceiling?: number,
+    public completion?: number,
+    public status?: string
+  ) {}
 }

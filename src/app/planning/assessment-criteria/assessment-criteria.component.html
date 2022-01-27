@@ -120,8 +120,8 @@
         </p-accordionTab>
       </p-accordion>
       <div fxLayout="row" fxLayoutAlign="space-between center">
-        <i *ngIf="!showCriteria" class="pi pi-lock" style="color: red">  Plan is locked</i>
-        <i *ngIf="showCriteria" class="pi pi-lock-open pi-primary"  style="color: green"  >  Plan is Open</i>
+        <i *ngIf="!showCriteria" class="pi pi-lock" style="color: red">  Plan is locked. Plan is at {{forwardedLevels}} level</i>
+        <i *ngIf="showCriteria" class="pi pi-lock-open pi-primary"  style="color: green"  >  Plan is Open. Plan is at {{forwardedLevels}} level</i>
         <div class="row" fxLayoutAlign="end">
           <button pButton type="button" class="p-button-primary" label="Initiate Assessment" [disabled]="isPlanInitialized"
                   style="margin-left: 16px" icon="pi pi-file-key" *ngxPermissionsOnly="['INITIATE_ASSESSMENT']" (click)="initiateCasAssessment()"
@@ -220,7 +220,7 @@
           pButton
           icon="pi pi-chevron-right"
           class="p-button-raised p-button-success"
-          *ngIf="admin_hierarchy_position! > 1"
+          *ngIf="admin_hierarchy_position !=1 || !showCriteria"
           label="Forward"
           style="margin-left: 16px"
         ></button>

@@ -2,6 +2,9 @@ export class Comment {
   constructor(
     public id?: number,
     public scrutinization_id?: number,
+    public admin_hierarchy_cost_centre_id?: number,
+    public admin_hierarchy_id?: number,
+    public section_id?: number,
     public financial_year_id?: number,
     public commentable_id?: number,
     public commentable_type?: string,

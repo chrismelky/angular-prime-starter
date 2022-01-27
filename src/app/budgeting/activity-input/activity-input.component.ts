@@ -49,6 +49,7 @@ import { ProcurementTypeService } from 'src/app/setup/procurement-type/procureme
 import { ProcurementMethodService } from 'src/app/setup/procurement-method/procurement-method.service';
 import { ProcurementType } from 'src/app/setup/procurement-type/procurement-type.model';
 import { ProcurementMethod } from 'src/app/execution/activity-implementation/activity-implementation.model';
+import { F } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-activity-input',
@@ -185,13 +186,32 @@ export class ActivityInputComponent implements OnInit {
     const parentId = this.adminHierarchyCostCentre?.admin_hierarchy_id;
     const sectionId = this.adminHierarchyCostCentre?.section_id;
     this.facilityIsLoading = true;
-    this.facilityService.planning(parentName, parentId!, sectionId!).subscribe(
-      (resp: CustomResponse<FacilityView[]>) => {
-        this.facilityIsLoading = false;
-        this.facilityGroupByType = this.helper.groupBy(resp.data!, 'type');
-      },
-      (error) => (this.facilityIsLoading = false)
-    );
+    this.facilityService
+      .planning(parentName, parentId!, sectionId!, {
+        financial_year_id: this.financialYear.id,
+      })
+      .subscribe(
+        (resp: CustomResponse<FacilityView[]>) => {
+          this.facilityIsLoading = false;
+          this.facilityGroupByType = this.helper.groupBy(
+            resp.data!.map((fa) => {
+              const completion = (
+                fa.ceiling && fa.ceiling > 0
+                  ? ((fa.budget || 0) / fa.ceiling) * 100
+                  : 0
+              ).toFixed(0);
+
+              return {
+                ...fa,
+                completion,
+                status: completion == '100' ? 'done' : 'incomplete',
+              };
+            }),
+            'type'
+          );
+        },
+        (error) => (this.facilityIsLoading = false)
+      );
   }
 
   /**

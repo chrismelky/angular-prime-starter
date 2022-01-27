@@ -31,7 +31,7 @@ export class TransferComponent implements OnInit {
   save(): void {
     const facility = this.facility;
     facility.admin_hierarchy_id = this.adminHierarchy.id;
-    this.subscribeToSaveResponse(this.facilityService.update(facility));
+    this.subscribeToSaveResponse(this.facilityService.transfer(facility));
   }
 
   protected subscribeToSaveResponse(

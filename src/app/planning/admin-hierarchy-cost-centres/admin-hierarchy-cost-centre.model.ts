@@ -1,6 +1,7 @@
 import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { DecisionLevel } from 'src/app/setup/decision-level/decision-level.model';
 import { Section } from 'src/app/setup/section/section.model';
+import { Comment } from '../scrutinization/comment/comment.model';
 
 export class AdminHierarchyCostCentre {
   constructor(
@@ -20,6 +21,7 @@ export class AdminHierarchyCostCentre {
     public supplementary_budget_decision_level_id?: number,
     public supplementary_budget_decision_level?: DecisionLevel,
     public section?: Section,
-    public admin_hierarchy?: AdminHierarchy
+    public admin_hierarchy?: AdminHierarchy,
+    public addressable_comments?: Comment[]
   ) {}
 }

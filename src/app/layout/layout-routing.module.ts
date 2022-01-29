@@ -1335,6 +1335,27 @@ const routes: Routes = [
             "../setup/expenditure-centre-item/expenditure-centre-item.module"
           ).then((m) => m.ExpenditureCentreItemModule),
       },
+      {
+        path: "project-data-form",
+        loadChildren: () =>
+          import("../setup/project-data-form/project-data-form.module").then(
+            (m) => m.ProjectDataFormModule
+          ),
+      },
+      {
+        path: "project-data-form-question",
+        loadChildren: () =>
+          import(
+            "../setup/project-data-form-question/project-data-form-question.module"
+          ).then((m) => m.ProjectDataFormQuestionModule),
+      },
+      {
+        path: "project-data-form-item",
+        loadChildren: () =>
+          import(
+            "../planning/project-data-form-item/project-data-form-item.module"
+          ).then((m) => m.ProjectDataFormItemModule),
+      },
       /**====Planrep router Generator Hook: Dont Delete====*/
       {
         path: "**",

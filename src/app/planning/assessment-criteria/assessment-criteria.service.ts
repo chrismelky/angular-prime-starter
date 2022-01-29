@@ -120,9 +120,9 @@ createComment(
    * check if  cas assessment  is
    * initialized
    * */
-  checkAssessmentStatus(admin_id: number, f_year_id: number,round_id: number) {
+  checkAssessmentStatus(admin_id: number, f_year_id: number,round_id: number,version_id: number) {
     return this.http.get<any>(
-      `${this.managePlan}/check_status/${admin_id}/${f_year_id}/${round_id}`
+      `${this.managePlan}/check_status/${admin_id}/${f_year_id}/${round_id}/${version_id}`
     );
   }
   /**

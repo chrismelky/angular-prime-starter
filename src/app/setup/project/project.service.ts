@@ -74,4 +74,12 @@ export class ProjectService {
       responseType: 'arraybuffer',
     });
   }
+
+
+  queryProjectByDepartment(req?: any): Observable<CustomResponse<Project[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<CustomResponse<Project[]>>(this.resourceUrl +'/project-by-department', {
+      params: options,
+    });
+  }
 }

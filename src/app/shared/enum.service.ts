@@ -95,7 +95,10 @@ export class EnumService {
       { display: "Public Other", value: "PO" },
     ],
     insuranceTypes: [
-      { display: "A. Insured comprehensive", value: "A. Insured comprehensive" },
+      {
+        display: "A. Insured comprehensive",
+        value: "A. Insured comprehensive",
+      },
       { display: "B. Insured 3rd party", value: "B. Insured 3rd party" },
       { display: "C. Not insured", value: "C. Not insured" },
       { display: "D. Not Applicable", value: "D. Not Applicable" },
@@ -237,12 +240,20 @@ export class EnumService {
     ],
     inputTypes: [
       { display: "Text", value: "text" },
-      { display: "Number", value: "number" },
+      { display: "Number", value: "Number" },
       { display: "Boolean", value: "boolean" },
     ],
     balanceTypes: [
       { display: "Debit", value: "DEBIT" },
       { display: "Credit", value: "CREDIT" },
+    ],
+
+    projectDataFormInputType: [
+      { display: "Text", value: "text" },
+      { display: "Number", value: "number" },
+      { display: "Date", value: "date" },
+      { display: "Radio", value: "radio" },
+      { display: "Check", value: "check" },
     ],
     /**====Planrep Enum Generator Hook: Dont Delete====*/
   };

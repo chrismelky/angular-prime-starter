@@ -767,3 +767,7 @@ p-divider.title .p-divider.p-divider-horizontal {
 .report-filter .p-dropdown {
   border-radius: 0px !important;
 }
+
+.p-toast .p-toast-message .p-toast-message-content .p-toast-detail {
+  white-space: pre-line;
+}

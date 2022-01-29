@@ -1,0 +1,13 @@
+td.error {
+  background-color: red;
+}
+table.error {
+  border-collapse: collapse;
+  border-spacing: 0px;
+  tr {
+    td ,th{
+   padding: 4px !important;
+  border: 1px solid #ccc
+}
+  }
+}

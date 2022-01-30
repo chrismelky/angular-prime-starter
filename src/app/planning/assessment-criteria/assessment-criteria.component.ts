@@ -667,7 +667,7 @@ initiateCasAssessment(){
     general_remarks:'Initialized'
   }).subscribe((resp: CustomResponse<any>)=> {
     this.toastService.info(resp.message)
-    // location.reload();
+    this.reloadCurrentRoute();
     this.isPlanInitialized = true;
     this.showCriteria = true;
   });

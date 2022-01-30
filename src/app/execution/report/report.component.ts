@@ -353,7 +353,6 @@ export class ReportComponent implements OnInit {
     ) {
       return;
     }
-
     if (content.report && !content.data_sets?.length) {
       this.report = { ...content.report };
       this.financialYear = this.financialYears?.find(

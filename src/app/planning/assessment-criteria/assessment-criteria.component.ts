@@ -25,12 +25,10 @@ import { AdminHierarchyService } from "src/app/setup/admin-hierarchy/admin-hiera
 import { FinancialYear } from "src/app/setup/financial-year/financial-year.model";
 import { FinancialYearService } from "src/app/setup/financial-year/financial-year.service";
 import { CasAssessmentRound } from "src/app/setup/cas-assessment-round/cas-assessment-round.model";
-import { CasAssessmentRoundService } from "src/app/setup/cas-assessment-round/cas-assessment-round.service";
 
 import { AssessmentCriteria } from "./assessment-criteria.model";
 import { AssessmentCriteriaService } from "./assessment-criteria.service";
 import { AssessmentCriteriaUpdateComponent } from "./update/assessment-criteria-update.component";
-import {CasAssessmentCriteriaOptionService} from "../../setup/cas-assessment-criteria-option/cas-assessment-criteria-option.service";
 import {CasAssessmentSubCriteriaOptionService} from "../../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.service";
 import {CasAssessmentSubCriteriaOption} from "../../setup/cas-assessment-sub-criteria-option/cas-assessment-sub-criteria-option.model";
 import {SetScoresComponent} from "./update/set-scores.component";
@@ -479,6 +477,7 @@ export class AssessmentCriteriaComponent implements OnInit {
                 window.open(fileURL, '_blank');
               });
           }else {
+            console.log(resp.data)
             const ref = this.dialogService.open(ReportUpdateComponent, {
               data: {
                 report,
@@ -495,7 +494,7 @@ export class AssessmentCriteriaComponent implements OnInit {
 
   getAssessmentReport() {
     this.assessmentCriteriaService.getAssessmentReport(this.admin_hierarchy_id,
-      this.admin_hierarchy_position!,
+      this.currentUser.admin_hierarchy?.admin_hierarchy_position!,
       this.financial_year_id,
       this.cas_assessment_round_id,
       this.cas_assessment_category_version_id).subscribe(resp =>{
@@ -663,8 +662,8 @@ initiateCasAssessment(){
     financial_year_id: this.financial_year_id,
     cas_assessment_round_id: this.cas_assessment_round_id,
     version_id: this.cas_assessment_category_version_id,
-    from_decision_level_id: this.currentUser.decision_level?.id,
-    to_decision_level_id: this.currentUser.decision_level?.id,
+    from_decision_level_id: this.currentUser.decision_level?.admin_hierarchy_level_position,
+    to_decision_level_id: this.currentUser.decision_level?.admin_hierarchy_level_position,
     general_remarks:'Initialized'
   }).subscribe((resp: CustomResponse<any>)=> {
     this.toastService.info(resp.message)

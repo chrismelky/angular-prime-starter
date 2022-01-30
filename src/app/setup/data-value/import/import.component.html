@@ -59,6 +59,7 @@
                   [autoDisplayFirst]="false"
                   [filter]="true"
                   class="p-inputtext-sm"
+                  (onChange)="loadError()"
                   [options]="financialYears!"
                   [(ngModel)]="financial_year_id"
                 ></p-dropdown>
@@ -76,6 +77,7 @@
                   [filter]="true"
                   class="p-inputtext-sm"
                   [options]="periods!"
+                  (onChange)="loadError()"
                   [(ngModel)]="period_id"
                 ></p-dropdown>
                 <label for="period_id">Period</label>
@@ -98,15 +100,56 @@
         (uploadHandler)="import($event)"
       >
         <ng-template let-file pTemplate="content">
-          <div fxLayout="column" fxLayoutGap="4px" *ngIf="importStatus">
-            <span>Total Items: {{ importStatus?.all }}</span>
-            <span>Imported: {{ importStatus?.imported }}</span>
-            <span>Errors</span>
-            <ul>
-              <li *ngFor="let e of importStatus?.errors">
-                Line {{ e.line }}: {{ e.error }}
-              </li>
-            </ul>
+          <div fxLayout="column" fxLayoutGap="4px">
+            <div fxLayout="column" fxLayoutGap="10px" *ngIf="importStatus">
+              <span>Total Items: {{ importStatus?.all }}</span>
+              <span>Imported: {{ importStatus?.imported }}</span>
+              <span>Errors</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+              <button
+                pButton
+                type="button"
+                (click)="reImport()"
+                label="Re Import"
+              ></button>
+            </div>
+            <table class="error">
+              <tr>
+                <th>Row</th>
+                <th>Dhsi2 Code</th>
+                <th>Planrep Code</th>
+                <th>Data Element</th>
+                <th>Value</th>
+                <th>Facility doesnt exist</th>
+                <th>Invalid Council</th>
+                <th>Data element Doest exist</th>
+              </tr>
+              <tr *ngFor="let e of errors">
+                <td>
+                  {{ e.row_number }}
+                </td>
+                <td>{{ e.dhis_facility_code }}</td>
+                <td>{{ e.planrep_facility_code }}</td>
+                <td>{{ e.de_code }}</td>
+                <td>{{ e.value }}</td>
+                <td [ngClass]="{ error: e.facility_code_dont_exist }"></td>
+                <td [ngClass]="{ error: e.invalid_council }"></td>
+                <td [ngClass]="{ error: e.de_dont_exist }"></td>
+              </tr>
+            </table>
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+              <p-paginator
+                #paginator
+                [alwaysShow]="errors?.length! > 0"
+                [rows]="per_page"
+                dropdownAppendTo="body"
+                [showCurrentPageReport]="true"
+                [totalRecords]="errors.length"
+                [rowsPerPageOptions]="perPageOptions"
+                (onPageChange)="pageChanged($event)"
+              ></p-paginator>
+            </div>
           </div>
         </ng-template>
       </p-fileUpload>

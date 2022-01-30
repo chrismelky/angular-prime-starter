@@ -40,6 +40,28 @@ export class DataValueService {
     );
   }
 
+  errors(req?: any): Observable<CustomResponse<any>> {
+    const options = createRequestOption(req);
+
+    return this.http.get<CustomResponse<any>>(
+      `${this.resourceUrl}/import/errors`,
+      {
+        params: options,
+      }
+    );
+  }
+
+  reImport(req?: any): Observable<CustomResponse<any>> {
+    const options = createRequestOption(req);
+
+    return this.http.get<CustomResponse<any>>(
+      `${this.resourceUrl}/import/errors/reimport`,
+      {
+        params: options,
+      }
+    );
+  }
+
   download(req?: any) {
     const options = createRequestOption(req);
 

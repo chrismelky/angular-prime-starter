@@ -1,21 +1,15 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+/**  * @license */
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { Group } from "./group.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Group } from './group.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class GroupService {
-  public resourceUrl = "api/groups";
+  public resourceUrl = 'api/groups';
 
   constructor(protected http: HttpClient) {}
 

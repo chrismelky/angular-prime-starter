@@ -1,25 +1,18 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {Observable, PartialObserver} from "rxjs";
+/**  * @license */
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, PartialObserver } from 'rxjs';
 
-import {createRequestOption} from "../../utils/request-util";
-import {CustomResponse} from "../../utils/custom-response";
-import {Menu} from "./menu.model";
-import {MenuItem} from "primeng/api";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Menu } from './menu.model';
+import { MenuItem } from 'primeng/api';
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: 'root' })
 export class MenuService {
-  public resourceUrl = "api/menus";
+  public resourceUrl = 'api/menus';
 
-  constructor(protected http: HttpClient) {
-  }
+  constructor(protected http: HttpClient) {}
 
   create(menu: Menu): Observable<CustomResponse<Menu>> {
     return this.http.post<CustomResponse<Menu>>(this.resourceUrl, menu);
@@ -44,7 +37,9 @@ export class MenuService {
   }
 
   currentUser(): Observable<CustomResponse<Menu>> {
-    return this.http.get<CustomResponse<Menu>>(`${this.resourceUrl}/currentUser`);
+    return this.http.get<CustomResponse<Menu>>(
+      `${this.resourceUrl}/currentUser`
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

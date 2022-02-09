@@ -1,20 +1,14 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import {CustomResponse} from "../utils/custom-response";
-import {createRequestOption} from "../utils/request-util";
+/**  * @license */
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { CustomResponse } from '../utils/custom-response';
+import { createRequestOption } from '../utils/request-util';
 import { BudgetCeiling } from './budget-ceiling.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class BudgetCeilingService {
-  public resourceUrl = "api/budget_ceilings";
+  public resourceUrl = 'api/budget_ceilings';
 
   constructor(protected http: HttpClient) {}
 
@@ -42,13 +36,11 @@ export class BudgetCeilingService {
     );
   }
 
-
   query(req?: any): Observable<CustomResponse<BudgetCeiling[]>> {
     const options = createRequestOption(req);
-    return this.http.get<CustomResponse<BudgetCeiling[]>>(
-      this.resourceUrl,
-      { params: options }
-    );
+    return this.http.get<CustomResponse<BudgetCeiling[]>>(this.resourceUrl, {
+      params: options,
+    });
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

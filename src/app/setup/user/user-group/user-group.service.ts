@@ -1,24 +1,17 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+/**  * @license */
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import {createRequestOption} from "../../../utils/request-util";
-import {CustomResponse} from "../../../utils/custom-response";
-import {CreateUserGroup, UserGroup} from "./user-group.model";
+import { createRequestOption } from '../../../utils/request-util';
+import { CustomResponse } from '../../../utils/custom-response';
+import { CreateUserGroup, UserGroup } from './user-group.model';
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: 'root' })
 export class UserGroupService {
-  public resourceUrl = "api/user_groups";
+  public resourceUrl = 'api/user_groups';
 
-  constructor(protected http: HttpClient) {
-  }
+  constructor(protected http: HttpClient) {}
 
   create(userGroup: UserGroup): Observable<CustomResponse<UserGroup>> {
     return this.http.post<CustomResponse<UserGroup>>(
@@ -51,7 +44,12 @@ export class UserGroupService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  assignMultipleGroups(data: CreateUserGroup): Observable<CustomResponse<null>> {
-    return this.http.post<CustomResponse<null>>(`${this.resourceUrl}/assignMultipleGroups`, data);
+  assignMultipleGroups(
+    data: CreateUserGroup
+  ): Observable<CustomResponse<null>> {
+    return this.http.post<CustomResponse<null>>(
+      `${this.resourceUrl}/assignMultipleGroups`,
+      data
+    );
   }
 }

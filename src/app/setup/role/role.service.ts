@@ -1,22 +1,16 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+/**  * @license */
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../utils/request-util";
-import { CustomResponse } from "../../utils/custom-response";
-import { Role } from "./role.model";
-import {AllPermissionAndAssigned} from "../permission/permission.model";
+import { createRequestOption } from '../../utils/request-util';
+import { CustomResponse } from '../../utils/custom-response';
+import { Role } from './role.model';
+import { AllPermissionAndAssigned } from '../permission/permission.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class RoleService {
-  public resourceUrl = "api/roles";
+  public resourceUrl = 'api/roles';
 
   constructor(protected http: HttpClient) {}
 
@@ -42,12 +36,17 @@ export class RoleService {
     });
   }
 
-  allPermissionsAndAssignedPermissions(roleId: number | undefined): Observable<CustomResponse<AllPermissionAndAssigned>> {
-    return this.http.get<CustomResponse<AllPermissionAndAssigned>>(`${this.resourceUrl}/allPermissionsAndAssignedPermissions`, {
-      params: {
-        roleId: `${roleId}`
-      },
-    });
+  allPermissionsAndAssignedPermissions(
+    roleId: number | undefined
+  ): Observable<CustomResponse<AllPermissionAndAssigned>> {
+    return this.http.get<CustomResponse<AllPermissionAndAssigned>>(
+      `${this.resourceUrl}/allPermissionsAndAssignedPermissions`,
+      {
+        params: {
+          roleId: `${roleId}`,
+        },
+      }
+    );
   }
 
   delete(id: number): Observable<CustomResponse<null>> {

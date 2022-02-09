@@ -1,21 +1,15 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+/**  * @license */
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../../utils/request-util";
-import { CustomResponse } from "../../../utils/custom-response";
-import {CreateMenuPermission, MenuPermission} from "./menu-permission.model";
+import { createRequestOption } from '../../../utils/request-util';
+import { CustomResponse } from '../../../utils/custom-response';
+import { CreateMenuPermission, MenuPermission } from './menu-permission.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class MenuPermissionService {
-  public resourceUrl = "api/menu_permissions";
+  public resourceUrl = 'api/menu_permissions';
 
   constructor(protected http: HttpClient) {}
 
@@ -54,7 +48,12 @@ export class MenuPermissionService {
     return this.http.delete<CustomResponse<null>>(`${this.resourceUrl}/${id}`);
   }
 
-  assignMultiplePermissions(data: CreateMenuPermission): Observable<CustomResponse<null>> {
-    return this.http.post<CustomResponse<null>>(`${this.resourceUrl}/assignMultiplePermissions`, data);
+  assignMultiplePermissions(
+    data: CreateMenuPermission
+  ): Observable<CustomResponse<null>> {
+    return this.http.post<CustomResponse<null>>(
+      `${this.resourceUrl}/assignMultiplePermissions`,
+      data
+    );
   }
 }

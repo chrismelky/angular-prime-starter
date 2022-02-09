@@ -1,39 +1,37 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {ConfirmationService, LazyLoadEvent} from "primeng/api";
-import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+/**  * @license */
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../../utils/custom-response";
+import { CustomResponse } from '../../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {Group} from "src/app/setup/group/group.model";
-import {RoleService} from "src/app/setup/role/role.service";
+} from '../../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Group } from 'src/app/setup/group/group.model';
+import { RoleService } from 'src/app/setup/role/role.service';
 
-import {GroupRole} from "./group-role.model";
-import {GroupRoleService} from "./group-role.service";
-import {GroupRoleUpdateComponent} from "./update/group-role-update.component";
-import {CreateComponent} from "./create/create.component";
+import { GroupRole } from './group-role.model';
+import { GroupRoleService } from './group-role.service';
+import { GroupRoleUpdateComponent } from './update/group-role-update.component';
+import { CreateComponent } from './create/create.component';
 
 @Component({
-  selector: "app-group-role",
-  templateUrl: "./group-role.component.html",
+  selector: 'app-group-role',
+  templateUrl: './group-role.component.html',
 })
 export class GroupRoleComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   groupRoles?: GroupRole[] = [];
   cols = []; //Table display columns
   group: Group | undefined;
@@ -158,18 +156,18 @@ export class GroupRoleComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
   create(): void {
     const data = {
-      group: this.group
-    }
+      group: this.group,
+    };
     const ref = this.dialogService.open(CreateComponent, {
       data,
-      header: "Create Group Role",
+      header: 'Create Group Role',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -181,11 +179,11 @@ export class GroupRoleComponent implements OnInit {
   edit(row?: GroupRole): void {
     const data = {
       groupRole: row,
-      group: this.group
-    }
+      group: this.group,
+    };
     const ref = this.dialogService.open(GroupRoleUpdateComponent, {
       data,
-      header: "Update Group Role",
+      header: 'Update Group Role',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -194,14 +192,13 @@ export class GroupRoleComponent implements OnInit {
     });
   }
 
-
   /**
    * Delete GroupRole
    * @param groupRole
    */
   delete(groupRole: GroupRole): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this GroupRole?",
+      message: 'Are you sure that you want to delete this GroupRole?',
       accept: () => {
         this.groupRoleService.delete(groupRole.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -233,6 +230,6 @@ export class GroupRoleComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Group Role");
+    this.toastService.error('Error loading Group Role');
   }
 }

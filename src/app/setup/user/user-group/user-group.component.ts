@@ -1,42 +1,40 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+/**  * @license */
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../../utils/custom-response";
+import { CustomResponse } from '../../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {User} from "src/app/setup/user/user.model";
-import {UserService} from "src/app/setup/user/user.service";
-import {Group} from "src/app/setup/group/group.model";
-import {GroupService} from "src/app/setup/group/group.service";
+} from '../../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { User } from 'src/app/setup/user/user.model';
+import { UserService } from 'src/app/setup/user/user.service';
+import { Group } from 'src/app/setup/group/group.model';
+import { GroupService } from 'src/app/setup/group/group.service';
 
-import {UserGroup} from "./user-group.model";
-import {UserGroupService} from "./user-group.service";
-import {UserGroupUpdateComponent} from "./update/user-group-update.component";
-import {CreateComponent} from "./create/create.component";
+import { UserGroup } from './user-group.model';
+import { UserGroupService } from './user-group.service';
+import { UserGroupUpdateComponent } from './update/user-group-update.component';
+import { CreateComponent } from './create/create.component';
 
 @Component({
-  selector: "app-user-group",
-  templateUrl: "./user-group.component.html",
+  selector: 'app-user-group',
+  templateUrl: './user-group.component.html',
 })
 export class UserGroupComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   userGroups?: UserGroup[] = [];
   user: User | undefined;
   groups?: Group[] = [];
@@ -74,7 +72,7 @@ export class UserGroupComponent implements OnInit {
 
   ngOnInit(): void {
     this.groupService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe((resp: CustomResponse<Group[]>) => (this.groups = resp.data));
     this.handleNavigation();
   }
@@ -172,8 +170,8 @@ export class UserGroupComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -183,11 +181,11 @@ export class UserGroupComponent implements OnInit {
    */
   create(): void {
     const data = {
-      user: this.user
-    }
+      user: this.user,
+    };
     const ref = this.dialogService.open(CreateComponent, {
       data,
-      header: "Assign Group",
+      header: 'Assign Group',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -199,11 +197,11 @@ export class UserGroupComponent implements OnInit {
   edit(userGroup?: UserGroup): void {
     const data = {
       user: this.user,
-      userGroup: userGroup
-    }
+      userGroup: userGroup,
+    };
     const ref = this.dialogService.open(UserGroupUpdateComponent, {
       data,
-      header: "Update Group",
+      header: 'Update Group',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -218,7 +216,7 @@ export class UserGroupComponent implements OnInit {
    */
   delete(userGroup: UserGroup): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this UserGroup?",
+      message: 'Are you sure that you want to delete this UserGroup?',
       accept: () => {
         this.userGroupService.delete(userGroup.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -250,6 +248,6 @@ export class UserGroupComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading User Group");
+    this.toastService.error('Error loading User Group');
   }
 }

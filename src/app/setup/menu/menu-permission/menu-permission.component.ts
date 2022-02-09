@@ -1,44 +1,42 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent, MenuItem } from "primeng/api";
-import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+/**  * @license */
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../../utils/custom-response";
+import { CustomResponse } from '../../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
-import { Menu } from "src/app/setup/menu/menu.model";
-import { MenuService } from "src/app/setup/menu/menu.service";
-import { Permission } from "src/app/setup/permission/permission.model";
-import { PermissionService } from "src/app/setup/permission/permission.service";
+} from '../../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Menu } from 'src/app/setup/menu/menu.model';
+import { MenuService } from 'src/app/setup/menu/menu.service';
+import { Permission } from 'src/app/setup/permission/permission.model';
+import { PermissionService } from 'src/app/setup/permission/permission.service';
 
-import { MenuPermission } from "./menu-permission.model";
-import { MenuPermissionService } from "./menu-permission.service";
-import { MenuPermissionUpdateComponent } from "./update/menu-permission-update.component";
-import {CreateComponent} from "./create/create.component";
+import { MenuPermission } from './menu-permission.model';
+import { MenuPermissionService } from './menu-permission.service';
+import { MenuPermissionUpdateComponent } from './update/menu-permission-update.component';
+import { CreateComponent } from './create/create.component';
 
 @Component({
-  selector: "app-menu-permission",
-  templateUrl: "./menu-permission.component.html",
+  selector: 'app-menu-permission',
+  templateUrl: './menu-permission.component.html',
 })
 export class MenuPermissionComponent implements OnInit {
   menu: Menu | undefined;
 
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   menuPermissions?: MenuPermission[] = [];
 
   menus?: Menu[] = [];
@@ -188,8 +186,8 @@ export class MenuPermissionComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -199,11 +197,11 @@ export class MenuPermissionComponent implements OnInit {
    */
   create(): void {
     const data = {
-      menu: this.menu
-    }
+      menu: this.menu,
+    };
     const ref = this.dialogService.open(CreateComponent, {
       data,
-      header: "Add Permission",
+      header: 'Add Permission',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -219,7 +217,7 @@ export class MenuPermissionComponent implements OnInit {
     };
     const ref = this.dialogService.open(MenuPermissionUpdateComponent, {
       data,
-      header: "Update MenuPermission",
+      header: 'Update MenuPermission',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -234,7 +232,7 @@ export class MenuPermissionComponent implements OnInit {
    */
   delete(menuPermission: MenuPermission): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this MenuPermission?",
+      message: 'Are you sure that you want to delete this MenuPermission?',
       accept: () => {
         this.menuPermissionService
           .delete(menuPermission.id!)
@@ -260,12 +258,12 @@ export class MenuPermissionComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/menu"], {
+      this.router.navigate(['/menu'], {
         queryParams: {
           page: this.page,
           per_page: this.perPage,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -278,6 +276,6 @@ export class MenuPermissionComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Menu Permission");
+    this.toastService.error('Error loading Menu Permission');
   }
 }

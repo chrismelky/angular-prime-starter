@@ -1,21 +1,15 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+/**  * @license */
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { createRequestOption } from "../../../utils/request-util";
-import { CustomResponse } from "../../../utils/custom-response";
-import {CreateUserRole, UserRole} from "./user-role.model";
+import { createRequestOption } from '../../../utils/request-util';
+import { CustomResponse } from '../../../utils/custom-response';
+import { CreateUserRole, UserRole } from './user-role.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class UserRoleService {
-  public resourceUrl = "api/user_roles";
+  public resourceUrl = 'api/user_roles';
 
   constructor(protected http: HttpClient) {}
 
@@ -24,7 +18,10 @@ export class UserRoleService {
   }
 
   assignMultipleRoles(data: CreateUserRole): Observable<CustomResponse<null>> {
-    return this.http.post<CustomResponse<null>>(`${this.resourceUrl}/assignMultipleRoles`, data);
+    return this.http.post<CustomResponse<null>>(
+      `${this.resourceUrl}/assignMultipleRoles`,
+      data
+    );
   }
 
   update(userRole: UserRole): Observable<CustomResponse<UserRole>> {

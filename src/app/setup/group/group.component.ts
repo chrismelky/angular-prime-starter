@@ -1,45 +1,39 @@
-/**
- * @license
- * Copyright TAMISEMI All Rights Reserved.
- *
- * Use of this source code is governed by an Apache-style license that can be
- * found in the LICENSE file at https://tamisemi.go.tz/license
- */
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { ConfirmationService, LazyLoadEvent } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
-import { Paginator } from "primeng/paginator";
-import { Table } from "primeng/table";
+/**  * @license */
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import { CustomResponse } from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import { HelperService } from "src/app/utils/helper.service";
-import { ToastService } from "src/app/shared/toast.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
-import { Group } from "./group.model";
-import { GroupService } from "./group.service";
-import { GroupUpdateComponent } from "./update/group-update.component";
-import {GroupRoleComponent} from "./group-role/group-role.component";
-import {UserGroupComponent} from "./user-group/user-group.component";
+import { Group } from './group.model';
+import { GroupService } from './group.service';
+import { GroupUpdateComponent } from './update/group-update.component';
+import { GroupRoleComponent } from './group-role/group-role.component';
+import { UserGroupComponent } from './user-group/user-group.component';
 
 @Component({
-  selector: "app-group",
-  templateUrl: "./group.component.html",
+  selector: 'app-group',
+  templateUrl: './group.component.html',
 })
 export class GroupComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   groups?: Group[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: true,
     },
   ]; //Table display columns
@@ -106,11 +100,11 @@ export class GroupComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -173,8 +167,8 @@ export class GroupComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -188,7 +182,7 @@ export class GroupComponent implements OnInit {
     };
     const ref = this.dialogService.open(GroupUpdateComponent, {
       data,
-      header: "Create/Update Group",
+      header: 'Create/Update Group',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -203,7 +197,7 @@ export class GroupComponent implements OnInit {
    */
   delete(group: Group): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Group?",
+      message: 'Are you sure that you want to delete this Group?',
       accept: () => {
         this.groupService.delete(group.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -227,12 +221,12 @@ export class GroupComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/group"], {
+      this.router.navigate(['/group'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -245,13 +239,13 @@ export class GroupComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Group");
+    this.toastService.error('Error loading Group');
   }
 
   roles(row: Group): void {
     const data = {
-      group: row
-    }
+      group: row,
+    };
     const ref = this.dialogService.open(GroupRoleComponent, {
       data,
       width: '60%',
@@ -265,12 +259,12 @@ export class GroupComponent implements OnInit {
 
   users(row: Group): void {
     const data = {
-      group: row
-    }
+      group: row,
+    };
     const ref = this.dialogService.open(UserGroupComponent, {
       data,
       width: '60%',
-      header: row.name
+      header: row.name,
     });
     ref.onClose.subscribe((result) => {
       if (result) {

@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -10,7 +11,6 @@ import { Role } from '../../../role/role.model';
 import { UserRoleService } from '../user-role.service';
 import { User } from '../../user.model';
 import { CreateUserRole } from '../user-role.model';
-import { AdminHierarchy } from '../../../admin-hierarchy/admin-hierarchy.model';
 
 @Component({
   selector: 'app-create',
@@ -108,17 +108,5 @@ export class CreateComponent implements OnInit {
       ...new CreateUserRole(),
       roles: this.editForm.get(['roles'])!.value,
     };
-  }
-
-  onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
-    this.editForm.get('roles')?.reset();
-    this.editForm.get('roles')?.updateValueAndValidity();
-    this.admin_hierarchy_position = adminHierarchy.admin_hierarchy_position;
-    this.roleService
-      .query({
-        columns: ['id', 'name'],
-        admin_hierarchy_position: adminHierarchy.admin_hierarchy_position,
-      })
-      .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));
   }
 }

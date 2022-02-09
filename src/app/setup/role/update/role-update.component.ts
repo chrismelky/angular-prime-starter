@@ -5,7 +5,7 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -15,10 +15,6 @@ import { CustomResponse } from '../../../utils/custom-response';
 import { Role } from '../role.model';
 import { RoleService } from '../role.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { AdminHierarchyLevel } from '../../admin-hierarchy-level/admin-hierarchy-level.model';
-import { AdminHierarchyLevelService } from '../../admin-hierarchy-level/admin-hierarchy-level.service';
-import {SectionLevel} from "../../section-level/section-level.model";
-import {SectionLevelService} from "../../section-level/section-level.service";
 
 @Component({
   selector: 'app-role-update',
@@ -28,9 +24,6 @@ export class RoleUpdateComponent implements OnInit {
   isSaving = false;
   formError = false;
   errors = [];
-  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
-  sectionLevels?: SectionLevel[] = [];
-
   /**
    * Declare form
    */
@@ -46,27 +39,10 @@ export class RoleUpdateComponent implements OnInit {
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
     protected fb: FormBuilder,
-    private toastService: ToastService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
-    protected sectionLevelService: SectionLevelService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.sectionLevelService
-      .query({
-        columns: ['id', 'name', 'code', 'position'],
-        sort: ['position:asc'],
-      })
-      .subscribe(
-        (resp: CustomResponse<SectionLevel[]>) =>
-          (this.sectionLevels = resp.data)
-      );
-    this.adminHierarchyLevelService
-      .query()
-      .subscribe(
-        (resp: CustomResponse<AdminHierarchyLevel[]>) =>
-          (this.adminHierarchyLevels = resp.data)
-      );
     this.updateForm(this.dialogConfig.data); //Initialize form with data from dialog
   }
 
@@ -125,8 +101,6 @@ export class RoleUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: role.id,
       name: role.name,
-      admin_hierarchy_position: role.admin_hierarchy_position,
-      section_position: role.section_position,
     });
   }
 
@@ -139,8 +113,6 @@ export class RoleUpdateComponent implements OnInit {
       ...new Role(),
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
-      admin_hierarchy_position: this.editForm.get(['admin_hierarchy_position'])!.value,
-      section_position: this.editForm.get(['section_position'])!.value,
     };
   }
 }

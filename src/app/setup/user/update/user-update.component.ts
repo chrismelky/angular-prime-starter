@@ -5,24 +5,17 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 import { CustomResponse } from '../../../utils/custom-response';
-import { Section } from 'src/app/setup/section/section.model';
-import { SectionService } from 'src/app/setup/section/section.service';
-import { AdminHierarchy } from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
 import { User } from '../user.model';
 import { UserService } from '../user.service';
 import { ToastService } from 'src/app/shared/toast.service';
-import { Facility } from '../../facility/facility.model';
-import { FacilityService } from '../../facility/facility.service';
 import { Role } from '../../role/role.model';
 import { RoleService } from '../../role/role.service';
-import { SectionLevelService } from '../../section-level/section-level.service';
-import { SectionLevel } from '../../section-level/section-level.model';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
@@ -37,12 +30,8 @@ export class UserUpdateComponent implements OnInit {
 
   formError = false;
   errors = [];
-  sectionLevels?: SectionLevel[] = [];
-  sections?: Section[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
   roles?: Role[] = [];
   facilities?: any[] = [];
-  adminHierarchy: AdminHierarchy = {};
 
   /**
    * Declare form
@@ -57,23 +46,13 @@ export class UserUpdateComponent implements OnInit {
     active: [false, []],
     title: [null, []],
     mobile_number: [null, []],
-    section_id: [null, [Validators.required]],
-    section_position: [null, [Validators.required]],
-    admin_hierarchy_id: [null, [Validators.required]],
-    facilities: [null, []],
     role_id: [null, []],
-    is_facility_user: [null, []],
-    has_facility_limit: [null, []],
-    facility_id: [null, []],
     is_super_user: [false, []],
   });
 
   constructor(
     protected userService: UserService,
-    protected sectionService: SectionService,
-    protected sectionLevelService: SectionLevelService,
     protected roleService: RoleService,
-    protected facilityService: FacilityService,
     protected fb: FormBuilder,
     public dialogRef: DynamicDialogRef,
     public dialogConfig: DynamicDialogConfig,
@@ -81,35 +60,15 @@ export class UserUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sectionLevelService
-      .query({
-        columns: ['id', 'name', 'code', 'position'],
-        sort: ['position:asc'],
-      })
-      .subscribe(
-        (resp: CustomResponse<SectionLevel[]>) =>
-          (this.sectionLevels = resp.data)
-      );
-
     const dialogData = this.dialogConfig.data;
 
     const user: User = dialogData.user;
-
-    this.adminHierarchy = dialogData.adminHierarchy;
-
-    this.adminHierarchies = [this.adminHierarchy];
 
     this.loadRoleByAdminLevel(
       dialogData.adminHierarchy.admin_hierarchy_position
     );
 
-    // load section if user has id i.e edit user
-    user?.id && this.loadSections(user.section_position!);
-
     this.updateForm(user);
-
-    // load facilities if user has id i.e edit user
-    user?.id && this.loadFacilities();
   }
 
   /**
@@ -177,19 +136,9 @@ export class UserUpdateComponent implements OnInit {
       active: user?.active,
       title: user?.title,
       mobile_number: user?.mobile_number,
-      section_id: user?.section_id,
-      section_position: user?.section_position,
       username: user?.username,
-      admin_hierarchy_id: user?.admin_hierarchy_id,
       role_id: user?.roles?.length ? user?.roles[0].id : null,
-      facilities:
-        user?.facilities !== undefined
-          ? JSON.parse(user.facilities!)
-          : user?.facilities,
-      is_facility_user: user?.is_facility_user,
-      facility_id: user?.facility_id,
       is_super_user: user?.is_super_user,
-      has_facility_limit: user?.has_facility_limit,
     });
   }
 
@@ -202,10 +151,6 @@ export class UserUpdateComponent implements OnInit {
       ...new User(),
       ...this.editForm.value,
       roles: [{ id: this.editForm.get('role_id')?.value }],
-      facilities:
-        this.editForm.get(['facilities'])!.value !== undefined
-          ? JSON.stringify(this.editForm.get(['facilities'])!.value)
-          : undefined,
     };
   }
 
@@ -223,114 +168,5 @@ export class UserUpdateComponent implements OnInit {
         },
         (error) => (this.roleIsLoading = false)
       );
-  }
-
-  private loadRoleByAdminLevelAndSectionPosition(position: number): void {
-    this.roleIsLoading = true;
-    this.roleService
-      .query({
-        columns: ['id', 'name'],
-        admin_hierarchy_position: this.adminHierarchy.admin_hierarchy_position,
-        section_position: position,
-      })
-      .subscribe(
-        (resp: CustomResponse<Role[]>) => {
-          this.roles = resp.data;
-          this.roleIsLoading = false;
-        },
-        (error) => (this.roleIsLoading = false)
-      );
-  }
-
-  isFacilityUserChanged(): void {
-    // If is facility user
-    const isFacilityUser = this.editForm.get('is_facility_user')?.value;
-
-    if (isFacilityUser) {
-      this.editForm.get('facility_id')?.setValidators([Validators.required]);
-      this.editForm.patchValue({
-        has_facility_limit: true,
-        facilities: [],
-      });
-      this.editForm.get('facilities')?.clearValidators();
-      this.loadFacilities();
-    } else {
-      this.editForm.get('facility_id')?.clearValidators();
-      this.editForm.patchValue({
-        has_facility_limit: false,
-        facilities: [],
-      });
-    }
-    this.editForm.get('facility_id')?.updateValueAndValidity();
-    this.editForm.get('facilities')?.updateValueAndValidity();
-  }
-
-  hasFacilityLimitChanged(): void {
-    const hasLimit = this.editForm.get('has_facility_limit')?.value;
-    if (hasLimit) {
-      this.editForm.get('facilities')?.setValidators([Validators.required]);
-      this.loadFacilities();
-    } else {
-      this.editForm.get('facilities')?.clearValidators();
-      this.editForm.get('facility_id')?.clearValidators();
-      this.editForm.patchValue({
-        facilities: [],
-        facility_id: null,
-        is_facility_user: false,
-      });
-    }
-    this.editForm.get('facilities')?.updateValueAndValidity();
-    this.editForm.get('facility_id')?.updateValueAndValidity();
-  }
-
-  /**
-   * Load section by setionlevel
-   * @param sectionLevelId
-   */
-  loadSections(position: number): void {
-    this.fetchSections(position);
-    this.loadRoleByAdminLevelAndSectionPosition(position);
-  }
-
-  private fetchSections(position: number) {
-    this.sectionIsLoading = true;
-    this.sectionService
-      .query({
-        columns: ['id', 'name', 'code'],
-        sort: ['name:asc'],
-        position: position,
-      })
-      .subscribe(
-        (resp: CustomResponse<Section[]>) => {
-          this.sections = resp.data;
-          this.sectionIsLoading = false;
-        },
-        (error) => (this.sectionIsLoading = false)
-      );
-  }
-
-  /**
-   * Load facilities by section and admin hiearchy
-   */
-  loadFacilities(): void {
-    const sectionId = this.editForm.get('section_id')?.value as number;
-    const hasFacilityLimit = this.editForm.get('has_facility_limit')?.value;
-    const isFacilityUser = this.editForm.get('is_facility_user')?.value;
-    const parentName = 'p' + this.adminHierarchy?.admin_hierarchy_position;
-    const parentId = this.adminHierarchy?.id;
-    if (
-      sectionId != null &&
-      parentId != null &&
-      (isFacilityUser || hasFacilityLimit)
-    ) {
-      this.facilityIsLoading = true;
-      this.facilityService.planning(parentName, parentId, sectionId).subscribe(
-        (resp: CustomResponse<Facility[]>) => {
-          this.facilities = resp.data;
-          this.facilityIsLoading = false;
-        },
-        (error) => (this.facilityIsLoading = false)
-      );
-    }
   }
 }

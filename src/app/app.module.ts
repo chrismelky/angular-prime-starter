@@ -1,26 +1,25 @@
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
-import {AppRoutingModule} from './app-routing.module';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {AppComponent} from './app.component';
-import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
-import {AuthInterceptor} from './interceptors/auth.interceptor';
-import {CommonModule} from '@angular/common';
-import {NgxWebstorageModule} from 'ngx-webstorage';
-import {MessageService} from 'primeng/api';
-import {MessageModule} from 'primeng/message';
-import {ErrorHandlerInterceptor} from './interceptors/error-handler.interceptor';
-import {AuthExpiredInterceptor} from './interceptors/auth-expired.interceptor';
-import {RippleModule} from 'primeng/ripple';
-import {LoaderInterceptor} from "./shared/loader-interceptor";
-import {NgxPermissionsModule} from 'ngx-permissions';
-import {DialogService} from "primeng/dynamicdialog";
-import { ProjectionAllocationComponent } from './shared/projection-allocation/projection-allocation.component';
-import {SharedPrimengModule} from "./shared/shared-primeng.module";
+import { AppRoutingModule } from './app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppComponent } from './app.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { CommonModule } from '@angular/common';
+import { NgxWebstorageModule } from 'ngx-webstorage';
+import { MessageService } from 'primeng/api';
+import { MessageModule } from 'primeng/message';
+import { ErrorHandlerInterceptor } from './interceptors/error-handler.interceptor';
+import { AuthExpiredInterceptor } from './interceptors/auth-expired.interceptor';
+import { RippleModule } from 'primeng/ripple';
+import { LoaderInterceptor } from './shared/loader-interceptor';
+import { NgxPermissionsModule } from 'ngx-permissions';
+import { DialogService } from 'primeng/dynamicdialog';
+import { SharedPrimengModule } from './shared/shared-primeng.module';
 
 @NgModule({
-  declarations: [AppComponent, ProjectionAllocationComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -29,7 +28,7 @@ import {SharedPrimengModule} from "./shared/shared-primeng.module";
     AppRoutingModule,
     RippleModule,
     NgxWebstorageModule.forRoot({
-      prefix: 'planrep',
+      prefix: 'app',
       separator: '-',
       caseSensitive: true,
     }),
@@ -58,10 +57,9 @@ import {SharedPrimengModule} from "./shared/shared-primeng.module";
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptor,
-      multi: true
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

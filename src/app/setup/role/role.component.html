@@ -85,16 +85,21 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="roles?.length">
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sort ? col.field : null">
-            {{ col.header}} <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.sort ? col.field : null"
+          >
+            {{ col.header }}
+            <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'admin_hierarchy_position'">
             Level <p-sortIcon [field]="'admin_hierarchy_position'"></p-sortIcon>
           </th>
           <th [pSortableColumn]="'section_position'">
-            Planning Unit Level <p-sortIcon [field]="'section_position'"></p-sortIcon>
+            Planning Unit Level
+            <p-sortIcon [field]="'section_position'"></p-sortIcon>
           </th>
-<!--          <th>Rights</th>-->
+          <!--          <th>Rights</th>-->
           <th style="flex: 0 0 2 rem">Action</th>
         </tr>
       </ng-template>
@@ -109,13 +114,13 @@
           <td>
             {{ rowData.section_level?.name }}
           </td>
-<!--          <td>-->
+          <!--          <td>-->
 
-<!--          </td>-->
+          <!--          </td>-->
           <td style="flex: 0 0 2 rem">
             <div fxLayout="row" fxLayoutAlign="end">
               <div fxLayout="row" fxLayoutGap="2px">
-                <button
+                <!-- <button
                   pButton
                   label="Permissions"
                   pTooltip="Permissions"
@@ -127,14 +132,12 @@
               "
                   (click)="permissions(rowData)"
                   *ngxPermissionsOnly="['CREATE_ROLE']"
-                ></button>
+                ></button> -->
                 <button
                   pButton
                   pTooltip="Edit"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
                   icon="pi pi-pencil
               "
                   (click)="createOrUpdate(rowData)"
@@ -144,9 +147,7 @@
                   pButton
                   pTooltip="Delete"
                   tooltipPosition="bottom"
-                  class="
-                    p-button-text p-button-plain p-button-rounded p-button-icon
-                  "
+                  class="p-button-text p-button-plain p-button-rounded p-button-icon"
                   icon="pi pi-trash
               "
                   (click)="delete(rowData)"

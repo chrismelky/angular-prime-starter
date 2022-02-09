@@ -5,41 +5,33 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest, Observable} from 'rxjs';
-import {ConfirmationService, LazyLoadEvent, MenuItem} from 'primeng/api';
-import {DialogService} from 'primeng/dynamicdialog';
-import {Paginator} from 'primeng/paginator';
-import {Table} from 'primeng/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, Observable } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from '../../utils/custom-response';
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
 } from '../../config/pagination.constants';
-import {HelperService} from 'src/app/utils/helper.service';
-import {ToastService} from 'src/app/shared/toast.service';
-import {Section} from 'src/app/setup/section/section.model';
-import {SectionService} from 'src/app/setup/section/section.service';
-import {AdminHierarchy} from 'src/app/setup/admin-hierarchy/admin-hierarchy.model';
-import {AdminHierarchyService} from 'src/app/setup/admin-hierarchy/admin-hierarchy.service';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
-import {User} from './user.model';
-import {UserService} from './user.service';
-import {UserUpdateComponent} from './update/user-update.component';
-import {AdminHierarchyLevelService} from '../admin-hierarchy-level/admin-hierarchy-level.service';
-import {AdminHierarchyLevel} from '../admin-hierarchy-level/admin-hierarchy-level.model';
-import {UserRoleComponent} from './user-role/user-role.component';
+import { User } from './user.model';
+import { UserService } from './user.service';
+import { UserUpdateComponent } from './update/user-update.component';
+import { UserRoleComponent } from './user-role/user-role.component';
 
-import {finalize} from 'rxjs/operators';
-import {UserGroupComponent} from './user-group/user-group.component';
-import {PasswordResetComponent} from './password-reset/password-reset.component';
+import { finalize } from 'rxjs/operators';
+import { UserGroupComponent } from './user-group/user-group.component';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
 
-import {AuthService} from "../../core/auth.service";
-import {randomString} from "../../shared/helpers";
-import {Facility} from "../facility/facility.model";
-import {TransferComponent} from "./transfer/transfer.component";
+import { AuthService } from '../../core/auth.service';
+import { randomString } from '../../shared/helpers';
 
 @Component({
   selector: 'app-user',
@@ -51,9 +43,6 @@ export class UserComponent implements OnInit {
   levelIsLoading = false;
   users?: User[] = [];
   isSaving = false;
-  sections?: Section[] = [];
-  adminHierarchies?: AdminHierarchy[] = [];
-  adminHierarchyLevels?: AdminHierarchyLevel[] = [];
   cols = [
     {
       field: 'first_name',
@@ -79,7 +68,7 @@ export class UserComponent implements OnInit {
       field: 'title',
       header: 'Title',
       sort: true,
-    }
+    },
   ]; //Table display columns
 
   isLoading = false;
@@ -92,14 +81,9 @@ export class UserComponent implements OnInit {
   search: any = {}; // items search objects
   currentUser!: User;
   //Mandatory filter
-  adminHierarchy!: AdminHierarchy;
-  admin_hierarchy_position!: number;
 
   constructor(
     protected userService: UserService,
-    protected sectionService: SectionService,
-    protected adminHierarchyService: AdminHierarchyService,
-    protected adminHierarchyLevelService: AdminHierarchyLevelService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected authService: AuthService,
@@ -121,9 +105,6 @@ export class UserComponent implements OnInit {
    * @param dontNavigate = if after successfully update url params with pagination and sort info
    */
   loadPage(page?: number, dontNavigate?: boolean): void {
-    if (!this.adminHierarchy.id || !this.admin_hierarchy_position) {
-      return;
-    }
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
     this.per_page = this.per_page ?? ITEMS_PER_PAGE;
@@ -132,9 +113,6 @@ export class UserComponent implements OnInit {
         page: pageToLoad,
         perPage: this.per_page,
         sort: this.sort(),
-        parent: `p${this.adminHierarchy.admin_hierarchy_position}`,
-        parentId: this.adminHierarchy.id,
-        position: this.admin_hierarchy_position,
         ...this.helper.buildFilter(this.search),
       })
       .subscribe(
@@ -250,11 +228,9 @@ export class UserComponent implements OnInit {
     const data = {
       user: user || {
         ...new User(),
-        admin_hierarchy_id: this.adminHierarchy.id,
         is_super_user: false,
         has_facility_limit: false,
       },
-      adminHierarchy: user ? user.admin_hierarchy : this.adminHierarchy,
     };
     const ref = this.dialogService.open(UserUpdateComponent, {
       data,
@@ -319,27 +295,10 @@ export class UserComponent implements OnInit {
     this.toastService.error('Error loading User');
   }
 
-  onAdminHierarchySelection(adminHierarchy: AdminHierarchy): void {
-    this.adminHierarchy = adminHierarchy;
-    this.loadLowerLevel(this.adminHierarchy.admin_hierarchy_position);
-    this.filterChanged();
-  }
-
-  loadLowerLevel(position: number | undefined) {
-    this.levelIsLoading = true;
-    this.adminHierarchyLevelService.lowerLevels(position).subscribe(
-      (resp: CustomResponse<AdminHierarchyLevel[]>) => {
-        this.adminHierarchyLevels = resp.data;
-        this.levelIsLoading = false;
-      },
-      (error) => (this.levelIsLoading = false)
-    );
-  }
-
   roles(rowData: User): void {
     const data = {
       user: rowData,
-      currentUser: this.currentUser
+      currentUser: this.currentUser,
     };
     const ref = this.dialogService.open(UserRoleComponent, {
       data,
@@ -355,7 +314,7 @@ export class UserComponent implements OnInit {
   groups(rowData: User): void {
     const data = {
       user: rowData,
-      currentUser: this.currentUser
+      currentUser: this.currentUser,
     };
     const ref = this.dialogService.open(UserGroupComponent, {
       data,
@@ -368,11 +327,10 @@ export class UserComponent implements OnInit {
     });
   }
 
-
   toggleActive(user: User, event: any): void {
     this.isSaving = true;
     user.active = event.checked;
-    user.username = user.username ? user.username : randomString(16)
+    user.username = user.username ? user.username : randomString(16);
     this.subscribeToSaveResponse(this.userService.update(user));
   }
 
@@ -389,8 +347,7 @@ export class UserComponent implements OnInit {
     this.toastService.info(result.message);
   }
 
-  protected onSaveError(error: any): void {
-  }
+  protected onSaveError(error: any): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -410,20 +367,6 @@ export class UserComponent implements OnInit {
       if (result) {
         this.loadPage(this.page);
       }
-    });
-  }
-
-  transfer(rowData: User): void {
-    const data = {
-      user: rowData,
-    };
-    const ref = this.dialogService.open(TransferComponent, {
-      data,
-      width: '60%',
-      header: 'User Transfer Form',
-    });
-    ref.onClose.subscribe((result) => {
-      this.loadPage(this.page);
     });
   }
 }

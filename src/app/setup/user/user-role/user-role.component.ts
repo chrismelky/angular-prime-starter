@@ -5,38 +5,41 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../../utils/custom-response";
+import { CustomResponse } from '../../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
-import {Role} from "src/app/setup/role/role.model";
-import {RoleService} from "src/app/setup/role/role.service";
-import {User} from "src/app/setup/user/user.model";
-import {UserService} from "src/app/setup/user/user.service";
+} from '../../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
+import { Role } from 'src/app/setup/role/role.model';
+import { RoleService } from 'src/app/setup/role/role.service';
+import { User } from 'src/app/setup/user/user.model';
+import { UserService } from 'src/app/setup/user/user.service';
 
-import {UserRole} from "./user-role.model";
-import {UserRoleService} from "./user-role.service";
-import {UserRoleUpdateComponent} from "./update/user-role-update.component";
-import {CreateComponent} from "./create/create.component";
+import { UserRole } from './user-role.model';
+import { UserRoleService } from './user-role.service';
+import { UserRoleUpdateComponent } from './update/user-role-update.component';
+import { CreateComponent } from './create/create.component';
 
 @Component({
-  selector: "app-user-role",
-  templateUrl: "./user-role.component.html",
+  selector: 'app-user-role',
+  templateUrl: './user-role.component.html',
 })
 export class UserRoleComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   userRoles?: UserRole[] = [];
   currentUser!: User;
   roles?: Role[] = [];
@@ -74,7 +77,7 @@ export class UserRoleComponent implements OnInit {
 
   ngOnInit(): void {
     this.roleService
-      .query({columns: ["id", "name"]})
+      .query({ columns: ['id', 'name'] })
       .subscribe((resp: CustomResponse<Role[]>) => (this.roles = resp.data));
     this.handleNavigation();
   }
@@ -171,18 +174,18 @@ export class UserRoleComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
   create(): void {
     const data = {
-      user: this.user
+      user: this.user,
     };
     const ref = this.dialogService.open(CreateComponent, {
       data,
-      header: "User - Role Assignment Form",
+      header: 'User - Role Assignment Form',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -194,11 +197,11 @@ export class UserRoleComponent implements OnInit {
   edit(row: UserRole): void {
     const data = {
       userRole: row,
-      user: this.user
+      user: this.user,
     };
     const ref = this.dialogService.open(UserRoleUpdateComponent, {
       data,
-      header: "User - Role Assignment Form",
+      header: 'User - Role Assignment Form',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -213,7 +216,7 @@ export class UserRoleComponent implements OnInit {
    */
   delete(userRole: UserRole): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this User Role?",
+      message: 'Are you sure that you want to delete this User Role?',
       accept: () => {
         this.userRoleService.delete(userRole.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -237,12 +240,12 @@ export class UserRoleComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/user"], {
+      this.router.navigate(['/user'], {
         queryParams: {
           page: this.page,
           per_page: this.perPage,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -255,6 +258,6 @@ export class UserRoleComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading User Role");
+    this.toastService.error('Error loading User Role');
   }
 }

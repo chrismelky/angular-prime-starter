@@ -5,42 +5,39 @@
  * Use of this source code is governed by an Apache-style license that can be
  * found in the LICENSE file at https://tamisemi.go.tz/license
  */
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {ConfirmationService, LazyLoadEvent, MenuItem} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
-import {Paginator} from "primeng/paginator";
-import {Table} from "primeng/table";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
-import {CustomResponse} from "../../utils/custom-response";
+import { CustomResponse } from '../../utils/custom-response';
 import {
   ITEMS_PER_PAGE,
   PER_PAGE_OPTIONS,
-} from "../../config/pagination.constants";
-import {HelperService} from "src/app/utils/helper.service";
-import {ToastService} from "src/app/shared/toast.service";
+} from '../../config/pagination.constants';
+import { HelperService } from 'src/app/utils/helper.service';
+import { ToastService } from 'src/app/shared/toast.service';
 
-import {Role} from "./role.model";
-import {RoleService} from "./role.service";
-import {RoleUpdateComponent} from "./update/role-update.component";
-import {RolePermissionComponent} from "./role-permission/role-permission.component";
-import {AdminHierarchyLevelService} from "../admin-hierarchy-level/admin-hierarchy-level.service";
-import {AdminHierarchyLevel} from "../admin-hierarchy-level/admin-hierarchy-level.model";
+import { Role } from './role.model';
+import { RoleService } from './role.service';
+import { RoleUpdateComponent } from './update/role-update.component';
 
 @Component({
-  selector: "app-role",
-  templateUrl: "./role.component.html",
+  selector: 'app-role',
+  templateUrl: './role.component.html',
 })
 export class RoleComponent implements OnInit {
-  @ViewChild("paginator") paginator!: Paginator;
-  @ViewChild("table") table!: Table;
+  @ViewChild('paginator') paginator!: Paginator;
+  @ViewChild('table') table!: Table;
   roles?: Role[] = [];
 
   cols = [
     {
-      field: "name",
-      header: "Name",
+      field: 'name',
+      header: 'Name',
       sort: false,
     },
   ]; //Table display columns
@@ -62,9 +59,8 @@ export class RoleComponent implements OnInit {
     protected confirmationService: ConfirmationService,
     protected dialogService: DialogService,
     protected helper: HelperService,
-    protected toastService: ToastService,
-  ) {
-  }
+    protected toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.handleNavigation();
@@ -107,11 +103,11 @@ export class RoleComponent implements OnInit {
       this.activatedRoute.data,
       this.activatedRoute.queryParamMap,
     ]).subscribe(([data, params]) => {
-      const page = params.get("page");
-      const perPage = params.get("per_page");
-      const sort = (params.get("sort") ?? data["defaultSort"]).split(":");
+      const page = params.get('page');
+      const perPage = params.get('per_page');
+      const sort = (params.get('sort') ?? data['defaultSort']).split(':');
       const predicate = sort[0];
-      const ascending = sort[1] === "asc";
+      const ascending = sort[1] === 'asc';
       this.per_page = perPage !== null ? parseInt(perPage) : ITEMS_PER_PAGE;
       this.page = page !== null ? parseInt(page) : 1;
       if (predicate !== this.predicate || ascending !== this.ascending) {
@@ -174,8 +170,8 @@ export class RoleComponent implements OnInit {
    * @returns dfefault ot id sorting
    */
   protected sort(): string[] {
-    const predicate = this.predicate ? this.predicate : "id";
-    const direction = this.ascending ? "asc" : "desc";
+    const predicate = this.predicate ? this.predicate : 'id';
+    const direction = this.ascending ? 'asc' : 'desc';
     return [`${predicate}:${direction}`];
   }
 
@@ -189,7 +185,7 @@ export class RoleComponent implements OnInit {
     };
     const ref = this.dialogService.open(RoleUpdateComponent, {
       data,
-      header: "Create/Update Role",
+      header: 'Create/Update Role',
     });
     ref.onClose.subscribe((result) => {
       if (result) {
@@ -204,7 +200,7 @@ export class RoleComponent implements OnInit {
    */
   delete(role: Role): void {
     this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this Role?",
+      message: 'Are you sure that you want to delete this Role?',
       accept: () => {
         this.roleService.delete(role.id!).subscribe((resp) => {
           this.loadPage(this.page);
@@ -228,12 +224,12 @@ export class RoleComponent implements OnInit {
     this.totalItems = resp?.total!;
     this.page = page;
     if (navigate) {
-      this.router.navigate(["/role"], {
+      this.router.navigate(['/role'], {
         queryParams: {
           page: this.page,
           per_page: this.per_page,
           sort:
-            this.predicate ?? "id" + ":" + (this.ascending ? "asc" : "desc"),
+            this.predicate ?? 'id' + ':' + (this.ascending ? 'asc' : 'desc'),
         },
       });
     }
@@ -246,22 +242,6 @@ export class RoleComponent implements OnInit {
   protected onError(): void {
     setTimeout(() => (this.table.value = []));
     this.page = 1;
-    this.toastService.error("Error loading Role");
-  }
-
-  permissions(rowData: Role): void {
-    const data = {
-      role: rowData
-    }
-    const ref = this.dialogService.open(RolePermissionComponent, {
-      data,
-      width: '60%',
-      header: rowData.name + ' Permissions'
-    });
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadPage(this.page);
-      }
-    });
+    this.toastService.error('Error loading Role');
   }
 }

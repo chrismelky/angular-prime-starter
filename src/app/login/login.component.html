@@ -76,7 +76,7 @@
                     type="text"
                     pInputText
                     autofocus
-                    formControlName="username"
+                    formControlName="email"
                     autocomplete="off"
                   />
                   <label for="username"
@@ -85,9 +85,9 @@
                 </span>
                 <span
                   *ngIf="
-                    loginForm.get('username')!.invalid &&
-                    (loginForm.get('username')!.dirty ||
-                      loginForm.get('username')!.touched ||
+                    loginForm.get('email')!.invalid &&
+                    (loginForm.get('email')!.dirty ||
+                      loginForm.get('email')!.touched ||
                       formError)
                   "
                 >

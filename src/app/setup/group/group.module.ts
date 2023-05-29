@@ -10,14 +10,13 @@ import { GroupRoleModule } from './group-role/group-role.module';
 import { UserGroupModule } from './user-group/user-group.module';
 
 @NgModule({
-  imports: [
-    SharedModule,
-    CommonModule,
-    GroupRoutingModule,
-    GroupRoleModule,
-    UserGroupModule,
-  ],
-  declarations: [GroupComponent, GroupUpdateComponent],
-  entryComponents: [GroupUpdateComponent],
+    imports: [
+        SharedModule,
+        CommonModule,
+        GroupRoutingModule,
+        GroupRoleModule,
+        UserGroupModule,
+    ],
+    declarations: [GroupComponent, GroupUpdateComponent]
 })
 export class GroupModule {}

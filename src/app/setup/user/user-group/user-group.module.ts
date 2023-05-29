@@ -8,8 +8,7 @@ import { UserGroupUpdateComponent } from './update/user-group-update.component';
 import { CreateComponent } from './create/create.component';
 
 @NgModule({
-  imports: [SharedModule, CommonModule],
-  declarations: [UserGroupComponent, UserGroupUpdateComponent, CreateComponent],
-  entryComponents: [UserGroupUpdateComponent],
+    imports: [SharedModule, CommonModule],
+    declarations: [UserGroupComponent, UserGroupUpdateComponent, CreateComponent]
 })
 export class UserGroupModule {}

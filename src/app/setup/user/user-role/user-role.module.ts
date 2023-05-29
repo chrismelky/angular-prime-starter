@@ -8,8 +8,7 @@ import { UserRoleUpdateComponent } from './update/user-role-update.component';
 import { CreateComponent } from './create/create.component';
 
 @NgModule({
-  imports: [SharedModule, CommonModule],
-  declarations: [UserRoleComponent, UserRoleUpdateComponent, CreateComponent],
-  entryComponents: [UserRoleUpdateComponent],
+    imports: [SharedModule, CommonModule],
+    declarations: [UserRoleComponent, UserRoleUpdateComponent, CreateComponent]
 })
 export class UserRoleModule {}

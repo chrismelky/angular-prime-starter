@@ -8,8 +8,7 @@ import { RoleComponent } from './role.component';
 import { RoleUpdateComponent } from './update/role-update.component';
 
 @NgModule({
-  imports: [SharedModule, CommonModule, RoleRoutingModule],
-  declarations: [RoleComponent, RoleUpdateComponent],
-  entryComponents: [RoleUpdateComponent],
+    imports: [SharedModule, CommonModule, RoleRoutingModule],
+    declarations: [RoleComponent, RoleUpdateComponent]
 })
 export class RoleModule {}

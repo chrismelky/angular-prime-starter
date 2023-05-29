@@ -8,12 +8,11 @@ import { MenuPermissionUpdateComponent } from './update/menu-permission-update.c
 import { CreateComponent } from './create/create.component';
 
 @NgModule({
-  imports: [SharedModule, CommonModule],
-  declarations: [
-    MenuPermissionComponent,
-    MenuPermissionUpdateComponent,
-    CreateComponent,
-  ],
-  entryComponents: [MenuPermissionUpdateComponent, CreateComponent],
+    imports: [SharedModule, CommonModule],
+    declarations: [
+        MenuPermissionComponent,
+        MenuPermissionUpdateComponent,
+        CreateComponent,
+    ]
 })
 export class MenuPermissionModule {}

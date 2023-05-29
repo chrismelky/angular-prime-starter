@@ -10,13 +10,12 @@ import { MenuPermissionModule } from './menu-permission/menu-permission.module';
 import { SubComponent } from './sub/sub.component';
 
 @NgModule({
-  imports: [
-    SharedModule,
-    CommonModule,
-    MenuRoutingModule,
-    MenuPermissionModule,
-  ],
-  declarations: [MenuComponent, MenuUpdateComponent, SubComponent],
-  entryComponents: [MenuUpdateComponent],
+    imports: [
+        SharedModule,
+        CommonModule,
+        MenuRoutingModule,
+        MenuPermissionModule,
+    ],
+    declarations: [MenuComponent, MenuUpdateComponent, SubComponent]
 })
 export class MenuModule {}
